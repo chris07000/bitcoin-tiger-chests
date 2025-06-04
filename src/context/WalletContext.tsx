@@ -12,7 +12,6 @@ import {
   signMessage
 } from 'sats-connect'
 import { getMagicEdenProvider, signMagicEdenMessage, getMagicEdenAddresses } from '../utils/magicEdenWallet'
-import { useSession } from 'next-auth/react'
 import Cookies from 'js-cookie'
 
 // Add type declaration for window.unisat
@@ -52,7 +51,9 @@ interface WalletContextType {
 const WalletContext = createContext<WalletContextType | undefined>(undefined)
 
 export function WalletProvider({ children }: { children: ReactNode }) {
-  const { data: session } = useSession();
+  // Replaced next-auth session with a simple mock
+  const session = { user: { email: null, name: null } };
+  
   const [connectedWallet, setConnectedWallet] = useState<string | null>(null);
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [publicKey, setPublicKey] = useState<string | null>(null);
@@ -101,13 +102,6 @@ export function WalletProvider({ children }: { children: ReactNode }) {
 
     loadInitialWalletState();
   }, []);
-
-  useEffect(() => {
-    if (session?.user?.email) {
-      setWalletAddress(session.user.email);
-      refreshBalance();
-    }
-  }, [session]);
 
   const initializeWalletInDB = async (address: string) => {
     try {
