@@ -1,8 +1,4 @@
-import dotenv from 'dotenv';
 import { generateMonthlyRakeback, generateWeeklyLossCompensation } from '../lib/ranking';
-
-// Load environment variables
-dotenv.config();
 
 /**
  * Script to generate rewards via CRON job
