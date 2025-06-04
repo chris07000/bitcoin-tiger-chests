@@ -1,40 +1,17 @@
-import mongoose from 'mongoose';
+/**
+ * DEPRECATED: This file is kept for backward compatibility.
+ * Please use Prisma client instead of MongoDB/Mongoose.
+ * 
+ * Example:
+ * import { prisma } from '@/lib/prisma';
+ */
 
-const MONGODB_URI = process.env.MONGODB_URI;
+console.warn('mongodb.ts is deprecated. Please use Prisma client instead.');
 
-if (!MONGODB_URI) {
-  throw new Error('Please define the MONGODB_URI environment variable inside .env.local');
-}
-
-let cached = global.mongoose;
-
-if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
-}
-
+// Stub function that does nothing but logs a warning
 async function connectDB() {
-  if (cached.conn) {
-    return cached.conn;
-  }
-
-  if (!cached.promise) {
-    const opts = {
-      bufferCommands: false,
-    };
-
-    cached.promise = mongoose.connect(MONGODB_URI!, opts).then((mongoose) => {
-      return mongoose;
-    });
-  }
-
-  try {
-    cached.conn = await cached.promise;
-  } catch (e) {
-    cached.promise = null;
-    throw e;
-  }
-
-  return cached.conn;
+  console.warn('connectDB() is deprecated. Please use Prisma client instead.');
+  return null;
 }
 
 export default connectDB; 
