@@ -25,6 +25,7 @@ export async function POST(request: NextRequest) {
     
     // Controleer of prisma beschikbaar is
     if (!prisma) {
+      console.error('Prisma client not available');
       return NextResponse.json(
         { error: 'Database connection unavailable' },
         { status: 500 }
@@ -43,7 +44,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Creëer een nieuwe raffle
+    // Creëer een nieuwe raffle met proper error handling
     const raffle = await prisma.raffle.create({
       data: {
         name,
@@ -56,6 +57,9 @@ export async function POST(request: NextRequest) {
         winner: null,
         updatedAt: new Date()
       }
+    }).catch((error) => {
+      console.error('Prisma raffle creation error:', error);
+      throw error;
     });
 
     console.log('New raffle created:', raffle);
@@ -68,7 +72,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error creating raffle:', error);
     return NextResponse.json(
-      { error: 'Failed to create raffle', details: String(error) },
+      { error: 'Failed to create raffle', details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }
