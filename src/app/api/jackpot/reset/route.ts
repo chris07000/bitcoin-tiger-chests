@@ -1,14 +1,11 @@
 import { NextResponse } from 'next/server';
-import connectDB from '@/lib/mongodb';
-import JackpotModel from '@/models/Jackpot';
+import { prisma } from '@/lib/prisma';
 
 const INITIAL_JACKPOT = 250000;
 
 export async function POST() {
   try {
-    await connectDB();
-    
-    const jackpot = await JackpotModel.findOne();
+    const jackpot = await prisma?.jackpot.findFirst();
     if (!jackpot) {
       return NextResponse.json(
         { error: 'Jackpot not found' },
@@ -18,13 +15,19 @@ export async function POST() {
 
     // Reset jackpot to 250k + current contribution
     const currentContribution = jackpot.balance - (jackpot.lastWinAmount || 0);
-    jackpot.balance = INITIAL_JACKPOT + currentContribution;
-    jackpot.lastUpdate = new Date();
-    await jackpot.save();
+    
+    // Update using Prisma
+    const updatedJackpot = await prisma?.jackpot.update({
+      where: { id: jackpot.id },
+      data: {
+        balance: INITIAL_JACKPOT + currentContribution,
+        lastUpdate: new Date()
+      }
+    });
 
     return NextResponse.json({
       message: 'Jackpot reset successfully',
-      newBalance: jackpot.balance
+      newBalance: updatedJackpot?.balance
     });
 
   } catch (error) {
