@@ -15,7 +15,7 @@ export default function AdminLoginPage() {
   
   const router = useRouter()
   const searchParams = useSearchParams()
-  const redirectPath = searchParams.get('redirect') || '/admin/raffle'
+  const redirectPath = searchParams?.get('redirect') || '/admin/raffle'
   
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault()
