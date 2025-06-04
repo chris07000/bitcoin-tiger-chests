@@ -5,11 +5,14 @@ import path from 'path';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { path: string[] } }
+  { params }: { params: Promise<{ path: string[] }> }
 ) {
   try {
+    // Await params in Next.js 15
+    const { path: pathSegments } = await params;
+    
     // Haal de benodigde informatie uit de URL
-    const path = params.path || [];
+    const path = pathSegments || [];
     const id = path[0];
     
     if (!id) {

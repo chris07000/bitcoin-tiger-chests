@@ -5,10 +5,10 @@ import { TransactionStatus } from '@/generated/prisma-client';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { hash: string } }
+  { params }: { params: Promise<{ hash: string }> }
 ) {
   try {
-    const { hash } = params;
+    const { hash } = await params;
     console.log('Checking payment for hash:', hash);
 
     // Check payment status

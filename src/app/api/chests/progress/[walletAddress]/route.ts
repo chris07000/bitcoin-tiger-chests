@@ -4,10 +4,10 @@ import crypto from 'crypto';
 
 export async function GET(
   request: Request,
-  { params }: { params: { walletAddress: string } }
+  { params }: { params: Promise<{ walletAddress: string }> }
 ) {
-  // Ontvang de walletAddress uit de URL parameter
-  const walletAddress = params.walletAddress;
+  // Await the params in Next.js 15
+  const { walletAddress } = await params;
   
   console.log(`GET /api/chests/progress/${walletAddress}`);
 
@@ -115,10 +115,10 @@ export async function GET(
 
 export async function POST(
   request: Request,
-  { params }: { params: { walletAddress: string } }
+  { params }: { params: Promise<{ walletAddress: string }> }
 ) {
-  // Ontvang de walletAddress uit de URL parameter
-  const walletAddress = params.walletAddress;
+  // Await the params in Next.js 15
+  const { walletAddress } = await params;
   
   console.log(`POST /api/chests/progress/${walletAddress}`);
   

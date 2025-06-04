@@ -4,10 +4,11 @@ import { v4 as uuidv4 } from 'uuid';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { address: string } }
+  { params }: { params: Promise<{ address: string }> }
 ) {
   try {
-    console.log('Processing withdrawal for address:', params.address);
+    const { address } = await params;
+    console.log('Processing withdrawal for address:', address);
     
     const { amount, paymentHash } = await request.json();
     console.log('Withdrawal details:', { amount, paymentHash });
@@ -23,7 +24,7 @@ export async function POST(
 
     // Get wallet and check balance
     const wallet = await prisma.wallet.findUnique({
-      where: { address: params.address },
+      where: { address },
     });
 
     if (!wallet) {
