@@ -15,7 +15,7 @@ enum TransactionType {
 // GET endpoint - Haalt wallet informatie op
 export async function GET(
   request: Request,
-  context: { params: { address: string } }
+  context: { params: Promise<{ address: string }> }
 ) {
   try {
     // Await params - dit werkt in zowel nieuwe als oudere NextJS versies
@@ -82,7 +82,7 @@ export async function GET(
 // PUT endpoint - Initialiseert een wallet als deze nog niet bestaat
 export async function PUT(
   request: Request,
-  context: { params: { address: string } }
+  context: { params: Promise<{ address: string }> }
 ) {
   try {
     // Await params - dit werkt in zowel nieuwe als oudere NextJS versies
@@ -146,7 +146,7 @@ interface WalletRequest {
 // POST endpoint - Update wallet balance and create a transaction
 export async function POST(
   request: Request,
-  context: { params: { address: string } }
+  context: { params: Promise<{ address: string }> }
 ) {
   try {
     const { address } = await context.params;
