@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { v4 as uuidv4 } from 'uuid';
+import { PrismaClient } from '@prisma/client';
 
 // Herdefiniëren van de enums die we nodig hebben
 enum RewardType {
