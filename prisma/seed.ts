@@ -23,7 +23,8 @@ async function seedRaffles() {
       totalTickets: 100,
       soldTickets: 38,
       endsAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // 3 days from now
-      winner: null
+      winner: null,
+      updatedAt: new Date()
     }
   })
   
@@ -36,7 +37,8 @@ async function seedRaffles() {
       totalTickets: 50,
       soldTickets: 12,
       endsAt: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // 5 days from now
-      winner: null
+      winner: null,
+      updatedAt: new Date()
     }
   })
   
@@ -49,7 +51,8 @@ async function seedRaffles() {
       totalTickets: 75,
       soldTickets: 25,
       endsAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
-      winner: null
+      winner: null,
+      updatedAt: new Date()
     }
   })
   
