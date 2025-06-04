@@ -1,4 +1,13 @@
+/**
+ * Jackpot model using Prisma client
+ * This file does NOT use mongoose - it only uses Prisma
+ * Last updated: 2025-06-01
+ */
+
 import { prisma } from '../lib/prisma';
+
+// Confirm no mongoose is used
+console.log('Loading Jackpot model with Prisma (no mongoose)');
 
 export interface IJackpot {
   id: number;
