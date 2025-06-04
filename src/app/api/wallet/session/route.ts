@@ -25,7 +25,7 @@ export async function POST(request: Request) {
     // Sla de wallet sessie op in een cookie
     // Gebruik een secure cookie die alleen via HTTPS toegankelijk is
     // Max-Age is 7 dagen (60 * 60 * 24 * 7 = 604800 seconden)
-    cookies().set({
+    (await cookies()).set({
       name: 'wallet_session',
       value: JSON.stringify(walletSessionData),
       maxAge: 604800,
@@ -54,7 +54,7 @@ export async function GET() {
     console.log('GET /api/wallet/session - Getting wallet session');
     
     // Haal de wallet sessie op uit de cookie
-    const walletSessionCookie = cookies().get('wallet_session');
+    const walletSessionCookie = (await cookies()).get('wallet_session');
     
     if (!walletSessionCookie || !walletSessionCookie.value) {
       return NextResponse.json({ 
@@ -71,7 +71,7 @@ export async function GET() {
     const MAX_AGE = 7 * 24 * 60 * 60 * 1000; // 7 dagen in milliseconden
     if (Date.now() - walletSessionData.timestamp > MAX_AGE) {
       // Verwijder de verlopen cookie
-      cookies().delete('wallet_session');
+      (await cookies()).delete('wallet_session');
       
       return NextResponse.json({
         success: false,
@@ -105,7 +105,7 @@ export async function DELETE() {
     console.log('DELETE /api/wallet/session - Removing wallet session');
     
     // Verwijder de wallet sessie cookie
-    cookies().delete('wallet_session');
+    (await cookies()).delete('wallet_session');
     
     return NextResponse.json({
       success: true,

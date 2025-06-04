@@ -12,6 +12,13 @@ export async function POST(req: Request) {
       )
     }
 
+    if (!prisma) {
+      return NextResponse.json(
+        { error: 'Database connection not available' },
+        { status: 500 }
+      )
+    }
+
     // Get jackpot
     const jackpot = await prisma.jackpot.findUnique({
       where: { id: 1 }

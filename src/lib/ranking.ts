@@ -1,6 +1,11 @@
 import { prisma } from '@/lib/prisma';
 import { v4 as uuidv4 } from 'uuid';
 import { PrismaClient } from '@prisma/client';
+import { 
+  UserRanking,
+  GameStats,
+  RewardType
+} from '@/generated/prisma-client';
 
 // Herdefiniëren van de enums die we nodig hebben
 enum RewardType {
@@ -710,13 +715,15 @@ export async function generateMonthlyRakeback() {
     const period = `${previousMonth.getFullYear()}-${String(previousMonth.getMonth() + 1).padStart(2, '0')}`;
     
     // Haal alle gebruikers op met hun ranks
-    const users = await prisma.userRanking.findMany({
+    const users = await prisma?.userRanking.findMany({
       include: {
         wallet: true,
         gameStats: true
       }
     });
     
+    if (!users) return { success: false, error: "Failed to fetch users" };
+
     for (const user of users) {
       // Sla over als gebruiker geen rank heeft
       if (user.currentRank === 'No Rank') continue;
@@ -734,6 +741,7 @@ export async function generateMonthlyRakeback() {
       if (rakebackAmount > 0) {
         await prisma.rewardClaim.create({
           data: {
+            id: uuidv4(),
             walletId: user.walletId,
             rewardType: RewardType.RAKEBACK,
             amount: rakebackAmount,
@@ -748,6 +756,7 @@ export async function generateMonthlyRakeback() {
       if (monthlyBonus > 0) {
         await prisma.rewardClaim.create({
           data: {
+            id: uuidv4(),
             walletId: user.walletId,
             rewardType: RewardType.MONTHLY_BONUS,
             amount: monthlyBonus,
@@ -784,6 +793,7 @@ export async function generateMonthlyRakeback() {
           if (compensationAmount > 0) {
             await prisma.rewardClaim.create({
               data: {
+                id: uuidv4(),
                 walletId: user.walletId,
                 rewardType: RewardType.LOSS_COMPENSATION,
                 amount: compensationAmount,
@@ -819,7 +829,7 @@ export async function generateWeeklyLossCompensation() {
     const period = `${previousWeekStart.getFullYear()}-W${getWeekNumber(previousWeekStart)}`;
     
     // Haal alle Diamond rank gebruikers op
-    const users = await prisma.userRanking.findMany({
+    const users = await prisma?.userRanking.findMany({
       where: {
         currentRank: 'Grandmaster'
       },
@@ -829,6 +839,8 @@ export async function generateWeeklyLossCompensation() {
       }
     });
     
+    if (!users) return { success: false, error: "Failed to fetch users" };
+
     for (const user of users) {
       const lossComp = getLossCompensation('Grandmaster');
       
@@ -855,6 +867,7 @@ export async function generateWeeklyLossCompensation() {
         if (compensationAmount > 0) {
           await prisma.rewardClaim.create({
             data: {
+              id: uuidv4(),
               walletId: user.walletId,
               rewardType: RewardType.WEEKLY_LOSS_COMPENSATION,
               amount: compensationAmount,
@@ -962,6 +975,7 @@ export async function claimReward(walletAddress: string, rewardId: string) {
       // Maak een transactie aan
       prisma.transaction.create({
         data: {
+          id: uuidv4(),
           type: 'REWARD',
           amount: reward.amount,
           paymentHash: `reward-${rewardId}-${Date.now()}`,
@@ -1038,6 +1052,7 @@ export async function claimAllRewards(walletAddress: string) {
     transactionOperations.push(
       prisma.transaction.create({
         data: {
+          id: uuidv4(),
           type: 'REWARD',
           amount: totalAmount,
           paymentHash: `bulk-reward-${Date.now()}`,

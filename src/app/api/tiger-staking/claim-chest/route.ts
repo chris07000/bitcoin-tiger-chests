@@ -26,6 +26,13 @@ export async function POST(
   let tigerId: string | undefined;
   
   try {
+    if (!prisma) {
+      return NextResponse.json(
+        { error: 'Database connection not available' },
+        { status: 500 }
+      );
+    }
+
     console.log('Processing chest claim request...');
     
     // Haal de request body op

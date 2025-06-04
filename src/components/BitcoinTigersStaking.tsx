@@ -3,10 +3,10 @@ import { useLightning } from '@/context/LightningContext';
 import Image from 'next/image';
 import axios from 'axios';
 import { isTaprootAlpha } from '@/components/TaprootAlphaMissions';
-import { BitcoinTigerCard } from './BitcoinTigerCard';
-import { BitcoinTigersAPI } from '@/utils/bitcoinTigersAPI';
-import { useWallet } from '@/contexts/WalletContext';
-import { Button, Card, Spinner, Modal, ButtonGroup } from 'react-bootstrap';
+// import { BitcoinTigerCard } from './BitcoinTigerCard';
+// import { BitcoinTigersAPI } from '@/utils/bitcoinTigersAPI';
+// import { useWallet } from '@/contexts/WalletContext';
+// import { Button, Card, Spinner, Modal, ButtonGroup } from 'react-bootstrap';
 
 // Constanten voor stakingstijd
 const MIN_STAKE_TIME_SECONDS = 7 * 24 * 60 * 60; // 7 dagen minimum stake tijd

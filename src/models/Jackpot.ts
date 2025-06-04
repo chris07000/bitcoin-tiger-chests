@@ -50,14 +50,21 @@ export default {
   updateBalance: async (amount: number) => {
     try {
       const jackpot = await getJackpot();
-      return await prisma?.jackpot.update({
-        where: { id: jackpot.id },
-        data: {
-          balance: { increment: amount },
-          totalContributions: { increment: amount },
-          lastUpdate: new Date()
-        }
-      });
+      if (jackpot) {
+        await prisma?.jackpot.update({
+          where: { id: jackpot.id },
+          data: {
+            balance: {
+              increment: amount
+            },
+            totalContributions: {
+              increment: amount
+            },
+            lastUpdate: new Date()
+          }
+        });
+      }
+      return jackpot;
     } catch (error) {
       console.error('Error updating jackpot balance:', error);
       return null;
@@ -66,7 +73,7 @@ export default {
   claim: async (walletAddress: string) => {
     try {
       const jackpot = await getJackpot();
-      if (jackpot.balance <= 0) return 0;
+      if (!jackpot || jackpot.balance <= 0) return 0;
       
       const amount = jackpot.balance;
       await prisma?.jackpot.update({

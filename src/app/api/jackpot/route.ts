@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { TransactionType } from '../../../prisma/generated-client';
+import { TransactionType } from '@/generated/prisma-client';
 
 const INITIAL_JACKPOT = 250000;
 

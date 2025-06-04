@@ -99,7 +99,7 @@ export async function POST(request: Request) {
     let jackpotAmount = 0;
 
     // Start een database transactie voor alle updates
-    const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+    const result = await prisma.$transaction(async (tx) => {
       console.log('Starting balance:', wallet.balance);
       console.log('Total cost:', totalCost);
       console.log('Reward:', reward);
