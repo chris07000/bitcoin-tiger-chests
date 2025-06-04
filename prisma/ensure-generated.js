@@ -24,13 +24,6 @@ if (!prismaClientExists || !generatedClientExists) {
   console.log('Prisma client already generated. Skipping.');
 }
 
-// Check the database connection while we're at it
-try {
-  // Try to connect to the database
-  execSync('npx prisma db pull --force', { stdio: 'inherit' });
-  console.log('Database connection successful!');
-} catch (error) {
-  console.warn('Warning: Could not connect to database:', error.message);
-  console.warn('The application may not function correctly without a database connection.');
-  // Don't exit - let the app try to start anyway
-} 
+// Database connection check is removed for production builds
+// This will be handled by the application at runtime instead
+console.log('Skipping database connection check during build process.'); 
