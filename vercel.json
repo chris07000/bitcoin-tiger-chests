@@ -8,15 +8,6 @@
       "maxDuration": 30
     }
   },
-  "builds": [
-    {
-      "src": "next.config.js",
-      "use": "@vercel/next",
-      "config": {
-        "zeroConfig": true
-      }
-    }
-  ],
   "env": {
     "NODE_OPTIONS": "--max-old-space-size=4096",
     "SKIP_ENV_VALIDATION": "1",
