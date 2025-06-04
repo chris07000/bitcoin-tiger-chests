@@ -41,9 +41,10 @@ export async function POST(request: Request) {
       result = await generateWeeklyLossCompensation();
     }
     
-    if (!result.success) {
+    // Check if result is defined and has the expected structure
+    if (!result || !result.success) {
       return NextResponse.json(
-        { error: result.error || 'Failed to generate rewards' },
+        { error: result?.error || 'Failed to generate rewards' },
         { status: 400 }
       );
     }
