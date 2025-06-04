@@ -1,7 +1,7 @@
 {
   "version": 2,
   "buildCommand": "npm run build",
-  "installCommand": "npm install --force",
+  "installCommand": "rm -rf node_modules package-lock.json && npm install",
   "framework": "nextjs",
   "builds": [
     {
@@ -10,6 +10,7 @@
     }
   ],
   "env": {
-    "NODE_OPTIONS": "--max-old-space-size=4096"
+    "NODE_OPTIONS": "--max-old-space-size=4096",
+    "SKIP_ENV_VALIDATION": "1"
   }
 } 
