@@ -1,103 +1,228 @@
-import Image from "next/image";
+'use client'
+
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
+import { useLightning } from '@/context/LightningContext'
+import ChestCard from '../components/chests/ChestCard'
+import JackpotBanner from '../components/jackpot/JackpotBanner'
+import BitcoinPrice from '../components/bitcoin/BitcoinPrice'
+import { ChestProgressProvider } from '../context/ChestProgressContext'
+import ChestProgress from '../components/chests/ChestProgress'
+import { WalletProvider, useWallet } from '../context/WalletContext'
+
+function HomeContent() {
+  const { walletAddress } = useWallet()
+
+  const handleChestOpen = () => {
+    // Hier kunnen we later extra logica toevoegen als een chest wordt geopend
+    console.log('Chest opened!')
+  }
+
+  return (
+    <main className="pixel-container">
+      <style jsx>{`
+        .pixel-container {
+          background: #0d1320;
+          color: #fff;
+          min-height: 100vh;
+        }
+        
+        .pixel-header {
+          padding: 3rem 1rem;
+          text-align: center;
+        }
+        
+        .pixel-title {
+          font-family: 'Press Start 2P', monospace;
+          font-size: 2rem;
+          color: #ffd700;
+          margin-bottom: 1rem;
+          text-shadow: 2px 2px #000;
+        }
+        
+        .pixel-subtitle {
+          font-size: 1.1rem;
+          color: #aaa;
+          max-width: 800px;
+          margin: 0 auto;
+        }
+        
+        .chest-section {
+          margin-bottom: 0;
+        }
+        
+        .pixel-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+          gap: 1rem;
+          max-width: 850px;
+          margin: 0 auto;
+          padding: 0 0.8rem;
+        }
+        
+        .progress-section {
+          width: 100%;
+          max-width: 800px;
+          margin: 0 auto;
+          padding: 0 1rem;
+          margin-top: 2rem;
+        }
+        
+        .pixel-main {
+          display: flex;
+          flex-direction: column;
+          gap: 0.8rem;
+          width: 100%;
+          max-width: 900px;
+          margin: 0 auto;
+          padding: 1.2rem;
+        }
+        
+        .pixel-footer {
+          text-align: center;
+          padding: 2rem 1rem;
+          margin-top: 4rem;
+          border-top: 1px solid rgba(255, 215, 0, 0.1);
+        }
+        
+        .pixel-footer-text {
+          color: #ffd700;
+          font-family: 'Press Start 2P', monospace;
+          font-size: 0.9rem;
+          margin-bottom: 0.5rem;
+        }
+        
+        .pixel-footer-subtext {
+          color: #aaa;
+          font-size: 0.8rem;
+        }
+        
+        @media (max-width: 768px) {
+          .pixel-title {
+            font-size: 1.5rem;
+          }
+          
+          .pixel-subtitle {
+            font-size: 0.9rem;
+          }
+          
+          .pixel-grid {
+            gap: 1.5rem;
+          }
+        }
+        
+        .user-won-tag {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          background: linear-gradient(135deg, #ffd700, #ff9500);
+          color: #000;
+          padding: 0.5rem;
+          font-size: 1rem;
+          font-weight: bold;
+          text-align: center;
+          z-index: 3;
+          font-family: 'Press Start 2P', monospace;
+          box-shadow: 0 3px 10px rgba(255, 215, 0, 0.5);
+          animation: pulse 2s infinite;
+        }
+        
+        .user-won-ribbon {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          border: 3px solid #ffd700;
+          box-sizing: border-box;
+          border-radius: 8px;
+          pointer-events: none;
+          z-index: 1;
+          animation: glow 1.5s infinite alternate;
+        }
+        
+        @keyframes pulse {
+          0% { transform: scale(1); }
+          50% { transform: scale(1.05); }
+          100% { transform: scale(1); }
+        }
+        
+        @keyframes glow {
+          from { box-shadow: 0 0 5px #ffd700; }
+          to { box-shadow: 0 0 20px #ffd700; }
+        }
+      `}</style>
+      <header className="pixel-header">
+        <h1 className="pixel-title">Bitcoin Tiger Chests</h1>
+        <p className="pixel-subtitle">
+          Unlock the power of blockchain rewards with our mystery chests!
+        </p>
+      </header>
+
+      <BitcoinPrice />
+      <JackpotBanner />
+
+      <div className="pixel-main">
+        <div className="chest-section">
+          <div className="pixel-grid">
+            <ChestCard
+              type="bronze"
+              price={5000}
+              maxWin={15000}
+              minWin={2000}
+              jackpotFee={1000}
+              jackpotChance={0.01}
+              walletAddress={walletAddress || ''}
+              onOpenAction={handleChestOpen}
+            />
+            <ChestCard
+              type="silver"
+              price={20000}
+              maxWin={60000}
+              minWin={12000}
+              jackpotFee={2500}
+              jackpotChance={0.02}
+              walletAddress={walletAddress || ''}
+              onOpenAction={handleChestOpen}
+            />
+            <ChestCard
+              type="gold"
+              price={50000}
+              maxWin={150000}
+              minWin={30000}
+              jackpotFee={5000}
+              jackpotChance={0.02}
+              walletAddress={walletAddress || ''}
+              onOpenAction={handleChestOpen}
+            />
+          </div>
+        </div>
+
+        <div className="progress-section">
+          <ChestProgress />
+        </div>
+      </div>
+
+      <footer className="pixel-footer">
+        <p className="pixel-footer-text">
+          ⚡ Powered by Bitcoin Lightning Network ⚡
+        </p>
+        <p className="pixel-footer-subtext">
+          Bitcoin Tiger Collective
+        </p>
+      </footer>
+    </main>
+  )
+}
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+    <WalletProvider>
+      <ChestProgressProvider>
+        <HomeContent />
+      </ChestProgressProvider>
+    </WalletProvider>
+  )
 }

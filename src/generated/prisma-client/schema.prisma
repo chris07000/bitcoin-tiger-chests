@@ -1,0 +1,157 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma-client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Wallet {
+  id            String         @id @default(uuid())
+  address       String         @unique
+  balance       Float          @default(0)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  transactions  Transaction[]
+  userRanking   UserRanking?
+  rewardClaims  RewardClaim[]
+  raffleTickets RaffleTicket[]
+}
+
+model Transaction {
+  id          String            @id @default(uuid())
+  type        TransactionType
+  amount      Float
+  status      TransactionStatus @default(COMPLETED)
+  paymentHash String?
+  walletId    String
+  wallet      Wallet            @relation(fields: [walletId], references: [id])
+  createdAt   DateTime          @default(now())
+}
+
+model UserRanking {
+  id           String     @id @default(uuid())
+  walletId     String     @unique
+  wallet       Wallet     @relation(fields: [walletId], references: [id])
+  totalWagered Float      @default(0)
+  currentRank  String     @default("No Rank")
+  rankProgress Int        @default(0) // Percentage naar volgende rank (0-100)
+  dailyWager   Float      @default(0)
+  weeklyWager  Float      @default(0)
+  monthlyWager Float      @default(0)
+  lastUpdated  DateTime   @default(now())
+  createdAt    DateTime   @default(now())
+  gameStats    GameStats?
+}
+
+model GameStats {
+  id            String      @id @default(uuid())
+  userRankingId String      @unique
+  userRanking   UserRanking @relation(fields: [userRankingId], references: [id])
+
+  // Chest game stats
+  chestsPlayed  Int   @default(0)
+  chestsWon     Int   @default(0)
+  chestsWagered Float @default(0)
+
+  // Coinflip game stats
+  coinflipPlayed  Int   @default(0)
+  coinflipWon     Int   @default(0)
+  coinflipWagered Float @default(0)
+
+  // Raffle game stats
+  rafflesEntered Int   @default(0)
+  rafflesWon     Int   @default(0)
+  rafflesWagered Float @default(0)
+
+  // Algemene tracking info
+  lastUpdated DateTime @default(now())
+}
+
+model RewardClaim {
+  id          String      @id @default(uuid())
+  walletId    String
+  wallet      Wallet      @relation(fields: [walletId], references: [id])
+  rewardType  RewardType
+  amount      Float
+  status      ClaimStatus @default(PENDING)
+  period      String // bijv. "2023-05" voor maandelijkse beloningen
+  description String
+  createdAt   DateTime    @default(now())
+  claimedAt   DateTime?
+}
+
+model Jackpot {
+  id                 Int       @id @default(1)
+  balance            Float     @default(250000)
+  totalContributions Float     @default(0)
+  lastWinner         String?
+  lastWinAmount      Float?
+  lastWinDate        DateTime?
+  lastUpdate         DateTime  @default(now())
+}
+
+model Raffle {
+  id             Int            @id @default(autoincrement())
+  name           String
+  description    String
+  image          String
+  ticketPrice    Float
+  totalTickets   Int
+  soldTickets    Int            @default(0)
+  endsAt         DateTime
+  winner         String?
+  winnerPickedAt DateTime?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  tickets        RaffleTicket[]
+}
+
+model RaffleTicket {
+  id           Int      @id @default(autoincrement())
+  raffleId     Int
+  raffle       Raffle   @relation(fields: [raffleId], references: [id])
+  walletId     String
+  wallet       Wallet   @relation(fields: [walletId], references: [id])
+  quantity     Int      @default(1)
+  purchaseDate DateTime @default(now())
+
+  @@index([walletId, raffleId])
+}
+
+enum TransactionType {
+  DEPOSIT
+  WITHDRAW
+  CHEST
+  JACKPOT
+  COINFLIP
+  RAFFLE
+  REWARD
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum RewardType {
+  RAKEBACK
+  MONTHLY_BONUS
+  LOSS_COMPENSATION
+  WEEKLY_LOSS_COMPENSATION
+}
+
+enum ClaimStatus {
+  PENDING
+  CLAIMED
+  EXPIRED
+}

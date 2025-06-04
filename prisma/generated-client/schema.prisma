@@ -1,0 +1,194 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../prisma/generated-client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model GameStats {
+  id              String      @id
+  userRankingId   String      @unique
+  chestsPlayed    Int         @default(0)
+  chestsWon       Int         @default(0)
+  chestsWagered   Float       @default(0)
+  coinflipPlayed  Int         @default(0)
+  coinflipWon     Int         @default(0)
+  coinflipWagered Float       @default(0)
+  rafflesEntered  Int         @default(0)
+  rafflesWon      Int         @default(0)
+  rafflesWagered  Float       @default(0)
+  lastUpdated     DateTime    @default(now())
+  UserRanking     UserRanking @relation(fields: [userRankingId], references: [id])
+}
+
+model Jackpot {
+  id                 Int       @id @default(1)
+  balance            Float     @default(250000)
+  totalContributions Float     @default(0)
+  lastWinner         String?
+  lastWinAmount      Float?
+  lastWinDate        DateTime?
+  lastUpdate         DateTime  @default(now())
+}
+
+model Raffle {
+  id             Int            @id @default(autoincrement())
+  name           String
+  description    String
+  image          String
+  ticketPrice    Float
+  totalTickets   Int
+  soldTickets    Int            @default(0)
+  endsAt         DateTime
+  winner         String?
+  winnerPickedAt DateTime?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime
+  RaffleTicket   RaffleTicket[]
+}
+
+model RaffleTicket {
+  id           Int      @id @default(autoincrement())
+  raffleId     Int
+  walletId     String
+  quantity     Int      @default(1)
+  purchaseDate DateTime @default(now())
+  Raffle       Raffle   @relation(fields: [raffleId], references: [id])
+  Wallet       Wallet   @relation(fields: [walletId], references: [id])
+
+  @@index([walletId, raffleId])
+}
+
+model RewardClaim {
+  id          String      @id
+  walletId    String
+  rewardType  RewardType
+  amount      Float
+  status      ClaimStatus @default(PENDING)
+  period      String
+  description String
+  createdAt   DateTime    @default(now())
+  claimedAt   DateTime?
+  Wallet      Wallet      @relation(fields: [walletId], references: [id])
+}
+
+model TigerChestClaim {
+  id         String   @id
+  walletId   String
+  tigerId    String
+  stakedId   String?
+  amount     Float
+  rewardType String   @default("LOW_ROLL")
+  claimedAt  DateTime @default(now())
+  Wallet     Wallet   @relation(fields: [walletId], references: [id])
+
+  @@index([tigerId])
+  @@index([walletId])
+}
+
+model TigerStaking {
+  id          String   @id
+  walletId    String
+  tigerId     String
+  stakedAt    DateTime @default(now())
+  nextChestAt DateTime
+  isActive    Boolean  @default(true)
+  tigerLevel  Int      @default(1)
+  tigerName   String?
+  tigerImage  String?
+  isGuardian  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+  Wallet      Wallet   @relation(fields: [walletId], references: [id])
+
+  @@unique([walletId, tigerId])
+  @@index([isActive])
+  @@index([walletId])
+}
+
+model ChestProgress {
+  id               String   @id @default(cuid())
+  walletId         String   @unique
+  bronzeOpened     Int      @default(0)
+  silverOpened     Int      @default(0)
+  goldOpened       Int      @default(0)
+  nextBronzeReward Int      @default(50)
+  nextSilverReward Int      @default(50)
+  nextGoldReward   Int      @default(50)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @default(now())
+  wallet           Wallet   @relation(fields: [walletId], references: [id])
+}
+
+model Transaction {
+  id          String            @id
+  amount      Float
+  paymentHash String?
+  createdAt   DateTime          @default(now())
+  walletId    String
+  type        TransactionType
+  status      TransactionStatus @default(COMPLETED)
+  Wallet      Wallet            @relation(fields: [walletId], references: [id])
+}
+
+model UserRanking {
+  id           String     @id
+  walletId     String     @unique
+  totalWagered Float      @default(0)
+  currentRank  String     @default("No Rank")
+  rankProgress Int        @default(0)
+  dailyWager   Float      @default(0)
+  weeklyWager  Float      @default(0)
+  monthlyWager Float      @default(0)
+  lastUpdated  DateTime   @default(now())
+  createdAt    DateTime   @default(now())
+  GameStats    GameStats?
+  Wallet       Wallet     @relation(fields: [walletId], references: [id])
+}
+
+model Wallet {
+  id              String            @id
+  address         String            @unique
+  balance         Float             @default(0)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime
+  RaffleTicket    RaffleTicket[]
+  RewardClaim     RewardClaim[]
+  TigerChestClaim TigerChestClaim[]
+  TigerStaking    TigerStaking[]
+  Transaction     Transaction[]
+  UserRanking     UserRanking?
+  ChestProgress   ChestProgress?
+}
+
+enum ClaimStatus {
+  PENDING
+  CLAIMED
+  EXPIRED
+}
+
+enum RewardType {
+  RAKEBACK
+  MONTHLY_BONUS
+  LOSS_COMPENSATION
+  WEEKLY_LOSS_COMPENSATION
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum TransactionType {
+  DEPOSIT
+  WITHDRAW
+  CHEST
+  JACKPOT
+  COINFLIP
+  RAFFLE
+  REWARD
+}
