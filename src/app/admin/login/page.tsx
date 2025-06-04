@@ -1,13 +1,14 @@
 'use client'
 
-import { useState, FormEvent } from 'react'
+import { useState, FormEvent, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import Cookies from 'js-cookie'
 
 // We hebben geen hardcoded API key meer nodig
 
-export default function AdminLoginPage() {
+// Component that uses useSearchParams - must be wrapped in Suspense
+function LoginForm() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -54,7 +55,53 @@ export default function AdminLoginPage() {
       setLoading(false)
     }
   }
-  
+
+  return (
+    <form className="login-form" onSubmit={handleLogin}>
+      <h1 className="title">Admin Login</h1>
+      
+      {error && <div className="error-message">{error}</div>}
+      
+      <div className="form-group">
+        <label className="form-label" htmlFor="username">
+          Username
+        </label>
+        <input
+          type="text"
+          id="username"
+          className="form-input"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+        />
+      </div>
+      
+      <div className="form-group">
+        <label className="form-label" htmlFor="password">
+          Password
+        </label>
+        <input
+          type="password"
+          id="password"
+          className="form-input"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+      </div>
+      
+      <button
+        type="submit"
+        className="login-button"
+        disabled={loading}
+      >
+        {loading ? 'Logging in...' : 'Login'}
+      </button>
+    </form>
+  )
+}
+
+export default function AdminLoginPage() {
   return (
     <>
       <style jsx>{`
@@ -159,47 +206,9 @@ export default function AdminLoginPage() {
           />
         </div>
         
-        <form className="login-form" onSubmit={handleLogin}>
-          <h1 className="title">Admin Login</h1>
-          
-          {error && <div className="error-message">{error}</div>}
-          
-          <div className="form-group">
-            <label className="form-label" htmlFor="username">
-              Username
-            </label>
-            <input
-              type="text"
-              id="username"
-              className="form-input"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
-          </div>
-          
-          <div className="form-group">
-            <label className="form-label" htmlFor="password">
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              className="form-input"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          
-          <button
-            type="submit"
-            className="login-button"
-            disabled={loading}
-          >
-            {loading ? 'Logging in...' : 'Login'}
-          </button>
-        </form>
+        <Suspense fallback={<div style={{color: '#ffd700', fontFamily: 'Press Start 2P', fontSize: '0.8rem'}}>Loading...</div>}>
+          <LoginForm />
+        </Suspense>
       </div>
     </>
   )
