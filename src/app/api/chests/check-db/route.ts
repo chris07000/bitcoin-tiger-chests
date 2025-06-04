@@ -40,7 +40,7 @@ export async function GET(request: Request) {
     if (table === 'ChestProgress') {
       tableData = await prisma.$queryRaw`
         SELECT * FROM "ChestProgress"
-      `;
+      ` as any[];
       
       if (walletAddress) {
         // Vind eerst het wallet record
@@ -61,11 +61,11 @@ export async function GET(request: Request) {
       if (walletAddress) {
         tableData = await prisma.$queryRaw`
           SELECT * FROM "Wallet" WHERE address = ${walletAddress}
-        `;
+        ` as any[];
       } else {
         tableData = await prisma.$queryRaw`
           SELECT * FROM "Wallet"
-        `;
+        ` as any[];
       }
     } else {
       // Voor andere tabellen, gebruik een veiligere methode
