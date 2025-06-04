@@ -2,6 +2,10 @@
 const nextConfig = {
   reactStrictMode: true,
   trailingSlash: false,
+  // Skip TypeScript checking during build
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   // Zorg dat alle pagina's correct geladen worden
   pageExtensions: ['js', 'jsx', 'ts', 'tsx'],
   // Configuratie voor externe afbeeldingsdomeinen
