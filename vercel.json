@@ -1,16 +1,25 @@
 {
   "version": 2,
-  "buildCommand": "npm run build",
-  "installCommand": "rm -rf node_modules package-lock.json && npm install",
+  "buildCommand": "rm -rf .next && npm run build",
+  "installCommand": "rm -rf node_modules package-lock.json .next && npm install --force && npm cache clean --force",
   "framework": "nextjs",
+  "functions": {
+    "src/app/**/*.ts": {
+      "maxDuration": 30
+    }
+  },
   "builds": [
     {
       "src": "next.config.js",
-      "use": "@vercel/next"
+      "use": "@vercel/next",
+      "config": {
+        "zeroConfig": true
+      }
     }
   ],
   "env": {
     "NODE_OPTIONS": "--max-old-space-size=4096",
-    "SKIP_ENV_VALIDATION": "1"
+    "SKIP_ENV_VALIDATION": "1",
+    "NEXT_TELEMETRY_DISABLED": "1"
   }
 } 
