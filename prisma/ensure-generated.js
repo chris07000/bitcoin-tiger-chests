@@ -2,6 +2,22 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
+// Log de omgeving voor debug doeleinden
+console.log(`Prisma environment: NODE_ENV=${process.env.NODE_ENV}`);
+
+// Valideer de database URL format
+if (process.env.DATABASE_URL) {
+  const dbUrl = process.env.DATABASE_URL;
+  console.log(`Database URL protocol: ${dbUrl.split('://')[0]}`);
+  
+  if (!dbUrl.startsWith('postgresql://') && !dbUrl.startsWith('postgres://')) {
+    console.warn('WARNING: DATABASE_URL moet beginnen met postgresql:// of postgres://');
+    console.warn('Huidige protocol: ' + dbUrl.split('://')[0]);
+  }
+} else {
+  console.warn('WARNING: DATABASE_URL is niet gedefinieerd. Dit zal problemen veroorzaken met Prisma.');
+}
+
 // Check if we need to generate Prisma client
 const prismaClientDir = path.join(__dirname, '../node_modules/.prisma');
 const generatedClientDir = path.join(__dirname, '../src/generated/prisma-client');

@@ -4,14 +4,6 @@ const nextConfig = {
   trailingSlash: false,
   // Zorg dat alle pagina's correct geladen worden
   pageExtensions: ['js', 'jsx', 'ts', 'tsx'],
-  // Configure server options
-  server: {
-    https: false, // Disable HTTPS for local network testing
-  },
-  // Allow connections from any IP
-  experimental: {
-    allowedResolveExtensions: ['.js', '.jsx', '.ts', '.tsx'],
-  },
   // Configuratie voor externe afbeeldingsdomeinen
   images: {
     domains: ['api.hiro.so'],
