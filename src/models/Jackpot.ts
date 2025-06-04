@@ -1,14 +1,12 @@
 /**
- * Jackpot model using Prisma client
- * This file does NOT use mongoose - it only uses Prisma
- * Last updated: 2025-06-01
+ * GEEN MONGOOSE HIER - ALLEEN PRISMA
+ * Volledig herschreven zonder mongoose afhankelijkheden
  */
 
+// Importeer alleen Prisma client
 import { prisma } from '../lib/prisma';
 
-// Confirm no mongoose is used
-console.log('Loading Jackpot model with Prisma (no mongoose)');
-
+// Basis interface voor Jackpot data
 export interface IJackpot {
   id: number;
   balance: number;
@@ -17,74 +15,74 @@ export interface IJackpot {
   lastWinAmount?: number;
   lastWinDate?: Date;
   lastUpdate: Date;
-  walletId?: string;
 }
 
-// Helper functie om de jackpot bij te werken
-export async function updateJackpotBalance(amount: number) {
-  const jackpot = await prisma?.jackpot.findFirst();
-  
-  if (!jackpot) {
-    return await prisma?.jackpot.create({
-      data: { 
-        balance: amount,
-        totalContributions: amount
-      }
-    });
-  }
-  
-  return await prisma?.jackpot.update({
-    where: { id: jackpot.id },
-    data: { 
-      balance: { increment: amount },
-      totalContributions: { increment: amount }
+// Jackpot beheer functie
+async function getJackpot() {
+  try {
+    // Haal jackpot op of maak een nieuwe aan als deze niet bestaat
+    const jackpot = await prisma?.jackpot.findFirst();
+    if (!jackpot) {
+      return await prisma?.jackpot.create({
+        data: {
+          id: 1,
+          balance: 250000,
+          totalContributions: 0
+        }
+      });
     }
-  });
-}
-
-// Helper functie om de jackpot te claimen
-export async function claimJackpot(walletAddress: string) {
-  const jackpot = await prisma?.jackpot.findFirst();
-  
-  if (!jackpot || jackpot.balance <= 0) {
-    throw new Error('No jackpot to claim');
-  }
-
-  const winAmount = jackpot.balance;
-  
-  await prisma?.jackpot.update({
-    where: { id: jackpot.id },
-    data: {
-      balance: 0,
-      lastWinner: walletAddress,
-      lastWinAmount: winAmount,
-      lastWinDate: new Date(),
+    return jackpot;
+  } catch (error) {
+    console.error('Prisma error in getJackpot:', error);
+    // Fallback object indien database niet beschikbaar is
+    return {
+      id: 1,
+      balance: 250000,
+      totalContributions: 0,
       lastUpdate: new Date()
-    }
-  });
-  
-  return winAmount;
-}
-
-// Helper functie om de huidige jackpot te krijgen
-export async function getJackpot() {
-  let jackpot = await prisma?.jackpot.findFirst();
-  
-  if (!jackpot) {
-    jackpot = await prisma?.jackpot.create({
-      data: {
-        balance: 0,
-        totalContributions: 0
-      }
-    });
+    };
   }
-  
-  return jackpot;
 }
 
-// Default export voor compatibiliteit
+// Eenvoudige export, zonder mongoose
 export default {
-  updateBalance: updateJackpotBalance,
-  claim: claimJackpot,
-  get: getJackpot
+  getJackpot,
+  updateBalance: async (amount: number) => {
+    try {
+      const jackpot = await getJackpot();
+      return await prisma?.jackpot.update({
+        where: { id: jackpot.id },
+        data: {
+          balance: { increment: amount },
+          totalContributions: { increment: amount },
+          lastUpdate: new Date()
+        }
+      });
+    } catch (error) {
+      console.error('Error updating jackpot balance:', error);
+      return null;
+    }
+  },
+  claim: async (walletAddress: string) => {
+    try {
+      const jackpot = await getJackpot();
+      if (jackpot.balance <= 0) return 0;
+      
+      const amount = jackpot.balance;
+      await prisma?.jackpot.update({
+        where: { id: jackpot.id },
+        data: {
+          balance: 0,
+          lastWinner: walletAddress,
+          lastWinAmount: amount,
+          lastWinDate: new Date(),
+          lastUpdate: new Date()
+        }
+      });
+      return amount;
+    } catch (error) {
+      console.error('Error claiming jackpot:', error);
+      return 0;
+    }
+  }
 }; 
