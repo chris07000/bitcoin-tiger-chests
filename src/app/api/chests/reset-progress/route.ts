@@ -1,43 +1,42 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import crypto from 'crypto';
 
-// Reset endpoint om chest progress te resetten
+// Admin endpoint to reset chest progress
 export async function GET(request: Request) {
   try {
-    // Get params from URL
     const url = new URL(request.url);
     const walletAddress = url.searchParams.get('wallet');
-    
+
     if (!walletAddress) {
+      return NextResponse.json({ error: 'Wallet address required' }, { status: 400 });
+    }
+
+    // Check if prisma is available
+    if (!prisma) {
       return NextResponse.json(
-        { error: 'Wallet address is required as a query parameter' },
-        { status: 400 }
+        { error: 'Database connection not available' },
+        { status: 500 }
       );
     }
-    
-    console.log(`Resetting chest progress for wallet ${walletAddress}`);
-    
-    // First check if the wallet exists
+
+    console.log(`Resetting chest progress for ${walletAddress}`);
+
     let wallet = await prisma.wallet.findUnique({
       where: { address: walletAddress },
-      include: { ChestProgress: true }
+      include: {
+        ChestProgress: true
+      }
     });
-    
-    // If wallet doesn't exist, return error
+
     if (!wallet) {
-      return NextResponse.json(
-        { error: 'Wallet not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Wallet not found' }, { status: 404 });
     }
-    
-    console.log(`Wallet found: ${wallet.id}`);
-    
+
     let chestProgress;
-    
-    // If ChestProgress exists, reset it
+
     if (wallet.ChestProgress) {
-      console.log(`Resetting existing ChestProgress: ${wallet.ChestProgress.id}`);
+      // Update existing progress to reset values
       chestProgress = await prisma.chestProgress.update({
         where: { id: wallet.ChestProgress.id },
         data: {
@@ -50,11 +49,12 @@ export async function GET(request: Request) {
           updatedAt: new Date()
         }
       });
+      console.log('Reset existing ChestProgress');
     } else {
-      // If ChestProgress doesn't exist, create it
-      console.log(`Creating new ChestProgress for wallet: ${wallet.id}`);
+      // Create new progress with reset values
       chestProgress = await prisma.chestProgress.create({
         data: {
+          id: crypto.randomUUID(),
           walletId: wallet.id,
           bronzeOpened: 0,
           silverOpened: 0,
@@ -65,25 +65,20 @@ export async function GET(request: Request) {
           updatedAt: new Date()
         }
       });
+      console.log('Created new ChestProgress with reset values');
     }
-    
-    console.log(`ChestProgress operation successful: ${chestProgress.id}`);
-    
+
     return NextResponse.json({
       success: true,
       message: 'Chest progress reset successfully',
-      chestProgress: {
-        id: chestProgress.id,
-        bronzeOpened: chestProgress.bronzeOpened,
-        silverOpened: chestProgress.silverOpened,
-        goldOpened: chestProgress.goldOpened,
-        nextBronzeReward: chestProgress.nextBronzeReward,
-        nextSilverReward: chestProgress.nextSilverReward,
-        nextGoldReward: chestProgress.nextGoldReward
-      }
+      wallet: {
+        address: wallet.address,
+        balance: wallet.balance
+      },
+      chestProgress
     });
   } catch (error) {
-    console.error('Error in reset-progress endpoint:', error);
+    console.error('Error resetting chest progress:', error);
     return NextResponse.json(
       { error: 'Failed to reset chest progress', details: String(error) },
       { status: 500 }

@@ -11,6 +11,14 @@ export async function GET(request: Request) {
     
     console.log(`Checking database table: ${table}`);
     
+    // Check if prisma is available
+    if (!prisma) {
+      return NextResponse.json(
+        { error: 'Database connection not available' },
+        { status: 500 }
+      );
+    }
+    
     // Rechtstreekse queries uitvoeren
     // We gebruiken $queryRaw om SQL rechtstreeks uit te voeren
     
