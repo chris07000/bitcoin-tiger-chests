@@ -1,11 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { v4 as uuidv4 } from 'uuid';
 import { PrismaClient } from '@prisma/client';
-import { 
-  UserRanking,
-  GameStats,
-  RewardType
-} from '@/generated/prisma-client';
 
 // Herdefiniëren van de enums die we nodig hebben
 enum RewardType {
@@ -707,6 +702,10 @@ export async function getUserStats(walletAddress: string) {
  */
 export async function generateMonthlyRakeback() {
   try {
+    if (!prisma) {
+      return { success: false, error: "Database connection not available" };
+    }
+
     const currentDate = new Date();
     const previousMonth = new Date(currentDate);
     previousMonth.setMonth(currentDate.getMonth() - 1);
@@ -715,10 +714,10 @@ export async function generateMonthlyRakeback() {
     const period = `${previousMonth.getFullYear()}-${String(previousMonth.getMonth() + 1).padStart(2, '0')}`;
     
     // Haal alle gebruikers op met hun ranks
-    const users = await prisma?.userRanking.findMany({
+    const users = await prisma.userRanking.findMany({
       include: {
-        wallet: true,
-        gameStats: true
+        Wallet: true,
+        GameStats: true
       }
     });
     
@@ -773,11 +772,12 @@ export async function generateMonthlyRakeback() {
         // Bereken verlies voor de maand
         const totalWagered = user.monthlyWager || 0;
         
-        // Som alle winsten op voor de verschillende speltypen
+        // Som alle winsten op voor de verschillende speltypen - use type assertion
+        const userWithStats = user as any;
         const totalWon = (
-          (user.gameStats?.chestsWon || 0) + 
-          (user.gameStats?.coinflipWon || 0) + 
-          (user.gameStats?.rafflesWon || 0)
+          (userWithStats.GameStats?.chestsWon || 0) + 
+          (userWithStats.GameStats?.coinflipWon || 0) + 
+          (userWithStats.GameStats?.rafflesWon || 0)
         );
         
         // Bereken netto verlies
@@ -821,6 +821,10 @@ export async function generateMonthlyRakeback() {
  */
 export async function generateWeeklyLossCompensation() {
   try {
+    if (!prisma) {
+      return { success: false, error: "Database connection not available" };
+    }
+
     const currentDate = new Date();
     const previousWeekStart = new Date(currentDate);
     previousWeekStart.setDate(currentDate.getDate() - 7);
@@ -829,13 +833,13 @@ export async function generateWeeklyLossCompensation() {
     const period = `${previousWeekStart.getFullYear()}-W${getWeekNumber(previousWeekStart)}`;
     
     // Haal alle Diamond rank gebruikers op
-    const users = await prisma?.userRanking.findMany({
+    const users = await prisma.userRanking.findMany({
       where: {
         currentRank: 'Grandmaster'
       },
       include: {
-        wallet: true,
-        gameStats: true
+        Wallet: true,
+        GameStats: true
       }
     });
     
@@ -847,11 +851,12 @@ export async function generateWeeklyLossCompensation() {
       // Bereken verlies voor de week
       const totalWagered = user.weeklyWager || 0;
       
-      // Som alle winsten op voor de verschillende speltypen
+      // Som alle winsten op voor de verschillende speltypen - use type assertion
+      const userWithStats = user as any;
       const totalWon = (
-        (user.gameStats?.chestsWon || 0) + 
-        (user.gameStats?.coinflipWon || 0) + 
-        (user.gameStats?.rafflesWon || 0)
+        (userWithStats.GameStats?.chestsWon || 0) + 
+        (userWithStats.GameStats?.coinflipWon || 0) + 
+        (userWithStats.GameStats?.rafflesWon || 0)
       );
       
       // Bereken netto verlies
@@ -903,6 +908,10 @@ function getWeekNumber(date: Date): number {
  */
 export async function getClaimableRewards(walletAddress: string) {
   try {
+    if (!prisma) {
+      return { success: false, error: "Database connection not available" };
+    }
+
     const wallet = await prisma.wallet.findUnique({
       where: { address: walletAddress }
     });
@@ -937,6 +946,10 @@ export async function getClaimableRewards(walletAddress: string) {
  */
 export async function claimReward(walletAddress: string, rewardId: string) {
   try {
+    if (!prisma) {
+      return { success: false, error: "Database connection not available" };
+    }
+
     const wallet = await prisma.wallet.findUnique({
       where: { address: walletAddress }
     });
@@ -1011,6 +1024,10 @@ export async function claimReward(walletAddress: string, rewardId: string) {
  */
 export async function claimAllRewards(walletAddress: string) {
   try {
+    if (!prisma) {
+      return { success: false, error: "Database connection not available" };
+    }
+
     const wallet = await prisma.wallet.findUnique({
       where: { address: walletAddress }
     });
@@ -1111,6 +1128,10 @@ export async function claimAllRewards(walletAddress: string) {
  */
 export async function resetPeriodicStats(period: 'daily' | 'weekly' | 'monthly') {
   try {
+    if (!prisma) {
+      return false;
+    }
+
     let updateData: any = {};
     
     if (period === 'daily') {
