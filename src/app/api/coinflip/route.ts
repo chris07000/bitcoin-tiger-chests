@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { PrismaClient } from '@prisma/client'
+import { v4 as uuidv4 } from 'uuid'
 
 export async function POST(request: Request) {
   try {
@@ -10,13 +11,23 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    // Get the wallet
+    // Check if prisma is available
+    if (!prisma) {
+      return NextResponse.json(
+        { error: 'Database connection not available' },
+        { status: 500 }
+      )
+    }
+
     const wallet = await prisma.wallet.findUnique({
-      where: { address: walletAddress },
+      where: { address: walletAddress }
     })
 
     if (!wallet) {
-      return NextResponse.json({ error: 'Wallet not found' }, { status: 404 })
+      return NextResponse.json(
+        { error: 'Wallet not found' },
+        { status: 404 }
+      )
     }
 
     // Check if enough balance
@@ -43,10 +54,11 @@ export async function POST(request: Request) {
     const reward = won ? Math.floor(baseReward * 0.97) : 0
 
     // Start een database transactie voor alle updates
-    const updatedWallet = await prisma.$transaction(async (tx: PrismaClient) => {
+    const updatedWallet = await prisma.$transaction(async (tx) => {
       // Voeg de bet transactie toe
       await tx.transaction.create({
         data: {
+          id: uuidv4(),
           type: 'COINFLIP',
           amount: -betAmount,
           paymentHash: `coinflip-bet-${Date.now()}`,
@@ -58,6 +70,7 @@ export async function POST(request: Request) {
       if (won) {
         await tx.transaction.create({
           data: {
+            id: uuidv4(),
             type: 'COINFLIP',
             amount: reward,
             paymentHash: `coinflip-win-${Date.now()}`,
@@ -69,7 +82,7 @@ export async function POST(request: Request) {
       // Update het saldo
       return await tx.wallet.update({
         where: { id: wallet.id },
-        data: { 
+        data: {
           balance: {
             increment: won ? reward - betAmount : -betAmount
           },
@@ -85,7 +98,6 @@ export async function POST(request: Request) {
       newBalance: updatedWallet.balance,
       message: won ? 'You won!' : 'You lost!'
     })
-
   } catch (error) {
     console.error('Error processing coinflip:', error)
     return NextResponse.json(
