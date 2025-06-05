@@ -273,6 +273,16 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
   const [chestIds, setChestIds] = useState<string[]>([]);
   const [showClaimRevealOverlay, setShowClaimRevealOverlay] = useState(false);
 
+  // Add client-side only state to prevent hydration issues
+  const [isClient, setIsClient] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+
+  // Effect to mark when we're on the client side
+  useEffect(() => {
+    setIsClient(true);
+    setCurrentTime(Date.now());
+  }, []);
+
   // Effect om mobiele padding aan te passen
   useEffect(() => {
     const handleResize = () => {
@@ -293,6 +303,8 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
   
   // Laad tiger level uit localStorage bij initialisatie
   useEffect(() => {
+    if (!isClient) return; // Only run on client side
+    
     try {
       // Legacy level laden (wallet-breed)
       const savedTigerLevel = localStorage.getItem(`tigerLevel_${walletAddress}`);
@@ -318,10 +330,12 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
     } catch (error) {
       console.error('Error loading tiger level:', error);
     }
-  }, [walletAddress]);
+  }, [walletAddress, isClient]);
   
   // Initialize tiger staking DB with data from localStorage
   useEffect(() => {
+    if (!isClient) return; // Only run on client side
+    
     // Retrieve tiger staking data from localStorage if it exists
     try {
       const savedData = localStorage.getItem('tigerStakingDB');
@@ -350,31 +364,31 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
       localStorage.setItem('tigerStakingDB', JSON.stringify(initialDB));
       setTigerStakingDB(initialDB);
     }
-  }, []);
+  }, [isClient]);
   
   // Sync tigerStakingDB state with localStorage whenever it changes
   useEffect(() => {
-    if (tigerStakingDB && Object.keys(tigerStakingDB).length > 0) {
-      try {
-        localStorage.setItem('tigerStakingDB', JSON.stringify(tigerStakingDB));
-        console.log('Synced tigerStakingDB to localStorage:', tigerStakingDB);
-      } catch (error) {
-        console.error('Error syncing tigerStakingDB to localStorage:', error);
-      }
+    if (!isClient || !tigerStakingDB || Object.keys(tigerStakingDB).length === 0) return;
+    
+    try {
+      localStorage.setItem('tigerStakingDB', JSON.stringify(tigerStakingDB));
+      console.log('Synced tigerStakingDB to localStorage:', tigerStakingDB);
+    } catch (error) {
+      console.error('Error syncing tigerStakingDB to localStorage:', error);
     }
-  }, [tigerStakingDB]);
+  }, [tigerStakingDB, isClient]);
 
   // Sla tiger level op in localStorage wanneer het verandert
   useEffect(() => {
-    if (walletAddress && tigerLevel > 0) {
-      try {
-        localStorage.setItem(`tigerLevel_${walletAddress}`, tigerLevel.toString());
-        console.log(`Saved tiger level ${tigerLevel} for wallet ${walletAddress}`);
-      } catch (error) {
-        console.error('Error saving tiger level:', error);
-      }
+    if (!isClient || !walletAddress || tigerLevel <= 0) return;
+    
+    try {
+      localStorage.setItem(`tigerLevel_${walletAddress}`, tigerLevel.toString());
+      console.log(`Saved tiger level ${tigerLevel} for wallet ${walletAddress}`);
+    } catch (error) {
+      console.error('Error saving tiger level:', error);
     }
-  }, [tigerLevel, walletAddress]);
+  }, [tigerLevel, walletAddress, isClient]);
 
   // Helper om te bepalen of een tiger een Rune Guardian is
   const isRuneGuardian = (tiger: any): boolean => {
@@ -636,28 +650,64 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
     }
   };
 
-  // Zet huidige tijd voor chest eligibility checks
-  const now = Date.now();
+  // Helper functie om tijd tot volgende chest te formatteren
+  const formatTimeRemaining = (nextChestAt?: number) => {
+    if (!isClient || !nextChestAt) return '00:00:00'; // Prevent hydration issues
+    
+    const now = currentTime || Date.now();
+    let timeLeft = Math.max(0, nextChestAt - now);
+    
+    // Als er minder dan 0 seconden over zijn, toon "READY!"
+    if (timeLeft <= 0) {
+      return 'READY!';
+    }
+    
+    const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+    timeLeft = timeLeft % (1000 * 60 * 60 * 24);
+    const hours = Math.floor(timeLeft / (1000 * 60 * 60));
+    timeLeft = timeLeft % (1000 * 60 * 60);
+    const minutes = Math.floor(timeLeft / (1000 * 60));
+    timeLeft = timeLeft % (1000 * 60);
+    const seconds = Math.floor(timeLeft / 1000);
+    
+    // Als er dagen zijn, toon dagen en uren
+    if (days > 0) {
+      return `${days}d ${hours}h ${minutes}m`;
+    }
+    
+    // Als er alleen uren zijn, toon uren en minuten
+    if (hours > 0) {
+      return `${hours}h ${minutes}m ${seconds}s`;
+    }
+    
+    // Als er alleen minuten en seconden zijn, toon traditioneel formaat
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  // Zet huidige tijd voor chest eligibility checks - only on client
+  const now = isClient ? (currentTime || Date.now()) : 0;
 
   // Effect om elke seconde formatTimeRemaining opnieuw uit te voeren
   useEffect(() => {
-    if (!nextChestDate) return;
+    if (!isClient || !nextChestDate) return;
     
     // Update alleen de countdown elke seconde
     const timer = setInterval(() => {
-      // Force re-render voor countdown update
-      setMessage(prev => prev);
+      setCurrentTime(Date.now()); // Update current time to trigger re-renders
     }, 1000);
     
     return () => clearInterval(timer);
-  }, [nextChestDate]);
+  }, [nextChestDate, isClient]);
 
   // Voeg een timer toe om de status van gestakede tigers te controleren
   useEffect(() => {
+    if (!isClient) return; // Only run on client side
+    
     // Check elke seconde of een tiger klaar is voor een chest
     const tigerCheckTimer = setInterval(() => {
       // Update de huidige tijd
       const currentTime = Date.now();
+      setCurrentTime(currentTime); // Update state to trigger re-renders
       
       // Bijhouden van echte aantal beschikbare chests
       let actualAvailableChests = 0;
@@ -719,26 +769,23 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
       if (actualAvailableChests !== availableChests) {
         setAvailableChests(actualAvailableChests);
       }
-      
-      // Force re-render om de UI bij te werken
-      setStakedTigers(prev => [...prev]);
     }, 1000);
     
     return () => clearInterval(tigerCheckTimer);
-  }, [stakedTigers, availableChests, walletAddress, tigerStakingDB]);
+  }, [stakedTigers, availableChests, walletAddress, tigerStakingDB, isClient]);
 
   // NIEUWE EFFECT: Extra effect om de timers op de kaarten elke seconde bij te werken
   useEffect(() => {
+    if (!isClient) return; // Only run on client side
+    
     // Dit effect wordt specifiek gebruikt om de timers op de kaarten elke seconde bij te werken
     // zonder de hele stakedTigers array te veranderen
     const timerUpdateInterval = setInterval(() => {
-      // Dit forceert een re-render zonder de state te wijzigen
-      // Hierdoor zal formatTimeRemaining opnieuw worden uitgevoerd met de huidige tijd
-      setStakedTigers(prev => [...prev]);
+      setCurrentTime(Date.now()); // Update current time to force re-render of timer displays
     }, 1000);
     
     return () => clearInterval(timerUpdateInterval);
-  }, []);
+  }, [isClient]);
 
   // Voeg een functie toe om te controleren of er nieuwe chests beschikbaar zijn
   const checkForNewChests = useCallback(() => {
@@ -1678,9 +1725,9 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
 
   // Helper functie om tijd tot volgende chest te formatteren
   const formatTimeRemaining = (nextChestAt?: number) => {
-    if (!nextChestAt) return '00:00:00';
+    if (!isClient || !nextChestAt) return '00:00:00'; // Prevent hydration issues
     
-    const now = Date.now();
+    const now = currentTime || Date.now();
     let timeLeft = Math.max(0, nextChestAt - now);
     
     // Als er minder dan 0 seconden over zijn, toon "READY!"

@@ -5,8 +5,9 @@
   "scripts": {
     "predev": "node ./prisma/ensure-generated.js",
     "dev": "next dev --hostname 0.0.0.0",
-    "prebuild": "node ./prisma/ensure-generated.js",
+    "prebuild": "prisma generate",
     "build": "next build --debug",
+    "postbuild": "prisma generate",
     "start": "next start",
     "restart": "npx prisma generate && npm run dev",
     "clean": "rmdir /s /q .next && npm run dev",
