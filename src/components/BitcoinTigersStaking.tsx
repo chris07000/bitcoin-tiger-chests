@@ -62,13 +62,34 @@ const tigerApiService = {
   // Fetch Bitcoin Tigers voor een wallet
   async fetchTigers(walletAddress: string) {
     try {
+      console.log('Fetching tigers for wallet:', walletAddress);
       const response = await axios.get(`/api/tiger-staking/fetch-tigers`, {
-        params: { walletAddress }
+        params: { walletAddress },
+        timeout: 15000 // 15 second timeout
       });
-      return response.data.tokens || [];
+      console.log('Fetch tigers response:', response.data);
+      
+      if (!response.data) {
+        console.warn('No data received from fetch-tigers API');
+        return [];
+      }
+      
+      const tokens = response.data.tokens || [];
+      console.log(`Successfully fetched ${tokens.length} tigers for wallet ${walletAddress}`);
+      
+      return tokens;
     } catch (error) {
       console.error('Error fetching Bitcoin Tigers:', error);
-      throw error;
+      
+      // More detailed error logging
+      if (axios.isAxiosError(error)) {
+        console.error('API Error Status:', error.response?.status);
+        console.error('API Error Data:', error.response?.data);
+        console.error('API Error Message:', error.message);
+      }
+      
+      // Return empty array instead of throwing
+      return [];
     }
   },
   
@@ -788,272 +809,99 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
 
   // Laad wallet en staking data
   const loadWalletAndStakingData = async () => {
-    setIsLoading(true);
-    try {
-      // Valideer wallet
-      if (!walletAddress) {
-        console.log('No wallet address found');
-        setIsLoading(false);
-        return;
-      }
-
-      console.log('Loading staking data for wallet:', walletAddress);
-
-      // Laad eerst data uit localStorage
-      let localStakedTigers: TigerStakedInfo[] = [];
-      try {
-        const tigerStakingData = localStorage.getItem('tigerStakingDB');
-        if (tigerStakingData) {
-          const parsedData = JSON.parse(tigerStakingData);
-          console.log('Loaded tiger staking data from localStorage:', parsedData);
-          
-          // Zet de tigerStakingDB state
-          setTigerStakingDB(parsedData);
-          
-          // Converteer de object-structuur naar een array voor de UI
-          if (parsedData.stakedTigers && parsedData.stakedTigers[walletAddress]) {
-            const tigerEntries = Object.entries(parsedData.stakedTigers[walletAddress]);
-            localStakedTigers = tigerEntries.map(([id, data]: [string, any]) => {
-              // Controleer of de nextChestAt tijd al voorbij is
-              const chestTime = data.nextChestAt || (Date.now() + 24 * 60 * 60 * 1000);
-              const chestReady = Date.now() >= chestTime;
-              
-              // Fix voor het probleem met "claimed" status:
-              // 1. Als er geen hasClaimedChest property is, stel deze in op false
-              // 2. Als de tiger pas net is gestaked (in de laatste 10 seconden), zet hasClaimedChest op false
-              // 3. Als de nextChestAt tijd al voorbij is (chestReady), maar de verstreken tijd 
-              //    minder is dan 24 uur, houd dan de bestaande claimed status
-              
-              // Bereken hoeveel tijd er is verstreken sinds de tiger is gestaked
-              const stakedAt = data.stakedAt || Date.now();
-              const secondsSinceStaked = (Date.now() - stakedAt) / 1000;
-              
-              // BELANGRIJKE FIX: Als de tiger net is gestaked, zorg ervoor dat deze niet direct
-              // claimbaar is, ook niet na een pagina refresh
-              const minimumStakeTimeForChest = MIN_STAKE_TIME_SECONDS; // Gebruik de constante
-              let hasClaimedChest = data.hasClaimedChest || false;
-              
-              // Als de tiger te recent is gestaked om te claimen, behandel dit alsof de nextChestAt 
-              // nog niet bereikt is, ongeacht wat de timestamp zegt
-              if (secondsSinceStaked < minimumStakeTimeForChest) {
-                console.log(`Tiger ${id} was staked only ${secondsSinceStaked.toFixed(1)}s ago, not yet eligible for chest claim`);
-                
-                // Forceer een update van de nextChestAt tijd als die niet correct is ingesteld
-                // BELANGRIJK: We behandelen deze case altijd, ongeacht of chestTime <= Date.now()
-                // Dit zorgt ervoor dat nextChestAt ALTIJD correct is na een refresh
-                
-                // Bereken nieuwe chest tijd
-                const newChestTime = stakedAt + (minimumStakeTimeForChest * 1000);
-                console.log(`Setting strict nextChestAt time from ${new Date(chestTime).toLocaleTimeString()} to ${new Date(newChestTime).toLocaleTimeString()}`);
-                
-                // Update in tigerStakingDB
-                if (parsedData.stakedTigers[walletAddress][id]) {
-                  console.log(`Updating tigerStakingDB for tiger ${id}`);
-                  parsedData.stakedTigers[walletAddress][id].nextChestAt = newChestTime;
-                  
-                  // Zorg ervoor dat hasClaimedChest op false staat als de tiger net is gestaked
-                  parsedData.stakedTigers[walletAddress][id].hasClaimedChest = false;
-                  
-                  // Sla direct op
-                  try {
-                    localStorage.setItem('tigerStakingDB', JSON.stringify(parsedData));
-                    console.log('Saved corrected nextChestAt time to localStorage');
-                  } catch (error) {
-                    console.error('Error saving corrected nextChestAt time to localStorage:', error);
-                  }
-                }
-                
-                // Gebruik de gecorrigeerde tijd
-                return {
-                  id,
-                  name: data.name || `Tiger #${id.substring(0, 8)}`,
-                  image: data.image || `/tiger-pixel${(parseInt(id.substring(0, 8), 16) % 5) + 1}.png`,
-                  stakedAt: stakedAt,
-                  nextChestAt: newChestTime,
-                  isRuneGuardian: data.isRuneGuardian || false,
-                  hasClaimedChest: false, // Forceer false voor nieuwe stakes
-                  key: id
-                };
-              }
-              
-              // Als de chest klaar is voor een nieuwe claim (nextChestAt is in het verleden),
-              // maar de tiger wel als "claimed" staat gemarkeerd, controleer dan of er 24 uur is verstreken
-              if (chestReady && hasClaimedChest) {
-                const hoursSinceReady = (Date.now() - chestTime) / (60 * 60 * 1000);
-                // Als er meer dan 24 uur is verstreken sinds de nextChestAt tijd, 
-                // dan is dit een nieuwe periode en moet hasClaimedChest gereset worden
-                if (hoursSinceReady >= 24) {
-                  hasClaimedChest = false;
-                  
-                  // Update ook in tigerStakingDB
-                  if (parsedData.stakedTigers[walletAddress][id]) {
-                    parsedData.stakedTigers[walletAddress][id].hasClaimedChest = false;
-                    parsedData.stakedTigers[walletAddress][id].nextChestAt = Date.now();
-                    
-                    // Sla direct op
-                    try {
-                      localStorage.setItem('tigerStakingDB', JSON.stringify(parsedData));
-                    } catch (error) {
-                      console.error('Error saving corrected claim status to localStorage:', error);
-                    }
-                  }
-                }
-              }
-              
-              // Log voor debugging
-              // console.log(`Tiger ${id}: ready=${chestReady}, claimed=${hasClaimedChest}, time=${new Date(chestTime).toLocaleTimeString()}`);
-              
-              return {
-                id,
-                name: data.name || `Tiger #${id.substring(0, 8)}`,
-                image: data.image || `/tiger-pixel${(parseInt(id.substring(0, 8), 16) % 5) + 1}.png`,
-                stakedAt: data.stakedAt || Date.now(),
-                nextChestAt: chestTime,
-                isRuneGuardian: data.isRuneGuardian || false,
-                hasClaimedChest: hasClaimedChest, // Gecorrigeerde claimed status
-                key: id
-              };
-            });
-            
-            console.log('Converted local staked tigers to array:', localStakedTigers);
-          }
-        }
-      } catch (error) {
-        console.error('Error loading data from localStorage:', error);
-      }
-
-      // Probeer daarna de API aan te roepen voor staking status
-      let apiStakedTigers: TigerStakedInfo[] = [];
-      try {
-      // Haal staking status op
-      const stakingStatus = await tigerApiService.getStakingStatus(walletAddress);
-        console.log('API staking status response:', stakingStatus);
-        
-        // Controleer of de response het nieuwe format heeft (stakedTigers als array)
-        // of het oude format (stakedTigers als aantal en stakedInfo als array)
-        let stakedInfoFromApi: TigerStakedInfo[] = [];
-        
-        if (Array.isArray(stakingStatus.stakedTigers)) {
-          // Nieuw format: stakedTigers is een array
-          stakedInfoFromApi = stakingStatus.stakedTigers;
-          console.log('Detected new API response format (stakedTigers as array)');
-        } else if (Array.isArray(stakingStatus.stakedInfo)) {
-          // Oud format: stakedInfo is een array
-          stakedInfoFromApi = stakingStatus.stakedInfo;
-          console.log('Detected old API response format (stakedInfo as array)');
-        } else {
-          console.warn('Unexpected API response format:', stakingStatus);
-          stakedInfoFromApi = [];
-        }
-      
-        // Laad claimedChests uit localStorage om te voorkomen dat geclaimde chests opnieuw kunnen worden geclaimd
-        let claimedChestsMap: Record<string, boolean> = {};
-        try {
-          const tigerStakingData = localStorage.getItem('tigerStakingDB');
-          if (tigerStakingData) {
-            const parsedData = JSON.parse(tigerStakingData);
-            if (parsedData.claimedChests && parsedData.claimedChests[walletAddress]) {
-              // Zet de claim data om naar een eenvoudige map voor snelle lookup
-              if (Array.isArray(parsedData.claimedChests[walletAddress])) {
-                // Als het een array is (nieuw formaat)
-                parsedData.claimedChests[walletAddress].forEach((chest: any) => {
-                  if (chest.tigerId) {
-                    claimedChestsMap[chest.tigerId] = true;
-                  }
-                });
-              } else {
-                // Als het een object is (oud formaat)
-                Object.keys(parsedData.claimedChests[walletAddress]).forEach(tigerId => {
-                  claimedChestsMap[tigerId] = true;
-                });
-              }
-            }
-          }
-        } catch (error) {
-          console.error('Error loading claimed chests data:', error);
-        }
-        
-        // Markeer reeds geclaimde chests
-        apiStakedTigers = stakedInfoFromApi.map((tiger: TigerStakedInfo) => {
-          // Als deze tiger in onze claimedChestsMap staat, markeer deze als geclaimd
-          if (claimedChestsMap[tiger.id]) {
-            return { ...tiger, hasClaimedChest: true };
-          }
-          return tiger;
-        });
-        
-        console.log('Loaded API staked tigers:', apiStakedTigers);
-      } catch (apiError) {
-        console.error('Error calling API, using only local data:', apiError);
-      }
-      
-      // Combineer de tigers uit localStorage en de API, met voorkeur voor localStorage data
-      const combinedTigers: TigerStakedInfo[] = [];
-      const seenIds = new Set<string>();
-      
-      // Voeg eerst de lokale tigers toe
-      for (const localTiger of localStakedTigers) {
-        combinedTigers.push(localTiger);
-        seenIds.add(localTiger.id);
-      }
-      
-      // Voeg tigers van de API toe die nog niet lokaal bestaan
-      for (const apiTiger of apiStakedTigers) {
-        if (!seenIds.has(apiTiger.id)) {
-          combinedTigers.push(apiTiger);
-          seenIds.add(apiTiger.id);
-        }
-      }
-      
-      console.log('Combined staked tigers:', combinedTigers);
-      
-      // Update state met gecombineerde data
-      setStakedTigers(combinedTigers);
-      
-      // Bereken het werkelijke aantal beschikbare chests op basis van de gecorrigeerde data
-      const actualAvailableChests = combinedTigers.filter(
-        (tiger: TigerStakedInfo) => now >= tiger.nextChestAt && !tiger.hasClaimedChest
-      ).length;
-      
-      setAvailableChests(actualAvailableChests);
-      
-      // Haal Bitcoin Tigers op, tenzij ze al zijn meegegeven als prop
-      if (initialUserTigers) {
-        // Gebruik de tigers die zijn meegegeven als prop
-        setUserTigers(initialUserTigers);
-      } else {
-        // Haal tigers op via API
-        const tigers = await tigerApiService.fetchTigers(walletAddress);
-        
-        // Filter Taproot Alpha ordinals uit
-        const processedTigers = tigers
-          .filter((tiger: any) => !isTaprootAlpha(tiger))
-          .map((tiger: any) => {
-            // Als er geen afbeelding is of als het de groepsafbeelding is, vervang door een individuele tiger
-            if (!tiger.image || tiger.image.includes("tiger-group") || tiger.image.includes("tiger-pixel")) {
-              // Maak een deterministische keuze voor tiger-afbeelding gebaseerd op het ID
-              const tigerNum = tiger.id ? (parseInt(tiger.id.substring(0, 8), 16) % 5) + 1 : 1;
-              return {
-                ...tiger,
-                image: `/tiger-pixel${tigerNum}.png` // Gebruik 5 verschillende tiger pixel varianten
-              };
-            }
-            return tiger;
-          });
-        
-        // Filter gestakede tigers uit de lijst van beschikbare tigers
-        const availableTigers = processedTigers.filter((tiger: BitcoinTiger) => 
-          !combinedTigers.some(stakedTiger => stakedTiger.id === tiger.id)
-        );
-        
-        setUserTigers(availableTigers || []);
-      }
-      
+    if (!walletAddress) {
+      console.warn('No wallet address provided to loadWalletAndStakingData');
       setIsLoading(false);
+      return;
+    }
+    
+    console.log('Loading wallet and staking data for:', walletAddress);
+    setIsLoading(true);
+    setMessage('');
+    setMessageType('');
+    
+    try {
+      // First, try to fetch tigers from the API
+      console.log('Step 1: Fetching tigers from API...');
+      const fetchedTigers = await tigerApiService.fetchTigers(walletAddress);
+      
+      if (fetchedTigers && fetchedTigers.length > 0) {
+        console.log(`Found ${fetchedTigers.length} tigers in wallet:`, fetchedTigers);
+        setUserTigers(fetchedTigers);
+      } else {
+        console.log('No tigers found in wallet, this is normal if user has no Bitcoin Tigers NFTs');
+        setUserTigers([]);
+      }
+      
+      // Always try to load staking status, regardless of whether we found tigers
+      console.log('Step 2: Loading staking status...');
+      try {
+        const stakingStatus = await tigerApiService.getStakingStatus(walletAddress);
+        console.log('Staking status response:', stakingStatus);
+        
+        if (stakingStatus && stakingStatus.success) {
+          // Handle different response formats
+          let stakedTigersList: TigerStakedInfo[] = [];
+          
+          if (Array.isArray(stakingStatus.stakedTigers)) {
+            stakedTigersList = stakingStatus.stakedTigers;
+          } else if (stakingStatus.stakedInfo && Array.isArray(stakingStatus.stakedInfo)) {
+            stakedTigersList = stakingStatus.stakedInfo;
+          }
+          
+          console.log(`Found ${stakedTigersList.length} staked tigers:`, stakedTigersList);
+          setStakedTigers(stakedTigersList);
+          setAvailableChests(stakingStatus.availableChests || 0);
+          
+          if (stakingStatus.nextChestDate) {
+            setNextChestDate(new Date(stakingStatus.nextChestDate));
+          } else {
+            setNextChestDate(null);
+          }
+        } else {
+          console.log('No staking status found or failed to get status');
+          // Initialize empty staking state
+          setStakedTigers([]);
+          setAvailableChests(0);
+          setNextChestDate(null);
+        }
+      } catch (stakingError) {
+        console.error('Error loading staking status:', stakingError);
+        // Don't fail completely, just log and continue with empty staking state
+        setStakedTigers([]);
+        setAvailableChests(0);
+        setNextChestDate(null);
+      }
+      
+      // Load from localStorage as backup/supplement
+      console.log('Step 3: Loading from localStorage...');
+      if (tigerStakingDB && tigerStakingDB.stakedTigers && tigerStakingDB.stakedTigers[walletAddress]) {
+        const localStakedTigers = Object.values(tigerStakingDB.stakedTigers[walletAddress]) as TigerStakedInfo[];
+        console.log(`Found ${localStakedTigers.length} staked tigers in localStorage:`, localStakedTigers);
+        
+        // Merge with API data if needed (API data takes precedence)
+        setStakedTigers(prevStaked => {
+          if (prevStaked.length === 0) {
+            return localStakedTigers;
+          }
+          return prevStaked; // Keep API data if available
+        });
+      }
+      
+      setMessage('Tiger data loaded successfully');
+      setMessageType('success');
+      
     } catch (error) {
-      console.error('Error loading Bitcoin Tigers:', error);
-      setMessage('Error loading Bitcoin Tigers. Please try again later.');
+      console.error('Error loading wallet and staking data:', error);
+      setMessage('Error loading tiger data. Please try refreshing the page.');
       setMessageType('error');
+      
+      // Set empty state on error
+      setUserTigers([]);
+      setStakedTigers([]);
+      setAvailableChests(0);
+      setNextChestDate(null);
+    } finally {
       setIsLoading(false);
     }
   };
