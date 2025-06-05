@@ -12,6 +12,14 @@ enum TransactionType {
   REWARD = 'REWARD'
 }
 
+// In-memory fallback for when database is not available
+const fallbackWallets = new Map<string, {
+  address: string;
+  balance: number;
+  transactions: any[];
+  createdAt: Date;
+}>();
+
 // GET endpoint - Haalt wallet informatie op
 export async function GET(
   request: Request,
@@ -28,48 +36,59 @@ export async function GET(
       return NextResponse.json({ error: "Ongeldig wallet adres" }, { status: 400 });
     }
 
-    // Controleer of prisma beschikbaar is
-    if (!prisma) {
-      console.error('Prisma client niet geïnitialiseerd');
-      return NextResponse.json(
-        { error: "Database verbinding niet beschikbaar" },
-        { status: 500 }
-      );
+    try {
+      // Try database first
+      if (prisma) {
+        // Zoek de wallet in de database
+        const wallet = await (prisma as any).wallet.findUnique({
+          where: { address: walletAddress }
+        });
+
+        if (wallet) {
+          // Haal transacties apart op
+          const transactions = await (prisma as any).transaction.findMany({
+            where: { walletId: wallet.id },
+            orderBy: { createdAt: 'desc' },
+            take: 10
+          });
+
+          // Format de wallet data voor de response
+          const formattedTransactions = transactions.map((t: any) => ({
+            type: t.type,
+            amount: t.amount,
+            status: t.status,
+            paymentHash: t.paymentHash,
+            createdAt: t.createdAt
+          }));
+
+          // Return de wallet data met de huidige balans
+          return NextResponse.json({
+            address: wallet.address,
+            balance: wallet.balance,
+            transactions: formattedTransactions,
+            success: true,
+            source: 'database'
+          });
+        }
+      }
+    } catch (dbError) {
+      console.warn('Database error, falling back to in-memory storage:', dbError);
     }
 
-    // Zoek de wallet in de database
-    const wallet = await prisma.wallet.findUnique({
-      where: { address: walletAddress }
-    });
+    // Fallback to in-memory storage
+    const fallbackWallet = fallbackWallets.get(walletAddress);
+    if (fallbackWallet) {
+      return NextResponse.json({
+        address: fallbackWallet.address,
+        balance: fallbackWallet.balance,
+        transactions: fallbackWallet.transactions,
+        success: true,
+        source: 'memory'
+      });
+    }
 
     // Als de wallet niet bestaat, return een 404
-    if (!wallet) {
-      return NextResponse.json({ error: "Wallet niet gevonden" }, { status: 404 });
-    }
-
-    // Haal transacties apart op
-    const transactions = await prisma.transaction.findMany({
-      where: { walletId: wallet.id },
-      orderBy: { createdAt: 'desc' },
-      take: 10
-    });
-
-    // Format de wallet data voor de response
-    const formattedTransactions = transactions.map((t: any) => ({
-      type: t.type,
-      amount: t.amount,
-      status: t.status,
-      paymentHash: t.paymentHash,
-      createdAt: t.createdAt
-    }));
-
-    // Return de wallet data met de huidige balans
-    return NextResponse.json({
-      address: wallet.address,
-      balance: wallet.balance,
-      transactions: formattedTransactions,
-      success: true
-    });
+    return NextResponse.json({ error: "Wallet niet gevonden" }, { status: 404 });
   } catch (error) {
     console.error("Error fetching wallet:", error);
     return NextResponse.json(
@@ -95,38 +114,71 @@ export async function PUT(
       return NextResponse.json({ error: "Ongeldig wallet adres" }, { status: 400 });
     }
 
-    // Controleer of prisma beschikbaar is
-    if (!prisma) {
-      console.error('Prisma client niet geïnitialiseerd');
-      return NextResponse.json(
-        { error: "Database verbinding niet beschikbaar" },
-        { status: 500 }
-      );
+    let wallet = null;
+    let isNewWallet = false;
+    let source = 'memory';
+
+    try {
+      // Try database first
+      if (prisma) {
+        console.log('Attempting database wallet initialization...');
+        
+        // Controleer of de wallet al bestaat
+        wallet = await (prisma as any).wallet.findUnique({
+          where: { address: walletAddress }
+        });
+
+        // Als de wallet nog niet bestaat, maak deze aan
+        if (!wallet) {
+          wallet = await (prisma as any).wallet.create({
+            data: {
+              id: walletAddress, // Gebruik het adres als ID
+              address: walletAddress,
+              balance: 0,
+              updatedAt: new Date()
+            }
+          });
+          isNewWallet = true;
+          source = 'database';
+          console.log(`Nieuwe wallet aangemaakt in database: ${walletAddress}`);
+        } else {
+          source = 'database';
+          console.log(`Bestaande wallet gevonden in database: ${walletAddress}`);
+        }
+      }
+    } catch (dbError) {
+      console.warn('Database error during wallet initialization, using fallback:', dbError);
+      // Continue to fallback logic below
     }
 
-    // Controleer of de wallet al bestaat
-    let wallet = await prisma.wallet.findUnique({
-      where: { address: walletAddress }
-    });
-
-    // Als de wallet nog niet bestaat, maak deze aan
+    // Fallback to in-memory storage if database failed
     if (!wallet) {
-      wallet = await prisma.wallet.create({
-        data: {
-          id: walletAddress, // Gebruik het adres als ID
+      console.log('Using in-memory fallback for wallet:', walletAddress);
+      
+      let fallbackWallet = fallbackWallets.get(walletAddress);
+      if (!fallbackWallet) {
+        fallbackWallet = {
           address: walletAddress,
           balance: 0,
-          updatedAt: new Date()
-        }
-      });
-      console.log(`Nieuwe wallet aangemaakt: ${walletAddress}`);
+          transactions: [],
+          createdAt: new Date()
+        };
+        fallbackWallets.set(walletAddress, fallbackWallet);
+        isNewWallet = true;
+        console.log(`Nieuwe wallet aangemaakt in memory: ${walletAddress}`);
+      }
+      
+      wallet = fallbackWallet;
+      source = 'memory';
     }
 
     // Return de wallet data
     return NextResponse.json({
       address: wallet.address,
       balance: wallet.balance,
-      created: wallet ? false : true
+      created: isNewWallet,
+      source: source,
+      success: true
     });
   } catch (error) {
     console.error("Error initializing wallet:", error);
@@ -152,15 +204,6 @@ export async function POST(
     const { address } = await context.params;
     const { type, amount, paymentHash } = await request.json();
 
-    // Controleer of prisma beschikbaar is
-    if (!prisma) {
-      console.error('Prisma client niet geïnitialiseerd');
-      return NextResponse.json(
-        { error: "Database verbinding niet beschikbaar" },
-        { status: 500 }
-      );
-    }
-
     // Validate transaction type
     if (!Object.values(TransactionType).includes(type)) {
       return NextResponse.json(
@@ -169,12 +212,77 @@ export async function POST(
       );
     }
 
-    // Get wallet
-    const wallet = await prisma.wallet.findUnique({
-      where: { address },
-    });
+    let wallet = null;
+    let source = 'memory';
 
-    if (!wallet) {
+    try {
+      // Try database first
+      if (prisma) {
+        // Get wallet
+        wallet = await (prisma as any).wallet.findUnique({
+          where: { address },
+        });
+
+        if (wallet) {
+          // Calculate new balance
+          let newBalance = wallet.balance;
+          if (type === 'DEPOSIT') {
+            newBalance += amount;
+          } else if (type === 'WITHDRAW') {
+            if (wallet.balance < amount) {
+              return NextResponse.json(
+                { error: 'Insufficient balance' },
+                { status: 400 }
+              );
+            }
+            newBalance -= amount;
+          }
+
+          // Create transaction and update wallet in a transaction
+          const result = await (prisma as any).$transaction([
+            (prisma as any).transaction.create({
+              data: {
+                id: `tx-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`,
+                type,
+                amount,
+                paymentHash,
+                walletId: wallet.id,
+              },
+            }),
+            (prisma as any).wallet.update({
+              where: { id: wallet.id },
+              data: { 
+                balance: newBalance,
+                updatedAt: new Date()
+              },
+            }),
+          ]);
+
+          source = 'database';
+          
+          // Ensure balance is converted to number
+          const serializedWallet = {
+            address: result[1].address,
+            balance: Number(result[1].balance),
+            transaction: {
+              type,
+              amount,
+              paymentHash,
+              status: 'COMPLETED'
+            },
+            source
+          };
+
+          return NextResponse.json(serializedWallet);
+        }
+      }
+    } catch (dbError) {
+      console.warn('Database error during transaction, using fallback:', dbError);
+    }
+
+    // Fallback to in-memory storage
+    const fallbackWallet = fallbackWallets.get(address);
+    if (!fallbackWallet) {
       return NextResponse.json(
         { error: 'Wallet not found' },
         { status: 404 }
@@ -182,11 +290,11 @@ export async function POST(
     }
 
     // Calculate new balance
-    let newBalance = wallet.balance;
+    let newBalance = fallbackWallet.balance;
     if (type === 'DEPOSIT') {
       newBalance += amount;
     } else if (type === 'WITHDRAW') {
-      if (wallet.balance < amount) {
+      if (fallbackWallet.balance < amount) {
         return NextResponse.json(
           { error: 'Insufficient balance' },
           { status: 400 }
@@ -195,39 +303,27 @@ export async function POST(
       newBalance -= amount;
     }
 
-    // Create transaction and update wallet in a transaction
-    const result = await prisma.$transaction([
-      prisma.transaction.create({
-        data: {
-          id: `tx-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`,
-          type,
-          amount,
-          paymentHash,
-          walletId: wallet.id,
-        },
-      }),
-      prisma.wallet.update({
-        where: { id: wallet.id },
-        data: { 
-          balance: newBalance,
-          updatedAt: new Date()
-        },
-      }),
-    ]);
+    // Update fallback wallet
+    fallbackWallet.balance = newBalance;
+    fallbackWallet.transactions.unshift({
+      type,
+      amount,
+      paymentHash,
+      status: 'COMPLETED',
+      createdAt: new Date()
+    });
 
-    // Ensure balance is converted to number
-    const serializedWallet = {
-      address: result[1].address,
-      balance: Number(result[1].balance),
+    return NextResponse.json({
+      address: fallbackWallet.address,
+      balance: fallbackWallet.balance,
       transaction: {
         type,
         amount,
         paymentHash,
         status: 'COMPLETED'
-      }
-    };
-
-    return NextResponse.json(serializedWallet);
+      },
+      source: 'memory'
+    });
   } catch (error) {
     console.error('Error processing transaction:', error);
     return NextResponse.json(
