@@ -1722,9 +1722,9 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
       setMessageType('error');
     }
   };
-
+  // Duplicate function removed
   // Helper functie om tijd tot volgende chest te formatteren
-  const formatTimeRemaining = (nextChestAt?: number) => {
+  const formatTimeRemainingDupe = (nextChestAt?: number) => {
     if (!isClient || !nextChestAt) return '00:00:00'; // Prevent hydration issues
     
     const now = currentTime || Date.now();
