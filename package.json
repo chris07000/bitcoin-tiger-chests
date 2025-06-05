@@ -8,6 +8,7 @@
     "prebuild": "prisma generate",
     "build": "next build --debug",
     "postbuild": "prisma generate",
+    "postinstall": "prisma generate",
     "start": "next start",
     "restart": "npx prisma generate && npm run dev",
     "clean": "rmdir /s /q .next && npm run dev",

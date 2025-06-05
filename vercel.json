@@ -1,7 +1,7 @@
 {
   "version": 2,
-  "buildCommand": "rm -rf .next && npm run build",
-  "installCommand": "rm -rf node_modules package-lock.json .next && npm install --force && npm cache clean --force",
+  "buildCommand": "chmod +x build.sh && ./build.sh",
+  "installCommand": "rm -rf node_modules package-lock.json .next && npm install --force && npx prisma generate && npm cache clean --force",
   "framework": "nextjs",
   "functions": {
     "src/app/**/*.ts": {
