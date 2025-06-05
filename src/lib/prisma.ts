@@ -1,28 +1,13 @@
 import { PrismaClient } from '@prisma/client'
-import { exec } from 'child_process'
-import { promisify } from 'util'
-
-const execAsync = promisify(exec)
 
 // Global type declaratie voor prisma
 declare global {
   var prisma: PrismaClient | undefined
 }
 
-// Vercel-safe Prisma client creation with auto-generation
-const createPrismaClient = async (retryGeneration = false) => {
+// Vercel-safe Prisma client creation
+const createPrismaClient = async () => {
   try {
-    // If we're on Vercel and retryGeneration is true, try to regenerate
-    if (retryGeneration && process.env.VERCEL) {
-      console.log('Attempting to regenerate Prisma client on Vercel...')
-      try {
-        await execAsync('npx prisma generate')
-        console.log('Prisma client regenerated successfully')
-      } catch (genError) {
-        console.error('Failed to regenerate Prisma client:', genError)
-      }
-    }
-    
     const client = new PrismaClient({
       log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
       datasources: {
@@ -38,13 +23,6 @@ const createPrismaClient = async (retryGeneration = false) => {
     return client
   } catch (error) {
     console.error('Failed to create Prisma client:', error)
-    
-    // If this is the first attempt and we're on Vercel, try regenerating
-    if (!retryGeneration && process.env.VERCEL) {
-      console.log('First attempt failed on Vercel, trying with regeneration...')
-      return await createPrismaClient(true)
-    }
-    
     throw error
   }
 }
