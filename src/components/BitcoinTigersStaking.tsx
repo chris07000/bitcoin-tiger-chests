@@ -277,6 +277,11 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
   const [isClient, setIsClient] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
 
+  // Add caching variables
+  const [lastDataLoad, setLastDataLoad] = useState<number>(0);
+  const [loadingLock, setLoadingLock] = useState<boolean>(false);
+  const DATA_CACHE_DURATION = 30000; // 30 seconds cache
+
   // Effect to mark when we're on the client side
   useEffect(() => {
     setIsClient(true);
@@ -389,6 +394,16 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
       console.error('Error saving tiger level:', error);
     }
   }, [tigerLevel, walletAddress, isClient]);
+
+  // Helper functie om een veilige fallback image te krijgen
+  const getSafeFallbackImage = (tigerId?: string, isGuardian: boolean = false) => {
+    if (isGuardian) {
+      return '/tiger-logo.png'; // Use tiger logo for Rune Guardians
+    } else {
+      // For regular tigers, use tiger-pixel1.png (which exists)
+      return '/tiger-pixel1.png';
+    }
+  };
 
   // Helper om te bepalen of een tiger een Rune Guardian is
   const isRuneGuardian = (tiger: any): boolean => {
@@ -503,7 +518,7 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
         newDB.stakedTigers[walletAddress][tigerId] = {
           id: tigerId,
           name: tiger.name || `Tiger #${tigerId.substring(0, 8)}`,
-          image: tiger.image || `/tiger-pixel${(parseInt(tigerId.substring(0, 8), 16) % 5) + 1}.png`,
+          image: tiger.image,
           isRuneGuardian: isRuneGuardian(tiger),
           stakedAt: stakeTime,       // Server-bepaald tijdstip
           nextChestAt: chestReadyTime, // Server-bepaald tijdstip
@@ -530,7 +545,7 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
       const newStakedTiger = {
         id: tigerId,
         name: tiger.name || `Tiger #${tigerId.substring(0, 8)}`,
-        image: tiger.image || `/tiger-pixel${(parseInt(tigerId.substring(0, 8), 16) % 5) + 1}.png`,
+        image: tiger.image,
         isRuneGuardian: isRuneGuardian(tiger),
         stakedAt: stakeTime,       // Server-bepaald tijdstip
         nextChestAt: chestReadyTime, // Server-bepaald tijdstip
@@ -618,16 +633,16 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
       setStakedTigers(prev => prev.filter(tiger => tiger.id !== tigerId));
       
       // Voeg de tiger toe aan userTigers
-      const unstakedTiger: BitcoinTiger = {
+      const unstakedTiger = {
         id: tigerToUnstake.id,
-        key: tigerToUnstake.id,
         name: tigerToUnstake.name,
-        image: tigerToUnstake.image || `/tiger-pixel${(parseInt(tigerToUnstake.id.substring(0, 8), 16) % 5) + 1}.png`,
+        image: tigerToUnstake.image,
+        key: tigerToUnstake.id, 
         inscriptionNumber: 0,
         inscriptionId: tigerToUnstake.id,
         isKnownTiger: false,
-        isRuneGuardian: tigerToUnstake.isRuneGuardian
-      };
+        isRuneGuardian: isRuneGuardian(tigerToUnstake)
+      } as BitcoinTiger;
       
       setUserTigers(prev => [...prev, unstakedTiger]);
       
@@ -884,7 +899,7 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
     if (effectiveWalletAddress && effectiveWalletAddress.trim() !== '') {
       console.log('Valid wallet address found, calling loadWalletAndStakingData...');
       loadWalletAndStakingData();
-    } else {
+          } else {
       console.log('No valid wallet address found anywhere, setting loading to false');
       setIsLoading(false);
     }
@@ -908,7 +923,20 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
   }, []);
 
   // Laad wallet en staking data
-  const loadWalletAndStakingData = async () => {
+  const loadWalletAndStakingData = async (forceReload: boolean = false) => {
+    // Check if we're already loading
+    if (loadingLock && !forceReload) {
+      console.log('Already loading data, skipping...');
+      return;
+    }
+
+    // Check cache validity (skip for force reload)
+    const now = Date.now();
+    if (!forceReload && (now - lastDataLoad) < DATA_CACHE_DURATION) {
+      console.log('Using cached data, skipping API calls');
+      return;
+    }
+
     // Try to get wallet address from multiple sources
     let effectiveWalletAddress = walletAddress;
     
@@ -944,26 +972,62 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
       setIsLoading(false);
       return;
     }
-    
+
     console.log('Loading wallet and staking data for:', effectiveWalletAddress);
+    setLoadingLock(true);
     setIsLoading(true);
     setMessage('');
     setMessageType('');
     
     try {
-      // First, try to fetch tigers from the API
+      // First, try to fetch tigers from the API with retry logic voor rate limiting
       console.log('Step 1: Fetching tigers from API...');
-      const fetchedTigers = await tigerApiService.fetchTigers(effectiveWalletAddress);
+      let fetchedTigers: BitcoinTiger[] = [];
       
-      if (fetchedTigers && fetchedTigers.length > 0) {
-        console.log(`Found ${fetchedTigers.length} tigers in wallet:`, fetchedTigers);
-        setUserTigers(fetchedTigers);
-      } else {
-        console.log('No tigers found in wallet, this is normal if user has no Bitcoin Tigers NFTs');
-        setUserTigers([]);
+      try {
+        fetchedTigers = await tigerApiService.fetchTigers(effectiveWalletAddress);
+        
+        if (fetchedTigers && fetchedTigers.length > 0) {
+          console.log(`Found ${fetchedTigers.length} tigers in wallet:`, fetchedTigers);
+          setUserTigers(fetchedTigers);
+          
+          // Cache de tigers voor volgende keer
+          localStorage.setItem(`bitcoinTigers_${effectiveWalletAddress}`, JSON.stringify(fetchedTigers));
+        } else {
+          console.log('No tigers found in wallet, this is normal if user has no Bitcoin Tigers NFTs');
+          setUserTigers([]);
+        }
+      } catch (tigerFetchError: any) {
+        console.error('Error fetching tigers:', tigerFetchError);
+        
+        // If we get rate limited, use cached data and try again later
+        if (tigerFetchError.response?.status === 429) {
+          console.log('Rate limited, trying cached data and will retry...');
+          const cachedTigers = localStorage.getItem(`bitcoinTigers_${effectiveWalletAddress}`);
+          if (cachedTigers) {
+            try {
+              const parsedTigers = JSON.parse(cachedTigers);
+              setUserTigers(parsedTigers);
+              console.log(`Using ${parsedTigers.length} cached tigers`);
+              
+              // Retry after a delay
+              setTimeout(() => {
+                console.log('Retrying tiger fetch after rate limit...');
+                loadWalletAndStakingData(true);
+              }, 60000); // Retry after 1 minute
+            } catch (parseError) {
+              console.error('Error parsing cached tigers:', parseError);
+              setUserTigers([]);
+            }
+          } else {
+            setUserTigers([]);
+          }
+        } else {
+          setUserTigers([]);
+        }
       }
-      
-      // Always try to load staking status, regardless of whether we found tigers
+
+      // Always try to load staking status
       console.log('Step 2: Loading staking status...');
       try {
         const stakingStatus = await tigerApiService.getStakingStatus(effectiveWalletAddress);
@@ -1018,6 +1082,9 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
         });
       }
       
+      // Update cache timestamp
+      setLastDataLoad(now);
+      
       setMessage('Tiger data loaded successfully');
       setMessageType('success');
       
@@ -1033,6 +1100,7 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
       setNextChestDate(null);
     } finally {
       setIsLoading(false);
+      setLoadingLock(false);
     }
   };
 
@@ -1076,10 +1144,10 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
         id: tigerToStake.id,
         key: tigerToStake.id,
         name: tigerToStake.name || `Tiger #${tigerToStake.id.substring(0, 8)}`,
-        image: tigerToStake.image || `/tiger-pixel${(parseInt(tigerToStake.id.substring(0, 8), 16) % 5) + 1}.png`,
+        image: tigerToStake.image,
         stakedAt: stakeTime,
         nextChestAt: nextChestTime,
-        isRuneGuardian: tigerToStake.isRuneGuardian,
+        isRuneGuardian: isRuneGuardian(tigerToStake),
         hasClaimedChest: false
       };
       
@@ -1105,10 +1173,10 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
         newDB.stakedTigers[walletAddress][tigerToStake.id] = {
           id: tigerToStake.id,
           name: tigerToStake.name || `Tiger #${tigerToStake.id.substring(0, 8)}`,
-          image: tigerToStake.image || `/tiger-pixel${(parseInt(tigerToStake.id.substring(0, 8), 16) % 5) + 1}.png`,
+          image: tigerToStake.image,
           stakedAt: stakeTime,
           nextChestAt: nextChestTime,
-          isRuneGuardian: tigerToStake.isRuneGuardian,
+          isRuneGuardian: isRuneGuardian(tigerToStake),
           hasClaimedChest: false,
           level: getTigerLevel(tigerToStake.id)
         };
@@ -1169,12 +1237,12 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
       const unstakedTiger = {
         id: tigerToUnstake.id,
         name: tigerToUnstake.name,
-        image: tigerToUnstake.image || '/tiger-pixel1.png',
+        image: tigerToUnstake.image || '',
         key: tigerToUnstake.id, 
         inscriptionNumber: 0,
         inscriptionId: tigerToUnstake.id,
         isKnownTiger: false,
-        isRuneGuardian: tigerToUnstake.isRuneGuardian
+        isRuneGuardian: isRuneGuardian(tigerToUnstake)
       } as BitcoinTiger;
       
       setUserTigers(prev => [...prev, unstakedTiger]);
@@ -2303,11 +2371,11 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
           id: tigerToUnstake.id,
           key: tigerToUnstake.id,
           name: tigerToUnstake.name,
-          image: tigerToUnstake.image || `/tiger-pixel${(parseInt(tigerToUnstake.id.substring(0, 8), 16) % 5) + 1}.png`,
-        inscriptionNumber: 0,
+          image: tigerToUnstake.image || '',
+          inscriptionNumber: 0,
           inscriptionId: tigerToUnstake.id,
-        isKnownTiger: false,
-          isRuneGuardian: tigerToUnstake.isRuneGuardian
+          isKnownTiger: false,
+          isRuneGuardian: isRuneGuardian(tigerToUnstake)
         };
         
         // Add to userTigers - CRITICAL for showing in available section
@@ -2699,19 +2767,15 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
                         onClick={() => setSelectedStakedTiger(tiger.id)}
                       >
                         <Image 
-                          src={tiger.image || `/tiger-pixel${(parseInt(tiger.id.substring(0, 8), 16) % 5) + 1}.png`}
+                          src={tiger.image || ''}
                           alt={tiger.name}
                           width={180}
                           height={180}
                           className="tiger-image"
                           unoptimized={true}
                           onError={(e) => {
-                            // Maak een deterministische keuze voor tiger-afbeelding gebaseerd op het ID
-                            const tigerNum = (parseInt(tiger.id.substring(0, 8), 16) % 5) + 1;
-                            // Fallback naar een unieke tiger afbeelding
-                            (e.target as HTMLImageElement).src = `/tiger-pixel${tigerNum}.png`;
-                            // Markeer als gefaald
-                            markImageAsFailed(tiger.id);
+                            console.log('Image failed to load for tiger:', tiger.id);
+                            // Just log the error, let the browser handle it
                           }}
                         />
                         <div className="tiger-name">{tiger.name}</div>
