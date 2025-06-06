@@ -1343,6 +1343,12 @@ export default function StakingPage() {
       return
     }
 
+    if (!walletAddress) {
+      setMessage('No wallet connected')
+      setMessageType('error')
+      return
+    }
+
     setIsClaiming(true)
     
     try {
@@ -3407,64 +3413,76 @@ export default function StakingPage() {
           )
         ) : stakingType === 'taproot' ? (
           // Taproot Alpha Staking UI
-          <TaprootAlphaMissions
-            walletAddress={walletAddress}
-            userTaproots={(() => {
-              // Combineer userTaproots met bitcoinTigers uit localStorage
-              const allTaproots = [...userTaproots];
-              
-              // Haal bitcoinTigers uit localStorage, net zoals bij de Rune Guardians tab
-              const cachedTigers = localStorage.getItem(`bitcoinTigers_${walletAddress}`);
-              if (cachedTigers) {
-                const parsedTigers = JSON.parse(cachedTigers);
-                console.log(`Adding ${parsedTigers.length} Bitcoin Tigers from cache to Taproot Alpha missions`);
+          walletAddress ? (
+            <TaprootAlphaMissions
+              walletAddress={walletAddress}
+              userTaproots={(() => {
+                // Combineer userTaproots met bitcoinTigers uit localStorage
+                const allTaproots = [...userTaproots];
                 
-                // Voorkom duplicaten door eerst de bestaande IDs te verzamelen
-                const existingIds = new Set(allTaproots.map(t => t.id));
+                // Haal bitcoinTigers uit localStorage, net zoals bij de Rune Guardians tab
+                const cachedTigers = localStorage.getItem(`bitcoinTigers_${walletAddress}`);
+                if (cachedTigers) {
+                  const parsedTigers = JSON.parse(cachedTigers);
+                  console.log(`Adding ${parsedTigers.length} Bitcoin Tigers from cache to Taproot Alpha missions`);
+                  
+                  // Voorkom duplicaten door eerst de bestaande IDs te verzamelen
+                  const existingIds = new Set(allTaproots.map(t => t.id));
+                  
+                  // Filter alle tigers die al in userTaproots zitten
+                  const uniqueTigers = parsedTigers.filter((tiger: any) => !existingIds.has(tiger.id));
+                  console.log(`Adding ${uniqueTigers.length} unique Bitcoin Tigers after filtering out duplicates`);
+                  
+                  // Voeg alleen unieke tigers toe
+                  allTaproots.push(...uniqueTigers);
+                }
                 
-                // Filter alle tigers die al in userTaproots zitten
-                const uniqueTigers = parsedTigers.filter((tiger: any) => !existingIds.has(tiger.id));
-                console.log(`Adding ${uniqueTigers.length} unique Bitcoin Tigers after filtering out duplicates`);
-                
-                // Voeg alleen unieke tigers toe
-                allTaproots.push(...uniqueTigers);
-              }
-              
-              return allTaproots;
-            })()}
-            stakedTaproots={stakedTaproots}
-            onStake={handleStakeTaproot}
-            onUnstake={handleUnstakeTaproot}
-            onRefresh={refreshTaproots}
-            bannerImage="/tiger_X_taproot.png"
-          />
+                return allTaproots;
+              })()}
+              stakedTaproots={stakedTaproots}
+              onStake={handleStakeTaproot}
+              onUnstake={handleUnstakeTaproot}
+              onRefresh={refreshTaproots}
+              bannerImage="/tiger_X_taproot.png"
+            />
+          ) : (
+            <div className="empty-state">
+              Connect your wallet to view Taproot Alpha staking
+            </div>
+          )
         ) : stakingType === 'sigmax' ? (
           // SigmaX Staking UI
-          <OrdinalSigmaXMissions 
-            walletAddress={walletAddress} 
-            userSigmaX={(() => {
-              // Alleen echte SigmaX ordinals laden, geen Bitcoin Tigers of Taproot Alpha
-              const allOrdinals: any[] = [];
-              
-              // Haal alleen SigmaX uit localStorage
-              const cachedSigmaX = localStorage.getItem(`sigmaX_${walletAddress}`);
-              if (cachedSigmaX) {
-                const parsedSigmaX = JSON.parse(cachedSigmaX);
-                console.log(`Laden van ${parsedSigmaX.length} SigmaX ordinals uit cache`);
+          walletAddress ? (
+            <OrdinalSigmaXMissions 
+              walletAddress={walletAddress} 
+              userSigmaX={(() => {
+                // Alleen echte SigmaX ordinals laden, geen Bitcoin Tigers of Taproot Alpha
+                const allOrdinals: any[] = [];
                 
-                // Expliciete markering als SigmaX
-                const markedSigmaX = parsedSigmaX.map((ordinal: any) => ({
-                  ...ordinal,
-                  isSigmaX: true
-                }));
+                // Haal alleen SigmaX uit localStorage
+                const cachedSigmaX = localStorage.getItem(`sigmaX_${walletAddress}`);
+                if (cachedSigmaX) {
+                  const parsedSigmaX = JSON.parse(cachedSigmaX);
+                  console.log(`Laden van ${parsedSigmaX.length} SigmaX ordinals uit cache`);
+                  
+                  // Expliciete markering als SigmaX
+                  const markedSigmaX = parsedSigmaX.map((ordinal: any) => ({
+                    ...ordinal,
+                    isSigmaX: true
+                  }));
+                  
+                  allOrdinals.push(...markedSigmaX);
+                }
                 
-                allOrdinals.push(...markedSigmaX);
-              }
-              
-              console.log(`Totaal aantal SigmaX ordinals doorgegeven aan component: ${allOrdinals.length}`);
-              return allOrdinals;
-            })()}
-          />
+                console.log(`Totaal aantal SigmaX ordinals doorgegeven aan component: ${allOrdinals.length}`);
+                return allOrdinals;
+              })()}
+            />
+          ) : (
+            <div className="empty-state">
+              Connect your wallet to view SigmaX staking
+            </div>
+          )
         ) : (
           // Rune Guardians Staking UI
           <div className="staking-page-container">
