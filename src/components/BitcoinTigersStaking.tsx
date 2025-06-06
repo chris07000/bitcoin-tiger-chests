@@ -847,11 +847,45 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
   // Effect om data te laden bij initialisatie
   useEffect(() => {
     console.log('BitcoinTigersStaking useEffect triggered, walletAddress:', walletAddress);
-    if (walletAddress && walletAddress.trim() !== '') {
+    
+    // Probeer wallet address uit verschillende bronnen te halen
+    let effectiveWalletAddress = walletAddress;
+    
+    if (!effectiveWalletAddress || effectiveWalletAddress.trim() === '') {
+      // Probeer localStorage
+      effectiveWalletAddress = localStorage.getItem('walletAddress') || '';
+      console.log('No walletAddress prop, trying localStorage:', effectiveWalletAddress);
+      
+      // Als localStorage ook leeg is, probeer dan cookies
+      if (!effectiveWalletAddress || effectiveWalletAddress.trim() === '') {
+        try {
+          // Probeer wallet gegevens uit cookies te halen
+          const walletCookie = document.cookie
+            .split('; ')
+            .find(row => row.startsWith('wallet_session='));
+          
+          if (walletCookie) {
+            const cookieValue = walletCookie.split('=')[1];
+            const walletData = JSON.parse(decodeURIComponent(cookieValue));
+            effectiveWalletAddress = walletData.walletAddress || '';
+            console.log('Trying wallet address from cookie:', effectiveWalletAddress);
+            
+            // Ook opslaan in localStorage voor toekomstig gebruik
+            if (effectiveWalletAddress) {
+              localStorage.setItem('walletAddress', effectiveWalletAddress);
+            }
+          }
+        } catch (error) {
+          console.error('Error parsing wallet cookie:', error);
+        }
+      }
+    }
+    
+    if (effectiveWalletAddress && effectiveWalletAddress.trim() !== '') {
       console.log('Valid wallet address found, calling loadWalletAndStakingData...');
       loadWalletAndStakingData();
     } else {
-      console.log('No valid wallet address, setting loading to false');
+      console.log('No valid wallet address found anywhere, setting loading to false');
       setIsLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -875,11 +909,38 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
 
   // Laad wallet en staking data
   const loadWalletAndStakingData = async () => {
-    // Try to get wallet address from props first, then localStorage
-    const effectiveWalletAddress = walletAddress || localStorage.getItem('walletAddress') || '';
+    // Try to get wallet address from multiple sources
+    let effectiveWalletAddress = walletAddress;
     
     if (!effectiveWalletAddress || effectiveWalletAddress.trim() === '') {
-      console.warn('No wallet address provided to loadWalletAndStakingData - neither prop nor localStorage');
+      // Try localStorage
+      effectiveWalletAddress = localStorage.getItem('walletAddress') || '';
+      
+      // Try cookies as last resort
+      if (!effectiveWalletAddress || effectiveWalletAddress.trim() === '') {
+        try {
+          const walletCookie = document.cookie
+            .split('; ')
+            .find(row => row.startsWith('wallet_session='));
+          
+          if (walletCookie) {
+            const cookieValue = walletCookie.split('=')[1];
+            const walletData = JSON.parse(decodeURIComponent(cookieValue));
+            effectiveWalletAddress = walletData.walletAddress || '';
+            
+            // Save to localStorage for future use
+            if (effectiveWalletAddress) {
+              localStorage.setItem('walletAddress', effectiveWalletAddress);
+            }
+          }
+        } catch (error) {
+          console.error('Error parsing wallet cookie in loadWalletAndStakingData:', error);
+        }
+      }
+    }
+    
+    if (!effectiveWalletAddress || effectiveWalletAddress.trim() === '') {
+      console.warn('No wallet address available from any source in loadWalletAndStakingData');
       setIsLoading(false);
       return;
     }

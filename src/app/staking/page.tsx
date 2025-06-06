@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useLightning } from '@/context/LightningContext'
+import { useWallet } from '@/context/WalletContext' // Voeg useWallet toe
 import Image from 'next/image'
 import axios from 'axios'
 import BitcoinTigersStaking from '@/components/BitcoinTigersStaking'
@@ -487,9 +488,11 @@ const apiService = {
 };
 
 export default function StakingPage() {
+  // Gebruik WalletContext voor wallet gegevens
+  const { walletAddress, connectedWallet, balance, refreshBalance } = useWallet()
+  
   // State variabelen
-  const [walletAddress, setWalletAddress] = useState<string>('')
-  const [balance, setLocalBalance] = useState<number>(0)
+  const [localBalance, setLocalBalance] = useState<number>(0)
   const [rewards, setRewards] = useState<number>(0)
   const [message, setMessage] = useState<string>('')
   const [messageType, setMessageType] = useState<'success' | 'error' | 'warning' | 'info' | ''>('')
@@ -883,17 +886,16 @@ export default function StakingPage() {
       setUserTaproots([]);
       setIsLoading(true);
       
-      // Haal wallet gegevens op uit localStorage (dit is veilig voor client-side)
-      const storedWalletAddress = localStorage.getItem('walletAddress') || '';
-      const storedBalance = parseInt(localStorage.getItem('balance') || '10000');
+      // Gebruik wallet address uit context
+      const storedWalletAddress = walletAddress || '';
+      const storedBalance = balance || 0;
       
-      // Update state met opgeslagen waarden
-      setWalletAddress(storedWalletAddress);
+      // Update lokale balance state
       setLocalBalance(storedBalance);
       
       // Als er geen wallet adres is, stop hier
       if (!storedWalletAddress) {
-        console.log('No wallet address found in localStorage');
+        console.log('No wallet address found in WalletContext');
         setIsLoading(false);
         return;
       }
@@ -1205,6 +1207,12 @@ export default function StakingPage() {
       return
     }
 
+    if (!walletAddress) {
+      setMessage('No wallet connected')
+      setMessageType('error')
+      return
+    }
+
     setIsStakingOrdinal(true)
     
     try {
@@ -1271,6 +1279,12 @@ export default function StakingPage() {
   const handleUnstakeOrdinal = async () => {
     if (!selectedStakedOrdinal) {
       setMessage('Please select an artifact to unstake');
+      setMessageType('error');
+      return;
+    }
+
+    if (!walletAddress) {
+      setMessage('No wallet connected');
       setMessageType('error');
       return;
     }
@@ -3382,9 +3396,15 @@ export default function StakingPage() {
           </>
         ) : stakingType === 'tigers' ? (
           // Bitcoin Tigers Staking UI
-          <BitcoinTigersStaking 
-            walletAddress={walletAddress} 
-          />
+          walletAddress ? (
+            <BitcoinTigersStaking 
+              walletAddress={walletAddress} 
+            />
+          ) : (
+            <div className="empty-state">
+              Connect your wallet to view Bitcoin Tigers staking
+            </div>
+          )
         ) : stakingType === 'taproot' ? (
           // Taproot Alpha Staking UI
           <TaprootAlphaMissions
