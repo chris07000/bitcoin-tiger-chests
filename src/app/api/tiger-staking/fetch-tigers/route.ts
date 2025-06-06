@@ -28,7 +28,7 @@ export async function GET(
       const response = await axios.get('https://api-mainnet.magiceden.dev/v2/ord/btc/wallets/tokens', {
         params: { 
           wallet: walletAddress,
-          limit: 100, // Maximaal 100 items ophalen
+          limit: 200, // Verhoog van 100 naar 200 voor grotere collecties
           offset: 0,
           // Momenteel filteren we op client side door bekende IDs te checken
           // collectionSymbol: 'tigers', // Bitcoin Tigers collectie
@@ -38,7 +38,7 @@ export async function GET(
         headers: {
           'Accept': 'application/json'
         },
-        timeout: 10000 // 10 seconden timeout
+        timeout: 15000 // Verhoog timeout naar 15 seconden
       });
       
       if (response.data && response.data.tokens) {
@@ -160,19 +160,21 @@ export async function GET(
         // Array om alle inscriptions op te slaan
         let allInscriptions: any[] = [];
         let offset = 0;
-        const limit = 60; // Hiro's standaard limit per request
-        const maxInscriptions = 300; // Maximum aantal inscriptions dat we willen ophalen
+        const limit = 25; // Kleinere batches voor minder rate limiting
+        const maxInscriptions = 1000; // Verhoog maximum voor grote collecties
         let hasMore = true;
         
         // Fetch inscriptions met paginatie
         while (hasMore && allInscriptions.length < maxInscriptions) {
+          console.log(`Fetching batch ${Math.floor(offset / limit) + 1}, offset: ${offset}`);
+          
           const hiro_response = await axios.get(`https://api.hiro.so/ordinals/v1/inscriptions`, {
             params: {
               address: walletAddress,
               limit: limit,
               offset: offset
             },
-            timeout: 10000
+            timeout: 15000 // Verhoog timeout naar 15 seconden
           });
           
           if (hiro_response.data && hiro_response.data.results && hiro_response.data.results.length > 0) {
@@ -185,6 +187,12 @@ export async function GET(
             
             // Check of we meer moeten ophalen
             hasMore = currentBatch.length === limit;
+            
+            // Voeg delay toe tussen requests om rate limiting te voorkomen
+            if (hasMore) {
+              console.log('Waiting 500ms before next batch...');
+              await new Promise(resolve => setTimeout(resolve, 500));
+            }
           } else {
             hasMore = false;
           }

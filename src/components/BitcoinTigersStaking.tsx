@@ -985,6 +985,9 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
       let fetchedTigers: BitcoinTiger[] = [];
       
       try {
+        setMessage('Loading your Bitcoin Tigers collection... This may take a moment for large collections.');
+        setMessageType('warning');
+        
         fetchedTigers = await tigerApiService.fetchTigers(effectiveWalletAddress);
         
         if (fetchedTigers && fetchedTigers.length > 0) {
@@ -993,9 +996,15 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
           
           // Cache de tigers voor volgende keer
           localStorage.setItem(`bitcoinTigers_${effectiveWalletAddress}`, JSON.stringify(fetchedTigers));
+          
+          // Update loading message
+          setMessage(`Successfully loaded ${fetchedTigers.length} Bitcoin Tigers from your collection!`);
+          setMessageType('success');
         } else {
           console.log('No tigers found in wallet, this is normal if user has no Bitcoin Tigers NFTs');
           setUserTigers([]);
+          setMessage('No Bitcoin Tigers found in this wallet.');
+          setMessageType('warning');
         }
       } catch (tigerFetchError: any) {
         console.error('Error fetching tigers:', tigerFetchError);
