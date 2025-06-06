@@ -846,23 +846,45 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
 
   // Effect om data te laden bij initialisatie
   useEffect(() => {
-    if (walletAddress) {
+    console.log('BitcoinTigersStaking useEffect triggered, walletAddress:', walletAddress);
+    if (walletAddress && walletAddress.trim() !== '') {
+      console.log('Valid wallet address found, calling loadWalletAndStakingData...');
       loadWalletAndStakingData();
     } else {
+      console.log('No valid wallet address, setting loading to false');
       setIsLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [walletAddress]);
 
+  // Effect om te detecteren wanneer component mount
+  useEffect(() => {
+    console.log('BitcoinTigersStaking component mounted');
+    console.log('Initial walletAddress:', walletAddress);
+    
+    // Extra check - probeer wallet address uit localStorage te halen als het niet is doorgegeven
+    if (!walletAddress || walletAddress.trim() === '') {
+      const storedWalletAddress = localStorage.getItem('walletAddress') || '';
+      console.log('No walletAddress prop, trying localStorage:', storedWalletAddress);
+      if (storedWalletAddress && storedWalletAddress.trim() !== '') {
+        console.log('Found wallet address in localStorage, triggering data load...');
+        loadWalletAndStakingData();
+      }
+    }
+  }, []);
+
   // Laad wallet en staking data
   const loadWalletAndStakingData = async () => {
-    if (!walletAddress) {
-      console.warn('No wallet address provided to loadWalletAndStakingData');
+    // Try to get wallet address from props first, then localStorage
+    const effectiveWalletAddress = walletAddress || localStorage.getItem('walletAddress') || '';
+    
+    if (!effectiveWalletAddress || effectiveWalletAddress.trim() === '') {
+      console.warn('No wallet address provided to loadWalletAndStakingData - neither prop nor localStorage');
       setIsLoading(false);
       return;
     }
     
-    console.log('Loading wallet and staking data for:', walletAddress);
+    console.log('Loading wallet and staking data for:', effectiveWalletAddress);
     setIsLoading(true);
     setMessage('');
     setMessageType('');
@@ -870,7 +892,7 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
     try {
       // First, try to fetch tigers from the API
       console.log('Step 1: Fetching tigers from API...');
-      const fetchedTigers = await tigerApiService.fetchTigers(walletAddress);
+      const fetchedTigers = await tigerApiService.fetchTigers(effectiveWalletAddress);
       
       if (fetchedTigers && fetchedTigers.length > 0) {
         console.log(`Found ${fetchedTigers.length} tigers in wallet:`, fetchedTigers);
@@ -883,7 +905,7 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
       // Always try to load staking status, regardless of whether we found tigers
       console.log('Step 2: Loading staking status...');
       try {
-        const stakingStatus = await tigerApiService.getStakingStatus(walletAddress);
+        const stakingStatus = await tigerApiService.getStakingStatus(effectiveWalletAddress);
         console.log('Staking status response:', stakingStatus);
         
         if (stakingStatus && stakingStatus.success) {
@@ -922,8 +944,8 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
       
       // Load from localStorage as backup/supplement
       console.log('Step 3: Loading from localStorage...');
-      if (tigerStakingDB && tigerStakingDB.stakedTigers && tigerStakingDB.stakedTigers[walletAddress]) {
-        const localStakedTigers = Object.values(tigerStakingDB.stakedTigers[walletAddress]) as TigerStakedInfo[];
+      if (tigerStakingDB && tigerStakingDB.stakedTigers && tigerStakingDB.stakedTigers[effectiveWalletAddress]) {
+        const localStakedTigers = Object.values(tigerStakingDB.stakedTigers[effectiveWalletAddress]) as TigerStakedInfo[];
         console.log(`Found ${localStakedTigers.length} staked tigers in localStorage:`, localStakedTigers);
         
         // Merge with API data if needed (API data takes precedence)
