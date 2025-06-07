@@ -1042,7 +1042,8 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
         const stakingStatus = await tigerApiService.getStakingStatus(effectiveWalletAddress);
         console.log('Staking status response:', stakingStatus);
         
-        if (stakingStatus && stakingStatus.success) {
+        // Fix: Remove the incorrect success check - the API returns the staking data directly
+        if (stakingStatus) {
           // Handle different response formats
           let stakedTigersList: TigerStakedInfo[] = [];
           
@@ -1056,10 +1057,16 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
           setStakedTigers(stakedTigersList);
           setAvailableChests(stakingStatus.availableChests || 0);
           
-          if (stakingStatus.nextChestDate) {
+          if (stakingStatus.nextChestDate && stakingStatus.nextChestDate > 0) {
             setNextChestDate(new Date(stakingStatus.nextChestDate));
           } else {
             setNextChestDate(null);
+          }
+          
+          // Update message if we found staked tigers
+          if (stakedTigersList.length > 0) {
+            setMessage(`Found ${stakedTigersList.length} staked Bitcoin Tigers! Available chests: ${stakingStatus.availableChests || 0}`);
+            setMessageType('success');
           }
         } else {
           console.log('No staking status found or failed to get status');
