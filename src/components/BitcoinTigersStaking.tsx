@@ -451,58 +451,8 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
     }
   }, [tigerLevel, walletAddress, isClient]);
 
-  // Helper functie om een veilige fallback image te krijgen
-  const getSafeFallbackImage = (tigerId?: string, isGuardian: boolean = false) => {
-    if (isGuardian) {
-      return '/tiger-logo.png'; // Use tiger logo for Rune Guardians
-    } else {
-      // For regular tigers, use tiger-pixel1.png (which exists)
-      return '/tiger-pixel1.png';
-    }
-  };
-
   // Removed complex image loading system to prevent flickering
-  // Now using simple Image component with basic error handling
-
-  // Simple Tiger Image Component without complex loading and flickering
-  const SimpleTigerImage = ({ 
-    tiger, 
-    width = 180, 
-    height = 180, 
-    className = "tiger-image" 
-  }: { 
-    tiger: any, 
-    width?: number, 
-    height?: number, 
-    className?: string 
-  }) => {
-    const [hasError, setHasError] = useState(false);
-
-    const handleError = () => {
-      setHasError(true);
-    };
-
-    // Simple fallback URL without complex logic
-    const imageUrl = tiger.image || `https://ordinals.com/content/${tiger.id}`;
-    const fallbackUrl = hasError ? '/tiger-pixel1.png' : imageUrl;
-
-    return (
-      <Image 
-        src={fallbackUrl}
-        alt={tiger.name || 'Bitcoin Tiger'}
-        width={width}
-        height={height}
-        className={className}
-        unoptimized={true}
-        onError={handleError}
-        style={{
-          backgroundColor: '#171a2d',
-          border: hasError ? '2px solid #ff9900' : '1px solid #333',
-          borderRadius: '8px'
-        }}
-      />
-    );
-  };
+  // Now using basic Next.js Image components directly - NO custom components
 
   // Helper om te bepalen of een tiger een Rune Guardian is
   const isRuneGuardian = (tiger: any): boolean => {
@@ -2784,11 +2734,18 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
                         className={`ordinal-item ${isSelected ? 'selected' : ''}`}
                         onClick={() => setSelectedTiger(tiger.id)}
                       >
-                        <SimpleTigerImage 
-                          tiger={tiger}
+                        <Image 
+                          src={tiger.image || `https://ordinals.com/content/${tiger.id}`}
+                          alt={tiger.name || 'Bitcoin Tiger'}
                           width={180}
                           height={180}
                           className="tiger-image"
+                          unoptimized={true}
+                          style={{
+                            backgroundColor: '#171a2d',
+                            border: '1px solid #333',
+                            borderRadius: '8px'
+                          }}
                         />
                         <div className="tiger-name">{tiger.name}</div>
                         
@@ -2871,11 +2828,18 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
                         className={`ordinal-item ${isSelected ? 'selected' : ''} on-mission ${isEligibleForClaim ? 'ready-for-chest' : ''}`}
                         onClick={() => setSelectedStakedTiger(tiger.id)}
                       >
-                        <SimpleTigerImage 
-                          tiger={tiger}
+                        <Image 
+                          src={tiger.image || `https://ordinals.com/content/${tiger.id}`}
+                          alt={tiger.name || 'Bitcoin Tiger'}
                           width={180}
                           height={180}
                           className="tiger-image"
+                          unoptimized={true}
+                          style={{
+                            backgroundColor: '#171a2d',
+                            border: '1px solid #333',
+                            borderRadius: '8px'
+                          }}
                         />
                         <div className="tiger-name">{tiger.name}</div>
                         <div className="mission-badge">ON MISSION</div>
