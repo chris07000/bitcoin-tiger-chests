@@ -350,9 +350,11 @@ export default function BitcoinPrice() {
           invoice={depositInvoice}
           initialAmount={depositAmount}
           onCloseAction={() => {
+            console.log('BitcoinPrice: Deposit modal closed, cleaning up state');
             setShowDepositModal(false);
             setDepositInvoice(null);
             setDepositPaymentHash(null);
+            setDepositAmount(1000); // Reset to default amount
           }}
           paymentHash={depositPaymentHash}
           onAmountChangeAction={(amount) => {

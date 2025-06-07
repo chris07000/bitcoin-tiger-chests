@@ -24,6 +24,10 @@ export default function LightningModal({
   const [copySuccess, setCopySuccess] = useState(false);
   const { checkPayment } = useLightning();
 
+  // Keep track of current invoice and payment hash to prevent cross-contamination
+  const [currentInvoice, setCurrentInvoice] = useState<string | null>(null);
+  const [currentPaymentHash, setCurrentPaymentHash] = useState<string | null>(null);
+
   // Check if on mobile
   useEffect(() => {
     const checkMobile = () => {
@@ -35,18 +39,31 @@ export default function LightningModal({
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  // Update current invoice and payment hash when props change
+  useEffect(() => {
+    if (invoice && paymentHash) {
+      console.log('LightningModal: New invoice/payment hash set:', {
+        invoice: invoice.substring(0, 20) + '...',
+        paymentHash: paymentHash
+      });
+      setCurrentInvoice(invoice);
+      setCurrentPaymentHash(paymentHash);
+      setPaymentStatus('pending'); // Reset status for new invoice
+    }
+  }, [invoice, paymentHash]);
+
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
     let checkCount = 0;
     const MAX_CHECKS = 20; // 1 minute of checking (20 * 3 seconds)
 
     const checkPaymentStatus = async () => {
-      if (!paymentHash) return;
+      if (!currentPaymentHash) return;
 
       try {
         checkCount++;
         
-        const encodedHash = encodeURIComponent(paymentHash);
+        const encodedHash = encodeURIComponent(currentPaymentHash);
         const status = await checkPayment(encodedHash);
 
         if (status.paid) {
@@ -74,7 +91,7 @@ export default function LightningModal({
       }
     };
 
-    if (paymentHash) {
+    if (currentPaymentHash) {
       checkCount = 0; // Reset counter
       checkPaymentStatus(); // Check immediately
       intervalId = setInterval(checkPaymentStatus, 3000);
@@ -85,7 +102,7 @@ export default function LightningModal({
         clearInterval(intervalId);
       }
     };
-  }, [paymentHash, onCloseAction, checkPayment]);
+  }, [currentPaymentHash, onCloseAction, checkPayment]);
 
   const handleAmountChange = (newAmount: number) => {
     setAmount(newAmount);
@@ -95,21 +112,60 @@ export default function LightningModal({
     onAmountChangeAction(amount);
   };
 
-  const copyToClipboard = async () => {
-    if (!invoice) return;
+  // Cleanup function to prevent invoice overlap
+  const handleCloseWithCleanup = async () => {
+    if (currentPaymentHash) {
+      console.log('LightningModal: Cleaning up invoice on close:', currentPaymentHash);
+      
+      try {
+        // Call the cancel API to mark the invoice as cancelled in the database
+        const response = await fetch('/api/lightning/cancel', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            paymentHash: currentPaymentHash
+          }),
+        });
+        
+        if (response.ok) {
+          console.log('LightningModal: Successfully cancelled invoice:', currentPaymentHash);
+        } else {
+          console.error('LightningModal: Failed to cancel invoice:', await response.text());
+        }
+      } catch (error) {
+        console.error('LightningModal: Error calling cancel API:', error);
+      }
+      
+      // Also mark in localStorage as backup
+      localStorage.setItem(`cancelled_invoice_${currentPaymentHash}`, Date.now().toString());
+    }
     
-    console.log('COPY DEBUG: invoice value =', invoice);
-    console.log('COPY DEBUG: invoice starts with =', invoice.substring(0, 10));
+    // Reset local state
+    setCurrentInvoice(null);
+    setCurrentPaymentHash(null);
+    setPaymentStatus('pending');
+    
+    // Call the original close action
+    onCloseAction();
+  };
+
+  const copyToClipboard = async () => {
+    if (!currentInvoice) return;
+    
+    console.log('COPY DEBUG: invoice value =', currentInvoice);
+    console.log('COPY DEBUG: invoice starts with =', currentInvoice.substring(0, 10));
     
     try {
-      await navigator.clipboard.writeText(invoice);
+      await navigator.clipboard.writeText(currentInvoice);
       setCopySuccess(true);
       setTimeout(() => setCopySuccess(false), 2000);
     } catch (error) {
       console.error('Failed to copy invoice:', error);
       // Fallback for older browsers
       const textArea = document.createElement('textarea');
-      textArea.value = invoice;
+      textArea.value = currentInvoice;
       document.body.appendChild(textArea);
       textArea.select();
       document.execCommand('copy');
@@ -134,24 +190,24 @@ export default function LightningModal({
           />
         </div>
         
-        {!invoice && (
+        {!currentInvoice && (
           <div className="modal-buttons">
             <button onClick={handleGenerateInvoice}>
               {isMobile ? 'Create' : 'Generate Invoice'}
             </button>
-            <button onClick={onCloseAction}>
+            <button onClick={handleCloseWithCleanup}>
               {isMobile ? '×' : 'Cancel'}
             </button>
           </div>
         )}
 
-        {invoice && (
+        {currentInvoice && (
           <>
             <div className="input-group">
               <label>{isMobile ? 'QR Code:' : 'Scan QR Code:'}</label>
               <div className="qr-container">
                 <QRCode
-                  value={invoice}
+                  value={currentInvoice}
                   size={isMobile ? 150 : 200}
                   level="H"
                 />
@@ -159,8 +215,8 @@ export default function LightningModal({
               <div className="invoice-text-container">
                 <div className="invoice-text">
                   {isMobile 
-                    ? `${invoice.substring(0, 15)}...${invoice.substring(invoice.length - 15)}`
-                    : invoice
+                    ? `${currentInvoice.substring(0, 15)}...${currentInvoice.substring(currentInvoice.length - 15)}`
+                    : currentInvoice
                   }
                 </div>
                 <button 
@@ -190,7 +246,7 @@ export default function LightningModal({
             </div>
 
             <div className="modal-buttons">
-              <button onClick={onCloseAction}>
+              <button onClick={handleCloseWithCleanup}>
                 {isMobile ? 'Close' : 'Close'}
               </button>
             </div>

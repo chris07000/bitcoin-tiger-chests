@@ -24,6 +24,17 @@ export async function GET(
       });
       
       if (transaction) {
+        // Check if this invoice was cancelled (marked in transaction memo)
+        const isCancelled = transaction.memo && transaction.memo.includes('CANCELLED');
+        
+        if (isCancelled) {
+          console.log('Payment received for cancelled invoice:', hash);
+          return NextResponse.json({
+            ...paymentStatus,
+            message: 'Invoice was cancelled - payment not credited'
+          });
+        }
+        
         // Haal de wallet op
         const wallet = await prisma.wallet.findUnique({
           where: {
