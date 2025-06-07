@@ -3165,13 +3165,13 @@ export default function StakingPage() {
         <div className="tiger-progress-container">
           <div className="tiger-progress-info">
             <span className="tiger-progress-label">Tigers Sold:</span>
-            <span className="tiger-progress-value">152 / 999</span>
-            <span className="tiger-progress-percent">15.2%</span>
+            <span className="tiger-progress-value">223 / 999</span>
+            <span className="tiger-progress-percent">22.3%</span>
           </div>
           <div className="tiger-progress-bar">
-            <div className="tiger-progress-fill" style={{ width: '15.2%' }}></div>
+            <div className="tiger-progress-fill" style={{ width: '22.3%' }}></div>
           </div>
-          <div className="tiger-progress-subtitle">847 Tigers Remaining (84.8%)</div>
+          <div className="tiger-progress-subtitle">776 Tigers Remaining (77.7%)</div>
         </div>
 
         <h1 className="page-title">Bitcoin Tiger Soft Staking</h1>
