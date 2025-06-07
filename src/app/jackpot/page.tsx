@@ -12,27 +12,21 @@ export default function JackpotPage() {
   const [result, setResult] = useState<'heads' | 'tails' | null>(null)
   const [message, setMessage] = useState<string>('')
   const [walletAddress, setWalletAddress] = useState<string>('')
-  const [balance, setLocalBalance] = useState<number>(0)
   const [liveWins, setLiveWins] = useState<Array<{address: string, amount: number, timestamp: Date, side: string}>>([])
-  const { setBalance } = useLightning()
+  const { balance, setBalance, walletAddress: contextWalletAddress } = useLightning()
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
   const [winAudio, setWinAudio] = useState<HTMLAudioElement | null>(null)
   const [showRankUpModal, setShowRankUpModal] = useState(false)
   const [rankUpLevel, setRankUpLevel] = useState('')
 
   useEffect(() => {
-    // Get wallet address and balance from localStorage
-    const storedWallet = localStorage.getItem('walletAddress')
+    // Use wallet address from LightningContext or localStorage as fallback
+    const storedWallet = contextWalletAddress || localStorage.getItem('walletAddress')
     if (storedWallet) {
       setWalletAddress(storedWallet)
       
-      // Eerst zetten we de balans uit localStorage voor snelle laden
-      const lightningBalances = JSON.parse(localStorage.getItem('lightningBalances') || '{}')
-      const currentBalance = lightningBalances[storedWallet] || 0
-      setLocalBalance(currentBalance)
-      
-      // Dan halen we de actuele balans op uit de database
-      fetchCurrentBalance(storedWallet);
+      // No need to fetch balance here since LightningContext handles it
+      console.log('Coinflip: Using wallet from context:', storedWallet, 'Balance:', balance)
     }
 
     // Initialize audio on client side only
@@ -92,7 +86,6 @@ export default function JackpotPage() {
         console.log(`Actuele balans opgehaald: ${data.balance}`);
         
         // Update zowel state als localStorage
-        setLocalBalance(data.balance);
         setBalance(data.balance);
         updateBalanceInStorage(walletAddr, data.balance);
       } else {
@@ -140,7 +133,6 @@ export default function JackpotPage() {
     
     // Direct het inzetbedrag aftrekken
     const newBalance = balance - betAmount
-    setLocalBalance(newBalance)
     setBalance(newBalance)
     updateBalanceInStorage(walletAddress, newBalance)
 
@@ -167,7 +159,6 @@ export default function JackpotPage() {
       if (!response.ok) {
         const error = await response.json()
         // Bij error het bedrag teruggeven
-        setLocalBalance(balance)
         setBalance(balance)
         updateBalanceInStorage(walletAddress, balance)
         throw new Error(error.error || 'Failed to place bet')
@@ -201,7 +192,6 @@ export default function JackpotPage() {
         
         // Update balance bij winst of verlies met het juiste bedrag uit de API
         const finalBalance = data.balance
-        setLocalBalance(finalBalance)
         setBalance(finalBalance)
         updateBalanceInStorage(walletAddress, finalBalance)
         
