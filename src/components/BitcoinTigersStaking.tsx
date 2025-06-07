@@ -405,58 +405,52 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
     }
   };
 
-  // Enhanced image loading with multiple fallbacks and retry mechanism
-  const getImageWithFallbacks = (tiger: any): string[] => {
-    const fallbacks = [];
-    
-    // Primary image from tiger data
-    if (tiger.image && !failedImages.has(tiger.id)) {
-      fallbacks.push(tiger.image);
-    }
-    
-    // Deterministic tiger-pixel fallback based on ID
-    const tigerNum = (parseInt(tiger.id.substring(0, 8), 16) % 5) + 1;
-    fallbacks.push(`/tiger-pixel${tigerNum}.png`);
-    
-    // Additional fallbacks
-    fallbacks.push('/tiger-pixel1.png');
-    fallbacks.push('/tiger-logo.png');
-    
-    return fallbacks;
+  // Enhanced image loading with retry mechanism but NO fallbacks - wait for real images
+  const getImageWithRetry = (tiger: any): string => {
+    // Always return the real tiger image, no fallbacks
+    return tiger.image || '';
   };
 
-  // Enhanced image error handler with retry mechanism
-  const handleImageError = (tigerId: string, currentSrc: string, fallbacks: string[], retryCount: number = 0) => {
+  // Enhanced image error handler with retry mechanism and rate limiting respect
+  const handleImageError = (tigerId: string, currentSrc: string, retryCount: number = 0) => {
     console.log(`Image failed for tiger ${tigerId}: ${currentSrc}, retry: ${retryCount}`);
     
-    // Mark this image as failed
+    // Mark this image as failed for this session
     markImageAsFailed(tigerId);
     
-    // Find next fallback
-    const currentIndex = fallbacks.indexOf(currentSrc);
-    const nextIndex = currentIndex + 1;
+    // Respect rate limits with exponential backoff
+    const maxRetries = 5; // Increase max retries
+    const baseDelay = 2000; // Start with 2 second delay
+    const exponentialDelay = baseDelay * Math.pow(2, retryCount); // 2s, 4s, 8s, 16s, 32s
+    const maxDelay = 60000; // Cap at 1 minute
+    const actualDelay = Math.min(exponentialDelay, maxDelay);
     
-    if (nextIndex < fallbacks.length) {
-      // Try next fallback
-      return fallbacks[nextIndex];
-    } else if (retryCount < 2) {
-      // Retry with delay (for network issues)
+    if (retryCount < maxRetries) {
+      console.log(`Retrying image load for tiger ${tigerId} in ${actualDelay}ms (attempt ${retryCount + 1}/${maxRetries})`);
+      
       setTimeout(() => {
         const img = document.querySelector(`img[data-tiger-id="${tigerId}"]`) as HTMLImageElement;
-        if (img && fallbacks[0]) {
-          img.src = fallbacks[0];
+        if (img && currentSrc) {
+          // Add cache busting parameter to retry
+          const separator = currentSrc.includes('?') ? '&' : '?';
+          img.src = `${currentSrc}${separator}retry=${retryCount + 1}&t=${Date.now()}`;
         }
-      }, 1000 * (retryCount + 1));
+      }, actualDelay);
       
-      return fallbacks[0]; // Return first fallback for now
+      return true; // Indicate retry will happen
     } else {
-      // Final fallback
-      return '/tiger-pixel1.png';
+      console.log(`Max retries reached for tiger ${tigerId}, giving up`);
+      return false; // No more retries
     }
   };
 
-  // Loading placeholder component
-  const ImagePlaceholder = ({ width = 180, height = 180, tigerId }: { width?: number, height?: number, tigerId: string }) => (
+  // Loading placeholder component with better messaging
+  const ImagePlaceholder = ({ width = 180, height = 180, tigerId, retryCount = 0 }: { 
+    width?: number, 
+    height?: number, 
+    tigerId: string,
+    retryCount?: number 
+  }) => (
     <div 
       className="image-placeholder"
       style={{
@@ -473,11 +467,18 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
       }}
     >
       <div style={{ fontSize: '24px', marginBottom: '8px' }}>🐅</div>
-      <div style={{ fontSize: '12px' }}>Loading...</div>
+      <div style={{ fontSize: '12px', textAlign: 'center' }}>
+        {retryCount > 0 ? `Retrying... (${retryCount})` : 'Loading Tiger...'}
+      </div>
+      {retryCount > 2 && (
+        <div style={{ fontSize: '10px', marginTop: '4px', color: '#888' }}>
+          High traffic - please wait
+        </div>
+      )}
     </div>
   );
 
-  // Enhanced Image component with robust error handling
+  // Enhanced Image component with proper retry logic and NO fallbacks
   const RobustTigerImage = ({ 
     tiger, 
     width = 180, 
@@ -495,48 +496,62 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [hasError, setHasError] = useState<boolean>(false);
     const [retryCount, setRetryCount] = useState<number>(0);
+    const [showImage, setShowImage] = useState<boolean>(false);
     
-    const fallbacks = getImageWithFallbacks(tiger);
+    const realImageSrc = getImageWithRetry(tiger);
     
     useEffect(() => {
-      if (fallbacks.length > 0) {
-        setCurrentSrc(fallbacks[0]);
+      if (realImageSrc) {
+        setCurrentSrc(realImageSrc);
         setIsLoading(true);
         setHasError(false);
+        setShowImage(true);
+      } else {
+        // No image available, don't show anything
+        setShowImage(false);
+        setIsLoading(false);
       }
-    }, [tiger.id]);
+    }, [tiger.id, realImageSrc]);
     
     const handleError = () => {
-      const currentIndex = fallbacks.indexOf(currentSrc);
-      const nextIndex = currentIndex + 1;
+      console.log(`Image load failed for tiger ${tiger.id}, current retry: ${retryCount}`);
       
-      if (nextIndex < fallbacks.length) {
-        // Try next fallback immediately
-        setCurrentSrc(fallbacks[nextIndex]);
+      setHasError(true);
+      setIsLoading(false);
+      
+      // Try to retry with exponential backoff
+      const willRetry = handleImageError(tiger.id, currentSrc, retryCount);
+      
+      if (willRetry) {
         setRetryCount(prev => prev + 1);
-      } else if (retryCount < 2) {
-        // Retry first image after delay
+        // Reset loading state for retry
         setTimeout(() => {
-          setCurrentSrc(fallbacks[0]);
-          setRetryCount(prev => prev + 1);
-        }, 2000);
-      } else {
-        // Give up, show final fallback
-        setHasError(true);
-        setIsLoading(false);
-        setCurrentSrc('/tiger-pixel1.png');
+          setIsLoading(true);
+          setHasError(false);
+        }, 100);
       }
-      
-      markImageAsFailed(tiger.id);
     };
     
     const handleLoad = () => {
+      console.log(`Image loaded successfully for tiger ${tiger.id}`);
       setIsLoading(false);
       setHasError(false);
+      // Clear from failed images on successful load
+      setFailedImages(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(tiger.id);
+        return newSet;
+      });
     };
     
-    if (isLoading && showPlaceholder && !currentSrc) {
-      return <ImagePlaceholder width={width} height={height} tigerId={tiger.id} />;
+    // If no image source or we've given up, show placeholder
+    if (!currentSrc || (!showImage && showPlaceholder)) {
+      return <ImagePlaceholder width={width} height={height} tigerId={tiger.id} retryCount={retryCount} />;
+    }
+    
+    // If loading or has error but we're retrying, show placeholder
+    if ((isLoading || hasError) && showPlaceholder) {
+      return <ImagePlaceholder width={width} height={height} tigerId={tiger.id} retryCount={retryCount} />;
     }
     
     return (
@@ -547,13 +562,15 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
         height={height}
         className={`${className} ${isLoading ? 'loading' : ''} ${hasError ? 'error' : ''}`}
         data-tiger-id={tiger.id}
+        data-retry-count={retryCount}
         unoptimized={true}
         onLoad={handleLoad}
         onError={handleError}
         style={{
           opacity: isLoading ? 0.7 : 1,
           transition: 'opacity 0.3s ease',
-          backgroundColor: isLoading ? '#171a2d' : 'transparent'
+          backgroundColor: isLoading ? '#171a2d' : 'transparent',
+          display: showImage ? 'block' : 'none'
         }}
       />
     );
@@ -3903,39 +3920,49 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
         }
 
         .tiger-image.error {
-          opacity: 0.8;
-          filter: grayscale(0.3);
-          border: 2px solid #ff6b00;
+          opacity: 0.5;
+          filter: grayscale(0.5);
+          border: 2px solid #ff9900;
         }
 
         .image-placeholder {
           animation: pulse-loading 1.5s ease-in-out infinite alternate;
           border: 2px solid #333;
           box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+          position: relative;
+        }
+
+        .image-placeholder::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: linear-gradient(45deg, 
+            rgba(255, 107, 0, 0.1) 25%, 
+            transparent 25%, 
+            transparent 50%, 
+            rgba(255, 107, 0, 0.1) 50%, 
+            rgba(255, 107, 0, 0.1) 75%, 
+            transparent 75%
+          );
+          background-size: 20px 20px;
+          animation: loading-stripes 2s linear infinite;
+          border-radius: 6px;
         }
 
         @keyframes pulse-loading {
           from {
             opacity: 0.6;
             transform: scale(0.98);
+            border-color: #555;
           }
           to {
             opacity: 1;
             transform: scale(1);
+            border-color: #ff6b00;
           }
-        }
-
-        /* Fallback image styling */
-        .tiger-image[src*="tiger-pixel"] {
-          border: 2px solid #ff6b00;
-          filter: drop-shadow(0 0 5px rgba(255, 107, 0, 0.3));
-        }
-
-        /* Loading state for images during high traffic */
-        .tiger-image:not([src]), .tiger-image[src=""] {
-          background: linear-gradient(45deg, #171a2d 25%, #1e1e3f 25%, #1e1e3f 50%, #171a2d 50%, #171a2d 75%, #1e1e3f 75%);
-          background-size: 20px 20px;
-          animation: loading-stripes 2s linear infinite;
         }
 
         @keyframes loading-stripes {
@@ -3944,6 +3971,36 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
           }
           100% {
             background-position: 20px 20px;
+          }
+        }
+
+        /* Rate limit aware loading states */
+        .tiger-image[data-retry-count="1"] {
+          border: 2px solid #ff9900;
+        }
+
+        .tiger-image[data-retry-count="2"] {
+          border: 2px solid #ff6600;
+        }
+
+        .tiger-image[data-retry-count="3"] {
+          border: 2px solid #ff3300;
+        }
+
+        .tiger-image[data-retry-count="4"],
+        .tiger-image[data-retry-count="5"] {
+          border: 2px solid #ff0000;
+          animation: retry-warning 1s ease-in-out infinite alternate;
+        }
+
+        @keyframes retry-warning {
+          from {
+            border-color: #ff0000;
+            box-shadow: 0 0 5px rgba(255, 0, 0, 0.3);
+          }
+          to {
+            border-color: #ff6600;
+            box-shadow: 0 0 15px rgba(255, 102, 0, 0.5);
           }
         }
         
