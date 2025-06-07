@@ -175,6 +175,117 @@ export default function RafflePage() {
     setSortBy(sort)
   }
 
+  // New function for direct purchase from Enter button
+  const handleDirectPurchase = async (raffleId: number, defaultTicketAmount: number = 1) => {
+    if (!raffleId || defaultTicketAmount <= 0 || !walletAddress) {
+      setMessage('Please check your wallet connection and try again')
+      return
+    }
+
+    const raffle = raffles.find(r => r.id === raffleId)
+    if (!raffle) {
+      setMessage('Raffle not found')
+      return
+    }
+
+    const totalCost = raffle.ticketPrice * defaultTicketAmount
+    if (totalCost > balance) {
+      setMessage('Insufficient balance')
+      return
+    }
+
+    // Set the selected raffle for visual feedback
+    setSelectedRaffle(raffleId)
+    setTicketAmount(defaultTicketAmount)
+
+    // Reset message
+    setMessage('')
+    
+    try {
+      // Subtract cost from balance immediately for better UX
+      const newBalance = balance - totalCost
+      setBalance(newBalance)
+      
+      // Update also in localStorage
+      const lightningBalances = JSON.parse(localStorage.getItem('lightningBalances') || '{}')
+      lightningBalances[walletAddress] = newBalance
+      localStorage.setItem('lightningBalances', JSON.stringify(lightningBalances))
+      
+      // Set a timestamp for when we last updated the balance
+      localStorage.setItem('lastBalanceFetch', Date.now().toString())
+
+      // Make API call to purchase tickets
+      const response = await fetch('/api/raffle/purchase', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          walletAddress,
+          raffleId: raffleId,
+          ticketAmount: defaultTicketAmount
+        }),
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        // Reverse the balance change if there's an error
+        setBalance(balance)
+        
+        // Also update localStorage to revert the balance
+        lightningBalances[walletAddress] = balance
+        localStorage.setItem('lightningBalances', JSON.stringify(lightningBalances))
+        
+        throw new Error(error.error || 'Failed to purchase tickets')
+      }
+
+      const data = await response.json()
+      
+      // Gebruik de nieuwe balans die door de server is teruggestuurd
+      if (data.newBalance !== undefined) {
+        // Update de balans met de waarde van de server
+        const serverBalance = data.newBalance
+        setBalance(serverBalance)
+        
+        // Update localStorage met de nieuwe balans van de server
+        lightningBalances[walletAddress] = serverBalance
+        localStorage.setItem('lightningBalances', JSON.stringify(lightningBalances))
+      }
+      
+      // Update local state with new tickets
+      const updatedRaffles = raffles.map(raffle => {
+        if (raffle.id === raffleId) {
+          return {
+            ...raffle,
+            soldTickets: raffle.soldTickets + defaultTicketAmount
+          }
+        }
+        return raffle
+      })
+      setRaffles(updatedRaffles)
+      
+      // Update user tickets
+      setUserTickets(prev => ({
+        ...prev,
+        [raffleId]: (prev[raffleId] || 0) + defaultTicketAmount
+      }))
+      
+      // Show success message
+      setMessage(`Successfully purchased ${defaultTicketAmount} ticket${defaultTicketAmount > 1 ? 's' : ''}!`)
+      
+      // Reset selection after successful purchase
+      setTimeout(() => {
+        setSelectedRaffle(null)
+        setTicketAmount(1)
+      }, 2000)
+    } catch (err: any) {
+      setMessage(err.message || 'An error occurred')
+      // Reset selection on error
+      setSelectedRaffle(null)
+      setTicketAmount(1)
+    }
+  }
+
   const handlePurchase = async () => {
     if (!selectedRaffle || ticketAmount <= 0 || !walletAddress) {
       setMessage('Please select a raffle and enter a valid ticket amount')
@@ -1270,10 +1381,9 @@ export default function RafflePage() {
                         className="enter-button"
                         onClick={(e) => {
                           e.stopPropagation();
-                          setSelectedRaffle(raffle.id);
-                          handlePurchase();
+                          handleDirectPurchase(raffle.id, selectedRaffle === raffle.id ? ticketAmount : 1);
                         }}
-                        disabled={isEnded || balance < (raffle.ticketPrice * (selectedRaffle === raffle.id ? ticketAmount : 1))}
+                        disabled={isEnded || balance < raffle.ticketPrice}
                       >
                         {isEnded ? 'Ended' : 'Enter'}
                       </button>
