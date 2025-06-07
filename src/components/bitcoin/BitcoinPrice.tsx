@@ -23,7 +23,7 @@ export default function BitcoinPrice() {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const { connectedWallet, walletAddress, connectXverse, connectMagicEden, disconnectWallet } = useWallet();
-  const { balance: contextBalance, setBalance, withdraw, generateInvoice, isInitialized, pendingWithdrawal: contextPendingWithdrawal } = useLightning();
+  const { balance: contextBalance, setBalance, withdraw, generateInvoice, isInitialized, pendingWithdrawal: contextPendingWithdrawal, fetchBalance } = useLightning();
   
   // Nieuwe functie om de actuele balans op te halen
   const fetchActualBalance = async () => {
@@ -131,28 +131,52 @@ export default function BitcoinPrice() {
         return;
       }
 
-      if (withdrawAmount > contextBalance) {
-        setErrorMessage('Insufficient balance');
-        setShowErrorAlert(true);
-        return;
+      // First, refresh the balance from the server to ensure we have the latest balance
+      console.log('Refreshing balance before withdrawal validation...');
+      setPendingWithdrawal(true);
+      
+      try {
+        // Use fetchBalance from Lightning context which returns the balance value
+        const freshBalance = await fetchBalance();
+        console.log('Fresh balance for withdrawal validation:', freshBalance);
+        
+        // Use the fresh balance for validation instead of cached contextBalance
+        if (withdrawAmount > freshBalance) {
+          setErrorMessage(`Insufficient balance. Current balance: ${freshBalance} sats, requested: ${withdrawAmount} sats`);
+          setShowErrorAlert(true);
+          setPendingWithdrawal(false);
+          return;
+        }
+      } catch (balanceError) {
+        console.error('Error fetching fresh balance:', balanceError);
+        // Fallback to contextBalance if fresh balance fetch fails
+        if (withdrawAmount > contextBalance) {
+          setErrorMessage('Insufficient balance (using cached balance). Please refresh and try again.');
+          setShowErrorAlert(true);
+          setPendingWithdrawal(false);
+          return;
+        }
       }
 
       if (!invoice || !invoice.startsWith('lnbc')) {
         setErrorMessage('Please enter a valid Lightning invoice');
         setShowErrorAlert(true);
+        setPendingWithdrawal(false);
         return;
       }
 
-      setPendingWithdrawal(true);
-
+      console.log('Proceeding with withdrawal after balance validation...');
+      
       await withdraw(withdrawAmount, invoice);
       
       setShowWithdrawModal(false);
       setInvoice('');
       setShowSuccessAlert(true);
       
-      // Haal de bijgewerkte balans op na een succesvolle withdraw
-      fetchActualBalance();
+      // Refresh balance again after successful withdrawal
+      setTimeout(() => {
+        fetchBalance();
+      }, 1000);
     } catch (error) {
       console.error('Error withdrawing:', error);
       setErrorMessage(error instanceof Error ? error.message : 'Failed to process withdrawal');
