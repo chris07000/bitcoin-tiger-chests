@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile } from 'fs/promises';
-import { join } from 'path';
+import { put } from '@vercel/blob';
 import { v4 as uuidv4 } from 'uuid';
 
 // Admin API key voor beveiliging
@@ -14,6 +13,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'Unauthorized: Invalid API key' },
         { status: 401 }
+      );
+    }
+
+    // Check if Blob storage is configured
+    if (!process.env.BLOB_READ_WRITE_TOKEN) {
+      return NextResponse.json(
+        { 
+          error: 'Image upload not configured. Please add BLOB_READ_WRITE_TOKEN to your Vercel environment variables.',
+          hint: 'Go to Vercel Dashboard → Project Settings → Environment Variables'
+        },
+        { status: 503 }
       );
     }
 
@@ -49,30 +59,26 @@ export async function POST(request: NextRequest) {
     // Maak een unieke bestandsnaam
     const fileExt = file.name.split('.').pop();
     const fileName = `raffle-${uuidv4()}.${fileExt}`;
-    const filePath = join(process.cwd(), 'public', 'uploads', fileName);
 
-    // Converteer het bestand naar een ArrayBuffer
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-
-    // Schrijf het bestand naar de publieke map
     try {
-      await writeFile(filePath, buffer);
+      // Upload naar Vercel Blob Storage
+      const blob = await put(fileName, file, {
+        access: 'public',
+      });
+
+      console.log('Image uploaded to Vercel Blob:', blob.url);
+      
+      return NextResponse.json({
+        success: true,
+        filePath: blob.url // Return the full Blob URL
+      });
     } catch (error) {
-      console.error('Error writing file to disk:', error);
+      console.error('Error uploading to Vercel Blob:', error);
       return NextResponse.json(
-        { error: 'Failed to save the image' },
+        { error: 'Failed to save the image to cloud storage' },
         { status: 500 }
       );
     }
-
-    // Return het pad naar het bestand
-    const publicPath = `/uploads/${fileName}`;
-    
-    return NextResponse.json({
-      success: true,
-      filePath: publicPath
-    });
   } catch (error) {
     console.error('Error uploading image:', error);
     return NextResponse.json(
