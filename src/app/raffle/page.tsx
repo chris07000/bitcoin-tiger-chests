@@ -9,7 +9,6 @@ export default function RafflePage() {
   const [selectedRaffle, setSelectedRaffle] = useState<number | null>(null)
   const [message, setMessage] = useState<string>('')
   const [walletAddress, setWalletAddress] = useState<string>('')
-  const [balance, setLocalBalance] = useState<number>(0)
   const [userTickets, setUserTickets] = useState<{[key: number]: number}>({})
   const [raffles, setRaffles] = useState<Array<{
     id: number,
@@ -29,20 +28,20 @@ export default function RafflePage() {
   const [categoryFilter, setcategoryFilter] = useState<string>('all')
   const [sortBy, setSortBy] = useState<string>('end_time') // 'end_time', 'price_low', 'price_high'
   const [refreshingBalance, setRefreshingBalance] = useState<boolean>(false)
-  const { setBalance, fetchBalance } = useLightning()
+  const { balance, setBalance, fetchBalance, walletAddress: contextWalletAddress } = useLightning()
   // Ref voor de timer
   const timerRef = useRef<NodeJS.Timeout | null>(null)
   // State voor de huidige tijd, gebruikt om de timers te forceren om bij te werken
   const [currentTime, setCurrentTime] = useState<number>(Date.now())
 
   useEffect(() => {
-    // Get wallet address and balance from localStorage
-    const storedWallet = localStorage.getItem('walletAddress')
+    // Use wallet address from LightningContext or localStorage as fallback
+    const storedWallet = contextWalletAddress || localStorage.getItem('walletAddress')
     if (storedWallet) {
-      const lightningBalances = JSON.parse(localStorage.getItem('lightningBalances') || '{}')
-      const currentBalance = lightningBalances[storedWallet] || 0
       setWalletAddress(storedWallet)
-      setLocalBalance(currentBalance)
+      
+      // No need to fetch balance here since LightningContext handles it
+      console.log('Raffle: Using wallet from context:', storedWallet, 'Balance:', balance)
     }
 
     // Fetch raffle data from API
@@ -200,7 +199,7 @@ export default function RafflePage() {
     try {
       // Subtract cost from balance immediately for better UX
       const newBalance = balance - totalCost
-      setLocalBalance(newBalance)
+      setBalance(newBalance)
       
       // Update the global balance in the Lightning context
       setBalance(newBalance)
@@ -229,7 +228,6 @@ export default function RafflePage() {
       if (!response.ok) {
         const error = await response.json()
         // Reverse the balance change if there's an error
-        setLocalBalance(balance)
         setBalance(balance)
         
         // Also update localStorage to revert the balance
@@ -245,7 +243,6 @@ export default function RafflePage() {
       if (data.newBalance !== undefined) {
         // Update de balans met de waarde van de server
         const serverBalance = data.newBalance
-        setLocalBalance(serverBalance)
         setBalance(serverBalance)
         
         // Update localStorage met de nieuwe balans van de server
@@ -335,7 +332,7 @@ export default function RafflePage() {
     try {
       const newBalance = await fetchBalance();
       if (newBalance !== undefined) {
-        setLocalBalance(newBalance);
+        setBalance(newBalance);
         
         // Update ook in localStorage
         const lightningBalances = JSON.parse(localStorage.getItem('lightningBalances') || '{}');
