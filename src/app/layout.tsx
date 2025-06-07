@@ -19,14 +19,9 @@ export const metadata: Metadata = {
   title: 'Bitcoin Tiger Chests - Ultimate Bitcoin Gaming',
   description: 'Open mystery chests, win Bitcoin prizes, and stake your Bitcoin Tigers NFTs in the ultimate Bitcoin gaming experience.',
   icons: {
-    icon: [
-      { url: '/tiger-pixel.png' },
-      { url: '/tiger-pixel.png', sizes: '32x32', type: 'image/png' },
-    ],
-    apple: [
-      { url: '/tiger-pixel.png', sizes: '180x180', type: 'image/png' },
-    ],
+    icon: '/tiger-pixel.png',
     shortcut: '/tiger-pixel.png',
+    apple: '/tiger-pixel.png',
   },
 }
 
