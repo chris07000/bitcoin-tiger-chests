@@ -153,10 +153,25 @@ export const LightningProvider = ({ children }: { children: ReactNode }) => {
         console.log('Lightning: Initializing for wallet:', walletAddress);
         setIsInitialized(false);
         
-        // Als er geen wallet is, zet initialized op true maar zonder data
+        // Als er geen wallet is en WalletContext heeft ook geen wallet, dan is het ok om initialized=true te zetten
+        // Maar als WalletContext nog aan het laden is (zoals bij Magic Eden), wacht dan
         if (!walletAddress) {
-          console.log('Lightning: No wallet connected, setting initialized=true');
-          setIsInitialized(true);
+          // Check if WalletContext is still loading by checking if we're in the middle of a connection process
+          const isWalletContextLoading = contextWalletAddress === null && typeof window !== 'undefined';
+          
+          if (!isWalletContextLoading) {
+            console.log('Lightning: No wallet connected and WalletContext not loading, setting initialized=true');
+            setIsInitialized(true);
+          } else {
+            console.log('Lightning: No wallet connected but WalletContext might be loading, waiting...');
+            // Don't set initialized to true yet, wait for wallet to be set or timeout
+            setTimeout(() => {
+              if (!walletAddress) {
+                console.log('Lightning: Timeout waiting for wallet, setting initialized=true');
+                setIsInitialized(true);
+              }
+            }, 5000); // 5 second timeout
+          }
           return;
         }
         
@@ -201,15 +216,20 @@ export const LightningProvider = ({ children }: { children: ReactNode }) => {
     };
 
     initializeWallet();
-  }, [walletAddress, isClient]);
+  }, [walletAddress, isClient, contextWalletAddress]);
 
   const generateInvoice = async (amount: number, memo?: string): Promise<InvoiceResponse> => {
     try {
       console.log('generateInvoice called with:', { amount, memo });
       
-      if (!walletAddress || !isInitialized) {
-        console.error('Wallet not ready:', { walletAddress, isInitialized });
-        throw new Error('Please wait while we connect to your wallet');
+      if (!walletAddress) {
+        console.error('No wallet connected');
+        throw new Error('Please connect your wallet first');
+      }
+      
+      if (!isInitialized) {
+        console.error('Lightning context not initialized yet');
+        throw new Error('Lightning is initializing, please wait a moment...');
       }
 
       const baseUrl = typeof window !== 'undefined' ? 

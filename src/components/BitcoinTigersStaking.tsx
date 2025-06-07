@@ -2672,10 +2672,10 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
             
             {/* Unstaked Bitcoin Tigers */}
             <div className="ordinal-category">
-              <h4>Available Bitcoin Tigers ({userTigers.filter(t => !isRuneGuardian(t) && !isTaprootAlpha(t)).length})</h4>
+              <h4>Available Bitcoin Tigers ({userTigers.filter(t => !isRuneGuardian(t) && !isTaprootAlpha(t) && !stakedTigers.some(st => st.id === t.id)).length})</h4>
               <div className="ordinals-grid">
                 {userTigers
-                  .filter(tiger => !isRuneGuardian(tiger) && !isTaprootAlpha(tiger))
+                  .filter(tiger => !isRuneGuardian(tiger) && !isTaprootAlpha(tiger) && !stakedTigers.some(st => st.id === tiger.id))
                   .map((tiger: BitcoinTiger) => {
                     const isSelected = selectedTiger === tiger.id;
                     
@@ -2713,7 +2713,7 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
                     );
                   })}
                 
-                {userTigers.filter(t => !isRuneGuardian(t) && !isTaprootAlpha(t)).length === 0 && (
+                {userTigers.filter(t => !isRuneGuardian(t) && !isTaprootAlpha(t) && !stakedTigers.some(st => st.id === t.id)).length === 0 && (
                   <div className="no-items">No Bitcoin Tigers available</div>
                 )}
               </div>
