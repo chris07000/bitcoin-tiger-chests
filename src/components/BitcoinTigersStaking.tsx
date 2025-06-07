@@ -985,7 +985,7 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
       let fetchedTigers: BitcoinTiger[] = [];
       
       try {
-        setMessage('Loading your Bitcoin Tigers collection... This may take a moment for large collections.');
+        setMessage('Loading Bitcoin Tigers...');
         setMessageType('warning');
         
         fetchedTigers = await tigerApiService.fetchTigers(effectiveWalletAddress);

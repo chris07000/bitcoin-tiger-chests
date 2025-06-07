@@ -28,7 +28,7 @@ export async function GET(
       const response = await axios.get('https://api-mainnet.magiceden.dev/v2/ord/btc/wallets/tokens', {
         params: { 
           wallet: walletAddress,
-          limit: 200, // Verhoog van 100 naar 200 voor grotere collecties
+          limit: 100, // Terug naar 100 voor betrouwbaarheid
           offset: 0,
           // Momenteel filteren we op client side door bekende IDs te checken
           // collectionSymbol: 'tigers', // Bitcoin Tigers collectie
@@ -38,7 +38,7 @@ export async function GET(
         headers: {
           'Accept': 'application/json'
         },
-        timeout: 15000 // Verhoog timeout naar 15 seconden
+        timeout: 10000 // Terug naar 10 seconden voor snelheid
       });
       
       if (response.data && response.data.tokens) {
@@ -160,8 +160,8 @@ export async function GET(
         // Array om alle inscriptions op te slaan
         let allInscriptions: any[] = [];
         let offset = 0;
-        const limit = 25; // Kleinere batches voor minder rate limiting
-        const maxInscriptions = 1000; // Verhoog maximum voor grote collecties
+        const limit = 50; // Verhoog batch size voor snellere loading
+        const maxInscriptions = 500; // Verminder voor betrouwbaarheid, maar meer dan voorheen
         let hasMore = true;
         
         // Fetch inscriptions met paginatie
@@ -190,8 +190,8 @@ export async function GET(
             
             // Voeg delay toe tussen requests om rate limiting te voorkomen
             if (hasMore) {
-              console.log('Waiting 500ms before next batch...');
-              await new Promise(resolve => setTimeout(resolve, 500));
+              console.log('Waiting 100ms before next batch...');
+              await new Promise(resolve => setTimeout(resolve, 100));
             }
           } else {
             hasMore = false;
