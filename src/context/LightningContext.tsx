@@ -49,16 +49,20 @@ export const LightningProvider = ({ children }: { children: ReactNode }) => {
   const [isClient, setIsClient] = useState(false);
   const [lastBalanceFetch, setLastBalanceFetch] = useState<number>(0);
 
+  // Get wallet from parent context
+  const { walletAddress: contextWalletAddress } = useWallet();
+
   useEffect(() => {
     setIsClient(true);
   }, []);
 
+  // Sync wallet address from WalletContext
   useEffect(() => {
-    if (!isClient) return;
-
-    // Initialize wallet address from session or API
-    // This is now handled by parent context or direct authentication
-  }, [isClient]);
+    if (contextWalletAddress !== walletAddress) {
+      console.log('Lightning: Syncing wallet address:', contextWalletAddress);
+      setWalletAddress(contextWalletAddress);
+    }
+  }, [contextWalletAddress, walletAddress]);
 
   // Utility functie om balans en timestamp in één keer bij te werken
   const updateBalanceWithTimestamp = (newBalance: number) => {
@@ -142,12 +146,19 @@ export const LightningProvider = ({ children }: { children: ReactNode }) => {
 
   // Laad wallet data van de backend
   useEffect(() => {
-    if (!isClient || !walletAddress) return;
+    if (!isClient) return;
 
     const initializeWallet = async () => {
       try {
-        console.log('Initializing wallet for:', walletAddress);
+        console.log('Lightning: Initializing for wallet:', walletAddress);
         setIsInitialized(false);
+        
+        // Als er geen wallet is, zet initialized op true maar zonder data
+        if (!walletAddress) {
+          console.log('Lightning: No wallet connected, setting initialized=true');
+          setIsInitialized(true);
+          return;
+        }
         
         if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname.includes('192.168.'))) {
           console.log('On local IP: Using local wallet initialization');
@@ -190,7 +201,7 @@ export const LightningProvider = ({ children }: { children: ReactNode }) => {
     };
 
     initializeWallet();
-  }, [walletAddress, isClient, balance]);
+  }, [walletAddress, isClient]);
 
   const generateInvoice = async (amount: number, memo?: string): Promise<InvoiceResponse> => {
     try {
