@@ -48,6 +48,7 @@ export const LightningProvider = ({ children }: { children: ReactNode }) => {
   const [pendingWithdrawal, setPendingWithdrawal] = useState<boolean>(false);
   const [isClient, setIsClient] = useState(false);
   const [lastBalanceFetch, setLastBalanceFetch] = useState<number>(0);
+  const [lastInitialization, setLastInitialization] = useState<number>(0);
 
   // Get wallet from parent context
   const { walletAddress: contextWalletAddress, isLoading: walletIsLoading, isInitialized: walletIsInitialized } = useWallet();
@@ -95,11 +96,22 @@ export const LightningProvider = ({ children }: { children: ReactNode }) => {
           return;
         }
         
+        // Voeg caching toe voor initialization om database load te verminderen
+        const now = Date.now();
+        const initCacheTime = 30000; // 30 seconden cache voor initialization
+        
+        if (lastInitialization && (now - lastInitialization < initCacheTime)) {
+          console.log(`Lightning: Skipping initialization - last init was ${now - lastInitialization}ms ago`);
+          setIsInitialized(true);
+          return;
+        }
+        
         if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname.includes('192.168.'))) {
           console.log('Lightning: On local IP - using local wallet initialization');
           setBalance(0);
           setTransactions([]);
           setIsInitialized(true);
+          setLastInitialization(now);
           console.log('Lightning: Local wallet initialization complete with balance: 0');
           return;
         }
@@ -107,13 +119,29 @@ export const LightningProvider = ({ children }: { children: ReactNode }) => {
         const baseUrl = typeof window !== 'undefined' ? 
           (process.env.NEXT_PUBLIC_API_BASE_URL || window.location.origin) : '';
         
-        // Eerst initialiseren
-        const initResponse = await fetch(`${baseUrl}/api/wallet/${walletAddress}`, {
-          method: 'PUT'
-        });
+        // Controleer eerst of wallet al bestaat voordat we initialiseren
+        let needsInit = false;
+        try {
+          const checkResponse = await fetch(`${baseUrl}/api/wallet/${walletAddress}`);
+          if (!checkResponse.ok) {
+            needsInit = true;
+          }
+        } catch (error) {
+          needsInit = true;
+        }
         
-        if (!initResponse.ok) {
-          throw new Error('Failed to initialize wallet');
+        // Alleen initialiseren als nodig
+        if (needsInit) {
+          console.log('Lightning: Wallet needs initialization');
+          const initResponse = await fetch(`${baseUrl}/api/wallet/${walletAddress}`, {
+            method: 'PUT'
+          });
+          
+          if (!initResponse.ok) {
+            throw new Error('Failed to initialize wallet');
+          }
+        } else {
+          console.log('Lightning: Wallet already exists, skipping initialization');
         }
 
         // Dan data ophalen
@@ -122,12 +150,12 @@ export const LightningProvider = ({ children }: { children: ReactNode }) => {
 
         const data = await response.json();
         console.log('Lightning: Loaded wallet data:', data);
-        console.log('Lightning: Current balance state before update:', balance);
         
         // Always use the server's balance value for consistency
         setBalance(data.balance);
         setTransactions(data.transactions);
         setIsInitialized(true);
+        setLastInitialization(now);
         console.log('Lightning: Wallet initialization complete with balance:', data.balance);
       } catch (error) {
         console.error('Lightning: Error initializing wallet:', error);
@@ -177,29 +205,27 @@ export const LightningProvider = ({ children }: { children: ReactNode }) => {
     try {
       console.log('Fetching current balance from server for:', walletAddress);
       
-      // Controleer eerst of we niet te snel opnieuw ophalen
+      // Verhoog de minimum tijd tussen fetches van 500ms naar 5 seconden
       const now = Date.now();
-      const minTimeBetweenFetches = 500; // minimaal 500ms tussen API calls
+      const minTimeBetweenFetches = 5000; // minimaal 5 seconden tussen API calls
       
       if (lastBalanceFetch && (now - lastBalanceFetch < minTimeBetweenFetches)) {
         console.log(`Skipping balance fetch - last fetch was ${now - lastBalanceFetch}ms ago (min: ${minTimeBetweenFetches}ms)`);
         return balance; // Return huidige balans als we te snel opnieuw proberen op te halen
       }
       
-      // Forceer volledige balans refresh via API, negeer caching
-      const forceRefreshOptions = {
+      // Gebruik normale caching in plaats van force refresh om database load te verminderen
+      const normalOptions = {
         method: 'GET',
         headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0'
+          'Content-Type': 'application/json'
         }
       };
       
       const baseUrl = typeof window !== 'undefined' ? 
         (process.env.NEXT_PUBLIC_API_BASE_URL || window.location.origin) : '';
       
-      const response = await fetch(`${baseUrl}/api/wallet/${walletAddress}`, forceRefreshOptions);
+      const response = await fetch(`${baseUrl}/api/wallet/${walletAddress}`, normalOptions);
       if (!response.ok) {
         console.error('Failed to fetch wallet data:', response.statusText);
         return balance;

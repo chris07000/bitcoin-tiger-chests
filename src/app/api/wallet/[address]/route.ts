@@ -12,6 +12,32 @@ enum TransactionType {
   REWARD = 'REWARD'
 }
 
+// EMERGENCY CACHE to reduce database calls
+const cache = new Map<string, {
+  data: any;
+  timestamp: number;
+}>();
+
+const CACHE_DURATION = 30000; // 30 seconds cache to reduce DB calls
+
+function getCachedResponse(key: string) {
+  const cached = cache.get(key);
+  if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+    console.log(`Cache HIT for ${key}`);
+    return cached.data;
+  }
+  console.log(`Cache MISS for ${key}`);
+  return null;
+}
+
+function setCacheResponse(key: string, data: any) {
+  cache.set(key, {
+    data,
+    timestamp: Date.now()
+  });
+  console.log(`Cached response for ${key}`);
+}
+
 // In-memory fallback for when database is not available
 const fallbackWallets = new Map<string, {
   address: string;
@@ -34,6 +60,13 @@ export async function GET(
     // Veiligheidscheck
     if (!walletAddress || typeof walletAddress !== 'string') {
       return NextResponse.json({ error: "Ongeldig wallet adres" }, { status: 400 });
+    }
+
+    // CHECK CACHE FIRST to reduce database calls
+    const cacheKey = `wallet_${walletAddress}`;
+    const cachedResponse = getCachedResponse(cacheKey);
+    if (cachedResponse) {
+      return NextResponse.json(cachedResponse);
     }
 
     try {
@@ -62,13 +95,18 @@ export async function GET(
           }));
 
           // Return de wallet data met de huidige balans
-          return NextResponse.json({
+          const response = {
             address: wallet.address,
             balance: wallet.balance,
             transactions: formattedTransactions,
             success: true,
             source: 'database'
-          });
+          };
+
+          // CACHE THE RESPONSE to reduce future DB calls
+          setCacheResponse(cacheKey, response);
+          
+          return NextResponse.json(response);
         }
       }
     } catch (dbError) {
@@ -78,13 +116,18 @@ export async function GET(
     // Fallback to in-memory storage
     const fallbackWallet = fallbackWallets.get(walletAddress);
     if (fallbackWallet) {
-      return NextResponse.json({
+      const response = {
         address: fallbackWallet.address,
         balance: fallbackWallet.balance,
         transactions: fallbackWallet.transactions,
         success: true,
         source: 'memory'
-      });
+      };
+
+      // CACHE THE FALLBACK RESPONSE too
+      setCacheResponse(cacheKey, response);
+
+      return NextResponse.json(response);
     }
 
     // Als de wallet niet bestaat, return een 404
@@ -113,6 +156,11 @@ export async function PUT(
     if (!walletAddress || typeof walletAddress !== 'string') {
       return NextResponse.json({ error: "Ongeldig wallet adres" }, { status: 400 });
     }
+
+    // INVALIDATE CACHE when wallet is modified
+    const cacheKey = `wallet_${walletAddress}`;
+    cache.delete(cacheKey);
+    console.log(`Cache invalidated for ${cacheKey} due to PUT request`);
 
     let wallet = null;
     let isNewWallet = false;
@@ -172,14 +220,18 @@ export async function PUT(
       source = 'memory';
     }
 
-    // Return de wallet data
-    return NextResponse.json({
+    // CACHE THE RESPONSE to reduce future calls
+    const response = {
       address: wallet.address,
       balance: wallet.balance,
       created: isNewWallet,
       source: source,
       success: true
-    });
+    };
+    setCacheResponse(cacheKey, response);
+
+    // Return de wallet data
+    return NextResponse.json(response);
   } catch (error) {
     console.error("Error initializing wallet:", error);
     return NextResponse.json(
@@ -204,6 +256,8 @@ export async function POST(
     const { address } = await context.params;
     const { type, amount, paymentHash } = await request.json();
 
+    console.log(`POST /api/wallet/${address} - ${type} ${amount} sats`);
+
     // Validate transaction type
     if (!Object.values(TransactionType).includes(type)) {
       return NextResponse.json(
@@ -211,6 +265,11 @@ export async function POST(
         { status: 400 }
       );
     }
+
+    // INVALIDATE CACHE when balance is updated
+    const cacheKey = `wallet_${address}`;
+    cache.delete(cacheKey);
+    console.log(`Cache invalidated for ${cacheKey} due to balance update`);
 
     let wallet = null;
     let source = 'memory';
@@ -273,6 +332,15 @@ export async function POST(
             source
           };
 
+          // CACHE THE UPDATED WALLET DATA
+          setCacheResponse(cacheKey, {
+            address: result[1].address,
+            balance: Number(result[1].balance),
+            transactions: [], // We could fetch these but for performance, keep empty
+            success: true,
+            source
+          });
+
           return NextResponse.json(serializedWallet);
         }
       }
@@ -311,6 +379,15 @@ export async function POST(
       paymentHash,
       status: 'COMPLETED',
       createdAt: new Date()
+    });
+
+    // CACHE THE UPDATED FALLBACK DATA
+    setCacheResponse(cacheKey, {
+      address: fallbackWallet.address,
+      balance: fallbackWallet.balance,
+      transactions: fallbackWallet.transactions,
+      success: true,
+      source: 'memory'
     });
 
     return NextResponse.json({

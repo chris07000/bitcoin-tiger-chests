@@ -3,6 +3,37 @@ import { prisma } from '@/lib/prisma';
 // We're not importing TigerStaking from prisma/generated-client because the file doesn't exist
 // Instead, we're using 'any' type for now to avoid linter errors
 
+// EMERGENCY CACHE to reduce database calls
+const stakingStatusCache = new Map<string, {
+  data: TigerStakingStatus;
+  timestamp: number;
+}>();
+
+const STAKING_CACHE_DURATION = 15000; // 15 seconds cache for staking status
+
+function getCachedStakingStatus(walletAddress: string): TigerStakingStatus | null {
+  const cached = stakingStatusCache.get(walletAddress);
+  if (cached && Date.now() - cached.timestamp < STAKING_CACHE_DURATION) {
+    console.log(`🚀 CACHE HIT for staking status: ${walletAddress}`);
+    return cached.data;
+  }
+  console.log(`❌ CACHE MISS for staking status: ${walletAddress}`);
+  return null;
+}
+
+function setCachedStakingStatus(walletAddress: string, data: TigerStakingStatus) {
+  stakingStatusCache.set(walletAddress, {
+    data,
+    timestamp: Date.now()
+  });
+  console.log(`💾 Cached staking status for ${walletAddress}`);
+}
+
+function invalidateStakingCache(walletAddress: string) {
+  stakingStatusCache.delete(walletAddress);
+  console.log(`🗑️ Invalidated staking cache for ${walletAddress}`);
+}
+
 // Constanten voor staking
 const CHEST_PERIOD_SECONDS = 7 * 24 * 60 * 60; // 7 dagen in seconden voor productie
 export const CHEST_PERIOD = CHEST_PERIOD_SECONDS * 1000; // 7 dagen in milliseconden
@@ -363,29 +394,40 @@ export class TigerStakingService {
   // Get staking status for a wallet
   async getTigerStakingStatus(walletAddress: string): Promise<TigerStakingStatus> {
     try {
+      // CHECK CACHE FIRST to prevent excessive database calls
+      const cachedStatus = getCachedStakingStatus(walletAddress);
+      if (cachedStatus) {
+        return cachedStatus;
+      }
+
       if (!prisma) {
         console.error('Prisma client is not initialized');
         throw new Error('Database connection not available');
       }
 
       // Vind de wallet in de database
-      const wallet = await prisma.wallet.findUnique({
+      const wallet = await (prisma as any).wallet.findUnique({
         where: { address: walletAddress }
       });
       
       if (!wallet) {
         console.log(`Wallet ${walletAddress} not found, returning empty staking status`);
-        return {
+        const emptyStatus = {
           stakedTigers: [],
           stakedInfo: [], // Voor compatibiliteit met de frontend
           totalStaked: 0,
           availableChests: 0,
           nextChestDate: 0
         };
+        
+        // CACHE EMPTY STATUS too to reduce DB calls
+        setCachedStakingStatus(walletAddress, emptyStatus);
+        
+        return emptyStatus;
       }
       
       // Haal alle actieve staked tigers op voor deze wallet
-      const stakedTigers = await prisma.tigerStaking.findMany({
+      const stakedTigers = await (prisma as any).tigerStaking.findMany({
         where: {
           walletId: wallet.id,
           isActive: true
@@ -432,13 +474,18 @@ export class TigerStakingService {
       console.log(`- Next chest date: ${nextChestDate > 0 ? new Date(nextChestDate).toISOString() : 'None'}`);
       console.log(`- Staked tigers info:`, stakedTigersInfo);
       
-      return {
+      const result = {
         stakedTigers: stakedTigersInfo, // Dit was eerst een array, nu is het aantal
         stakedInfo: stakedTigersInfo, // Extra veld voor compatibiliteit met de frontend
         totalStaked: stakedTigersInfo.length,
         availableChests,
         nextChestDate
       };
+
+      // CACHE THE RESULT to reduce future DB calls
+      setCachedStakingStatus(walletAddress, result);
+      
+      return result;
     } catch (error) {
       console.error('Error getting tiger staking status:', error);
       throw error;
@@ -448,6 +495,9 @@ export class TigerStakingService {
   // Stake een Bitcoin Tiger
   async stakeTiger(walletAddress: string, tigerId: string, tigerData: any): Promise<TigerStakingStatus> {
     console.log(`Staking Bitcoin Tiger ${tigerId} for wallet ${walletAddress}`);
+    
+    // INVALIDATE CACHE when staking data changes
+    invalidateStakingCache(walletAddress);
     
     try {
       if (!prisma) {

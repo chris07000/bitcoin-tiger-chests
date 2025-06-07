@@ -281,10 +281,10 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
   const [isClient, setIsClient] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
 
-  // Add caching variables
+  // Add caching variables - verhoog cache duration
   const [lastDataLoad, setLastDataLoad] = useState<number>(0);
   const [loadingLock, setLoadingLock] = useState<boolean>(false);
-  const DATA_CACHE_DURATION = 30000; // 30 seconds cache
+  const DATA_CACHE_DURATION = 60000; // Verhoog van 30 naar 60 seconden cache
 
   // Effect to mark when we're on the client side
   useEffect(() => {
@@ -325,6 +325,14 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
     }
     
     console.log('BitcoinTigersStaking: All contexts ready, proceeding with data loading...');
+    
+    // Voeg extra cache check toe om te voorkomen dat we te vaak data laden
+    const now = Date.now();
+    if (lastDataLoad && (now - lastDataLoad < DATA_CACHE_DURATION)) {
+      console.log('BitcoinTigersStaking: Using cached data, skipping data load');
+      setIsLoading(false);
+      return;
+    }
     
     // Now we can safely load data
     if (walletAddress && walletAddress.trim() !== '') {
