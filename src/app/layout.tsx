@@ -32,11 +32,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <head>
-        <link rel="icon" href="/tiger-pixel.png" type="image/png" />
-        <link rel="shortcut icon" href="/tiger-pixel.png" type="image/png" />
-        <link rel="apple-touch-icon" href="/tiger-pixel.png" />
-      </head>
       <body className={`${inter.variable} ${roboto.variable} ${pressStart2P.variable} antialiased`}>
         <ClientLayout>
           {children}
