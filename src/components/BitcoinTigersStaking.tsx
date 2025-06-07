@@ -405,6 +405,160 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
     }
   };
 
+  // Enhanced image loading with multiple fallbacks and retry mechanism
+  const getImageWithFallbacks = (tiger: any): string[] => {
+    const fallbacks = [];
+    
+    // Primary image from tiger data
+    if (tiger.image && !failedImages.has(tiger.id)) {
+      fallbacks.push(tiger.image);
+    }
+    
+    // Deterministic tiger-pixel fallback based on ID
+    const tigerNum = (parseInt(tiger.id.substring(0, 8), 16) % 5) + 1;
+    fallbacks.push(`/tiger-pixel${tigerNum}.png`);
+    
+    // Additional fallbacks
+    fallbacks.push('/tiger-pixel1.png');
+    fallbacks.push('/tiger-logo.png');
+    
+    return fallbacks;
+  };
+
+  // Enhanced image error handler with retry mechanism
+  const handleImageError = (tigerId: string, currentSrc: string, fallbacks: string[], retryCount: number = 0) => {
+    console.log(`Image failed for tiger ${tigerId}: ${currentSrc}, retry: ${retryCount}`);
+    
+    // Mark this image as failed
+    markImageAsFailed(tigerId);
+    
+    // Find next fallback
+    const currentIndex = fallbacks.indexOf(currentSrc);
+    const nextIndex = currentIndex + 1;
+    
+    if (nextIndex < fallbacks.length) {
+      // Try next fallback
+      return fallbacks[nextIndex];
+    } else if (retryCount < 2) {
+      // Retry with delay (for network issues)
+      setTimeout(() => {
+        const img = document.querySelector(`img[data-tiger-id="${tigerId}"]`) as HTMLImageElement;
+        if (img && fallbacks[0]) {
+          img.src = fallbacks[0];
+        }
+      }, 1000 * (retryCount + 1));
+      
+      return fallbacks[0]; // Return first fallback for now
+    } else {
+      // Final fallback
+      return '/tiger-pixel1.png';
+    }
+  };
+
+  // Loading placeholder component
+  const ImagePlaceholder = ({ width = 180, height = 180, tigerId }: { width?: number, height?: number, tigerId: string }) => (
+    <div 
+      className="image-placeholder"
+      style={{
+        width: `${width}px`,
+        height: `${height}px`,
+        backgroundColor: '#171a2d',
+        border: '2px solid #333',
+        borderRadius: '8px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'column',
+        color: '#666'
+      }}
+    >
+      <div style={{ fontSize: '24px', marginBottom: '8px' }}>🐅</div>
+      <div style={{ fontSize: '12px' }}>Loading...</div>
+    </div>
+  );
+
+  // Enhanced Image component with robust error handling
+  const RobustTigerImage = ({ 
+    tiger, 
+    width = 180, 
+    height = 180, 
+    className = "tiger-image",
+    showPlaceholder = true 
+  }: { 
+    tiger: any, 
+    width?: number, 
+    height?: number, 
+    className?: string,
+    showPlaceholder?: boolean 
+  }) => {
+    const [currentSrc, setCurrentSrc] = useState<string>('');
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [hasError, setHasError] = useState<boolean>(false);
+    const [retryCount, setRetryCount] = useState<number>(0);
+    
+    const fallbacks = getImageWithFallbacks(tiger);
+    
+    useEffect(() => {
+      if (fallbacks.length > 0) {
+        setCurrentSrc(fallbacks[0]);
+        setIsLoading(true);
+        setHasError(false);
+      }
+    }, [tiger.id]);
+    
+    const handleError = () => {
+      const currentIndex = fallbacks.indexOf(currentSrc);
+      const nextIndex = currentIndex + 1;
+      
+      if (nextIndex < fallbacks.length) {
+        // Try next fallback immediately
+        setCurrentSrc(fallbacks[nextIndex]);
+        setRetryCount(prev => prev + 1);
+      } else if (retryCount < 2) {
+        // Retry first image after delay
+        setTimeout(() => {
+          setCurrentSrc(fallbacks[0]);
+          setRetryCount(prev => prev + 1);
+        }, 2000);
+      } else {
+        // Give up, show final fallback
+        setHasError(true);
+        setIsLoading(false);
+        setCurrentSrc('/tiger-pixel1.png');
+      }
+      
+      markImageAsFailed(tiger.id);
+    };
+    
+    const handleLoad = () => {
+      setIsLoading(false);
+      setHasError(false);
+    };
+    
+    if (isLoading && showPlaceholder && !currentSrc) {
+      return <ImagePlaceholder width={width} height={height} tigerId={tiger.id} />;
+    }
+    
+    return (
+      <Image 
+        src={currentSrc}
+        alt={tiger.name || 'Bitcoin Tiger'}
+        width={width}
+        height={height}
+        className={`${className} ${isLoading ? 'loading' : ''} ${hasError ? 'error' : ''}`}
+        data-tiger-id={tiger.id}
+        unoptimized={true}
+        onLoad={handleLoad}
+        onError={handleError}
+        style={{
+          opacity: isLoading ? 0.7 : 1,
+          transition: 'opacity 0.3s ease',
+          backgroundColor: isLoading ? '#171a2d' : 'transparent'
+        }}
+      />
+    );
+  };
+
   // Helper om te bepalen of een tiger een Rune Guardian is
   const isRuneGuardian = (tiger: any): boolean => {
     // Early return als tiger niet geldig is
@@ -2685,21 +2839,12 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
                         className={`ordinal-item ${isSelected ? 'selected' : ''}`}
                         onClick={() => setSelectedTiger(tiger.id)}
                       >
-                        <Image 
-                          src={tiger.image || `/tiger-pixel${(parseInt(tiger.id.substring(0, 8), 16) % 5) + 1}.png`}
-                          alt={tiger.name}
+                        <RobustTigerImage 
+                          tiger={tiger}
                           width={180}
                           height={180}
                           className="tiger-image"
-                          unoptimized={true}
-                          onError={(e) => {
-                            // Maak een deterministische keuze voor tiger-afbeelding gebaseerd op het ID
-                            const tigerNum = (parseInt(tiger.id.substring(0, 8), 16) % 5) + 1;
-                            // Fallback naar een unieke tiger afbeelding
-                            (e.target as HTMLImageElement).src = `/tiger-pixel${tigerNum}.png`;
-                            // Markeer als gefaald
-                            markImageAsFailed(tiger.id);
-                          }}
+                          showPlaceholder={true}
                         />
                         <div className="tiger-name">{tiger.name}</div>
                         
@@ -2782,17 +2927,12 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
                         className={`ordinal-item ${isSelected ? 'selected' : ''} on-mission ${isEligibleForClaim ? 'ready-for-chest' : ''}`}
                         onClick={() => setSelectedStakedTiger(tiger.id)}
                       >
-                        <Image 
-                          src={tiger.image || ''}
-                          alt={tiger.name}
+                        <RobustTigerImage 
+                          tiger={tiger}
                           width={180}
                           height={180}
                           className="tiger-image"
-                          unoptimized={true}
-                          onError={(e) => {
-                            console.log('Image failed to load for tiger:', tiger.id);
-                            // Just log the error, let the browser handle it
-                          }}
+                          showPlaceholder={true}
                         />
                         <div className="tiger-name">{tiger.name}</div>
                         <div className="mission-badge">ON MISSION</div>
@@ -3753,6 +3893,58 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
           transition: all 0.3s;
           border: 1px solid #333; /* Voeg een subtiele rand toe */
           box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); /* Voeg een schaduw toe */
+        }
+        
+        /* Enhanced image loading states */
+        .tiger-image.loading {
+          opacity: 0.7;
+          filter: blur(1px);
+          background-color: #171a2d;
+        }
+
+        .tiger-image.error {
+          opacity: 0.8;
+          filter: grayscale(0.3);
+          border: 2px solid #ff6b00;
+        }
+
+        .image-placeholder {
+          animation: pulse-loading 1.5s ease-in-out infinite alternate;
+          border: 2px solid #333;
+          box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes pulse-loading {
+          from {
+            opacity: 0.6;
+            transform: scale(0.98);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+
+        /* Fallback image styling */
+        .tiger-image[src*="tiger-pixel"] {
+          border: 2px solid #ff6b00;
+          filter: drop-shadow(0 0 5px rgba(255, 107, 0, 0.3));
+        }
+
+        /* Loading state for images during high traffic */
+        .tiger-image:not([src]), .tiger-image[src=""] {
+          background: linear-gradient(45deg, #171a2d 25%, #1e1e3f 25%, #1e1e3f 50%, #171a2d 50%, #171a2d 75%, #1e1e3f 75%);
+          background-size: 20px 20px;
+          animation: loading-stripes 2s linear infinite;
+        }
+
+        @keyframes loading-stripes {
+          0% {
+            background-position: 0 0;
+          }
+          100% {
+            background-position: 20px 20px;
+          }
         }
         
         .tiger-name {
