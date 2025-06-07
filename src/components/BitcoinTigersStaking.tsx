@@ -4428,56 +4428,92 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
           
           .ordinals-grid {
             gap: 0.5rem;
+            justify-content: center;
           }
           
           .ordinal-item {
-            width: 150px;
-            padding: 0.75rem;
-            margin: 0.5rem;
+            width: 140px; /* Slightly smaller to fit better */
+            padding: 0.5rem;
+            margin: 0.3rem;
+            box-sizing: border-box; /* Include padding and border in width */
+            overflow: hidden; /* Prevent content from overflowing */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
           }
           
           .tiger-image {
-            width: 120px;
-            height: 120px;
-            margin-bottom: 0.75rem;
+            width: 100px !important; /* Force smaller size on mobile */
+            height: 100px !important;
+            max-width: 100px; /* Ensure image doesn't exceed container */
+            max-height: 100px;
+            margin-bottom: 0.5rem;
+            border-radius: 6px;
+            object-fit: cover; /* Maintain aspect ratio */
+            flex-shrink: 0; /* Don't shrink the image */
           }
           
           .tiger-name {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             margin-bottom: 0.3rem;
-            min-height: 1.8rem;
+            min-height: 1.5rem;
+            width: 100%;
+            text-align: center;
+            word-wrap: break-word;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
           }
           
           .mission-badge {
-            font-size: 0.65rem;
-            padding: 0.2rem 0.4rem;
+            font-size: 0.6rem;
+            padding: 0.15rem 0.3rem;
+            top: -8px;
+            right: -8px;
+          }
+          
+          .tiger-level-badge {
+            font-size: 0.6rem;
+            padding: 0.15rem 0.3rem;
+            top: -8px;
+            left: -8px;
           }
           
           .ordinal-timer {
-            padding: 0.5rem;
-            margin-top: 0.5rem;
+            padding: 0.4rem;
+            margin-top: 0.4rem;
+            font-size: 0.65rem;
+            width: 100%;
+            box-sizing: border-box;
           }
           
           .timer-label {
-            font-size: 0.7rem;
+            font-size: 0.6rem;
+            margin-bottom: 0.2rem;
           }
           
           .timer-value {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
+            min-width: 80px;
+            padding: 0.2rem;
           }
           
           .timer-value.ready {
-            font-size: 1rem;
+            font-size: 0.9rem;
           }
           
           .timer-rewards {
-            font-size: 0.7rem;
+            font-size: 0.6rem;
+            margin-top: 0.3rem;
           }
           
           .claim-button {
-            padding: 0.5rem;
-            font-size: 0.8rem;
-            margin-top: 0.5rem;
+            padding: 0.4rem 0.6rem;
+            font-size: 0.7rem;
+            margin-top: 0.4rem;
+            letter-spacing: 0.5px;
           }
           
           /* Verbeterde buttons voor mobiel */
