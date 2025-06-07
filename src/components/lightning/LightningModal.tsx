@@ -21,6 +21,7 @@ export default function LightningModal({
   const [amount, setAmount] = useState(initialAmount);
   const [paymentStatus, setPaymentStatus] = useState<'pending' | 'paid' | 'failed'>('pending');
   const [isMobile, setIsMobile] = useState(false);
+  const [copySuccess, setCopySuccess] = useState(false);
   const { checkPayment } = useLightning();
 
   // Check if on mobile
@@ -94,6 +95,27 @@ export default function LightningModal({
     onAmountChangeAction(amount);
   };
 
+  const copyToClipboard = async () => {
+    if (!invoice) return;
+    
+    try {
+      await navigator.clipboard.writeText(invoice);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    } catch (error) {
+      console.error('Failed to copy invoice:', error);
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = invoice;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    }
+  };
+
   return (
     <div className="modal">
       <div className="modal-content">
@@ -131,11 +153,20 @@ export default function LightningModal({
                   level="H"
                 />
               </div>
-              <div className="invoice-text">
-                {isMobile 
-                  ? `${invoice.substring(0, 15)}...${invoice.substring(invoice.length - 15)}`
-                  : invoice
-                }
+              <div className="invoice-text-container">
+                <div className="invoice-text">
+                  {isMobile 
+                    ? `${invoice.substring(0, 15)}...${invoice.substring(invoice.length - 15)}`
+                    : invoice
+                  }
+                </div>
+                <button 
+                  className="copy-button"
+                  onClick={copyToClipboard}
+                  title="Copy Lightning Invoice"
+                >
+                  {copySuccess ? (isMobile ? '✓' : 'Copied!') : (isMobile ? '📋' : 'Copy')}
+                </button>
               </div>
             </div>
 
@@ -163,6 +194,71 @@ export default function LightningModal({
           </>
         )}
       </div>
+      
+      <style jsx>{`
+        .invoice-text-container {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          margin-top: 0.5rem;
+        }
+        
+        .invoice-text {
+          font-family: var(--font-geist-mono);
+          font-size: 0.75rem;
+          color: var(--gold);
+          word-break: break-all;
+          background: black;
+          border: 1px solid var(--gold);
+          padding: 0.5rem;
+          border-radius: 4px;
+          flex: 1;
+        }
+        
+        .copy-button {
+          background: var(--gold);
+          color: black;
+          border: 1px solid black;
+          padding: 0.5rem;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 0.75rem;
+          font-weight: bold;
+          min-width: ${isMobile ? '40px' : '60px'};
+          height: 40px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.2s ease;
+          flex-shrink: 0;
+        }
+        
+        .copy-button:hover {
+          background: #ffea00;
+          transform: translateY(-1px);
+        }
+        
+        .copy-button:active {
+          transform: translateY(0);
+        }
+        
+        @media (max-width: 768px) {
+          .invoice-text-container {
+            flex-direction: column;
+            gap: 0.5rem;
+          }
+          
+          .copy-button {
+            width: 100%;
+            min-width: auto;
+          }
+          
+          .invoice-text {
+            font-size: 0.7rem;
+            padding: 0.75rem;
+          }
+        }
+      `}</style>
     </div>
   );
 } 
