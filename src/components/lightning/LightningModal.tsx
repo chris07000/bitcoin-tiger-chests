@@ -98,6 +98,9 @@ export default function LightningModal({
   const copyToClipboard = async () => {
     if (!invoice) return;
     
+    console.log('COPY DEBUG: invoice value =', invoice);
+    console.log('COPY DEBUG: invoice starts with =', invoice.substring(0, 10));
+    
     try {
       await navigator.clipboard.writeText(invoice);
       setCopySuccess(true);
