@@ -1600,12 +1600,24 @@ const OrdinalSigmaXMissions: React.FC<OrdinalSigmaXMissionsProps> = ({
                         >
                           <div className="ordinal-image-container">
                             <Image
-                              src={tiger.image || '/tiger-pixel1.png'}
-                              alt={tiger.name || 'Bitcoin Tiger'}
-                              width={120}
-                              height={120}
+                              src={tiger.image || ''}
+                              alt={tiger.name}
+                              width={180}
+                              height={180}
+                              className="tiger-image"
+                              style={{
+                                border: '1px solid #ffd700',
+                                borderRadius: '8px',
+                                backgroundColor: '#000',
+                                opacity: tiger.image ? 1 : 0.7
+                              }}
                               unoptimized={true}
-                              className="ordinal-image"
+                              onError={(e) => {
+                                console.log(`Failed to load Tiger image: ${tiger.image}`);
+                                // Don't use fallback, just mark as failed and let it retry
+                                (e.target as HTMLImageElement).style.opacity = '0.5';
+                                (e.target as HTMLImageElement).style.filter = 'grayscale(0.5)';
+                              }}
                             />
                             {selectedOrdinals.includes(tiger.id) && (
                               <div className="selected-overlay">

@@ -933,7 +933,7 @@ export default function StakingPage() {
           ).map((tiger: any) => ({
             id: tiger.id,
             name: tiger.name || `Bitcoin Tiger #${tiger.id.slice(0, 6)}`,
-            image: tiger.image || '/tiger-pixel1.png',
+            image: tiger.image || '',
             isRuneGuardian: false,
             key: `tiger-${tiger.id}`
           }));
@@ -1772,7 +1772,7 @@ export default function StakingPage() {
             ).map((tiger: any) => ({
               id: tiger.id,
               name: tiger.name || `Bitcoin Tiger #${tiger.id.slice(0, 6)}`,
-              image: tiger.image || '/tiger-pixel1.png',
+              image: tiger.image || '',
               isRuneGuardian: false,
               key: `tiger-${tiger.id}`
             }));

@@ -137,7 +137,7 @@ const TigerMissions: React.FC<MissionProps> = ({
         const propTigers = stakedTigers.map(tiger => ({
           id: tiger.id,
           name: tiger.name || `Tiger #${tiger.id.substring(0, 8)}`,
-          image: tiger.image || '/tiger-pixel1.png',
+          image: tiger.image || '',
           isRuneGuardian: tiger.isRuneGuardian || false,
           stakedAt: typeof tiger.stakedAt === 'number' ? tiger.stakedAt : Date.now(),
           nextChestAt: typeof tiger.nextChestAt === 'number' ? tiger.nextChestAt : (Date.now() + 10000),
@@ -161,7 +161,7 @@ const TigerMissions: React.FC<MissionProps> = ({
           const displayStakedTigers = Object.entries(walletStakedTigers).map(([tigerId, info]: [string, any]) => ({
             id: tigerId,
             name: info.name || `Tiger #${tigerId.substring(0, 8)}`,
-            image: info.image || '/tiger-pixel1.png',
+            image: info.image || '',
             isRuneGuardian: info.isRuneGuardian || false,
             stakedAt: info.stakedAt || Date.now(),
             nextChestAt: info.nextChestAt || (Date.now() + 10000),
@@ -375,7 +375,7 @@ const TigerMissions: React.FC<MissionProps> = ({
     } else {
       return (
         <Image 
-          src={tiger.image || '/tiger-pixel1.png'} 
+          src={tiger.image || ''} 
           alt={tiger.name}
           width={180}
           height={180}
@@ -383,12 +383,15 @@ const TigerMissions: React.FC<MissionProps> = ({
           style={{
             border: '1px solid #ffd700',
             borderRadius: '8px',
-            backgroundColor: '#000'
+            backgroundColor: '#000',
+            opacity: tiger.image ? 1 : 0.7
           }}
           unoptimized={true}
           onError={(e) => {
             console.log(`Failed to load Tiger image: ${tiger.image}`);
-            (e.target as HTMLImageElement).src = '/tiger-pixel1.png';
+            // Don't use fallback, just mark as failed and let it retry
+            (e.target as HTMLImageElement).style.opacity = '0.5';
+            (e.target as HTMLImageElement).style.filter = 'grayscale(0.5)';
           }}
         />
       );
@@ -595,7 +598,7 @@ const TigerMissions: React.FC<MissionProps> = ({
       const localStakedTigers = stakedTigerEntries.map(([tigerId, info]: [string, any]) => ({
         id: tigerId,
         name: info.name || `Tiger #${tigerId.substring(0, 8)}`,
-        image: info.image || '/tiger-pixel1.png',
+        image: info.image || '',
         isRuneGuardian: info.isRuneGuardian || false,
         stakedAt: info.stakedAt || Date.now(),
         nextChestAt: info.nextChestAt || (Date.now() + 10000),
