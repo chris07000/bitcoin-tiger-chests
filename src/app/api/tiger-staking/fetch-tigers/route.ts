@@ -160,18 +160,23 @@ export async function GET(
         // Array om alle inscriptions op te slaan
         let allInscriptions: any[] = [];
         let offset = 0;
-        const limit = 50; // Verhoog batch size voor snellere loading
-        const maxInscriptions = 500; // Verminder voor betrouwbaarheid, maar meer dan voorheen
+        
+        // Slimme detectie: start met kleine batch om collectie grootte te schatten
+        const initialLimit = 100;
+        let maxInscriptions = 200; // Start conservatief
+        let batchSize = 50;
         let hasMore = true;
+        
+        console.log('Starting with initial batch to estimate collection size...');
         
         // Fetch inscriptions met paginatie
         while (hasMore && allInscriptions.length < maxInscriptions) {
-          console.log(`Fetching batch ${Math.floor(offset / limit) + 1}, offset: ${offset}`);
+          console.log(`Fetching batch ${Math.floor(offset / batchSize) + 1}, offset: ${offset}`);
           
           const hiro_response = await axios.get(`https://api.hiro.so/ordinals/v1/inscriptions`, {
             params: {
               address: walletAddress,
-              limit: limit,
+              limit: batchSize,
               offset: offset
             },
             timeout: 15000 // Verhoog timeout naar 15 seconden
@@ -183,15 +188,24 @@ export async function GET(
             console.log(`Fetched ${currentBatch.length} inscriptions, total now: ${allInscriptions.length}`);
             
             // Ga naar de volgende pagina
-            offset += limit;
+            offset += batchSize;
             
             // Check of we meer moeten ophalen
-            hasMore = currentBatch.length === limit;
+            hasMore = currentBatch.length === batchSize;
+            
+            // Na de eerste batch: detecteer of dit een grote collectie is
+            if (offset === batchSize && allInscriptions.length >= 80) {
+              console.log('Large collection detected! Switching to extended mode...');
+              maxInscriptions = 800; // Verhoog limiet voor grote collecties
+              batchSize = 25; // Kleinere batches voor grote collecties
+            }
             
             // Voeg delay toe tussen requests om rate limiting te voorkomen
             if (hasMore) {
-              console.log('Waiting 100ms before next batch...');
-              await new Promise(resolve => setTimeout(resolve, 100));
+              // Dynamische delay: kleine collecties = sneller, grote = langzamer
+              const delay = allInscriptions.length > 200 ? 200 : 50;
+              console.log(`Waiting ${delay}ms before next batch...`);
+              await new Promise(resolve => setTimeout(resolve, delay));
             }
           } else {
             hasMore = false;
