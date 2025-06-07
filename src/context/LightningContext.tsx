@@ -50,7 +50,7 @@ export const LightningProvider = ({ children }: { children: ReactNode }) => {
   const [lastBalanceFetch, setLastBalanceFetch] = useState<number>(0);
 
   // Get wallet from parent context
-  const { walletAddress: contextWalletAddress } = useWallet();
+  const { walletAddress: contextWalletAddress, isLoading: walletIsLoading, isInitialized: walletIsInitialized } = useWallet();
 
   useEffect(() => {
     setIsClient(true);
@@ -63,6 +63,80 @@ export const LightningProvider = ({ children }: { children: ReactNode }) => {
       setWalletAddress(contextWalletAddress);
     }
   }, [contextWalletAddress, walletAddress]);
+
+  // Enhanced initialization that waits for WalletContext
+  useEffect(() => {
+    if (!isClient) return;
+
+    const initializeWallet = async () => {
+      try {
+        console.log('Lightning: Initialization check - WalletContext loading:', walletIsLoading, 'initialized:', walletIsInitialized);
+        
+        // Wait for WalletContext to finish loading
+        if (walletIsLoading) {
+          console.log('Lightning: Waiting for WalletContext to finish loading...');
+          setIsInitialized(false);
+          return;
+        }
+        
+        if (!walletIsInitialized) {
+          console.log('Lightning: WalletContext not yet initialized, waiting...');
+          setIsInitialized(false);
+          return;
+        }
+        
+        console.log('Lightning: WalletContext ready, initializing for wallet:', walletAddress);
+        setIsInitialized(false);
+        
+        // Now we can safely proceed with Lightning initialization
+        if (!walletAddress) {
+          console.log('Lightning: No wallet connected after WalletContext initialization, setting initialized=true');
+          setIsInitialized(true);
+          return;
+        }
+        
+        if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname.includes('192.168.'))) {
+          console.log('Lightning: On local IP - using local wallet initialization');
+          setBalance(0);
+          setTransactions([]);
+          setIsInitialized(true);
+          console.log('Lightning: Local wallet initialization complete with balance: 0');
+          return;
+        }
+        
+        const baseUrl = typeof window !== 'undefined' ? 
+          (process.env.NEXT_PUBLIC_API_BASE_URL || window.location.origin) : '';
+        
+        // Eerst initialiseren
+        const initResponse = await fetch(`${baseUrl}/api/wallet/${walletAddress}`, {
+          method: 'PUT'
+        });
+        
+        if (!initResponse.ok) {
+          throw new Error('Failed to initialize wallet');
+        }
+
+        // Dan data ophalen
+        const response = await fetch(`${baseUrl}/api/wallet/${walletAddress}`);
+        if (!response.ok) throw new Error('Failed to fetch wallet data');
+
+        const data = await response.json();
+        console.log('Lightning: Loaded wallet data:', data);
+        console.log('Lightning: Current balance state before update:', balance);
+        
+        // Always use the server's balance value for consistency
+        setBalance(data.balance);
+        setTransactions(data.transactions);
+        setIsInitialized(true);
+        console.log('Lightning: Wallet initialization complete with balance:', data.balance);
+      } catch (error) {
+        console.error('Lightning: Error initializing wallet:', error);
+        setIsInitialized(true);
+      }
+    };
+
+    initializeWallet();
+  }, [walletAddress, isClient, walletIsLoading, walletIsInitialized]);
 
   // Utility functie om balans en timestamp in één keer bij te werken
   const updateBalanceWithTimestamp = (newBalance: number) => {
@@ -143,80 +217,6 @@ export const LightningProvider = ({ children }: { children: ReactNode }) => {
       return balance;
     }
   };
-
-  // Laad wallet data van de backend
-  useEffect(() => {
-    if (!isClient) return;
-
-    const initializeWallet = async () => {
-      try {
-        console.log('Lightning: Initializing for wallet:', walletAddress);
-        setIsInitialized(false);
-        
-        // Als er geen wallet is en WalletContext heeft ook geen wallet, dan is het ok om initialized=true te zetten
-        // Maar als WalletContext nog aan het laden is (zoals bij Magic Eden), wacht dan
-        if (!walletAddress) {
-          // Check if WalletContext is still loading by checking if we're in the middle of a connection process
-          const isWalletContextLoading = contextWalletAddress === null && typeof window !== 'undefined';
-          
-          if (!isWalletContextLoading) {
-            console.log('Lightning: No wallet connected and WalletContext not loading, setting initialized=true');
-            setIsInitialized(true);
-          } else {
-            console.log('Lightning: No wallet connected but WalletContext might be loading, waiting...');
-            // Don't set initialized to true yet, wait for wallet to be set or timeout
-            setTimeout(() => {
-              if (!walletAddress) {
-                console.log('Lightning: Timeout waiting for wallet, setting initialized=true');
-                setIsInitialized(true);
-              }
-            }, 5000); // 5 second timeout
-          }
-          return;
-        }
-        
-        if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname.includes('192.168.'))) {
-          console.log('On local IP: Using local wallet initialization');
-          setBalance(0);
-          setTransactions([]);
-          setIsInitialized(true);
-          console.log('Local wallet initialization complete with balance: 0');
-          return;
-        }
-        
-        const baseUrl = typeof window !== 'undefined' ? 
-          (process.env.NEXT_PUBLIC_API_BASE_URL || window.location.origin) : '';
-        
-        // Eerst initialiseren
-        const initResponse = await fetch(`${baseUrl}/api/wallet/${walletAddress}`, {
-          method: 'PUT'
-        });
-        
-        if (!initResponse.ok) {
-          throw new Error('Failed to initialize wallet');
-        }
-
-        // Dan data ophalen
-        const response = await fetch(`${baseUrl}/api/wallet/${walletAddress}`);
-        if (!response.ok) throw new Error('Failed to fetch wallet data');
-
-        const data = await response.json();
-        console.log('Loaded wallet data:', data);
-        console.log('Current balance state before update:', balance);
-        
-        // Always use the server's balance value for consistency
-        setBalance(data.balance);
-        setTransactions(data.transactions);
-        setIsInitialized(true);
-        console.log('Wallet initialization complete with balance:', data.balance);
-      } catch (error) {
-        console.error('Error initializing wallet:', error);
-        setIsInitialized(true);
-      }
-    };
-
-    initializeWallet();
-  }, [walletAddress, isClient, contextWalletAddress]);
 
   const generateInvoice = async (amount: number, memo?: string): Promise<InvoiceResponse> => {
     try {

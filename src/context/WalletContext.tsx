@@ -46,6 +46,8 @@ interface WalletContextType {
   refreshBalance: () => Promise<void>
   updateBalanceAfterChest: (newBalance: number) => void
   handleChestOpen: (chestType: string, joinJackpot: boolean, isFree: boolean) => Promise<void>
+  isLoading: boolean
+  isInitialized: boolean
 }
 
 const WalletContext = createContext<WalletContextType | undefined>(undefined)
@@ -59,17 +61,22 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   const [publicKey, setPublicKey] = useState<string | null>(null);
   const [addressType, setAddressType] = useState<string | null>(null);
   const [balance, setBalance] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // Load wallet state from session on first mount
   useEffect(() => {
     const loadInitialWalletState = async () => {
+      console.log('WalletContext: Starting initialization...');
+      setIsLoading(true);
+      
       try {
         // Laad wallet gegevens uit cookie
         const walletCookie = Cookies.get('wallet_session');
         if (walletCookie) {
           try {
             const walletData = JSON.parse(walletCookie);
-            console.log('Wallet data geladen uit cookie:', walletData);
+            console.log('WalletContext: Wallet data geladen uit cookie:', walletData);
             
             // Controleer of de gegevens geldig zijn
             if (walletData.connectedWallet && walletData.walletAddress) {
@@ -78,25 +85,38 @@ export function WalletProvider({ children }: { children: ReactNode }) {
               setPublicKey(walletData.publicKey || null);
               setAddressType(walletData.addressType || null);
               
-              // Haal balans op
-              setTimeout(() => refreshBalance(), 500);
+              console.log('WalletContext: Wallet sessie hersteld van cookie');
               
-              console.log('Wallet sessie hersteld van cookie');
+              // Wacht even en haal dan balans op
+              setTimeout(() => {
+                refreshBalance().then(() => {
+                  console.log('WalletContext: Balance loaded after cookie restore');
+                });
+              }, 500);
+              
+              setIsInitialized(true);
+              setIsLoading(false);
               return;
             }
           } catch (error) {
-            console.error('Fout bij het laden van wallet cookie:', error);
+            console.error('WalletContext: Fout bij het laden van wallet cookie:', error);
             Cookies.remove('wallet_session');
           }
         }
         
         // Check if we're on local development IP
         if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname.includes('192.168.'))) {
-          console.log('On local IP: Skipping initial wallet load from session');
-          return;
+          console.log('WalletContext: On local IP - skipping initial wallet load from session');
         }
+        
+        // No valid wallet data found
+        console.log('WalletContext: No valid wallet data found, initialization complete');
+        setIsInitialized(true);
+        setIsLoading(false);
       } catch (error) {
-        console.error('Error loading initial wallet state:', error);
+        console.error('WalletContext: Error loading initial wallet state:', error);
+        setIsInitialized(true);
+        setIsLoading(false);
       }
     };
 
@@ -147,13 +167,14 @@ export function WalletProvider({ children }: { children: ReactNode }) {
 
   const connectXverse = async () => {
     try {
-      console.log('Connecting to Xverse wallet...');
+      setIsLoading(true);
+      console.log('WalletContext: Connecting to Xverse wallet...');
       const response = await request('wallet_connect', {
         addresses: [AddressPurpose.Ordinals, AddressPurpose.Payment],
         message: 'Bitcoin Tiger Collective needs access to your wallet'
       });
 
-      console.log('Xverse connection response:', response);
+      console.log('WalletContext: Xverse connection response:', response);
 
       if (response.status === 'success') {
         const ordinalsAddress = response.result.addresses.find(
@@ -184,11 +205,17 @@ export function WalletProvider({ children }: { children: ReactNode }) {
             secure: window.location.protocol === 'https:'
           });
           
-          console.log('Connected to Xverse:', {
+          setIsInitialized(true);
+          setIsLoading(false);
+          
+          console.log('WalletContext: Connected to Xverse:', {
             address: ordinalsAddress.address,
             publicKey: ordinalsAddress.publicKey,
             addressType: ordinalsAddress.addressType
           });
+          
+          // Refresh balance after connection
+          setTimeout(() => refreshBalance(), 500);
         } else {
           throw new Error('No ordinals address found');
         }
@@ -200,13 +227,17 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         }
       }
     } catch (error: any) {
-      console.error('Failed to connect Xverse wallet:', error);
+      console.error('WalletContext: Failed to connect Xverse wallet:', error);
+      setIsLoading(false);
       alert(error?.message || 'Failed to connect to Xverse wallet');
     }
   };
 
   const connectUnisat = async () => {
     try {
+      setIsLoading(true);
+      console.log('WalletContext: Connecting to Unisat wallet...');
+      
       const unisat = window.unisat
       if (!unisat) {
         throw new Error('Unisat wallet not found! Please install Unisat wallet.')
@@ -240,52 +271,60 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         secure: window.location.protocol === 'https:'
       });
       
-      console.log('Connected to Unisat:', accounts)
+      setIsInitialized(true);
+      setIsLoading(false);
+      
+      console.log('WalletContext: Connected to Unisat:', accounts)
+      
+      // Refresh balance after connection
+      setTimeout(() => refreshBalance(), 500);
     } catch (error) {
-      console.error('Failed to connect Unisat wallet:', error)
+      console.error('WalletContext: Failed to connect Unisat wallet:', error)
+      setIsLoading(false);
     }
   }
 
   const connectMagicEden = async () => {
     try {
-      console.log('Starting Magic Eden connection process');
+      setIsLoading(true);
+      console.log('WalletContext: Starting Magic Eden connection process');
       
       // Controleer of we op een IP-adres draaien
       const isIPAddress = typeof window !== 'undefined' && /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(window.location.hostname);
       if (isIPAddress) {
-        console.log('Connecting on IP address:', window.location.hostname);
+        console.log('WalletContext: Connecting on IP address:', window.location.hostname);
       }
       
       const addressResponse = await new Promise<any>((resolve, reject) => {
-        console.log('Requesting Magic Eden addresses...');
+        console.log('WalletContext: Requesting Magic Eden addresses...');
         getMagicEdenAddresses()
           .then(response => {
-            console.log('Magic Eden addresses received:', response);
+            console.log('WalletContext: Magic Eden addresses received:', response);
             resolve(response);
           })
           .catch(error => {
-            console.error('Error getting Magic Eden addresses:', error);
+            console.error('WalletContext: Error getting Magic Eden addresses:', error);
             reject(error);
           });
       });
 
-      console.log('Magic Eden response:', addressResponse);
+      console.log('WalletContext: Magic Eden response:', addressResponse);
 
       const paymentAddress = addressResponse.addresses.find(
         (addr: Address) => addr.purpose === AddressPurpose.Payment
       );
 
       if (!paymentAddress) {
-        console.error('No payment address found in response');
+        console.error('WalletContext: No payment address found in response');
         throw new Error('No payment address found');
       }
 
       try {
-        console.log('Requesting signature for wallet verification...');
+        console.log('WalletContext: Requesting signature for wallet verification...');
         const signature = await signMagicEdenMessage(paymentAddress.address);
-        console.log('Wallet verified with signature:', signature);
+        console.log('WalletContext: Wallet verified with signature:', signature);
       } catch (error) {
-        console.error('Signature error:', error);
+        console.error('WalletContext: Signature error:', error);
         throw new Error('Failed to verify wallet ownership');
       }
 
@@ -294,7 +333,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       );
 
       if (ordinalsAddress) {
-        console.log('Initializing ordinals address in DB:', ordinalsAddress.address);
+        console.log('WalletContext: Initializing ordinals address in DB:', ordinalsAddress.address);
         await initializeWalletInDB(ordinalsAddress.address);
         
         // Set local state
@@ -318,14 +357,21 @@ export function WalletProvider({ children }: { children: ReactNode }) {
           secure: window.location.protocol === 'https:'
         });
         
-        console.log('Connected to Magic Eden:', ordinalsAddress.address);
+        setIsInitialized(true);
+        setIsLoading(false);
+        
+        console.log('WalletContext: Connected to Magic Eden:', ordinalsAddress.address);
+        
+        // Refresh balance after connection
+        setTimeout(() => refreshBalance(), 500);
       } else {
-        console.error('No ordinals address found in response');
+        console.error('WalletContext: No ordinals address found in response');
         throw new Error('No ordinals address found');
       }
 
     } catch (error: any) {
-      console.error('Failed to connect Magic Eden wallet:', error);
+      console.error('WalletContext: Failed to connect Magic Eden wallet:', error);
+      setIsLoading(false);
       
       // Controleer of we op een IP-adres draaien en geef een specifieker bericht
       const isIPAddress = typeof window !== 'undefined' && /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(window.location.hostname);
@@ -341,23 +387,30 @@ export function WalletProvider({ children }: { children: ReactNode }) {
 
   const disconnectWallet = async () => {
     try {
-      console.log('Disconnecting wallet:', connectedWallet);
+      console.log('WalletContext: Disconnecting wallet:', connectedWallet);
+      setIsLoading(true);
+      
       if (connectedWallet === 'Xverse') {
         await request('wallet_disconnect', null);
       }
       
       // Verwijder wallet cookie
       Cookies.remove('wallet_session');
-      console.log('Wallet cookie verwijderd');
+      console.log('WalletContext: Wallet cookie verwijderd');
       
       // Clear local state
       setConnectedWallet(null);
       setWalletAddress(null);
       setPublicKey(null);
       setAddressType(null);
-      console.log('Wallet disconnected');
+      setBalance(0);
+      setIsInitialized(false);
+      setIsLoading(false);
+      
+      console.log('WalletContext: Wallet disconnected');
     } catch (error) {
-      console.error('Failed to disconnect:', error);
+      console.error('WalletContext: Failed to disconnect:', error);
+      setIsLoading(false);
     }
   };
 
@@ -468,7 +521,9 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       address: walletAddress,
       refreshBalance,
       updateBalanceAfterChest,
-      handleChestOpen
+      handleChestOpen,
+      isLoading,
+      isInitialized
     }}>
       {children}
     </WalletContext.Provider>
