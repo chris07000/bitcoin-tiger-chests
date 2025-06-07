@@ -34,16 +34,11 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Log de request path voor debugging
-  if (request.nextUrl.pathname.startsWith('/api/')) {
-    console.log(`Processing API request: ${request.method} ${request.nextUrl.pathname}`);
-  }
-
-  // We don't modify anything, just continue with the request
+  // Voor alle andere routes (inclusief API routes), gewoon doorlaten
   return NextResponse.next();
 }
 
 // Configureer de middleware om alleen op admin routes te worden uitgevoerd
 export const config = {
-  matcher: ['/admin/:path*', '/api/:path*'],
+  matcher: ['/admin/:path*'],
 }; 
