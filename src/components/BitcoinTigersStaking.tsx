@@ -461,214 +461,11 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
     }
   };
 
-  // Enhanced image loading with Hiro API key and intelligent batching
-  const HIRO_API_CONFIG = {
-    // Free API key allows 900 RPM (15 req/sec) vs 25 RPM without key
-    API_KEY: process.env.NEXT_PUBLIC_HIRO_API_KEY || '', // Add this to environment variables
-    BASE_URL: 'https://api.hiro.so/ordinals/v1',
-    RATE_LIMIT: {
-      WITHOUT_KEY: 25, // requests per minute
-      WITH_KEY: 900,   // requests per minute (15 per second)
-      BITCOIN_L1_MONTHLY: 50000 // monthly limit for Bitcoin L1 requests
-    },
-    ENDPOINTS: [
-      'https://ordinals.com/content', // Primary - fastest
-      'https://api.hiro.so/ordinals/v1/inscriptions', // Secondary - with API key
-      'https://ord.io/content' // Tertiary fallback
-    ]
-  };
+  // Removed complex image loading system to prevent flickering
+  // Now using simple Image component with basic error handling
 
-  // Intelligent image loading with multiple strategies
-  const loadTigerImage = async (tigerId: string, retryCount: number = 0): Promise<string> => {
-    const maxRetries = 3;
-    const hasApiKey = HIRO_API_CONFIG.API_KEY.length > 0;
-    
-    // Strategy 1: Try ordinals.com first (usually fastest and most reliable)
-    const primaryUrl = `https://ordinals.com/content/${tigerId}`;
-    
-    try {
-      const response = await fetch(primaryUrl, {
-        method: 'HEAD', // Just check if image exists
-        signal: AbortSignal.timeout(5000) // 5 second timeout
-      });
-      
-      if (response.ok) {
-        console.log(`✅ Tiger ${tigerId}: Primary URL works`);
-        return primaryUrl;
-      }
-    } catch (error) {
-      console.log(`⚠️ Tiger ${tigerId}: Primary URL failed, trying alternatives...`);
-    }
-    
-    // Strategy 2: Try Hiro API with key (if available)
-    if (hasApiKey && retryCount < maxRetries) {
-      try {
-        const headers: Record<string, string> = {
-          'Authorization': `Bearer ${HIRO_API_CONFIG.API_KEY}`,
-          'Accept': 'image/*'
-        };
-        
-        const hiroUrl = `${HIRO_API_CONFIG.BASE_URL}/inscriptions/${tigerId}/content`;
-        const response = await fetch(hiroUrl, {
-          method: 'HEAD',
-          headers,
-          signal: AbortSignal.timeout(8000) // 8 second timeout for API calls
-        });
-        
-        if (response.ok) {
-          console.log(`✅ Tiger ${tigerId}: Hiro API with key works`);
-          return hiroUrl;
-        }
-      } catch (error) {
-        console.log(`⚠️ Tiger ${tigerId}: Hiro API failed:`, error);
-      }
-    }
-    
-    // Strategy 3: Try alternative endpoints
-    const altEndpoints = [
-      `https://ord.io/content/${tigerId}`,
-      `https://ordinals.goat.network/content/${tigerId}`,
-      `https://ordinalswallet.com/inscription/${tigerId}`
-    ];
-    
-    for (const endpoint of altEndpoints) {
-      try {
-        const response = await fetch(endpoint, {
-          method: 'HEAD',
-          signal: AbortSignal.timeout(6000)
-        });
-        
-        if (response.ok) {
-          console.log(`✅ Tiger ${tigerId}: Alternative endpoint works: ${endpoint}`);
-          return endpoint;
-        }
-      } catch (error) {
-        console.log(`⚠️ Tiger ${tigerId}: Alternative ${endpoint} failed`);
-      }
-    }
-    
-    // Strategy 4: Exponential backoff retry
-    if (retryCount < maxRetries) {
-      const delay = Math.pow(2, retryCount) * 1000; // 1s, 2s, 4s
-      console.log(`🔄 Tiger ${tigerId}: Retrying in ${delay}ms (attempt ${retryCount + 1}/${maxRetries})`);
-      
-      await new Promise(resolve => setTimeout(resolve, delay));
-      return loadTigerImage(tigerId, retryCount + 1);
-    }
-    
-    // Final fallback: return primary URL anyway (browser cache might help)
-    console.log(`❌ Tiger ${tigerId}: All strategies failed, returning primary URL as last resort`);
-    return primaryUrl;
-  };
-
-  // Batch loading for multiple tigers to respect rate limits
-  const batchLoadTigerImages = async (tigerIds: string[]): Promise<Record<string, string>> => {
-    const results: Record<string, string> = {};
-    const hasApiKey = HIRO_API_CONFIG.API_KEY.length > 0;
-    
-    // Calculate delay between requests based on rate limits
-    const requestsPerSecond = hasApiKey 
-      ? (HIRO_API_CONFIG.RATE_LIMIT.WITH_KEY / 60) // 15 req/sec with key
-      : (HIRO_API_CONFIG.RATE_LIMIT.WITHOUT_KEY / 60); // 0.42 req/sec without key
-    
-    const delayMs = Math.max(100, 1000 / requestsPerSecond); // Minimum 100ms between requests
-    
-    console.log(`🚀 Batch loading ${tigerIds.length} tiger images with ${requestsPerSecond.toFixed(1)} req/sec (${delayMs}ms delay)`);
-    
-    for (let i = 0; i < tigerIds.length; i++) {
-      const tigerId = tigerIds[i];
-      
-      try {
-        results[tigerId] = await loadTigerImage(tigerId);
-        
-        // Add delay between requests (except for last request)
-        if (i < tigerIds.length - 1) {
-          await new Promise(resolve => setTimeout(resolve, delayMs));
-        }
-      } catch (error) {
-        console.error(`❌ Failed to load tiger ${tigerId}:`, error);
-        results[tigerId] = `https://ordinals.com/content/${tigerId}`; // Fallback
-      }
-    }
-    
-    return results;
-  };
-
-  // Enhanced image loading with retry mechanism but NO fallbacks - wait for real images
-  const getImageWithRetry = (tiger: any): string => {
-    // Always return the real tiger image, no fallbacks
-    return tiger.image || '';
-  };
-
-  // Enhanced image error handler with retry mechanism and rate limiting respect
-  const handleImageError = (tigerId: string, currentSrc: string, retryCount: number = 0) => {
-    console.log(`Image failed for tiger ${tigerId}: ${currentSrc}, retry: ${retryCount}`);
-    
-    // Mark this image as failed for this session
-    markImageAsFailed(tigerId);
-    
-    // Respect rate limits with exponential backoff
-    const maxRetries = 5; // Increase max retries
-    const baseDelay = 2000; // Start with 2 second delay
-    const exponentialDelay = baseDelay * Math.pow(2, retryCount); // 2s, 4s, 8s, 16s, 32s
-    const maxDelay = 60000; // Cap at 1 minute
-    const actualDelay = Math.min(exponentialDelay, maxDelay);
-    
-    if (retryCount < maxRetries) {
-      console.log(`Retrying image load for tiger ${tigerId} in ${actualDelay}ms (attempt ${retryCount + 1}/${maxRetries})`);
-      
-      setTimeout(() => {
-        const img = document.querySelector(`img[data-tiger-id="${tigerId}"]`) as HTMLImageElement;
-        if (img && currentSrc) {
-          // Add cache busting parameter to retry
-          const separator = currentSrc.includes('?') ? '&' : '?';
-          img.src = `${currentSrc}${separator}retry=${retryCount + 1}&t=${Date.now()}`;
-        }
-      }, actualDelay);
-      
-      return true; // Indicate retry will happen
-    } else {
-      console.log(`Max retries reached for tiger ${tigerId}, giving up`);
-      return false; // No more retries
-    }
-  };
-
-  // Loading placeholder component with better messaging
-  const ImagePlaceholder = ({ width = 180, height = 180, tigerId, retryCount = 0 }: { 
-    width?: number, 
-    height?: number, 
-    tigerId: string,
-    retryCount?: number 
-  }) => (
-    <div 
-      className="image-placeholder"
-      style={{
-        width: `${width}px`,
-        height: `${height}px`,
-        backgroundColor: '#171a2d',
-        border: '2px solid #333',
-        borderRadius: '8px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexDirection: 'column',
-        color: '#666'
-      }}
-    >
-      <div style={{ fontSize: '24px', marginBottom: '8px' }}>🐅</div>
-      <div style={{ fontSize: '12px', textAlign: 'center' }}>
-        {retryCount > 0 ? `Retrying... (${retryCount})` : 'Loading Tiger...'}
-      </div>
-      {retryCount > 2 && (
-        <div style={{ fontSize: '10px', marginTop: '4px', color: '#888' }}>
-          High traffic - please wait
-        </div>
-      )}
-    </div>
-  );
-
-  // Enhanced Tiger Image Component with intelligent loading
-  const RobustTigerImage = ({ 
+  // Simple Tiger Image Component without complex loading and flickering
+  const SimpleTigerImage = ({ 
     tiger, 
     width = 180, 
     height = 180, 
@@ -679,158 +476,31 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
     height?: number, 
     className?: string 
   }) => {
-    const [currentSrc, setCurrentSrc] = useState<string>('');
-    const [isLoading, setIsLoading] = useState(true);
     const [hasError, setHasError] = useState(false);
-    const [retryCount, setRetryCount] = useState(0);
-    const [showImage, setShowImage] = useState(false);
 
-    // Load optimal image URL when component mounts
-    useEffect(() => {
-      const loadOptimalImage = async () => {
-        setIsLoading(true);
-        setHasError(false);
-        
-        try {
-          console.log(`🔍 Loading optimal image for tiger: ${tiger.id}`);
-          const optimalUrl = await loadTigerImage(tiger.id);
-          setCurrentSrc(optimalUrl);
-          console.log(`✅ Optimal URL found for ${tiger.id}: ${optimalUrl}`);
-        } catch (error) {
-          console.error(`❌ Failed to find optimal URL for ${tiger.id}:`, error);
-          setCurrentSrc(`https://ordinals.com/content/${tiger.id}`); // Final fallback
-          setHasError(true);
-        } finally {
-          setIsLoading(false);
-        }
-      };
-      
-      if (tiger.id) {
-        loadOptimalImage();
-      }
-    }, [tiger.id]);
-
-    const handleLoad = () => {
-      console.log(`✅ Image loaded successfully: ${tiger.id}`);
-      setIsLoading(false);
-      setHasError(false);
-      setShowImage(true);
-    };
-
-    const handleError = async () => {
-      console.log(`❌ Image failed to load: ${tiger.id}, attempt: ${retryCount + 1}`);
+    const handleError = () => {
       setHasError(true);
-      
-      // Try to find alternative URL if current one fails
-      if (retryCount < 2) { // Max 2 additional retries
-        try {
-          setRetryCount(prev => prev + 1);
-          console.log(`🔄 Finding alternative URL for ${tiger.id} (retry ${retryCount + 1})`);
-          
-          const alternativeUrl = await loadTigerImage(tiger.id, retryCount + 1);
-          if (alternativeUrl !== currentSrc) {
-            setCurrentSrc(alternativeUrl);
-            setHasError(false);
-            console.log(`🔄 Trying alternative URL: ${alternativeUrl}`);
-          }
-        } catch (error) {
-          console.error(`❌ Failed to find alternative URL:`, error);
-        }
-      }
     };
 
-    // Show loading placeholder while finding optimal image
-    if (isLoading && !currentSrc) {
-      return (
-        <div 
-          className={`${className} image-placeholder`}
-          style={{ 
-            width, 
-            height, 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center',
-            backgroundColor: '#171a2d',
-            border: '2px solid #333'
-          }}
-        >
-          <div style={{ 
-            fontSize: '12px', 
-            color: '#888', 
-            textAlign: 'center',
-            fontFamily: 'Press Start 2P'
-          }}>
-            Finding<br/>optimal<br/>image...
-          </div>
-        </div>
-      );
-    }
+    // Simple fallback URL without complex logic
+    const imageUrl = tiger.image || `https://ordinals.com/content/${tiger.id}`;
+    const fallbackUrl = hasError ? '/tiger-pixel1.png' : imageUrl;
 
     return (
-      <div style={{ position: 'relative', width, height }}>
-        {isLoading && (
-          <div 
-            className="image-loading-overlay"
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: 'rgba(0,0,0,0.7)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              zIndex: 2
-            }}
-          >
-            <div style={{ 
-              fontSize: '10px', 
-              color: '#ffd700', 
-              textAlign: 'center',
-              fontFamily: 'Press Start 2P'
-            }}>
-              Loading...
-            </div>
-          </div>
-        )}
-        
-        <Image 
-          src={currentSrc}
-          alt={tiger.name || 'Bitcoin Tiger'}
-          width={width}
-          height={height}
-          className={`${className} ${isLoading ? 'loading' : ''} ${hasError ? 'error' : ''}`}
-          data-tiger-id={tiger.id}
-          data-retry-count={retryCount}
-          unoptimized={true}
-          onLoad={handleLoad}
-          onError={handleError}
-          style={{
-            opacity: showImage ? 1 : 0.7,
-            transition: 'opacity 0.3s ease',
-            backgroundColor: isLoading ? '#171a2d' : 'transparent',
-            filter: hasError ? 'grayscale(0.3)' : 'none'
-          }}
-          priority={width > 150} // Prioritize larger images
-        />
-        
-        {hasError && retryCount >= 2 && (
-          <div style={{
-            position: 'absolute',
-            bottom: '5px',
-            right: '5px',
-            fontSize: '8px',
-            color: '#ff6b6b',
-            backgroundColor: 'rgba(0,0,0,0.8)',
-            padding: '2px 4px',
-            borderRadius: '2px',
-            fontFamily: 'Press Start 2P'
-          }}>
-            ⚠
-          </div>
-        )}
-      </div>
+      <Image 
+        src={fallbackUrl}
+        alt={tiger.name || 'Bitcoin Tiger'}
+        width={width}
+        height={height}
+        className={className}
+        unoptimized={true}
+        onError={handleError}
+        style={{
+          backgroundColor: '#171a2d',
+          border: hasError ? '2px solid #ff9900' : '1px solid #333',
+          borderRadius: '8px'
+        }}
+      />
     );
   };
 
@@ -3114,7 +2784,7 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
                         className={`ordinal-item ${isSelected ? 'selected' : ''}`}
                         onClick={() => setSelectedTiger(tiger.id)}
                       >
-                        <RobustTigerImage 
+                        <SimpleTigerImage 
                           tiger={tiger}
                           width={180}
                           height={180}
@@ -3201,7 +2871,7 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
                         className={`ordinal-item ${isSelected ? 'selected' : ''} on-mission ${isEligibleForClaim ? 'ready-for-chest' : ''}`}
                         onClick={() => setSelectedStakedTiger(tiger.id)}
                       >
-                        <RobustTigerImage 
+                        <SimpleTigerImage 
                           tiger={tiger}
                           width={180}
                           height={180}
