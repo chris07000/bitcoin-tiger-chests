@@ -63,7 +63,8 @@ export async function POST(request: NextRequest) {
     
     // Bereken de totale kosten (sats of points)
     const totalCost = raffle.ticketPrice * ticketAmount
-    const pointCost = raffle.isFree ? raffle.pointCost * ticketAmount : 0
+    // Ensure pointCost handles null values properly for TypeScript
+    const pointCost = raffle.isFree ? (raffle.pointCost || 100) * ticketAmount : 0
 
     // Controleer of de gebruiker voldoende balans/points heeft
     if (raffle.isFree) {
