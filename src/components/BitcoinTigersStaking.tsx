@@ -88,23 +88,67 @@ const getNumberFromInscriptionId = (inscriptionId: string): number => {
   return number;
 };
 
-// Nieuwe functie om de juiste afbeelding te krijgen voor een tiger
+// Bitcoin Tigers series mapping (copieer van tigers page)
+const TIGER_SERIES = [
+  {
+    id: 'series1',
+    name: 'Bitcoin Tigers Series 1',
+    baseId: 'df507f90784f3cbeb695598199cf7a24d293b4bdd46d342809cc83781427adeei',
+    count: 293,
+    startNumber: 1 // Images start at 1.png
+  },
+  {
+    id: 'series2', 
+    name: 'Bitcoin Tigers Series 2',
+    baseId: '34e91e21b54873b251447a8500934c02718945014f64bcdb6eb01c8a28716bb7i',
+    count: 294,
+    startNumber: 294 // Series 2 starts at 294.png (293 + 1)
+  },
+  {
+    id: 'series3',
+    name: 'Bitcoin Tigers Series 3', 
+    baseId: '002daf5cf64dd62c65e8cee7c7738a921cd334b2619845cedaadd357187a45fdi',
+    count: 294,
+    startNumber: 588 // Series 3 starts at 588.png (293 + 294 + 1)
+  },
+  {
+    id: 'series4',
+    name: 'Bitcoin Tigers Series 4',
+    baseId: 'c0fecdeed61f30653190550bb6d4a9b5172443f8a6a0c57630d08fbbba65b5e5i',
+    count: 118,
+    startNumber: 882 // Series 4 starts at 882.png (293 + 294 + 294 + 1)
+  }
+];
+
+// CORRECTE functie om inscription ID naar lokale afbeelding te mappen
 const getTigerImage = (tiger: any): string => {
-  // Als er al een image URL is, gebruik die direct
-  if (tiger.image && tiger.image.trim() !== '') {
-    // Als het een ordinals.com URL is, gebruik die
-    if (tiger.image.includes('ordinals.com') || tiger.image.includes('hiro.so')) {
-      return tiger.image;
+  // Als er een inscription ID is, probeer mapping naar lokale afbeelding
+  if (tiger.id) {
+    // Zoek de juiste serie voor deze inscription ID
+    for (const series of TIGER_SERIES) {
+      if (tiger.id.startsWith(series.baseId)) {
+        // Haal het nummer uit de inscription ID
+        const suffix = tiger.id.replace(series.baseId, '');
+        const indexNumber = parseInt(suffix.replace('i', ''), 10);
+        
+        if (!isNaN(indexNumber) && indexNumber >= 0 && indexNumber < series.count) {
+          const imageNumber = series.startNumber + indexNumber;
+          console.log(`✅ Mapped ${tiger.id} → /${imageNumber}.png (${series.name})`);
+          return `/${imageNumber}.png`;
+        }
+      }
     }
-    // Als het een lokale URL is, gebruik die
-    if (tiger.image.startsWith('/')) {
-      return tiger.image;
-    }
+    
+    console.log(`⚠️ No local mapping found for ${tiger.id}, using ordinals.com`);
+    // Als geen mapping gevonden, gebruik ordinals.com als fallback
+    return `https://ordinals.com/content/${tiger.id}`;
   }
   
-  // Als er een inscription ID is, maak ordinals.com URL
-  if (tiger.id) {
-    return `https://ordinals.com/content/${tiger.id}`;
+  // Als er al een image URL is, gebruik die direct
+  if (tiger.image && tiger.image.trim() !== '') {
+    if (tiger.image.startsWith('/') || tiger.image.includes('ordinals.com') || tiger.image.includes('hiro.so')) {
+      return tiger.image;
+    }
   }
   
   // Als laatste fallback
