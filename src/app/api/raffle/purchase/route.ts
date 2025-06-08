@@ -74,6 +74,9 @@ export async function POST(request: NextRequest) {
     
     // Begin een database transactie
     try {
+      // Bereken points te verdienen: 1 point per 100 sats
+      const pointsToAward = Math.floor(totalCost / 100)
+      
       // Gebruik een transactie om ervoor te zorgen dat alle updates slagen of allemaal falen
       await prisma.$transaction(async (tx) => {
         // 1. Update de balans van de gebruiker
@@ -97,7 +100,44 @@ export async function POST(request: NextRequest) {
           }
         })
         
-        // 3. Update bestaande tickets of maak nieuwe aan
+        // 3. Award Tiger Points (1 point per 100 sats)
+        if (pointsToAward > 0) {
+          // Get or create UserPoints record
+          const existingPoints = await tx.userPoints.findUnique({
+            where: { walletId: wallet.id }
+          })
+          
+          if (existingPoints) {
+            // Update existing points
+            await tx.userPoints.update({
+              where: { walletId: wallet.id },
+              data: { 
+                totalPoints: existingPoints.totalPoints + pointsToAward,
+                updatedAt: new Date()
+              }
+            })
+          } else {
+            // Create new points record
+            await tx.userPoints.create({
+              data: {
+                walletId: wallet.id,
+                totalPoints: pointsToAward
+              }
+            })
+          }
+          
+          // Record the points transaction
+          await tx.pointTransaction.create({
+            data: {
+              walletId: wallet.id,
+              points: pointsToAward,
+              reason: 'raffle_entry',
+              raffleId: parseInt(raffleId.toString())
+            }
+          })
+        }
+        
+        // 4. Update bestaande tickets of maak nieuwe aan
         const existingTicket = await tx.raffleTicket.findFirst({
           where: {
             raffleId: parseInt(raffleId.toString()),
@@ -125,7 +165,7 @@ export async function POST(request: NextRequest) {
           })
         }
         
-        // 4. Update de raffle met het nieuwe aantal verkochte tickets
+        // 5. Update de raffle met het nieuwe aantal verkochte tickets
         await tx.raffle.update({
           where: { id: parseInt(raffleId.toString()) },
           data: { 
@@ -144,7 +184,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: true,
         message: `Successfully purchased ${ticketAmount} ticket(s) for raffle ${raffle.name}`,
-        newBalance: updatedWallet?.balance || (wallet.balance - totalCost)
+        newBalance: updatedWallet?.balance || (wallet.balance - totalCost),
+        pointsEarned: pointsToAward
       })
     } catch (dbError) {
       console.error('Database error purchasing tickets:', dbError)
