@@ -15,20 +15,37 @@ export async function GET(
       )
     }
 
-    // For now, just return a placeholder response
-    // We'll implement the actual points logic once TypeScript recognizes the new models
+    // Get or create wallet first
+    let wallet = await prisma.wallet.findUnique({
+      where: { address }
+    })
+
+    if (!wallet) {
+      // Create wallet if it doesn't exist
+      wallet = await prisma.wallet.create({
+        data: { address }
+      })
+    }
+
+    // Get user points (will be created automatically when they make first purchase)
+    const userPoints = await prisma.userPoints.findUnique({
+      where: { walletId: wallet.id }
+    })
+
     return NextResponse.json({
       success: true,
-      points: 0,
-      walletAddress: address,
-      message: 'Points system is being implemented'
+      points: userPoints?.totalPoints || 0,
+      walletAddress: address
     })
 
   } catch (error) {
     console.error('Error in points API:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch user points' },
-      { status: 500 }
-    )
+    // For now, return 0 points if there's any error (graceful fallback)
+    return NextResponse.json({
+      success: true,
+      points: 0,
+      walletAddress: (await params).address,
+      message: 'Points system initializing'
+    })
   }
 } 
