@@ -1132,6 +1132,9 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
           console.log(`Found ${fetchedTigers.length} tigers in wallet:`, fetchedTigers);
           setUserTigers(fetchedTigers);
           
+          // Log missing image mappings voor debugging
+          logMissingMappings(fetchedTigers);
+          
           // Cache de tigers voor volgende keer
           localStorage.setItem(`bitcoinTigers_${effectiveWalletAddress}`, JSON.stringify(fetchedTigers));
           
@@ -2830,10 +2833,6 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
                           height={180}
                           className="tiger-image"
                           unoptimized={true}
-                          onError={(e) => {
-                            console.log(`Image failed for ${tiger.id}, falling back to pixel tiger`);
-                            (e.target as HTMLImageElement).src = '/tiger-pixel1.png';
-                          }}
                           style={{
                             backgroundColor: '#171a2d',
                             border: '1px solid #333',
@@ -2928,10 +2927,6 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
                           height={180}
                           className="tiger-image"
                           unoptimized={true}
-                          onError={(e) => {
-                            console.log(`Image failed for ${tiger.id}, falling back to pixel tiger`);
-                            (e.target as HTMLImageElement).src = '/tiger-pixel1.png';
-                          }}
                           style={{
                             backgroundColor: '#171a2d',
                             border: '1px solid #333',
