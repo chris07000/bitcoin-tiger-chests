@@ -23,7 +23,10 @@ export async function GET(
     if (!wallet) {
       // Create wallet if it doesn't exist
       wallet = await prisma.wallet.create({
-        data: { address }
+        data: { 
+          id: address,  // Use address as ID since it's unique
+          address 
+        }
       })
     }
 
