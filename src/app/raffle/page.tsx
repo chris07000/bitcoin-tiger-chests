@@ -20,7 +20,9 @@ export default function RafflePage() {
     soldTickets: number,
     endsAt: Date,
     winner: string | null,
-    winnerPickedAt?: Date | null
+    winnerPickedAt?: Date | null,
+    isFree: boolean,
+    pointCost: number
   }>>([])
   const [filteredRaffles, setFilteredRaffles] = useState<Array<any>>([])
   const [loading, setLoading] = useState<boolean>(true)
@@ -43,6 +45,10 @@ export default function RafflePage() {
     ticketPrice: number;
     totalCost: number;
   } | null>(null)
+
+  // Tiger Points state
+  const [userPoints, setUserPoints] = useState<number>(0)
+  const [refreshingPoints, setRefreshingPoints] = useState(false)
 
   useEffect(() => {
     // Use wallet address from LightningContext or localStorage as fallback
@@ -96,6 +102,21 @@ export default function RafflePage() {
       }
     }
 
+    // Fetch user points
+    const fetchUserPoints = async () => {
+      if (!walletAddress) return
+
+      try {
+        const response = await fetch(`/api/points/${walletAddress}`)
+        if (response.ok) {
+          const data = await response.json()
+          setUserPoints(data.points || 0)
+        }
+      } catch (error) {
+        console.error('Error fetching user points:', error)
+      }
+    }
+
     // Start timer die elke seconde de huidige tijd bijwerkt
     timerRef.current = setInterval(() => {
       setCurrentTime(Date.now())
@@ -104,6 +125,7 @@ export default function RafflePage() {
     fetchRaffles()
     if (walletAddress) {
       fetchUserTickets()
+      fetchUserPoints()
     }
 
     // Cleanup functie om de timer te stoppen wanneer de component unmount
@@ -198,19 +220,28 @@ export default function RafflePage() {
       return
     }
 
-    const totalCost = raffle.ticketPrice * defaultTicketAmount
-    if (totalCost > balance) {
-      setMessage('Insufficient balance')
-      return
+    // Check if user has sufficient balance/points
+    if (raffle.isFree) {
+      const pointCost = raffle.pointCost * defaultTicketAmount
+      if (pointCost > userPoints) {
+        setMessage('Insufficient Tiger Points')
+        return
+      }
+    } else {
+      const totalCost = raffle.ticketPrice * defaultTicketAmount
+      if (totalCost > balance) {
+        setMessage('Insufficient balance')
+        return
+      }
     }
 
-    // Show confirmation modal instead of direct purchase
+    // Show confirmation modal
     setConfirmModalData({
       raffleId,
       raffleName: raffle.name,
       ticketAmount: defaultTicketAmount,
-      ticketPrice: raffle.ticketPrice,
-      totalCost
+      ticketPrice: raffle.isFree ? 0 : raffle.ticketPrice,
+      totalCost: raffle.isFree ? raffle.pointCost * defaultTicketAmount : raffle.ticketPrice * defaultTicketAmount
     })
     setShowConfirmModal(true)
   }
@@ -273,6 +304,15 @@ export default function RafflePage() {
       // Refresh balance to get latest from server
       await fetchBalance()
       
+      // Refresh points to get latest from server
+      if (walletAddress) {
+        const pointsResponse = await fetch(`/api/points/${walletAddress}`)
+        if (pointsResponse.ok) {
+          const pointsData = await pointsResponse.json()
+          setUserPoints(pointsData.points || 0)
+        }
+      }
+      
       // Update local state with new tickets
       const updatedRaffles = raffles.map(raffle => {
         if (raffle.id === raffleId) {
@@ -291,8 +331,9 @@ export default function RafflePage() {
         [raffleId]: (prev[raffleId] || 0) + purchaseAmount
       }))
       
-      // Show success message
-      setMessage(`Successfully purchased ${purchaseAmount} ticket${purchaseAmount > 1 ? 's' : ''}!`)
+      // Show success message with points earned
+      const pointsEarned = data.pointsEarned || 0
+      setMessage(`Successfully purchased ${purchaseAmount} ticket${purchaseAmount > 1 ? 's' : ''}! ${pointsEarned > 0 ? `+${pointsEarned} Tiger Points earned!` : ''}`)
       
       // Reset selection after successful purchase
       setTimeout(() => {
@@ -478,6 +519,24 @@ export default function RafflePage() {
       console.error('Error refreshing balance:', error);
     } finally {
       setRefreshingBalance(false);
+    }
+  };
+
+  // Functie om points handmatig te verversen
+  const refreshPoints = async () => {
+    if (!walletAddress || refreshingPoints) return;
+    
+    setRefreshingPoints(true);
+    try {
+      const response = await fetch(`/api/points/${walletAddress}`)
+      if (response.ok) {
+        const data = await response.json()
+        setUserPoints(data.points || 0)
+      }
+    } catch (error) {
+      console.error('Error refreshing points:', error);
+    } finally {
+      setRefreshingPoints(false);
     }
   };
 
@@ -1173,9 +1232,14 @@ export default function RafflePage() {
             font-size: 0.8rem;
           }
           
-          .balance-display {
+          .balance-display, .points-display {
             padding: 0.6rem 1.2rem;
             font-size: 0.9rem;
+          }
+
+          .points-display {
+            margin-left: 0;
+            margin-top: 0.5rem;
           }
         }
         
@@ -1197,10 +1261,16 @@ export default function RafflePage() {
             font-size: 0.8rem;
           }
           
-          .balance-display {
+          .balance-display, .points-display {
             padding: 0.5rem 1rem;
             font-size: 0.8rem;
             width: 80%;
+            margin-left: 0;
+            margin-bottom: 0.5rem;
+          }
+
+          .points-display {
+            margin-top: 0.5rem;
           }
         }
         
@@ -1399,6 +1469,28 @@ export default function RafflePage() {
             font-size: 0.9rem;
           }
         }
+
+        .points-display {
+          font-size: 1.1rem;
+          color: #ff6b00;
+          margin: 0 0 1.5rem 0;
+          padding: 0.8rem 1.5rem;
+          background: rgba(0, 0, 0, 0.4);
+          border: 2px solid #ff6b00;
+          display: inline-flex;
+          align-items: center;
+          border-radius: 8px;
+          text-align: center;
+          box-shadow: 0 0 10px rgba(255, 107, 0, 0.2);
+          font-family: 'Press Start 2P', monospace;
+          transition: all 0.3s ease;
+          margin-left: 1rem;
+        }
+        
+        .points-display:hover {
+          box-shadow: 0 0 15px rgba(255, 107, 0, 0.4);
+          transform: translateY(-2px);
+        }
       `}</style>
 
       <div className="page-content">
@@ -1415,6 +1507,19 @@ export default function RafflePage() {
             title="Refresh balance"
           >
             <div className={`refresh-icon ${refreshingBalance ? 'rotating' : ''}`}>↻</div>
+          </button>
+        </div>
+
+        <div className="points-display">
+          Tiger Points: <span className="points-value">{userPoints.toLocaleString()}</span>
+          <span className="points-label"> pts</span>
+          <button 
+            className="refresh-button"
+            onClick={refreshPoints}
+            disabled={refreshingPoints}
+            title="Refresh points"
+          >
+            <div className={`refresh-icon ${refreshingPoints ? 'rotating' : ''}`}>🐅</div>
           </button>
         </div>
         
@@ -1535,7 +1640,15 @@ export default function RafflePage() {
                   
                   <div className="raffle-price-bar">
                     <div className="raffle-price-tag">
-                      <span>₿</span> {raffle.ticketPrice.toLocaleString()} sats
+                      {raffle.isFree ? (
+                        <>
+                          <span>🐅</span> {raffle.pointCost} points
+                        </>
+                      ) : (
+                        <>
+                          <span>₿</span> {raffle.ticketPrice.toLocaleString()} sats
+                        </>
+                      )}
                     </div>
                     
                     <div className="raffle-ticket-count">
@@ -1614,7 +1727,7 @@ export default function RafflePage() {
                           e.stopPropagation();
                           handleDirectPurchase(raffle.id, selectedRaffle === raffle.id ? ticketAmount : 1);
                         }}
-                        disabled={isEnded || balance < raffle.ticketPrice}
+                        disabled={isEnded || (raffle.isFree ? userPoints < raffle.pointCost : balance < raffle.ticketPrice)}
                       >
                         {isEnded ? 'Ended' : 'Enter'}
                       </button>
@@ -1686,23 +1799,45 @@ export default function RafflePage() {
                   </div>
                   <div className="detail-row">
                     <span>Price per ticket:</span>
-                    <span>{confirmModalData.ticketPrice.toLocaleString()} sats</span>
+                    <span>
+                      {confirmModalData.ticketPrice === 0 
+                        ? `${confirmModalData.totalCost / confirmModalData.ticketAmount} points`
+                        : `${confirmModalData.ticketPrice.toLocaleString()} sats`
+                      }
+                    </span>
                   </div>
                   <div className="detail-row total-row">
                     <span>Total cost:</span>
-                    <span>{confirmModalData.totalCost.toLocaleString()} sats</span>
+                    <span>
+                      {confirmModalData.ticketPrice === 0 
+                        ? `${confirmModalData.totalCost} points`
+                        : `${confirmModalData.totalCost.toLocaleString()} sats`
+                      }
+                    </span>
                   </div>
                 </div>
               </div>
               
               <div className="balance-check">
                 <div className="detail-row">
-                  <span>Current balance:</span>
-                  <span>{balance.toLocaleString()} sats</span>
+                  <span>
+                    {confirmModalData.ticketPrice === 0 ? 'Current points:' : 'Current balance:'}
+                  </span>
+                  <span>
+                    {confirmModalData.ticketPrice === 0 
+                      ? `${userPoints.toLocaleString()} points`
+                      : `${balance.toLocaleString()} sats`
+                    }
+                  </span>
                 </div>
                 <div className="detail-row">
                   <span>After purchase:</span>
-                  <span>{(balance - confirmModalData.totalCost).toLocaleString()} sats</span>
+                  <span>
+                    {confirmModalData.ticketPrice === 0 
+                      ? `${(userPoints - confirmModalData.totalCost).toLocaleString()} points`
+                      : `${(balance - confirmModalData.totalCost).toLocaleString()} sats`
+                    }
+                  </span>
                 </div>
               </div>
             </div>
