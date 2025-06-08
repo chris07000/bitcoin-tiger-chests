@@ -45,28 +45,28 @@ interface BitcoinTiger {
   originalImageUrls?: string; // To store original multiple URLs
 }
 
-// Static mapping of inscription IDs to local images to avoid rate limits
-const TIGER_IMAGE_MAPPING: Record<string, string> = {
-  // Bitcoin Tigers - gebruik lokale afbeeldingen
-  'e0fa3603a3eb14944bb38d16dbf21a7eb79af8ebd21828e8dad72f7ce4daa7cei0': '/tigers/tiger1.png',
-  'c9970479c393de09e886afd5fd3e0ff5c4fea97e00d1c4251469d99469357a46i0': '/tigers/tiger2.png',
-  '51bce55d0e69f65c9d43b0eec14e7f0b5392edf4c4ca4ad891fda0a706f23e1di0': '/tigers/tiger3.png',
-  '4c85f0ee6dd8f99a50716cacc460cd03d96ae4aaddbda1a84f1e1b01f4ce7cb0i0': '/tigers/tiger4.png',
-  'bd5c8b5d95ec5a61b0ec3eb7e06ed1f0a160fbbb4f66b46ae2e7adcf7bc90d60i0': '/tigers/tiger5.png',
-  '7ec90d31d1ea5b801157b9d5c89cfc59c87ecbf95d2d06b175df44a0190c8f90i0': '/tigers/tiger6.png',
-  '7dac5fc07f6a02c2ed1d5c60bb91b9fcbcf4b499c5c72b5f9ea5edd3e65ebfffi0': '/tigers/tiger7.png',
-  '8a24aea5a8d6f02b1e0de79abb99acac72da1b6a29cbdcdbcef3a2fef1f4ffcai0': '/tigers/tiger8.png',
-  '4458e1b1d33d49d38f05efc6c3b6a02d91a6f8d4c600a93671be0d0ecc4e43fei0': '/tigers/tiger9.png',
-  '22c66a48e32d27d0a4c1e4ff5df44c07361e59d3b2784161de25239c85334a5ci0': '/tigers/tiger10.png',
-  '32cfe6c1bfa49e22bd8c57e1a10a15c09ef5ecdbe9a4fe8a7c9e4d98359ecf8fi0': '/tigers/tiger11.png',
-  'cda3f5ac84c35a16d9b13e92c8bae0e91da06219f43e76ca1f8093a9a1e5cb13i0': '/tigers/tiger12.png',
-  'bdcf3dde04fdcc3fba8d05b3c1bd8e2e91072d8e8ec6cc12b3c441e0e87cfd22i0': '/tigers/tiger13.png',
-  'c4b28e3c43a5f6bb99b49c53edecf2e0fbf0bd91b20dca5d099152d7ea2bff6di0': '/tigers/tiger14.png',
-  'c0a2b7a253d97346c730eff3a1a1eabe4ec3a3fb60d89fd3fd96a10bc79b7fe5i0': '/tigers/tiger15.png',
+// Static mapping of inscription IDs to numbered images (veel simpeler dan paths)
+const TIGER_NUMBER_MAPPING: Record<string, number> = {
+  // Bitcoin Tigers - map naar nummers in plaats van paths
+  'e0fa3603a3eb14944bb38d16dbf21a7eb79af8ebd21828e8dad72f7ce4daa7cei0': 1,
+  'c9970479c393de09e886afd5fd3e0ff5c4fea97e00d1c4251469d99469357a46i0': 2,
+  '51bce55d0e69f65c9d43b0eec14e7f0b5392edf4c4ca4ad891fda0a706f23e1di0': 3,
+  '4c85f0ee6dd8f99a50716cacc460cd03d96ae4aaddbda1a84f1e1b01f4ce7cb0i0': 4,
+  'bd5c8b5d95ec5a61b0ec3eb7e06ed1f0a160fbbb4f66b46ae2e7adcf7bc90d60i0': 5,
+  '7ec90d31d1ea5b801157b9d5c89cfc59c87ecbf95d2d06b175df44a0190c8f90i0': 6,
+  '7dac5fc07f6a02c2ed1d5c60bb91b9fcbcf4b499c5c72b5f9ea5edd3e65ebfffi0': 7,
+  '8a24aea5a8d6f02b1e0de79abb99acac72da1b6a29cbdcdbcef3a2fef1f4ffcai0': 8,
+  '4458e1b1d33d49d38f05efc6c3b6a02d91a6f8d4c600a93671be0d0ecc4e43fei0': 9,
+  '22c66a48e32d27d0a4c1e4ff5df44c07361e59d3b2784161de25239c85334a5ci0': 10,
+  '32cfe6c1bfa49e22bd8c57e1a10a15c09ef5ecdbe9a4fe8a7c9e4d98359ecf8fi0': 11,
+  'cda3f5ac84c35a16d9b13e92c8bae0e91da06219f43e76ca1f8093a9a1e5cb13i0': 12,
+  'bdcf3dde04fdcc3fba8d05b3c1bd8e2e91072d8e8ec6cc12b3c441e0e87cfd22i0': 13,
+  'c4b28e3c43a5f6bb99b49c53edecf2e0fbf0bd91b20dca5d099152d7ea2bff6di0': 14,
+  'c0a2b7a253d97346c730eff3a1a1eabe4ec3a3fb60d89fd3fd96a10bc79b7fe5i0': 15,
   // Voeg meer mappings toe voor andere bekende tigers...
 };
 
-// Fallback afbeeldingen voor verschillende tiger types
+// Fallback afbeeldingen voor verschillende tiger types (behouden voor backwards compatibility)
 const FALLBACK_IMAGES = [
   '/tiger-pixel1.png',
   '/tiger-pixel2.png', 
@@ -75,18 +75,33 @@ const FALLBACK_IMAGES = [
   '/tiger-pixel5.png'
 ];
 
-// Functie om de juiste afbeelding te krijgen voor een tiger
+// Functie om een consistent nummer te krijgen uit een inscription ID
+const getNumberFromInscriptionId = (inscriptionId: string): number => {
+  // Hash van inscription ID omzetten naar nummer tussen 1-999
+  const hash = inscriptionId.split('').reduce((a: number, b: string) => {
+    a = ((a << 5) - a) + b.charCodeAt(0);
+    return a & a;
+  }, 0);
+  
+  // Zorgen dat we een positief nummer tussen 1 en 999 krijgen
+  const number = (Math.abs(hash) % 999) + 1;
+  return number;
+};
+
+// Nieuwe functie om de juiste afbeelding te krijgen voor een tiger
 const getTigerImage = (tiger: any): string => {
-  // Eerst kijken of we een mapping hebben voor dit inscription ID
-  if (tiger.id && TIGER_IMAGE_MAPPING[tiger.id]) {
-    console.log(`✅ Found mapped image for ${tiger.id}: ${TIGER_IMAGE_MAPPING[tiger.id]}`);
-    return TIGER_IMAGE_MAPPING[tiger.id];
+  // Eerst kijken of we een specifieke nummer mapping hebben voor dit inscription ID
+  if (tiger.id && TIGER_NUMBER_MAPPING[tiger.id]) {
+    const number = TIGER_NUMBER_MAPPING[tiger.id];
+    console.log(`✅ Found mapped number for ${tiger.id}: ${number}.png`);
+    return `/${number}.png`;
   }
   
-  // Log missing mappings voor debugging
-  if (tiger.id && !TIGER_IMAGE_MAPPING[tiger.id]) {
-    console.log(`⚠️ No mapping found for inscription ID: ${tiger.id}`);
-    console.log(`Add this to TIGER_IMAGE_MAPPING: '${tiger.id}': '/tigers/tigerX.png',`);
+  // Als er een inscription ID is, gebruik die om een consistent nummer te genereren
+  if (tiger.id) {
+    const number = getNumberFromInscriptionId(tiger.id);
+    console.log(`🎯 Generated number for ${tiger.id}: ${number}.png`);
+    return `/${number}.png`;
   }
   
   // Als tiger.image al een lokale path is, gebruik die
@@ -94,18 +109,13 @@ const getTigerImage = (tiger: any): string => {
     return tiger.image;
   }
   
-  // Als er een image URL is maar geen lokale mapping, probeer die eerst
+  // Als er een image URL is maar geen lokale mapping, probeer die eerst (maar vermijd ordinals.com)
   if (tiger.image && !tiger.image.includes('ordinals.com')) {
     return tiger.image;
   }
   
-  // Gebruik een deterministische fallback gebaseerd op het tiger ID
-  const hash = tiger.id ? tiger.id.split('').reduce((a: number, b: string) => {
-    a = ((a << 5) - a) + b.charCodeAt(0);
-    return a & a;
-  }, 0) : 0;
-  
-  const fallbackIndex = Math.abs(hash) % FALLBACK_IMAGES.length;
+  // Als laatste fallback, gebruik pixel tigers
+  const fallbackIndex = Math.abs((tiger.name || '').length) % FALLBACK_IMAGES.length;
   const fallbackImage = FALLBACK_IMAGES[fallbackIndex];
   
   console.log(`🎭 Using fallback image for ${tiger.id || 'unknown'}: ${fallbackImage}`);
@@ -115,13 +125,22 @@ const getTigerImage = (tiger: any): string => {
 // Debug functie om alle gemiste mappings te tonen
 const logMissingMappings = (tigers: any[]) => {
   const missingMappings = tigers
-    .filter(tiger => tiger.id && !TIGER_IMAGE_MAPPING[tiger.id])
-    .map(tiger => `'${tiger.id}': '/tigers/tiger${tigers.indexOf(tiger) + 1}.png',`);
+    .filter(tiger => tiger.id && !TIGER_NUMBER_MAPPING[tiger.id])
+    .map((tiger, index) => `'${tiger.id}': ${index + 16}, // Tiger #${index + 16}`);
   
   if (missingMappings.length > 0) {
-    console.group('🔧 Missing Tiger Image Mappings');
-    console.log('Add these to TIGER_IMAGE_MAPPING:');
+    console.group('🔧 Missing Tiger Number Mappings');
+    console.log('Add these to TIGER_NUMBER_MAPPING:');
     missingMappings.forEach(mapping => console.log(mapping));
+    console.groupEnd();
+    
+    console.group('🎯 Auto-generated Numbers Being Used');
+    tigers
+      .filter(tiger => tiger.id && !TIGER_NUMBER_MAPPING[tiger.id])
+      .forEach(tiger => {
+        const number = getNumberFromInscriptionId(tiger.id);
+        console.log(`${tiger.id} → ${number}.png`);
+      });
     console.groupEnd();
   }
 };
