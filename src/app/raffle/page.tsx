@@ -304,12 +304,17 @@ export default function RafflePage() {
       // Refresh balance to get latest from server
       await fetchBalance()
       
-      // Refresh points to get latest from server
-      if (walletAddress) {
-        const pointsResponse = await fetch(`/api/points/${walletAddress}`)
-        if (pointsResponse.ok) {
-          const pointsData = await pointsResponse.json()
-          setUserPoints(pointsData.points || 0)
+      // Update points based on API response
+      if (data.newPointsBalance !== undefined) {
+        setUserPoints(data.newPointsBalance)
+      } else {
+        // Fallback: refresh points from server
+        if (walletAddress) {
+          const pointsResponse = await fetch(`/api/points/${walletAddress}`)
+          if (pointsResponse.ok) {
+            const pointsData = await pointsResponse.json()
+            setUserPoints(pointsData.points || 0)
+          }
         }
       }
       
@@ -331,9 +336,18 @@ export default function RafflePage() {
         [raffleId]: (prev[raffleId] || 0) + purchaseAmount
       }))
       
-      // Show success message with points earned
+      // Show success message with points info
       const pointsEarned = data.pointsEarned || 0
-      setMessage(`Successfully purchased ${purchaseAmount} ticket${purchaseAmount > 1 ? 's' : ''}! ${pointsEarned > 0 ? `+${pointsEarned} Tiger Points earned!` : ''}`)
+      const pointsSpent = data.pointsSpent || 0
+      let pointsMessage = ''
+      
+      if (pointsSpent > 0) {
+        pointsMessage = ` -${pointsSpent} Tiger Points spent!`
+      } else if (pointsEarned > 0) {
+        pointsMessage = ` +${pointsEarned} Tiger Points earned!`
+      }
+      
+      setMessage(`Successfully purchased ${purchaseAmount} ticket${purchaseAmount > 1 ? 's' : ''}!${pointsMessage}`)
       
       // Reset selection after successful purchase
       setTimeout(() => {
