@@ -63,7 +63,7 @@ model Raffle {
   isFree         Boolean        @default(false)
   pointCost      Int?
   createdAt      DateTime       @default(now())
-  updatedAt      DateTime
+  updatedAt      DateTime       @default(now()) @updatedAt
   RaffleTicket   RaffleTicket[]
   PointTransaction PointTransaction[]
 }
