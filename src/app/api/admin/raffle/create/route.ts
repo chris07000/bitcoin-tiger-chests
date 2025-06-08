@@ -33,18 +33,61 @@ export async function POST(request: NextRequest) {
     }
 
     // Verwerk de request data
-    const data = await request.json();
-    const { name, description, image, ticketPrice, totalTickets, endsAt } = data;
+    const {
+      name,
+      description,
+      image,
+      ticketPrice,
+      totalTickets,
+      endsAt,
+      isFree,
+      pointCost
+    } = await request.json();
 
-    // Validatie
-    if (!name || !description || !image || !ticketPrice || !totalTickets || !endsAt) {
+    // Validate required fields
+    if (!name || !description || !image || !totalTickets || !endsAt) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
       );
     }
 
-    // Creëer een nieuwe raffle met proper error handling
+    // Additional validation for free vs paid raffles
+    if (isFree) {
+      if (!pointCost || pointCost < 1) {
+        return NextResponse.json(
+          { error: 'Point cost is required for free raffles and must be at least 1' },
+          { status: 400 }
+        );
+      }
+    } else {
+      if (!ticketPrice || ticketPrice < 1) {
+        return NextResponse.json(
+          { error: 'Ticket price is required for paid raffles and must be at least 1' },
+          { status: 400 }
+        );
+      }
+    }
+
+    // Parse the end date
+    const endDate = new Date(endsAt);
+    
+    if (isNaN(endDate.getTime())) {
+      return NextResponse.json(
+        { error: 'Invalid end date' },
+        { status: 400 }
+      );
+    }
+
+    // Check if end date is in the future
+    if (endDate <= new Date()) {
+      return NextResponse.json(
+        { error: 'End date must be in the future' },
+        { status: 400 }
+      );
+    }
+
+    // Create the raffle
     const raffle = await prisma.raffle.create({
       data: {
         name,
@@ -52,10 +95,9 @@ export async function POST(request: NextRequest) {
         image,
         ticketPrice: parseFloat(ticketPrice),
         totalTickets: parseInt(totalTickets),
-        soldTickets: 0,
-        endsAt: new Date(endsAt),
-        winner: null,
-        updatedAt: new Date()
+        endsAt: endDate,
+        isFree: Boolean(isFree),
+        pointCost: isFree ? parseInt(pointCost) : null
       }
     }).catch((error) => {
       console.error('Prisma raffle creation error:', error);

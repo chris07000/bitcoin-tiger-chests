@@ -60,9 +60,12 @@ model Raffle {
   endsAt         DateTime
   winner         String?
   winnerPickedAt DateTime?
+  isFree         Boolean        @default(false)
+  pointCost      Int?
   createdAt      DateTime       @default(now())
   updatedAt      DateTime
   RaffleTicket   RaffleTicket[]
+  PointTransaction PointTransaction[]
 }
 
 model RaffleTicket {
@@ -164,6 +167,30 @@ model Wallet {
   TigerStaking    TigerStaking[]
   Transaction     Transaction[]
   UserRanking     UserRanking?
+  UserPoints      UserPoints?
+  PointTransaction PointTransaction[]
+}
+
+model UserPoints {
+  id            Int      @id @default(autoincrement())
+  walletId      String   @unique
+  totalPoints   Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  Wallet        Wallet   @relation(fields: [walletId], references: [id])
+}
+
+model PointTransaction {
+  id            Int      @id @default(autoincrement())
+  walletId      String
+  points        Int
+  reason        String
+  raffleId      Int?
+  createdAt     DateTime @default(now())
+  Wallet        Wallet   @relation(fields: [walletId], references: [id])
+  Raffle        Raffle?  @relation(fields: [raffleId], references: [id])
+
+  @@index([walletId])
 }
 
 enum ClaimStatus {

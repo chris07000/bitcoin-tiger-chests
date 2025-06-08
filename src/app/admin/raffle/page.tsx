@@ -40,7 +40,9 @@ export default function AdminRafflePage() {
     ticketPrice: '',
     totalTickets: '',
     endDate: defaultEndDate(),
-    endTime: defaultEndTime()
+    endTime: defaultEndTime(),
+    isFree: false,
+    pointCost: '100'
   })
   
   const [isLoading, setIsLoading] = useState(false)
@@ -51,8 +53,14 @@ export default function AdminRafflePage() {
   const fileInputRef = React.useRef<HTMLInputElement>(null)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
+    const { name, value, type } = e.target
+    
+    if (type === 'checkbox') {
+      const checked = (e.target as HTMLInputElement).checked
+      setFormData(prev => ({ ...prev, [name]: checked }))
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }))
+    }
   }
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -145,9 +153,11 @@ export default function AdminRafflePage() {
         name: formData.name,
         description: formData.description,
         image: formData.image,
-        ticketPrice: formData.ticketPrice,
+        ticketPrice: formData.isFree ? 0 : formData.ticketPrice,
         totalTickets: formData.totalTickets,
-        endsAt: endsAt.toISOString()
+        endsAt: endsAt.toISOString(),
+        isFree: formData.isFree,
+        pointCost: formData.isFree ? parseInt(formData.pointCost) : null
       };
       
       const response = await fetch('/api/admin/raffle/create', {
@@ -174,7 +184,9 @@ export default function AdminRafflePage() {
           ticketPrice: '',
           totalTickets: '',
           endDate: defaultEndDate(),
-          endTime: defaultEndTime()
+          endTime: defaultEndTime(),
+          isFree: false,
+          pointCost: '100'
         })
         // Redirect naar de raffle pagina na 2 seconden
         setTimeout(() => {
@@ -529,6 +541,65 @@ export default function AdminRafflePage() {
               />
             </div>
             
+            {/* Free Raffle Option */}
+            <div className="form-group">
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '0.5rem',
+                marginBottom: '1rem'
+              }}>
+                <input
+                  type="checkbox"
+                  id="isFree"
+                  name="isFree"
+                  checked={formData.isFree}
+                  onChange={handleChange}
+                  style={{
+                    width: '18px',
+                    height: '18px',
+                    accentColor: '#ffd700'
+                  }}
+                />
+                <label 
+                  className="form-label" 
+                  htmlFor="isFree"
+                  style={{ 
+                    margin: 0,
+                    cursor: 'pointer'
+                  }}
+                >
+                  This is a Free Raffle (Tiger Points)
+                </label>
+              </div>
+              
+              {formData.isFree && (
+                <div>
+                  <label className="form-label" htmlFor="pointCost">
+                    Points Cost
+                  </label>
+                  <input
+                    type="number"
+                    id="pointCost"
+                    name="pointCost"
+                    className="form-input"
+                    value={formData.pointCost}
+                    onChange={handleChange}
+                    min="1"
+                    placeholder="100"
+                    style={{ maxWidth: '200px' }}
+                  />
+                  <p style={{ 
+                    marginTop: '0.5rem', 
+                    fontSize: '0.8rem', 
+                    color: '#aaa' 
+                  }}>
+                    Points required to enter this free raffle (default: 100)
+                  </p>
+                </div>
+              )}
+            </div>
+            
             <div className="form-group">
               <label className="form-label" htmlFor="image">
                 Raffle Image
@@ -603,18 +674,23 @@ export default function AdminRafflePage() {
             <div className="two-columns">
               <div className="form-group">
                 <label className="form-label" htmlFor="ticketPrice">
-                  Ticket Price (sats)
+                  {formData.isFree ? 'Ticket Price (disabled for free raffles)' : 'Ticket Price (sats)'}
                 </label>
                 <input
                   type="number"
                   id="ticketPrice"
                   name="ticketPrice"
                   className="form-input"
-                  value={formData.ticketPrice}
+                  value={formData.isFree ? '0' : formData.ticketPrice}
                   onChange={handleChange}
-                  required
+                  required={!formData.isFree}
+                  disabled={formData.isFree}
                   min="1"
                   placeholder="e.g. 5000"
+                  style={{ 
+                    opacity: formData.isFree ? 0.5 : 1,
+                    cursor: formData.isFree ? 'not-allowed' : 'text'
+                  }}
                 />
               </div>
               
