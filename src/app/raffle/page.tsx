@@ -34,6 +34,16 @@ export default function RafflePage() {
   // State voor de huidige tijd, gebruikt om de timers te forceren om bij te werken
   const [currentTime, setCurrentTime] = useState<number>(Date.now())
 
+  // Confirmation modal state
+  const [showConfirmModal, setShowConfirmModal] = useState(false)
+  const [confirmModalData, setConfirmModalData] = useState<{
+    raffleId: number;
+    raffleName: string;
+    ticketAmount: number;
+    ticketPrice: number;
+    totalCost: number;
+  } | null>(null)
+
   useEffect(() => {
     // Use wallet address from LightningContext or localStorage as fallback
     const storedWallet = contextWalletAddress || localStorage.getItem('walletAddress')
@@ -194,16 +204,38 @@ export default function RafflePage() {
       return
     }
 
+    // Show confirmation modal instead of direct purchase
+    setConfirmModalData({
+      raffleId,
+      raffleName: raffle.name,
+      ticketAmount: defaultTicketAmount,
+      ticketPrice: raffle.ticketPrice,
+      totalCost
+    })
+    setShowConfirmModal(true)
+  }
+
+  // Function to actually purchase after confirmation
+  const handleConfirmedPurchase = async () => {
+    if (!confirmModalData || !walletAddress) {
+      setMessage('Error: Missing purchase data')
+      setShowConfirmModal(false)
+      return
+    }
+
+    const { raffleId, ticketAmount: purchaseAmount } = confirmModalData
+    
     // Set the selected raffle for visual feedback
     setSelectedRaffle(raffleId)
-    setTicketAmount(defaultTicketAmount)
+    setTicketAmount(purchaseAmount)
 
-    // Reset message
+    // Reset message and close modal
     setMessage('')
+    setShowConfirmModal(false)
     
     try {
       // Subtract cost from balance immediately for better UX
-      const newBalance = balance - totalCost
+      const newBalance = balance - confirmModalData.totalCost
       setBalance(newBalance)
       
       // Update also in localStorage
@@ -222,42 +254,31 @@ export default function RafflePage() {
         },
         body: JSON.stringify({
           walletAddress,
-          raffleId: raffleId,
-          ticketAmount: defaultTicketAmount
+          raffleId,
+          ticketAmount: purchaseAmount
         }),
       })
 
+      const data = await response.json()
+
       if (!response.ok) {
-        const error = await response.json()
-        // Reverse the balance change if there's an error
+        // Restore balance on error
         setBalance(balance)
-        
-        // Also update localStorage to revert the balance
         lightningBalances[walletAddress] = balance
         localStorage.setItem('lightningBalances', JSON.stringify(lightningBalances))
         
-        throw new Error(error.error || 'Failed to purchase tickets')
+        throw new Error(data.error || 'Purchase failed')
       }
 
-      const data = await response.json()
-      
-      // Gebruik de nieuwe balans die door de server is teruggestuurd
-      if (data.newBalance !== undefined) {
-        // Update de balans met de waarde van de server
-        const serverBalance = data.newBalance
-        setBalance(serverBalance)
-        
-        // Update localStorage met de nieuwe balans van de server
-        lightningBalances[walletAddress] = serverBalance
-        localStorage.setItem('lightningBalances', JSON.stringify(lightningBalances))
-      }
+      // Refresh balance to get latest from server
+      await fetchBalance()
       
       // Update local state with new tickets
       const updatedRaffles = raffles.map(raffle => {
         if (raffle.id === raffleId) {
           return {
             ...raffle,
-            soldTickets: raffle.soldTickets + defaultTicketAmount
+            soldTickets: raffle.soldTickets + purchaseAmount
           }
         }
         return raffle
@@ -267,11 +288,11 @@ export default function RafflePage() {
       // Update user tickets
       setUserTickets(prev => ({
         ...prev,
-        [raffleId]: (prev[raffleId] || 0) + defaultTicketAmount
+        [raffleId]: (prev[raffleId] || 0) + purchaseAmount
       }))
       
       // Show success message
-      setMessage(`Successfully purchased ${defaultTicketAmount} ticket${defaultTicketAmount > 1 ? 's' : ''}!`)
+      setMessage(`Successfully purchased ${purchaseAmount} ticket${purchaseAmount > 1 ? 's' : ''}!`)
       
       // Reset selection after successful purchase
       setTimeout(() => {
@@ -459,6 +480,32 @@ export default function RafflePage() {
       setRefreshingBalance(false);
     }
   };
+
+  // Keyboard handling for confirmation modal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (showConfirmModal) {
+        if (e.key === 'Escape') {
+          setShowConfirmModal(false)
+        } else if (e.key === 'Enter') {
+          e.preventDefault()
+          handleConfirmedPurchase()
+        }
+      }
+    }
+
+    if (showConfirmModal) {
+      document.addEventListener('keydown', handleKeyDown)
+      // Prevent body scroll when modal is open
+      document.body.style.overflow = 'hidden'
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+      // Restore body scroll
+      document.body.style.overflow = 'unset'
+    }
+  }, [showConfirmModal, handleConfirmedPurchase])
 
   return (
     <>
@@ -1168,6 +1215,190 @@ export default function RafflePage() {
           border-color: #ffd700;
           box-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
         }
+
+        /* Confirmation Modal Styles */
+        .modal-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          background: rgba(0, 0, 0, 0.8);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 10000;
+          padding: 1rem;
+          box-sizing: border-box;
+        }
+
+        .confirmation-modal {
+          background: #0d1320;
+          border: 2px solid #ffd700;
+          border-radius: 8px;
+          width: 100%;
+          max-width: 500px;
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+          animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+          from {
+            opacity: 0;
+            transform: translateY(-20px) scale(0.95);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+
+        .modal-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 1.5rem;
+          border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .modal-header h3 {
+          font-family: 'Press Start 2P', monospace;
+          font-size: 1.2rem;
+          color: #ffd700;
+          margin: 0;
+        }
+
+        .modal-close {
+          background: none;
+          border: none;
+          color: #fff;
+          font-size: 1.5rem;
+          cursor: pointer;
+          padding: 0.5rem;
+          line-height: 1;
+          transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+          color: #ffd700;
+        }
+
+        .modal-body {
+          padding: 1.5rem;
+        }
+
+        .raffle-info h4 {
+          font-family: 'Press Start 2P', monospace;
+          color: #fff;
+          font-size: 1rem;
+          margin: 0 0 1rem 0;
+          text-align: center;
+        }
+
+        .purchase-details, .balance-check {
+          background: rgba(0, 0, 0, 0.3);
+          border-radius: 6px;
+          padding: 1rem;
+          margin-bottom: 1rem;
+        }
+
+        .detail-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 0.5rem;
+          font-size: 0.9rem;
+        }
+
+        .detail-row:last-child {
+          margin-bottom: 0;
+        }
+
+        .detail-row span:first-child {
+          color: #ccc;
+        }
+
+        .detail-row span:last-child {
+          color: #fff;
+          font-weight: bold;
+        }
+
+        .total-row {
+          border-top: 1px solid rgba(255, 215, 0, 0.3);
+          padding-top: 0.5rem;
+          margin-top: 0.5rem;
+        }
+
+        .total-row span {
+          color: #ffd700;
+          font-size: 1rem;
+        }
+
+        .modal-actions {
+          display: flex;
+          gap: 1rem;
+          padding: 0 1.5rem 1.5rem 1.5rem;
+        }
+
+        .cancel-button, .confirm-button {
+          flex: 1;
+          padding: 0.8rem;
+          border: none;
+          border-radius: 4px;
+          font-family: 'Press Start 2P', monospace;
+          font-size: 0.8rem;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+
+        .cancel-button {
+          background: rgba(255, 255, 255, 0.1);
+          color: #fff;
+          border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .cancel-button:hover {
+          background: rgba(255, 255, 255, 0.2);
+        }
+
+        .confirm-button {
+          background: #ffd700;
+          color: #000;
+        }
+
+        .confirm-button:hover {
+          background: #ffe970;
+          transform: translateY(-2px);
+        }
+
+        /* Mobile-specific modal styles */
+        @media (max-width: 480px) {
+          .modal-overlay {
+            padding: 0.5rem;
+          }
+
+          .modal-header {
+            padding: 1rem;
+          }
+
+          .modal-header h3 {
+            font-size: 1rem;
+          }
+
+          .modal-body {
+            padding: 1rem;
+          }
+
+          .modal-actions {
+            flex-direction: column;
+            padding: 0 1rem 1rem 1rem;
+          }
+
+          .cancel-button, .confirm-button {
+            padding: 1rem;
+            font-size: 0.9rem;
+          }
+        }
       `}</style>
 
       <div className="page-content">
@@ -1430,6 +1661,69 @@ export default function RafflePage() {
           <p>Bitcoin Tiger Collective</p>
         </div>
       </div>
+
+      {/* Confirmation Modal */}
+      {showConfirmModal && confirmModalData && (
+        <div className="modal-overlay" onClick={() => setShowConfirmModal(false)}>
+          <div className="confirmation-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Confirm Raffle Entry</h3>
+              <button 
+                className="modal-close"
+                onClick={() => setShowConfirmModal(false)}
+              >
+                ×
+              </button>
+            </div>
+            
+            <div className="modal-body">
+              <div className="raffle-info">
+                <h4>{confirmModalData.raffleName}</h4>
+                <div className="purchase-details">
+                  <div className="detail-row">
+                    <span>Tickets:</span>
+                    <span>{confirmModalData.ticketAmount}</span>
+                  </div>
+                  <div className="detail-row">
+                    <span>Price per ticket:</span>
+                    <span>{confirmModalData.ticketPrice.toLocaleString()} sats</span>
+                  </div>
+                  <div className="detail-row total-row">
+                    <span>Total cost:</span>
+                    <span>{confirmModalData.totalCost.toLocaleString()} sats</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="balance-check">
+                <div className="detail-row">
+                  <span>Current balance:</span>
+                  <span>{balance.toLocaleString()} sats</span>
+                </div>
+                <div className="detail-row">
+                  <span>After purchase:</span>
+                  <span>{(balance - confirmModalData.totalCost).toLocaleString()} sats</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="modal-actions">
+              <button 
+                className="cancel-button"
+                onClick={() => setShowConfirmModal(false)}
+              >
+                Cancel
+              </button>
+              <button 
+                className="confirm-button"
+                onClick={handleConfirmedPurchase}
+              >
+                Confirm Entry
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 } 
