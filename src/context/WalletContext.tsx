@@ -87,12 +87,12 @@ export function WalletProvider({ children }: { children: ReactNode }) {
               
               console.log('WalletContext: Wallet sessie hersteld van cookie');
               
-              // Wacht even en haal dan balans op
+              // Wacht even en haal dan balans op - reduced timeout for faster response
               setTimeout(() => {
                 refreshBalance().then(() => {
                   console.log('WalletContext: Balance loaded after cookie restore');
                 });
-              }, 500);
+              }, 100); // Reduced from 500ms to 100ms for faster loading
               
               setIsInitialized(true);
               setIsLoading(false);
@@ -101,6 +101,55 @@ export function WalletProvider({ children }: { children: ReactNode }) {
           } catch (error) {
             console.error('WalletContext: Fout bij het laden van wallet cookie:', error);
             Cookies.remove('wallet_session');
+          }
+        }
+        
+        // Fallback: try localStorage if cookies failed
+        const walletLocalStorage = localStorage.getItem('wallet_session_backup');
+        if (walletLocalStorage) {
+          try {
+            const walletData = JSON.parse(walletLocalStorage);
+            console.log('WalletContext: Wallet data geladen uit localStorage:', walletData);
+            
+            // Controleer of de gegevens geldig zijn en niet te oud (max 7 dagen)
+            const maxAge = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
+            if (walletData.connectedWallet && walletData.walletAddress && 
+                walletData.timestamp && (Date.now() - walletData.timestamp < maxAge)) {
+              setConnectedWallet(walletData.connectedWallet);
+              setWalletAddress(walletData.walletAddress);
+              setPublicKey(walletData.publicKey || null);
+              setAddressType(walletData.addressType || null);
+              
+              console.log('WalletContext: Wallet sessie hersteld van localStorage');
+              
+              // Also restore to cookie for next time
+              Cookies.set('wallet_session', JSON.stringify(walletData), { 
+                expires: 7,
+                sameSite: 'lax',
+                secure: false,
+                path: '/'
+              });
+              
+              // Also save to localStorage as backup
+              localStorage.setItem('wallet_session_backup', JSON.stringify(walletData));
+              
+              // Wacht even en haal dan balans op
+              setTimeout(() => {
+                refreshBalance().then(() => {
+                  console.log('WalletContext: Balance loaded after localStorage restore');
+                });
+              }, 100);
+              
+              setIsInitialized(true);
+              setIsLoading(false);
+              return;
+            } else {
+              console.log('WalletContext: localStorage wallet data too old or invalid, removing');
+              localStorage.removeItem('wallet_session_backup');
+            }
+          } catch (error) {
+            console.error('WalletContext: Fout bij het laden van wallet localStorage:', error);
+            localStorage.removeItem('wallet_session_backup');
           }
         }
         
@@ -201,9 +250,13 @@ export function WalletProvider({ children }: { children: ReactNode }) {
           
           Cookies.set('wallet_session', JSON.stringify(walletData), { 
             expires: 7, // 7 dagen
-            sameSite: 'strict',
-            secure: window.location.protocol === 'https:'
+            sameSite: 'lax', // Changed from 'strict' to 'lax' for better compatibility
+            secure: false, // Allow cookies on localhost/http for development
+            path: '/' // Ensure cookie is available site-wide
           });
+          
+          // Also save to localStorage as backup
+          localStorage.setItem('wallet_session_backup', JSON.stringify(walletData));
           
           setIsInitialized(true);
           setIsLoading(false);
@@ -215,7 +268,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
           });
           
           // Refresh balance after connection
-          setTimeout(() => refreshBalance(), 500);
+          setTimeout(() => refreshBalance(), 100); // Reduced from 500ms to 100ms
         } else {
           throw new Error('No ordinals address found');
         }
@@ -267,9 +320,13 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       
       Cookies.set('wallet_session', JSON.stringify(walletData), { 
         expires: 7, // 7 dagen
-        sameSite: 'strict',
-        secure: window.location.protocol === 'https:'
+        sameSite: 'lax', // Changed from 'strict' to 'lax' for better compatibility
+        secure: false, // Allow cookies on localhost/http for development
+        path: '/' // Ensure cookie is available site-wide
       });
+      
+      // Also save to localStorage as backup
+      localStorage.setItem('wallet_session_backup', JSON.stringify(walletData));
       
       setIsInitialized(true);
       setIsLoading(false);
@@ -277,7 +334,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       console.log('WalletContext: Connected to Unisat:', accounts)
       
       // Refresh balance after connection
-      setTimeout(() => refreshBalance(), 500);
+      setTimeout(() => refreshBalance(), 100); // Reduced from 500ms to 100ms
     } catch (error) {
       console.error('WalletContext: Failed to connect Unisat wallet:', error)
       setIsLoading(false);
@@ -353,9 +410,13 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         
         Cookies.set('wallet_session', JSON.stringify(walletData), { 
           expires: 7, // 7 dagen
-          sameSite: 'strict',
-          secure: window.location.protocol === 'https:'
+          sameSite: 'lax', // Changed from 'strict' to 'lax' for better compatibility
+          secure: false, // Allow cookies on localhost/http for development
+          path: '/' // Ensure cookie is available site-wide
         });
+        
+        // Also save to localStorage as backup
+        localStorage.setItem('wallet_session_backup', JSON.stringify(walletData));
         
         setIsInitialized(true);
         setIsLoading(false);
@@ -363,7 +424,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         console.log('WalletContext: Connected to Magic Eden:', ordinalsAddress.address);
         
         // Refresh balance after connection
-        setTimeout(() => refreshBalance(), 500);
+        setTimeout(() => refreshBalance(), 100); // Reduced from 500ms to 100ms
       } else {
         console.error('WalletContext: No ordinals address found in response');
         throw new Error('No ordinals address found');
@@ -397,6 +458,10 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       // Verwijder wallet cookie
       Cookies.remove('wallet_session');
       console.log('WalletContext: Wallet cookie verwijderd');
+      
+      // Also remove localStorage backup
+      localStorage.removeItem('wallet_session_backup');
+      console.log('WalletContext: Wallet localStorage backup verwijderd');
       
       // Clear local state
       setConnectedWallet(null);
