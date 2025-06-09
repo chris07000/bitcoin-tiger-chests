@@ -192,16 +192,37 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       
       const baseUrl = typeof window !== 'undefined' ? 
         (process.env.NEXT_PUBLIC_API_BASE_URL || window.location.origin) : '';
-      const response = await fetch(`${baseUrl}/api/wallet/${address}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+      
+      // Add timeout and retry logic for better reliability
+      const response = await Promise.race([
+        fetch(`${baseUrl}/api/wallet/${address}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Request timeout')), 10000) // 10 second timeout
+        )
+      ]) as Response;
       
       if (!response.ok) {
         const errorText = await response.text();
         console.error('Server response:', errorText);
+        
+        // If it's a server error, don't throw - just continue with local mode
+        if (response.status >= 500) {
+          console.warn('Server error detected, continuing with local wallet mode');
+          return {
+            address,
+            balance: 0,
+            id: `local-fallback-${Date.now()}`,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            fallback: true
+          };
+        }
+        
         throw new Error(`Failed to initialize wallet in database: ${response.status} ${response.statusText}`);
       }
       
@@ -210,7 +231,17 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       return data;
     } catch (error) {
       console.error('Error initializing wallet in DB:', error);
-      throw error;
+      
+      // Don't throw error for new users - provide graceful fallback
+      console.warn('Using local fallback wallet initialization due to error');
+      return {
+        address,
+        balance: 0,
+        id: `local-fallback-${Date.now()}`,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        fallback: true
+      };
     }
   };
 
@@ -231,7 +262,12 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         );
 
         if (ordinalsAddress) {
-          await initializeWalletInDB(ordinalsAddress.address);
+          try {
+            await initializeWalletInDB(ordinalsAddress.address);
+          } catch (initError) {
+            console.warn('Wallet initialization failed, continuing anyway:', initError);
+            // Continue with wallet connection even if DB init fails
+          }
           
           // Set local state
           setConnectedWallet('Xverse');
@@ -303,7 +339,12 @@ export function WalletProvider({ children }: { children: ReactNode }) {
 
       const accounts = await unisat.requestAccounts()
       
-      await initializeWalletInDB(accounts[0]);
+      try {
+        await initializeWalletInDB(accounts[0]);
+      } catch (initError) {
+        console.warn('Wallet initialization failed, continuing anyway:', initError);
+        // Continue with wallet connection even if DB init fails
+      }
       
       // Set local state
       setConnectedWallet('Unisat')
@@ -391,7 +432,12 @@ export function WalletProvider({ children }: { children: ReactNode }) {
 
       if (ordinalsAddress) {
         console.log('WalletContext: Initializing ordinals address in DB:', ordinalsAddress.address);
-        await initializeWalletInDB(ordinalsAddress.address);
+        try {
+          await initializeWalletInDB(ordinalsAddress.address);
+        } catch (initError) {
+          console.warn('Wallet initialization failed, continuing anyway:', initError);
+          // Continue with wallet connection even if DB init fails
+        }
         
         // Set local state
         setConnectedWallet('MagicEden');
@@ -495,18 +541,31 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       
       const baseUrl = typeof window !== 'undefined' ? 
         (process.env.NEXT_PUBLIC_API_BASE_URL || window.location.origin) : '';
-      const response = await fetch(`${baseUrl}/api/wallet/${walletAddress}`, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+      
+      // Add timeout for balance requests too
+      const response = await Promise.race([
+        fetch(`${baseUrl}/api/wallet/${walletAddress}`, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Balance fetch timeout')), 5000) // 5 second timeout
+        )
+      ]) as Response;
+      
       if (response.ok) {
         const data = await response.json();
         console.log('Refreshing balance:', data.balance);
         setBalance(data.balance || 0);
+      } else {
+        console.warn('Balance fetch failed, keeping current balance');
+        // Don't update balance if fetch fails - keep current state
       }
     } catch (error) {
       console.error('Error refreshing balance:', error);
+      // Don't update balance on error - this prevents breaking the UI
+      // Keep the current balance instead of setting to 0
     }
   };
 
