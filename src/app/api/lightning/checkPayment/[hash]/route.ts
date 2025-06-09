@@ -66,7 +66,7 @@ export async function GET(
             type: 'DEPOSIT' // Only process deposit transactions
           },
           include: {
-            wallet: true // Include wallet info for better logging
+            Wallet: true // Include wallet info for better logging
           }
         });
         
@@ -80,7 +80,7 @@ export async function GET(
 
         console.log('📋 Found transaction:', {
           id: transaction.id,
-          walletAddress: transaction.wallet.address,
+          walletAddress: transaction.Wallet.address,
           amount: transaction.amount,
           status: transaction.status,
           paidAmount: paymentStatus.amount
@@ -93,7 +93,7 @@ export async function GET(
             paidAmount: paymentStatus.amount,
             difference: paymentStatus.amount - transaction.amount,
             transactionId: transaction.id,
-            walletAddress: transaction.wallet.address,
+            walletAddress: transaction.Wallet.address,
             paymentHash: hash
           });
           
