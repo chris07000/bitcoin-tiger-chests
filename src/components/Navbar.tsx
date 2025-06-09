@@ -71,7 +71,7 @@ export default function Navbar() {
         
         // Alleen nieuwe balans ophalen als het lang genoeg geleden is
         // OF als er nog nooit een fetch is gedaan
-        if (lastBalanceFetch === 0 || timeSinceLastFetch > 2000) { // 2 seconden interval
+        if (lastBalanceFetch === 0 || timeSinceLastFetch > 30000) { // 30 seconden interval (was 2000)
           console.log(`Navbar: Time since last balance fetch: ${timeSinceLastFetch}ms, fetching new balance`);
           
           // Gebruik fetchBalance om de balans op te halen
@@ -99,8 +99,8 @@ export default function Navbar() {
     // Update direct bij laden
     updateBalance();
 
-    // Update elke seconde, maar voer alleen de API call uit als het nodig is
-    const interval = setInterval(updateBalance, 1000);
+    // Update elke 30 seconden in plaats van elke seconde (was 1000)
+    const interval = setInterval(updateBalance, 30000);
     
     // Luister naar custom balance update events
     const handleBalanceUpdate = (event: CustomEvent<{ balance: number, wallet: string }>) => {

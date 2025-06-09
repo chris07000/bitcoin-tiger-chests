@@ -72,19 +72,31 @@ export default function BitcoinPrice() {
     return () => clearInterval(interval);
   }, []);
   
-  // Nieuwe useEffect om de balans regelmatig bij te werken
+  // useEffect voor balance events in plaats van polling
   useEffect(() => {
     if (!walletAddress) return;
     
-    // Haal direct bij laden de actuele balans op
+    // Haal alleen bij laden de actuele balans op
     fetchActualBalance();
     
-    // Update elke 10 seconden
-    const balanceInterval = setInterval(() => {
-      fetchActualBalance();
-    }, 10000);
+    // Luister naar balance update events in plaats van polling
+    const handleBalanceUpdate = (event: CustomEvent<{ balance: number, wallet: string }>) => {
+      console.log('BitcoinPrice: Received balance update event', event.detail);
+      
+      // Alleen updaten als het voor onze huidige wallet is
+      if (event.detail.wallet === walletAddress) {
+        setBalance(event.detail.balance);
+        console.log('BitcoinPrice: Balance updated from event to', event.detail.balance);
+      }
+    };
     
-    return () => clearInterval(balanceInterval);
+    // Event listener toevoegen voor balance updates
+    window.addEventListener('balanceUpdated', handleBalanceUpdate as EventListener);
+    
+    // Cleanup alleen event listener
+    return () => {
+      window.removeEventListener('balanceUpdated', handleBalanceUpdate as EventListener);
+    };
   }, [walletAddress]);
 
   const fetchBitcoinPrice = async () => {
