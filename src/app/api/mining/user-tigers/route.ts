@@ -21,37 +21,35 @@ export async function GET(request: NextRequest) {
     if (!wallet) {
       return NextResponse.json({
         success: true,
-        memberships: []
+        tigers: []
       });
     }
 
-    // Haal pool memberships op
-    const memberships = await prisma.poolMembership.findMany({
+    // Haal alle gestakte tigers op die nog niet in mining pools zitten
+    const stakedTigers = await prisma.tigerStaking.findMany({
       where: {
         walletId: wallet.id,
         isActive: true
       },
-      include: {
-        pool: true
+      select: {
+        id: true,
+        tigerId: true,
+        tigerName: true,
+        tigerImage: true,
+        tigerLevel: true,
+        stakedAt: true,
+        isGuardian: true
       }
     });
 
-    // Format voor frontend
-    const formattedMemberships = memberships.map(membership => ({
-      poolId: membership.poolId,
-      tigersStaked: membership.tigersStaked,
-      totalEarned: membership.totalEarned,
-      joinedAt: membership.joinedAt.toISOString()
-    }));
-
     return NextResponse.json({
       success: true,
-      memberships: formattedMemberships
+      tigers: stakedTigers
     });
   } catch (error) {
-    console.error('Error fetching user memberships:', error);
+    console.error('Error fetching user tigers:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch memberships' },
+      { error: 'Failed to fetch user tigers' },
       { status: 500 }
     );
   }

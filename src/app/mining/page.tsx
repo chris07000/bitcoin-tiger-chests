@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useWallet } from '@/context/WalletContext';
 import { useLightning } from '@/context/LightningContext';
+import TigerSelector from '@/components/mining/TigerSelector';
 
 interface MiningPool {
   id: number;
@@ -25,13 +26,24 @@ interface PoolMembership {
   joinedAt: string;
 }
 
+interface Tiger {
+  id: string;
+  tigerId: string;
+  tigerName?: string;
+  tigerImage?: string;
+  tigerLevel: number;
+  stakedAt: string;
+  isGuardian: boolean;
+}
+
 export default function MiningPage() {
   const [pools, setPools] = useState<MiningPool[]>([]);
   const [myMemberships, setMyMemberships] = useState<PoolMembership[]>([]);
   const [loading, setLoading] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const [selectedPool, setSelectedPool] = useState<number | null>(null);
-  const [tigersToStake, setTigersToStake] = useState(1);
+  const [selectedTigers, setSelectedTigers] = useState<Tiger[]>([]);
+  const [showTigerSelector, setShowTigerSelector] = useState(false);
 
   const { walletAddress } = useWallet();
   const { balance } = useLightning();
@@ -89,7 +101,7 @@ export default function MiningPage() {
         body: JSON.stringify({
           walletAddress,
           poolId,
-          tigersToStake
+          tigersToStake: selectedTigers.length
         })
       });
 
@@ -223,25 +235,18 @@ export default function MiningPage() {
                 
                 {!isJoined && pool.currentTigers < pool.maxTigers && (
                   <div className="join-controls">
-                    <div className="tiger-input">
-                      <label>Tigers to stake:</label>
-                      <input
-                        type="number"
-                        min="1"
-                        max="10"
-                        value={selectedPool === pool.id ? tigersToStake : 1}
-                        onChange={(e) => {
-                          setTigersToStake(parseInt(e.target.value) || 1);
-                          setSelectedPool(pool.id);
-                        }}
-                      />
-                    </div>
                     <button
                       className="join-button"
-                      onClick={() => joinPool(pool.id)}
+                      onClick={() => {
+                        setSelectedPool(pool.id);
+                        setShowTigerSelector(true);
+                      }}
                       disabled={balance < pool.entryFee}
                     >
-                      Join Pool ({pool.entryFee.toLocaleString()} sats)
+                      {selectedPool === pool.id && selectedTigers.length > 0 
+                        ? `Join with ${selectedTigers.length} Tigers (${pool.entryFee.toLocaleString()} sats)`
+                        : `Select Tigers (${pool.entryFee.toLocaleString()} sats)`
+                      }
                     </button>
                   </div>
                 )}
@@ -256,6 +261,21 @@ export default function MiningPage() {
           })}
         </div>
       </section>
+      
+      {showTigerSelector && (
+        <TigerSelector
+          walletAddress={walletAddress || ''}
+          onTigersSelected={(tigers: Tiger[]) => {
+            setSelectedTigers(tigers);
+            if (selectedPool && tigers.length > 0) {
+              joinPool(selectedPool);
+            }
+            setShowTigerSelector(false);
+          }}
+          isOpen={showTigerSelector}
+          onClose={() => setShowTigerSelector(false)}
+        />
+      )}
       
       <style jsx>{`
         .mining-page {
@@ -407,27 +427,6 @@ export default function MiningPage() {
         .join-controls {
           border-top: 1px solid #333;
           padding-top: 1rem;
-        }
-        
-        .tiger-input {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          margin-bottom: 1rem;
-        }
-        
-        .tiger-input label {
-          font-size: 0.9rem;
-          color: #aaa;
-        }
-        
-        .tiger-input input {
-          background: #1a2332;
-          border: 1px solid #333;
-          color: white;
-          padding: 0.5rem;
-          border-radius: 4px;
-          width: 80px;
         }
         
         .join-button {
