@@ -45,6 +45,7 @@ export default function SlotMachine() {
   const [lastWin, setLastWin] = useState<SpinResult | null>(null);
   const [totalWins, setTotalWins] = useState(0);
   const [gamesPlayed, setGamesPlayed] = useState(0);
+  const [biggestWin, setBiggestWin] = useState(0);
   const [showBonus, setShowBonus] = useState(false);
   const [bonusWin, setBonusWin] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
@@ -194,6 +195,7 @@ export default function SlotMachine() {
     setTimeout(() => {
       setShowBonus(false);
       setTotalWins(prev => prev + randomBonus);
+      setBiggestWin(prev => Math.max(prev, randomBonus));
     }, 3000);
   };
 
@@ -262,6 +264,7 @@ export default function SlotMachine() {
           triggerBonusRound();
         } else if (result.payout > 0) {
           setTotalWins(prev => prev + result.payout);
+          setBiggestWin(prev => Math.max(prev, result.payout));
         }
         
         setIsSpinning(false);
@@ -297,10 +300,6 @@ export default function SlotMachine() {
     return symbol ? symbol.emoji : '❓';
   };
 
-  const getRTP = () => {
-    return gamesPlayed > 0 ? ((totalWins / (gamesPlayed * currentBet)) * 100).toFixed(1) : '0.0';
-  };
-
   return (
     <div className="slot-machine">
       <header className="slot-header">
@@ -320,11 +319,11 @@ export default function SlotMachine() {
           <span className="stat-value">{totalWins.toLocaleString()} sats</span>
         </div>
         <div className="stat">
-          <span className="stat-label">RTP</span>
-          <span className="stat-value">{getRTP()}%</span>
+          <span className="stat-label">Biggest Win</span>
+          <span className="stat-value">{biggestWin.toLocaleString()} sats</span>
         </div>
         <div className="stat">
-          <span className="stat-label">Games</span>
+          <span className="stat-label">Spins</span>
           <span className="stat-value">{gamesPlayed}</span>
         </div>
       </div>
