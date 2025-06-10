@@ -281,12 +281,12 @@ export default function SlotMachine() {
     const tigerNumber = symbolId.replace('tiger', '');
     return (
       <img 
-        src={`/tigers/${tigerNumber}.png`} 
+        src={`/${tigerNumber}.png`} 
         alt={`Tiger #${tigerNumber}`}
         className="tiger-symbol"
         onError={(e) => {
           // Fallback to a default tiger if image doesn't exist
-          e.currentTarget.src = '/tigers/5.png';
+          e.currentTarget.src = '/5.png';
         }}
       />
     );
