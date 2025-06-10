@@ -499,6 +499,7 @@ export default function SlotMachine() {
           padding: 2rem;
           margin-bottom: 2rem;
           position: relative;
+          transform: none !important;
         }
         
         .reels-container {
@@ -506,6 +507,7 @@ export default function SlotMachine() {
           grid-template-columns: repeat(3, 1fr);
           gap: 1rem;
           margin-bottom: 1rem;
+          transform: none !important;
         }
         
         .reel {
@@ -518,6 +520,7 @@ export default function SlotMachine() {
           transition: all 0.1s ease;
           overflow: hidden;
           position: relative;
+          transform: none !important;
         }
         
         .reel.spinning {
@@ -525,18 +528,31 @@ export default function SlotMachine() {
         }
         
         .reel.spinning .symbol {
-          animation: symbolSpin 0.1s infinite;
+          animation: symbolBlur 0.15s infinite;
+        }
+        
+        @keyframes symbolBlur {
+          0% { 
+            opacity: 1;
+            filter: blur(0px);
+            transform: none;
+          }
+          50% { 
+            opacity: 0.7;
+            filter: blur(0.5px);
+            transform: none;
+          }
+          100% { 
+            opacity: 1;
+            filter: blur(0px);
+            transform: none;
+          }
         }
         
         @keyframes symbolSpin {
           0% { transform: translateY(0); opacity: 1; }
           50% { transform: translateY(-5px); opacity: 0.7; }
           100% { transform: translateY(0); opacity: 1; }
-        }
-        
-        @keyframes spin {
-          0% { transform: translateY(0); }
-          100% { transform: translateY(-10px); }
         }
         
         .symbol {
