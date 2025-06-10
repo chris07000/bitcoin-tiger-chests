@@ -517,10 +517,22 @@ export default function SlotMachine() {
           display: flex;
           flex-direction: column;
           transition: all 0.1s ease;
+          overflow: hidden;
+          position: relative;
         }
         
         .reel.spinning {
-          animation: spin 0.1s infinite;
+          animation: none; /* Remove animation from reel container */
+        }
+        
+        .reel.spinning .symbol {
+          animation: symbolSpin 0.1s infinite;
+        }
+        
+        @keyframes symbolSpin {
+          0% { transform: translateY(0); opacity: 1; }
+          50% { transform: translateY(-5px); opacity: 0.7; }
+          100% { transform: translateY(0); opacity: 1; }
         }
         
         @keyframes spin {
