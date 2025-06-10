@@ -86,7 +86,7 @@ export async function GET(request: NextRequest) {
 
       // Log de gevonden tigers voor debugging
       if (tigers.length > 0) {
-        console.log('Tigers found:', tigers.slice(0, 3).map(t => ({
+        console.log('Tigers found:', tigers.slice(0, 3).map((t: any) => ({
           id: t.id.slice(0, 10) + '...',
           name: t.tigerName,
           number: t.inscriptionNumber
