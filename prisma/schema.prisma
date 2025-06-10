@@ -169,6 +169,7 @@ model Wallet {
   UserRanking     UserRanking?
   UserPoints      UserPoints?
   PointTransaction PointTransaction[]
+  PoolMembership  PoolMembership[]
 }
 
 model UserPoints {
@@ -191,6 +192,53 @@ model PointTransaction {
   Raffle        Raffle?  @relation(fields: [raffleId], references: [id])
 
   @@index([walletId])
+}
+
+// Mining Pool Models
+model MiningPool {
+  id              Int                @id @default(autoincrement())
+  name            String
+  description     String
+  poolType        PoolType
+  minTigers       Int                // Minimum tigers needed to start
+  maxTigers       Int                // Maximum tigers allowed
+  currentTigers   Int                @default(0)
+  entryFee        Float              // Lightning fee to join
+  dailyYield      Float              // Base daily sats yield
+  riskPercentage  Float              // Risk of losing tigers
+  isActive        Boolean            @default(true)
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  lastPayout      DateTime?
+  poolMembers     PoolMembership[]
+  poolEvents      PoolEvent[]
+}
+
+model PoolMembership {
+  id           Int      @id @default(autoincrement())
+  poolId       Int
+  walletId     String
+  tigersStaked Int      @default(0)
+  joinedAt     DateTime @default(now())
+  isActive     Boolean  @default(true)
+  totalEarned  Float    @default(0)
+  
+  pool         MiningPool @relation(fields: [poolId], references: [id])
+  wallet       Wallet     @relation(fields: [walletId], references: [id])
+  
+  @@unique([poolId, walletId])
+  @@index([walletId])
+}
+
+model PoolEvent {
+  id          Int         @id @default(autoincrement())
+  poolId      Int
+  eventType   PoolEventType
+  description String
+  impact      Float       // Positive or negative impact
+  createdAt   DateTime    @default(now())
+  
+  pool        MiningPool  @relation(fields: [poolId], references: [id])
 }
 
 enum ClaimStatus {
@@ -220,4 +268,19 @@ enum TransactionType {
   COINFLIP
   RAFFLE
   REWARD
+}
+
+enum PoolType {
+  COAL_MINE
+  GOLD_MINE
+  DIAMOND_MINE
+  LIGHTNING_MINE
+}
+
+enum PoolEventType {
+  CAVE_IN
+  GOLD_DISCOVERY
+  EQUIPMENT_FAILURE
+  BONUS_YIELD
+  GOVERNMENT_RAID
 }

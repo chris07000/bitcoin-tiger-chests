@@ -292,6 +292,13 @@ export default function Navbar() {
               Staking
             </Link>
             <Link 
+              href="/mining" 
+              className={`nav-link ${pathname === '/mining' ? 'active' : ''}`}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Mining
+            </Link>
+            <Link 
               href="/tigers" 
               className={`nav-link ${pathname === '/tigers' ? 'active' : ''}`}
               onClick={() => setIsMenuOpen(false)}
@@ -374,6 +381,12 @@ export default function Navbar() {
               className={`nav-link ${pathname === '/staking' ? 'active' : ''}`}
             >
               Staking
+            </Link>
+            <Link 
+              href="/mining" 
+              className={`nav-link ${pathname === '/mining' ? 'active' : ''}`}
+            >
+              Mining
             </Link>
             <Link 
               href="/tigers" 
