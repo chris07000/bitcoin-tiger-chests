@@ -559,10 +559,14 @@ export default function SlotMachine() {
           font-size: 3rem;
           text-align: center;
           padding: 0.5rem;
-          transition: all 0.3s ease;
+          transition: none; /* Remove transition during spinning */
           display: flex;
           align-items: center;
           justify-content: center;
+          transform: none; /* Default state */
+          width: 100px;
+          height: 100px;
+          box-sizing: border-box;
         }
         
         .tiger-symbol {
@@ -575,7 +579,13 @@ export default function SlotMachine() {
         }
         
         .emoji-symbol {
-          font-size: 3rem;
+          font-size: 4rem;
+          width: 80px;
+          height: 80px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          line-height: 1;
         }
         
         .symbol.center .tiger-symbol {
@@ -835,6 +845,8 @@ export default function SlotMachine() {
           .symbol {
             font-size: 2rem;
             padding: 0.3rem;
+            width: 80px;
+            height: 80px;
           }
           
           .tiger-symbol {
@@ -843,7 +855,9 @@ export default function SlotMachine() {
           }
           
           .emoji-symbol {
-            font-size: 2rem;
+            font-size: 3rem;
+            width: 60px;
+            height: 60px;
           }
           
           .paytable-symbol-display .tiger-symbol {
