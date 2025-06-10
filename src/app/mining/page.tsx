@@ -3,47 +3,51 @@
 import { useState, useEffect } from 'react';
 import { useWallet } from '@/context/WalletContext';
 import { useLightning } from '@/context/LightningContext';
-import TigerSelector from '@/components/mining/TigerSelector';
 
-interface MiningPool {
-  id: number;
-  name: string;
-  description: string;
-  poolType: string;
-  minTigers: number;
-  maxTigers: number;
-  currentTigers: number;
-  entryFee: number;
-  dailyYield: number;
-  riskPercentage: number;
-  isActive: boolean;
-}
-
-interface PoolMembership {
-  poolId: number;
-  tigersStaked: number;
-  totalEarned: number;
-  joinedAt: string;
-}
-
-interface Tiger {
+interface SlotSymbol {
   id: string;
-  tigerId: string;
-  tigerName: string;
-  tigerImage: string;
-  inscriptionNumber: number;
-  contentType: string;
-  isAvailable: boolean;
+  emoji: string;
+  name: string;
+  value: number;
+  rarity: number; // Higher = rarer
 }
 
-export default function MiningPage() {
-  const [pools, setPools] = useState<MiningPool[]>([]);
-  const [myMemberships, setMyMemberships] = useState<PoolMembership[]>([]);
-  const [loading, setLoading] = useState(true);
+interface SpinResult {
+  symbols: string[][];
+  payout: number;
+  isWin: boolean;
+  winType?: string;
+  bonus?: boolean;
+  scatter?: boolean;
+}
+
+const SLOT_SYMBOLS: SlotSymbol[] = [
+  { id: 'tiger5', emoji: '', name: 'Tiger #5', value: 1, rarity: 1 },
+  { id: 'tiger12', emoji: '', name: 'Tiger #12', value: 2, rarity: 2 },
+  { id: 'tiger23', emoji: '', name: 'Tiger #23', value: 3, rarity: 3 },
+  { id: 'tiger45', emoji: '', name: 'Tiger #45', value: 4, rarity: 4 },
+  { id: 'tiger67', emoji: '', name: 'Tiger #67', value: 5, rarity: 5 },
+  { id: 'tiger89', emoji: '', name: 'Tiger #89', value: 8, rarity: 6 },
+  { id: 'tiger123', emoji: '', name: 'Tiger #123', value: 12, rarity: 7 },
+  { id: 'tiger234', emoji: '', name: 'Tiger #234', value: 15, rarity: 8 },
+  { id: 'tiger456', emoji: '', name: 'Tiger #456', value: 25, rarity: 9 },
+  { id: 'tiger777', emoji: '', name: 'Tiger #777', value: 50, rarity: 10 },
+  { id: 'scatter', emoji: '🎰', name: 'Scatter', value: 0, rarity: 6 },
+  { id: 'bonus', emoji: '🎁', name: 'Bonus', value: 0, rarity: 7 },
+];
+
+const BET_AMOUNTS = [100, 500, 1000, 5000, 10000, 25000, 50000];
+
+export default function SlotMachine() {
+  const [reels, setReels] = useState<string[][]>([[], [], []]);
+  const [isSpinning, setIsSpinning] = useState(false);
+  const [currentBet, setCurrentBet] = useState(1000);
+  const [lastWin, setLastWin] = useState<SpinResult | null>(null);
+  const [totalWins, setTotalWins] = useState(0);
+  const [gamesPlayed, setGamesPlayed] = useState(0);
+  const [showBonus, setShowBonus] = useState(false);
+  const [bonusWin, setBonusWin] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
-  const [selectedPool, setSelectedPool] = useState<number | null>(null);
-  const [selectedTigers, setSelectedTigers] = useState<Tiger[]>([]);
-  const [showTigerSelector, setShowTigerSelector] = useState(false);
 
   const { walletAddress } = useWallet();
   const { balance } = useLightning();
@@ -56,718 +60,782 @@ export default function MiningPage() {
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
+    
+    // Initialize reels
+    initializeReels();
   }, []);
 
-  useEffect(() => {
-    if (walletAddress) {
-      fetchPools();
-      fetchMyMemberships();
-    }
-  }, [walletAddress]);
-
-  const fetchPools = async () => {
-    try {
-      const response = await fetch('/api/mining/pools');
-      const data = await response.json();
-      if (data.success) {
-        setPools(data.pools);
-      }
-    } catch (error) {
-      console.error('Error fetching pools:', error);
-    }
+  const initializeReels = () => {
+    const initialReels = [
+      generateRandomReel(),
+      generateRandomReel(),
+      generateRandomReel()
+    ];
+    setReels(initialReels);
   };
 
-  const fetchMyMemberships = async () => {
-    try {
-      const response = await fetch(`/api/mining/my-pools?wallet=${walletAddress}`);
-      const data = await response.json();
-      if (data.success) {
-        setMyMemberships(data.memberships);
-      }
-    } catch (error) {
-      console.error('Error fetching memberships:', error);
-    } finally {
-      setLoading(false);
+  const generateRandomReel = (): string[] => {
+    const reel: string[] = [];
+    for (let i = 0; i < 3; i++) {
+      const randomSymbol = getWeightedRandomSymbol();
+      reel.push(randomSymbol.id);
     }
+    return reel;
   };
 
-  const joinPool = async (poolId: number) => {
-    if (!walletAddress) return;
+  const getWeightedRandomSymbol = (): SlotSymbol => {
+    // Adjusted weights for better house edge (8-10%)
+    const weights: { [key: string]: number } = {
+      'tiger5': 25,    // Most common
+      'tiger12': 20,
+      'tiger23': 15,
+      'tiger45': 12,
+      'tiger67': 10,
+      'tiger89': 8,
+      'tiger123': 5,
+      'tiger234': 3,
+      'tiger456': 2,
+      'tiger777': 1,      // Rarest
+      'scatter': 4,    // Medium rare for bonus features
+      'bonus': 3
+    };
+    
+    const totalWeight = Object.values(weights).reduce((sum, weight) => sum + weight, 0);
+    let randomNum = Math.random() * totalWeight;
+    
+    for (const symbol of SLOT_SYMBOLS) {
+      const weight = weights[symbol.id] || 1;
+      randomNum -= weight;
+      if (randomNum <= 0) {
+        return symbol;
+      }
+    }
+    return SLOT_SYMBOLS[0];
+  };
+
+  const calculatePayout = (resultReels: string[][]): SpinResult => {
+    const centerLine = [resultReels[0][1], resultReels[1][1], resultReels[2][1]];
+    
+    // Check for scatter symbols (anywhere on reels)
+    const scatterCount = resultReels.flat().filter(symbol => symbol === 'scatter').length;
+    if (scatterCount >= 3) {
+      const scatterPayout = Math.floor(currentBet * scatterCount * 1.5); // Reduced from 2x
+      return {
+        symbols: resultReels,
+        payout: scatterPayout,
+        isWin: true,
+        winType: `${scatterCount} Scatters!`,
+        scatter: true
+      };
+    }
+
+    // Check for bonus symbols (center line only)
+    const bonusCount = centerLine.filter(symbol => symbol === 'bonus').length;
+    if (bonusCount >= 2) {
+      return {
+        symbols: resultReels,
+        payout: 0,
+        isWin: true,
+        winType: 'Bonus Round!',
+        bonus: true
+      };
+    }
+
+    // Check center line for wins
+    if (centerLine[0] === centerLine[1] && centerLine[1] === centerLine[2]) {
+      // Three of a kind on center line
+      const symbol = SLOT_SYMBOLS.find(s => s.id === centerLine[0]);
+      if (symbol && symbol.id !== 'scatter' && symbol.id !== 'bonus') {
+        const payout = Math.floor(currentBet * symbol.value * 0.7); // Reduced from 0.8 to 0.7
+        return {
+          symbols: resultReels,
+          payout,
+          isWin: true,
+          winType: `Three ${symbol.name}s!`
+        };
+      }
+    }
+
+    // Check for two of a kind (only high value symbols)
+    if (centerLine[0] === centerLine[1] || centerLine[1] === centerLine[2]) {
+      const matchSymbol = centerLine[0] === centerLine[1] ? centerLine[0] : centerLine[1];
+      const symbol = SLOT_SYMBOLS.find(s => s.id === matchSymbol);
+      if (symbol && symbol.id !== 'scatter' && symbol.id !== 'bonus' && symbol.value >= 8) { // Increased from 5 to 8
+        const payout = Math.floor(currentBet * symbol.value * 0.15); // Reduced from 0.2 to 0.15
+        return {
+          symbols: resultReels,
+          payout,
+          isWin: true,
+          winType: `Two ${symbol.name}s!`
+        };
+      }
+    }
+
+    return {
+      symbols: resultReels,
+      payout: 0,
+      isWin: false
+    };
+  };
+
+  const triggerBonusRound = () => {
+    setShowBonus(true);
+    // Bonus: pick from treasure chests (reduced payouts for better house edge)
+    const bonuses = [
+      Math.floor(currentBet * 1.5),
+      Math.floor(currentBet * 3),
+      Math.floor(currentBet * 6),
+      Math.floor(currentBet * 10),
+      Math.floor(currentBet * 15)
+    ];
+    const randomBonus = bonuses[Math.floor(Math.random() * bonuses.length)];
+    setBonusWin(randomBonus);
+    
+    setTimeout(() => {
+      setShowBonus(false);
+      setTotalWins(prev => prev + randomBonus);
+    }, 3000);
+  };
+
+  const spin = async () => {
+    if (!walletAddress || balance < currentBet || isSpinning) return;
+
+    setIsSpinning(true);
+    setLastWin(null);
 
     try {
-      const response = await fetch('/api/mining/join-pool', {
+      // Call API to place bet
+      const response = await fetch('/api/slots/spin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           walletAddress,
-          poolId,
-          tigersToStake: selectedTigers.length
+          betAmount: currentBet
         })
       });
 
-      const data = await response.json();
-      if (data.success) {
-        fetchPools();
-        fetchMyMemberships();
-        setSelectedPool(null);
-      } else {
-        alert(data.error);
+      const apiResult = await response.json();
+      
+      if (!apiResult.success) {
+        alert(apiResult.error);
+        setIsSpinning(false);
+        return;
       }
+
+      console.log('Bet placed:', apiResult.message);
     } catch (error) {
-      console.error('Error joining pool:', error);
+      console.error('Error processing bet:', error);
+      alert('Failed to place bet. Please try again.');
+      setIsSpinning(false);
+      return;
     }
+
+    // Simulate spinning animation
+    const spinDuration = 2000;
+    const intervalDuration = 100;
+    let elapsed = 0;
+
+    const spinInterval = setInterval(() => {
+      setReels([
+        generateRandomReel(),
+        generateRandomReel(),
+        generateRandomReel()
+      ]);
+      elapsed += intervalDuration;
+
+      if (elapsed >= spinDuration) {
+        clearInterval(spinInterval);
+        
+        // Final result calculation
+        const finalReels = [
+          generateRandomReel(),
+          generateRandomReel(),
+          generateRandomReel()
+        ];
+        
+        const result = calculatePayout(finalReels);
+        setReels(finalReels);
+        setLastWin(result);
+        setGamesPlayed(prev => prev + 1);
+        
+        if (result.bonus) {
+          triggerBonusRound();
+        } else if (result.payout > 0) {
+          setTotalWins(prev => prev + result.payout);
+        }
+        
+        setIsSpinning(false);
+      }
+    }, intervalDuration);
   };
 
-  const getPoolTypeEmoji = (poolType: string) => {
-    switch (poolType) {
-      case 'COAL_MINE': return '🔥';
-      case 'GOLD_MINE': return '💎';
-      case 'DIAMOND_MINE': return '⚡';
-      case 'LIGHTNING_MINE': return '🚀';
-      default: return '⛏️';
+  const getSymbolDisplay = (symbolId: string) => {
+    if (symbolId === 'scatter') {
+      return <span className="emoji-symbol">🎰</span>;
     }
-  };
-
-  const getRigTypeEmoji = (poolType: string) => {
-    return getPoolTypeEmoji(poolType);
-  };
-
-  const getRigName = (poolType: string, originalName: string) => {
-    switch (poolType) {
-      case 'COAL_MINE': return 'AntMiner S19 Pro';
-      case 'GOLD_MINE': return 'WhatsMiner M50S';
-      case 'DIAMOND_MINE': return 'AntMiner S21 Hyd';
-      case 'LIGHTNING_MINE': return 'Lightning Rig X1';
-      default: return originalName;
+    if (symbolId === 'bonus') {
+      return <span className="emoji-symbol">🎁</span>;
     }
-  };
-
-  const getRigDescription = (poolType: string) => {
-    switch (poolType) {
-      case 'COAL_MINE': return 'Reliable mining workhorse with proven stability and consistent hash rates.';
-      case 'GOLD_MINE': return 'High-performance ASIC with optimized cooling and superior efficiency.';
-      case 'DIAMOND_MINE': return 'Next-gen hydro-cooled mining rig with maximum hash rate output.';
-      case 'LIGHTNING_MINE': return 'Experimental quantum-enhanced mining rig with lightning-fast processing.';
-      default: return 'Professional Bitcoin mining hardware for maximum profitability.';
-    }
-  };
-
-  const getRiskColor = (risk: number) => {
-    if (risk < 10) return '#4CAF50';
-    if (risk < 20) return '#FF9800';
-    return '#F44336';
-  };
-
-  if (loading) {
+    
+    // Extract tiger number from symbolId (e.g., 'tiger777' -> '777')
+    const tigerNumber = symbolId.replace('tiger', '');
     return (
-      <div className="mining-page">
-        <div className="loading">Loading mining pools...</div>
-      </div>
+      <img 
+        src={`/tigers/${tigerNumber}.png`} 
+        alt={`Tiger #${tigerNumber}`}
+        className="tiger-symbol"
+        onError={(e) => {
+          // Fallback to a default tiger if image doesn't exist
+          e.currentTarget.src = '/tigers/5.png';
+        }}
+      />
     );
-  }
+  };
+
+  const getSymbolEmoji = (symbolId: string): string => {
+    const symbol = SLOT_SYMBOLS.find(s => s.id === symbolId);
+    return symbol ? symbol.emoji : '❓';
+  };
+
+  const getRTP = () => {
+    return gamesPlayed > 0 ? ((totalWins / (gamesPlayed * currentBet)) * 100).toFixed(1) : '0.0';
+  };
 
   return (
-    <div className="mining-page">
-      <header className="mining-header">
-        <div className="mining-facility">
-          <h1 className="facility-title">⚡ LIGHTNING MINING FACILITY ⚡</h1>
-          <div className="facility-stats">
-            <div className="facility-stat">
-              <span className="stat-icon">⛏️</span>
-              <span className="stat-label">Total Hash Rate</span>
-              <span className="stat-value">{pools.reduce((sum, pool) => sum + (pool.currentTigers * 15.5), 0).toFixed(1)} TH/s</span>
-            </div>
-            <div className="facility-stat">
-              <span className="stat-icon">🔥</span>
-              <span className="stat-label">Active Rigs</span>
-              <span className="stat-value">{pools.filter(p => p.currentTigers > 0).length}</span>
-            </div>
-            <div className="facility-stat">
-              <span className="stat-icon">⚡</span>
-              <span className="stat-label">Power Draw</span>
-              <span className="stat-value">{(pools.reduce((sum, pool) => sum + (pool.currentTigers * 3.25), 0)).toFixed(1)} kW</span>
-            </div>
-          </div>
-        </div>
-        <p className="mining-subtitle">
-          Deploy your Tigers to high-performance ASIC mining rigs for Bitcoin rewards!
+    <div className="slot-machine">
+      <header className="slot-header">
+        <h1 className="slot-title">🎰 BITCOIN TIGER SLOTS 🐅</h1>
+        <p className="slot-subtitle">
+          Spin the reels and win big with Bitcoin Tiger magic!
         </p>
       </header>
 
-      {myMemberships.length > 0 && (
-        <section className="my-rigs-section">
-          <h2>🔥 MY ACTIVE MINING RIGS</h2>
-          <div className="rig-grid">
-            {myMemberships.map((membership) => {
-              const pool = pools.find(p => p.id === membership.poolId);
-              if (!pool) return null;
-              
-              const hashRate = membership.tigersStaked * 15.5; // TH/s per tiger
-              const powerDraw = membership.tigersStaked * 3.25; // kW per tiger
-              const efficiency = (hashRate / powerDraw * 1000).toFixed(1); // GH/J
-              
-              return (
-                <div key={membership.poolId} className="rig-card active">
-                  <div className="rig-header">
-                    <span className="rig-emoji">{getPoolTypeEmoji(pool.poolType)}</span>
-                    <div className="rig-info">
-                      <h3>{pool.name}</h3>
-                      <div className="rig-status online">● ONLINE</div>
-                    </div>
-                  </div>
-                  
-                  <div className="rig-stats">
-                    <div className="stat-row">
-                      <div className="mining-stat">
-                        <span className="stat-icon">⛏️</span>
-                        <span className="stat-label">Hash Rate</span>
-                        <span className="stat-value">{hashRate.toFixed(1)} TH/s</span>
-                      </div>
-                      <div className="mining-stat">
-                        <span className="stat-icon">⚡</span>
-                        <span className="stat-label">Power Draw</span>
-                        <span className="stat-value">{powerDraw.toFixed(1)} kW</span>
-                      </div>
-                    </div>
-                    
-                    <div className="stat-row">
-                      <div className="mining-stat">
-                        <span className="stat-icon">🎯</span>
-                        <span className="stat-label">Efficiency</span>
-                        <span className="stat-value">{efficiency} GH/J</span>
-                      </div>
-                      <div className="mining-stat">
-                        <span className="stat-icon">🐅</span>
-                        <span className="stat-label">Tigers</span>
-                        <span className="stat-value">{membership.tigersStaked}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="earnings-section">
-                      <div className="stat">
-                        <span>Total Mined:</span>
-                        <span className="earnings">{membership.totalEarned.toLocaleString()} sats</span>
-                      </div>
-                      <div className="stat">
-                        <span>Daily Est:</span>
-                        <span className="earnings">{Math.round(pool.dailyYield * membership.tigersStaked / pool.currentTigers).toLocaleString()} sats</span>
-                      </div>
-                    </div>
-                  </div>
+      <div className="slot-stats">
+        <div className="stat">
+          <span className="stat-label">Balance</span>
+          <span className="stat-value">{balance.toLocaleString()} sats</span>
+        </div>
+        <div className="stat">
+          <span className="stat-label">Total Won</span>
+          <span className="stat-value">{totalWins.toLocaleString()} sats</span>
+        </div>
+        <div className="stat">
+          <span className="stat-label">RTP</span>
+          <span className="stat-value">{getRTP()}%</span>
+        </div>
+        <div className="stat">
+          <span className="stat-label">Games</span>
+          <span className="stat-value">{gamesPlayed}</span>
+        </div>
+      </div>
+
+      <div className="slot-container">
+        <div className="reels-container">
+          {reels.map((reel, reelIndex) => (
+            <div key={reelIndex} className={`reel ${isSpinning ? 'spinning' : ''}`}>
+              {reel.map((symbolId, symbolIndex) => (
+                <div 
+                  key={`${reelIndex}-${symbolIndex}`} 
+                  className={`symbol ${symbolIndex === 1 ? 'center' : ''}`}
+                >
+                  {getSymbolDisplay(symbolId)}
                 </div>
-              );
-            })}
+              ))}
+            </div>
+          ))}
+        </div>
+
+        <div className="payline">
+          <div className="payline-indicator">━━━ PAYLINE ━━━</div>
+        </div>
+      </div>
+
+      <div className="bet-controls">
+        <div className="bet-selector">
+          <label>Bet Amount:</label>
+          <div className="bet-buttons">
+            {BET_AMOUNTS.map(amount => (
+              <button
+                key={amount}
+                className={`bet-button ${currentBet === amount ? 'active' : ''}`}
+                onClick={() => setCurrentBet(amount)}
+                disabled={balance < amount}
+              >
+                {amount.toLocaleString()}
+              </button>
+            ))}
           </div>
-        </section>
+        </div>
+
+        <button
+          className="spin-button"
+          onClick={spin}
+          disabled={isSpinning || balance < currentBet || !walletAddress}
+        >
+          {isSpinning ? '🎰 SPINNING...' : `🎰 SPIN (${currentBet.toLocaleString()} sats)`}
+        </button>
+      </div>
+
+      {lastWin && (
+        <div className={`win-display ${lastWin.isWin ? 'win' : 'lose'}`}>
+          {lastWin.isWin ? (
+            <div className="win-message">
+              <div className="win-type">{lastWin.winType}</div>
+              {lastWin.payout > 0 && (
+                <div className="win-amount">+{lastWin.payout.toLocaleString()} sats</div>
+              )}
+            </div>
+          ) : (
+            <div className="lose-message">Try again!</div>
+          )}
+        </div>
       )}
 
-      <section className="available-rigs-section">
-        <h2>⚡ AVAILABLE MINING RIGS</h2>
-        <div className="rigs-grid">
-          {pools.map((pool) => {
-            const progressPercentage = (pool.currentTigers / pool.maxTigers) * 100;
-            const isJoined = myMemberships.some(m => m.poolId === pool.id);
-            const hashRatePerTiger = 15.5; // TH/s
-            const powerPerTiger = 3.25; // kW
-            const efficiency = (hashRatePerTiger / powerPerTiger * 1000).toFixed(1); // GH/J
-            
-            return (
-              <div key={pool.id} className={`rig-card ${selectedPool === pool.id ? 'selected' : ''} ${isJoined ? 'owned' : ''}`}>
-                <div className="rig-header">
-                  <span className="rig-emoji">{getPoolTypeEmoji(pool.poolType)}</span>
-                  <div className="rig-info">
-                    <h3>{pool.name}</h3>
-                    <div className={`rig-status ${pool.currentTigers > 0 ? 'online' : 'offline'}`}>
-                      ● {pool.currentTigers > 0 ? 'MINING' : 'OFFLINE'}
-                    </div>
-                  </div>
-                  {isJoined && <span className="owned-badge">OWNED</span>}
-                </div>
-                
-                <div className="rig-description">{pool.description}</div>
-                
-                <div className="rig-specs">
-                  <div className="spec-row">
-                    <div className="spec">
-                      <span className="spec-icon">⛏️</span>
-                      <span className="spec-label">Hash Rate</span>
-                      <span className="spec-value">{hashRatePerTiger} TH/s</span>
-                    </div>
-                    <div className="spec">
-                      <span className="spec-icon">⚡</span>
-                      <span className="spec-label">Power</span>
-                      <span className="spec-value">{powerPerTiger} kW</span>
-                    </div>
-                  </div>
-                  
-                  <div className="spec-row">
-                    <div className="spec">
-                      <span className="spec-icon">🎯</span>
-                      <span className="spec-label">Efficiency</span>
-                      <span className="spec-value">{efficiency} GH/J</span>
-                    </div>
-                    <div className="spec">
-                      <span className="spec-icon">💰</span>
-                      <span className="spec-label">Daily Yield</span>
-                      <span className="spec-value">{pool.dailyYield.toLocaleString()} sats</span>
-                    </div>
-                  </div>
-                  
-                  <div className="risk-spec">
-                    <span className="spec-icon">⚠️</span>
-                    <span className="spec-label">Failure Risk:</span>
-                    <span className="spec-value" style={{ color: getRiskColor(pool.riskPercentage) }}>
-                      {pool.riskPercentage}%
-                    </span>
-                  </div>
-                </div>
-                
-                <div className="rig-slots">
-                  <div className="slots-header">
-                    <span>Tiger Slots: {pool.currentTigers}/{pool.maxTigers}</span>
-                    <span className="utilization">{Math.round(progressPercentage)}% Utilization</span>
-                  </div>
-                  <div className="slots-bar">
-                    <div 
-                      className="slots-fill" 
-                      style={{ width: `${progressPercentage}%` }}
-                    />
-                  </div>
-                </div>
-                
-                <div className="deployment-section">
-                  <div className="deployment-cost">
-                    <span className="cost-label">Deployment Cost:</span>
-                    <span className="cost-value">{pool.entryFee.toLocaleString()} sats</span>
-                  </div>
-                  
-                  {!isJoined && pool.currentTigers < pool.maxTigers && (
-                    <button
-                      className="deploy-button"
-                      onClick={() => {
-                        setSelectedPool(pool.id);
-                        setShowTigerSelector(true);
-                      }}
-                      disabled={balance < pool.entryFee}
-                    >
-                      {selectedPool === pool.id && selectedTigers.length > 0 
-                        ? `Deploy ${selectedTigers.length} Tigers`
-                        : `Deploy Tigers`
-                      }
-                    </button>
-                  )}
-                  
-                  {pool.currentTigers >= pool.maxTigers && (
-                    <div className="rig-full">
-                      🔒 RIG AT CAPACITY
-                    </div>
-                  )}
-                  
-                  {isJoined && (
-                    <div className="rig-owned">
-                      ✅ RIG DEPLOYED
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })}
+      {showBonus && (
+        <div className="bonus-overlay">
+          <div className="bonus-content">
+            <h2>🎁 BONUS ROUND! 🎁</h2>
+            <p>Tiger chose your treasure!</p>
+            <div className="bonus-amount">+{bonusWin.toLocaleString()} sats</div>
+          </div>
         </div>
-      </section>
-      
-      {showTigerSelector && (
-        <TigerSelector
-          walletAddress={walletAddress || ''}
-          onTigersSelected={(tigers: Tiger[]) => {
-            setSelectedTigers(tigers);
-            if (selectedPool && tigers.length > 0) {
-              joinPool(selectedPool);
-            }
-            setShowTigerSelector(false);
-          }}
-          isOpen={showTigerSelector}
-          onClose={() => setShowTigerSelector(false)}
-        />
       )}
-      
+
+      <div className="paytable">
+        <h3>💰 PAYTABLE</h3>
+        <div className="paytable-grid">
+          {SLOT_SYMBOLS.filter(s => s.id !== 'scatter' && s.id !== 'bonus').map(symbol => (
+            <div key={symbol.id} className="paytable-row">
+              <span className="paytable-symbol">
+                <span className="paytable-symbol-display">
+                  {getSymbolDisplay(symbol.id)}
+                </span>
+                {symbol.name}
+              </span>
+              <span className="paytable-payout">
+                3x = {Math.floor(currentBet * symbol.value * 0.7).toLocaleString()}
+                {symbol.value >= 8 && (
+                  <span className="two-kind"> | 2x = {Math.floor(currentBet * symbol.value * 0.15).toLocaleString()}</span>
+                )}
+              </span>
+            </div>
+          ))}
+          <div className="paytable-row special">
+            <span className="paytable-symbol">🎰 3+ Scatters</span>
+            <span className="paytable-payout">1.5x bet per scatter</span>
+          </div>
+          <div className="paytable-row special">
+            <span className="paytable-symbol">🎁 2+ Bonus</span>
+            <span className="paytable-payout">Bonus Round! (1.5x - 15x)</span>
+          </div>
+        </div>
+        
+        <div className="house-edge-info">
+          <p>🎲 House Edge: ~8-10% | Expected RTP: ~90-92%</p>
+          <p>💡 Higher value symbols have better odds for 2-of-a-kind wins!</p>
+        </div>
+      </div>
+
       <style jsx>{`
-        .mining-page {
-          max-width: 1200px;
+        .slot-machine {
+          max-width: 800px;
           margin: 0 auto;
           padding: 2rem 1rem;
-          background: #0d1320;
+          background: linear-gradient(135deg, #0d1320, #1a2332);
           color: white;
           min-height: 100vh;
         }
         
-        .mining-header {
+        .slot-header {
           text-align: center;
-          margin-bottom: 3rem;
-        }
-        
-        .mining-facility {
-          background: linear-gradient(135deg, #1a2332, #2d3748);
-          border: 2px solid #ffd700;
-          border-radius: 12px;
-          padding: 2rem;
           margin-bottom: 2rem;
         }
         
-        .facility-title {
+        .slot-title {
           font-family: 'Press Start 2P', monospace;
-          font-size: ${isMobile ? '1.2rem' : '1.8rem'};
+          font-size: ${isMobile ? '1rem' : '1.5rem'};
           color: #ffd700;
-          margin-bottom: 1.5rem;
+          margin-bottom: 1rem;
           text-shadow: 2px 2px #000;
-          letter-spacing: 2px;
         }
         
-        .facility-stats {
+        .slot-subtitle {
+          font-size: 1rem;
+          color: #aaa;
+          margin-bottom: 1rem;
+        }
+        
+        .slot-stats {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
           gap: 1rem;
-          margin-top: 1rem;
+          margin-bottom: 2rem;
         }
         
-        .facility-stat {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          background: rgba(0, 0, 0, 0.3);
+        .stat {
+          background: rgba(0, 0, 0, 0.5);
           padding: 1rem;
           border-radius: 8px;
           border: 1px solid #333;
-        }
-        
-        .stat-icon {
-          font-size: 1.5rem;
-          margin-bottom: 0.5rem;
+          text-align: center;
         }
         
         .stat-label {
+          display: block;
           color: #aaa;
           font-size: 0.8rem;
-          margin-bottom: 0.3rem;
-          text-transform: uppercase;
-          letter-spacing: 1px;
+          margin-bottom: 0.5rem;
         }
         
         .stat-value {
           color: #ffd700;
           font-weight: bold;
           font-size: 1.1rem;
-          font-family: 'Press Start 2P', monospace;
         }
         
-        .mining-subtitle {
-          font-size: 1.1rem;
-          color: #aaa;
-          max-width: 600px;
-          margin: 0 auto;
-        }
-        
-        .my-rigs-section, .available-rigs-section {
-          margin-bottom: 3rem;
-        }
-        
-        .my-rigs-section h2, .available-rigs-section h2 {
-          font-family: 'Press Start 2P', monospace;
-          font-size: 1.2rem;
-          color: #ffd700;
-          margin-bottom: 1.5rem;
-        }
-        
-        .rig-grid, .rigs-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-          gap: 1.5rem;
-        }
-        
-        .rig-card, .rig-card {
-          background: linear-gradient(135deg, #1a2332, #0d1320);
-          border: 2px solid #333;
-          border-radius: 12px;
-          padding: 1.5rem;
-          transition: all 0.3s ease;
-        }
-        
-        .rig-card:hover {
-          border-color: #ffd700;
-          transform: translateY(-2px);
-        }
-        
-        .rig-card.selected {
-          border-color: #ffd700;
-          box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
-        }
-        
-        .rig-header, .rig-header {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          margin-bottom: 1rem;
+        .slot-container {
+          background: linear-gradient(45deg, #2d3748, #1a2332);
+          border: 3px solid #ffd700;
+          border-radius: 15px;
+          padding: 2rem;
+          margin-bottom: 2rem;
           position: relative;
         }
         
-        .rig-emoji, .rig-emoji {
-          font-size: 1.5rem;
+        .reels-container {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 1rem;
+          margin-bottom: 1rem;
         }
         
-        .rig-header h3, .rig-header h3 {
-          font-family: 'Press Start 2P', monospace;
-          font-size: 0.9rem;
-          color: #ffd700;
-          margin: 0;
-          flex: 1;
-        }
-        
-        .rig-info {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          gap: 0.3rem;
-        }
-        
-        .rig-status {
-          font-size: 0.6rem;
-          font-weight: bold;
-          text-transform: uppercase;
-          letter-spacing: 1px;
-        }
-        
-        .rig-status.online {
-          color: #4CAF50;
-        }
-        
-        .rig-status.offline {
-          color: #F44336;
-        }
-        
-        .owned-badge {
-          background: #4CAF50;
-          color: white;
-          padding: 0.2rem 0.5rem;
-          border-radius: 4px;
-          font-size: 0.7rem;
-          font-weight: bold;
-        }
-        
-        .rig-card.owned {
-          border-color: #4CAF50;
-          background: linear-gradient(135deg, #1a2332, #1d3a2d);
-        }
-        
-        .mining-stat {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
+        .reel {
+          background: #000;
+          border: 2px solid #333;
+          border-radius: 10px;
           padding: 0.5rem;
-          background: rgba(0, 0, 0, 0.2);
-          border-radius: 6px;
-          flex: 1;
-          margin: 0.2rem;
-        }
-        
-        .mining-stat .stat-icon {
-          font-size: 1rem;
-          margin-bottom: 0.3rem;
-        }
-        
-        .mining-stat .stat-label {
-          font-size: 0.7rem;
-          color: #aaa;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-          margin-bottom: 0.2rem;
-        }
-        
-        .mining-stat .stat-value {
-          font-size: 0.8rem;
-          color: #ffd700;
-          font-weight: bold;
-        }
-        
-        .spec {
           display: flex;
           flex-direction: column;
-          align-items: center;
+          transition: all 0.1s ease;
+        }
+        
+        .reel.spinning {
+          animation: spin 0.1s infinite;
+        }
+        
+        @keyframes spin {
+          0% { transform: translateY(0); }
+          100% { transform: translateY(-10px); }
+        }
+        
+        .symbol {
+          font-size: 3rem;
+          text-align: center;
           padding: 0.5rem;
-          background: rgba(0, 0, 0, 0.2);
-          border-radius: 6px;
-          flex: 1;
-          margin: 0.2rem;
-        }
-        
-        .spec-icon {
-          font-size: 1rem;
-          margin-bottom: 0.3rem;
-        }
-        
-        .spec-label {
-          font-size: 0.7rem;
-          color: #aaa;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-          margin-bottom: 0.2rem;
-        }
-        
-        .spec-value {
-          font-size: 0.8rem;
-          color: #ffd700;
-          font-weight: bold;
-        }
-        
-        .risk-spec {
+          transition: all 0.3s ease;
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 0.5rem;
-          margin-top: 0.5rem;
-          padding: 0.5rem;
-          background: rgba(244, 67, 54, 0.1);
-          border-radius: 6px;
-          border: 1px solid rgba(244, 67, 54, 0.3);
         }
         
-        .utilization {
-          color: #ffd700;
-          font-weight: bold;
-        }
-        
-        .rig-description {
-          color: #aaa;
-          margin-bottom: 1rem;
-          font-size: 0.9rem;
-        }
-        
-        .rig-specs {
-          display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
-          margin-bottom: 1rem;
-        }
-        
-        .spec-row {
-          display: flex;
-          justify-content: space-between;
-          font-size: 0.9rem;
-        }
-        
-        .earnings-section {
-          display: flex;
-          justify-content: space-between;
-          font-size: 0.9rem;
-        }
-        
-        .earnings {
-          color: #ffd700;
-          font-weight: bold;
-        }
-        
-        .rig-slots {
-          margin-bottom: 1rem;
-        }
-        
-        .slots-header {
-          display: flex;
-          justify-content: space-between;
-          margin-bottom: 0.5rem;
-          font-size: 0.9rem;
-          color: #aaa;
-        }
-        
-        .slots-bar {
-          height: 8px;
-          background: #333;
-          border-radius: 4px;
-          overflow: hidden;
-        }
-        
-        .slots-fill {
-          height: 100%;
-          background: linear-gradient(90deg, #ffd700, #ff9500);
-          transition: width 0.3s ease;
-        }
-        
-        .deployment-section {
-          border-top: 1px solid #333;
-          padding-top: 1rem;
-        }
-        
-        .deployment-cost {
-          display: flex;
-          justify-content: space-between;
-          font-size: 0.9rem;
-        }
-        
-        .cost-label {
-          color: #aaa;
-        }
-        
-        .cost-value {
-          color: #ffd700;
-          font-weight: bold;
-        }
-        
-        .deploy-button {
-          background: linear-gradient(135deg, #ffd700, #ff9500);
-          color: black;
-          border: none;
-          padding: 0.8rem 1.5rem;
-          border-radius: 6px;
-          font-weight: bold;
-          cursor: pointer;
-          width: 100%;
+        .tiger-symbol {
+          width: 80px;
+          height: 80px;
+          object-fit: cover;
+          border-radius: 8px;
+          border: 2px solid #333;
           transition: all 0.3s ease;
         }
         
-        .deploy-button:hover {
-          transform: translateY(-1px);
-          box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+        .emoji-symbol {
+          font-size: 3rem;
         }
         
-        .deploy-button:disabled {
-          background: #333;
-          color: #666;
+        .symbol.center .tiger-symbol {
+          border-color: #ffd700;
+          box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+        
+        .symbol.center {
+          background: rgba(255, 215, 0, 0.2);
+          border-radius: 8px;
+          border: 2px solid #ffd700;
+        }
+        
+        .payline {
+          text-align: center;
+          margin-top: 1rem;
+        }
+        
+        .payline-indicator {
+          color: #ffd700;
+          font-weight: bold;
+          letter-spacing: 2px;
+        }
+        
+        .bet-controls {
+          text-align: center;
+          margin-bottom: 2rem;
+        }
+        
+        .bet-selector {
+          margin-bottom: 1rem;
+        }
+        
+        .bet-selector label {
+          display: block;
+          margin-bottom: 0.5rem;
+          color: #ffd700;
+          font-weight: bold;
+        }
+        
+        .bet-buttons {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+          justify-content: center;
+          margin-bottom: 1rem;
+        }
+        
+        .bet-button {
+          background: #2d3748;
+          border: 2px solid #333;
+          color: white;
+          padding: 0.5rem 1rem;
+          border-radius: 5px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          font-size: 0.9rem;
+        }
+        
+        .bet-button:hover:not(:disabled) {
+          border-color: #ffd700;
+          background: #3d4758;
+        }
+        
+        .bet-button.active {
+          background: #ffd700;
+          color: #000;
+          font-weight: bold;
+        }
+        
+        .bet-button:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+        
+        .spin-button {
+          background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+          border: 3px solid #ffd700;
+          color: white;
+          padding: 1rem 2rem;
+          border-radius: 10px;
+          font-size: 1.2rem;
+          font-weight: bold;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          text-shadow: 1px 1px #000;
+        }
+        
+        .spin-button:hover:not(:disabled) {
+          transform: scale(1.05);
+          box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+        
+        .spin-button:disabled {
+          opacity: 0.5;
           cursor: not-allowed;
           transform: none;
-          box-shadow: none;
         }
         
-        .rig-full {
+        .win-display {
           text-align: center;
           padding: 1rem;
-          background: rgba(244, 67, 54, 0.1);
-          border: 1px solid #F44336;
-          border-radius: 6px;
-          color: #F44336;
-          font-weight: bold;
+          border-radius: 10px;
+          margin-bottom: 2rem;
+          animation: fadeIn 0.5s ease;
         }
         
-        .rig-owned {
-          text-align: center;
-          padding: 1rem;
-          background: rgba(4, 170, 109, 0.1);
-          border: 1px solid #4CAF50;
-          border-radius: 6px;
-          color: #4CAF50;
-          font-weight: bold;
+        .win-display.win {
+          background: linear-gradient(45deg, #2ecc71, #27ae60);
+          border: 2px solid #ffd700;
         }
         
-        .loading {
-          text-align: center;
-          padding: 3rem;
-          color: #aaa;
+        .win-display.lose {
+          background: linear-gradient(45deg, #e74c3c, #c0392b);
+          border: 2px solid #333;
+        }
+        
+        .win-type {
           font-size: 1.2rem;
+          font-weight: bold;
+          margin-bottom: 0.5rem;
+        }
+        
+        .win-amount {
+          font-size: 1.5rem;
+          color: #ffd700;
+          font-weight: bold;
+        }
+        
+        .lose-message {
+          font-size: 1.2rem;
+          color: #fff;
+        }
+        
+        .bonus-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.8);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 1000;
+          animation: fadeIn 0.5s ease;
+        }
+        
+        .bonus-content {
+          background: linear-gradient(45deg, #8e44ad, #9b59b6);
+          border: 3px solid #ffd700;
+          border-radius: 20px;
+          padding: 3rem;
+          text-align: center;
+          animation: bounceIn 0.5s ease;
+        }
+        
+        .bonus-content h2 {
+          font-size: 2rem;
+          margin-bottom: 1rem;
+          color: #ffd700;
+        }
+        
+        .bonus-amount {
+          font-size: 2.5rem;
+          color: #ffd700;
+          font-weight: bold;
+          margin-top: 1rem;
+        }
+        
+        .paytable {
+          background: rgba(0, 0, 0, 0.5);
+          border: 2px solid #333;
+          border-radius: 10px;
+          padding: 1.5rem;
+        }
+        
+        .paytable h3 {
+          text-align: center;
+          color: #ffd700;
+          margin-bottom: 1rem;
+        }
+        
+        .paytable-grid {
+          display: grid;
+          gap: 0.5rem;
+        }
+        
+        .paytable-row {
+          display: flex;
+          justify-content: space-between;
+          padding: 0.5rem;
+          background: rgba(255, 255, 255, 0.05);
+          border-radius: 5px;
+        }
+        
+        .paytable-row.special {
+          background: rgba(255, 215, 0, 0.1);
+        }
+        
+        .paytable-symbol {
+          color: #fff;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+        
+        .paytable-symbol-display {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+        
+        .paytable-symbol-display .tiger-symbol {
+          width: 32px;
+          height: 32px;
+          border: 1px solid #333;
+        }
+        
+        .paytable-symbol-display .emoji-symbol {
+          font-size: 1.5rem;
+        }
+        
+        .paytable-payout {
+          color: #ffd700;
+          font-weight: bold;
+        }
+        
+        .two-kind {
+          color: #ffd700;
+          font-weight: bold;
+        }
+        
+        .house-edge-info {
+          text-align: center;
+          margin-top: 1rem;
+          color: #aaa;
+          font-size: 0.8rem;
+        }
+        
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        
+        @keyframes bounceIn {
+          0% { transform: scale(0.5); opacity: 0; }
+          50% { transform: scale(1.1); opacity: 1; }
+          100% { transform: scale(1); opacity: 1; }
         }
         
         @media (max-width: 768px) {
-          .rig-grid, .rigs-grid {
-            grid-template-columns: 1fr;
+          .slot-machine {
+            padding: 1rem 0.5rem;
           }
           
-          .rig-specs {
-            font-size: 0.8rem;
+          .symbol {
+            font-size: 2rem;
+            padding: 0.3rem;
+          }
+          
+          .tiger-symbol {
+            width: 60px;
+            height: 60px;
+          }
+          
+          .emoji-symbol {
+            font-size: 2rem;
+          }
+          
+          .paytable-symbol-display .tiger-symbol {
+            width: 24px;
+            height: 24px;
+          }
+          
+          .bet-buttons {
+            flex-direction: column;
+            align-items: center;
+          }
+          
+          .bet-button {
+            width: 120px;
+          }
+          
+          .spin-button {
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
           }
         }
       `}</style>

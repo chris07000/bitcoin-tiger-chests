@@ -170,6 +170,7 @@ model Wallet {
   UserPoints      UserPoints?
   PointTransaction PointTransaction[]
   PoolMembership  PoolMembership[]
+  SlotGame        SlotGame[]
 }
 
 model UserPoints {
@@ -254,6 +255,24 @@ model HouseRevenue {
   @@index([date])
 }
 
+// Slot Machine Models
+model SlotGame {
+  id          Int         @id @default(autoincrement())
+  walletId    String
+  betAmount   Float       // Amount bet in sats
+  payout      Float       @default(0) // Amount won in sats
+  isWin       Boolean     @default(false)
+  gameType    SlotGameType @default(CLASSIC_SLOTS)
+  symbols     String?     // JSON of the slot result symbols
+  winType     String?     // Type of win (Three Tigers, Bonus, etc.)
+  createdAt   DateTime    @default(now())
+  
+  wallet      Wallet      @relation(fields: [walletId], references: [id])
+  
+  @@index([walletId])
+  @@index([createdAt])
+}
+
 enum ClaimStatus {
   PENDING
   CLAIMED
@@ -305,4 +324,11 @@ enum RevenueSource {
   CHEST_PLAYS
   COINFLIP_HOUSE_EDGE
   JACKPOT_CONTRIBUTION
+  SLOT_MACHINE
+}
+
+enum SlotGameType {
+  CLASSIC_SLOTS
+  BONUS_SLOTS
+  PROGRESSIVE_SLOTS
 }
