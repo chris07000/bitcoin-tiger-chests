@@ -241,6 +241,19 @@ model PoolEvent {
   pool        MiningPool  @relation(fields: [poolId], references: [id])
 }
 
+// House Revenue Tracking
+model HouseRevenue {
+  id          Int         @id @default(autoincrement())
+  amount      Float       // Sats earned by the house
+  source      RevenueSource // Where the revenue came from
+  sourceId    String?     // ID of the pool, raffle, etc.
+  description String?     // Optional description
+  date        DateTime    @default(now())
+  
+  @@index([source, date])
+  @@index([date])
+}
+
 enum ClaimStatus {
   PENDING
   CLAIMED
@@ -283,4 +296,13 @@ enum PoolEventType {
   EQUIPMENT_FAILURE
   BONUS_YIELD
   GOVERNMENT_RAID
+}
+
+enum RevenueSource {
+  MINING_ENTRY_FEE
+  MINING_HOUSE_EDGE
+  RAFFLE_TICKET_SALES
+  CHEST_PLAYS
+  COINFLIP_HOUSE_EDGE
+  JACKPOT_CONTRIBUTION
 }

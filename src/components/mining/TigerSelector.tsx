@@ -6,11 +6,11 @@ import Image from 'next/image';
 interface Tiger {
   id: string;
   tigerId: string;
-  tigerName?: string;
-  tigerImage?: string;
-  tigerLevel: number;
-  stakedAt: string;
-  isGuardian: boolean;
+  tigerName: string;
+  tigerImage: string;
+  inscriptionNumber: number;
+  contentType: string;
+  isAvailable: boolean;
 }
 
 interface TigerSelectorProps {
@@ -50,66 +50,20 @@ export default function TigerSelector({
   const fetchUserTigers = async () => {
     setLoading(true);
     try {
-      // Voor nu mock data - later vervangen met echte API call
-      const mockTigers: Tiger[] = [
-        {
-          id: 'stake_1',
-          tigerId: 'tiger_001',
-          tigerName: 'Thunder Beast',
-          tigerImage: '/tiger-logo.png',
-          tigerLevel: 3,
-          stakedAt: new Date().toISOString(),
-          isGuardian: false
-        },
-        {
-          id: 'stake_2', 
-          tigerId: 'tiger_002',
-          tigerName: 'Golden Claw',
-          tigerImage: '/tiger-logo.png',
-          tigerLevel: 5,
-          stakedAt: new Date().toISOString(),
-          isGuardian: true
-        },
-        {
-          id: 'stake_3',
-          tigerId: 'tiger_003',
-          tigerName: 'Shadow Hunter',
-          tigerImage: '/tiger-logo.png',
-          tigerLevel: 2,
-          stakedAt: new Date().toISOString(),
-          isGuardian: false
-        },
-        {
-          id: 'stake_4',
-          tigerId: 'tiger_004',
-          tigerName: 'Lightning Strike',
-          tigerImage: '/tiger-logo.png',
-          tigerLevel: 7,
-          stakedAt: new Date().toISOString(),
-          isGuardian: true
-        },
-        {
-          id: 'stake_5',
-          tigerId: 'tiger_005',
-          tigerName: 'Storm Rider',
-          tigerImage: '/tiger-logo.png',
-          tigerLevel: 4,
-          stakedAt: new Date().toISOString(),
-          isGuardian: false
-        }
-      ];
-      
-      setTigers(mockTigers);
-      
-      /* Later vervangen met:
       const response = await fetch(`/api/mining/user-tigers?wallet=${walletAddress}`);
       const data = await response.json();
+      
       if (data.success) {
         setTigers(data.tigers);
+        console.log(`🐅 Loaded ${data.tigers.length} tigers for mining selection`);
+      } else {
+        console.error('Failed to load tigers:', data.error);
+        setTigers([]);
       }
-      */
     } catch (error) {
       console.error('Error fetching tigers:', error);
+      // Fallback to empty tigers array if API fails
+      setTigers([]);
     } finally {
       setLoading(false);
     }
@@ -129,13 +83,6 @@ export default function TigerSelector({
     onClose();
   };
 
-  const getTigerLevelColor = (level: number) => {
-    if (level >= 7) return '#ff6b35'; // Legendary orange
-    if (level >= 5) return '#ffd700'; // Epic gold
-    if (level >= 3) return '#9d4edd'; // Rare purple
-    return '#4CAF50'; // Common green
-  };
-
   if (!isOpen) return null;
 
   return (
@@ -151,18 +98,25 @@ export default function TigerSelector({
             <div className="loading">Loading your tigers...</div>
           ) : tigers.length === 0 ? (
             <div className="no-tigers">
-              <p>You have no staked tigers available for mining.</p>
-              <p>Stake some tigers first to participate in mining pools!</p>
+              <div className="no-tigers-icon">🐅</div>
+              <h3>No Tigers Available for Mining</h3>
+              <p>You need to have <strong>staked tigers</strong> to participate in mining pools.</p>
+              <div className="action-hints">
+                <p>💡 <strong>Get started:</strong></p>
+                <ol>
+                  <li>Go to the Tiger Staking page</li>
+                  <li>Stake some tigers to level them up</li>
+                  <li>Come back here to join mining pools!</li>
+                </ol>
+              </div>
+              <p className="tip">Higher level tigers earn more mining rewards! 🚀</p>
             </div>
           ) : (
             <>
               <div className="selection-info">
                 <p>Selected: {selectedTigers.length} tigers</p>
-                <div className="level-legend">
-                  <span style={{ color: '#4CAF50' }}>●</span> Lvl 1-2
-                  <span style={{ color: '#9d4edd' }}>●</span> Lvl 3-4
-                  <span style={{ color: '#ffd700' }}>●</span> Lvl 5-6
-                  <span style={{ color: '#ff6b35' }}>●</span> Lvl 7+
+                <div className="available-info">
+                  <span>🐅 Available Tigers: {tigers.length}</span>
                 </div>
               </div>
               
@@ -182,19 +136,10 @@ export default function TigerSelector({
                           width={60}
                           height={60}
                         />
-                        {tiger.isGuardian && (
-                          <div className="guardian-badge">🛡️</div>
-                        )}
                       </div>
                       
                       <div className="tiger-info">
                         <h4>{tiger.tigerName || `Tiger #${tiger.tigerId.slice(-3)}`}</h4>
-                        <div 
-                          className="tiger-level"
-                          style={{ color: getTigerLevelColor(tiger.tigerLevel) }}
-                        >
-                          Level {tiger.tigerLevel}
-                        </div>
                       </div>
                       
                       <div className="selection-indicator">
@@ -287,6 +232,53 @@ export default function TigerSelector({
           color: #aaa;
         }
         
+        .no-tigers-icon {
+          font-size: 3rem;
+          margin-bottom: 1rem;
+        }
+        
+        .no-tigers h3 {
+          color: #ffd700;
+          margin: 0 0 1rem 0;
+          font-size: 1.2rem;
+        }
+        
+        .no-tigers p {
+          margin: 0.8rem 0;
+          line-height: 1.6;
+        }
+        
+        .action-hints {
+          background: rgba(255, 215, 0, 0.1);
+          border: 1px solid #ffd700;
+          border-radius: 8px;
+          padding: 1.5rem;
+          margin: 1.5rem 0;
+          text-align: left;
+        }
+        
+        .action-hints p {
+          color: #ffd700;
+          font-weight: bold;
+          margin: 0 0 1rem 0;
+        }
+        
+        .action-hints ol {
+          color: #ccc;
+          margin: 0;
+          padding-left: 1.2rem;
+        }
+        
+        .action-hints li {
+          margin: 0.5rem 0;
+        }
+        
+        .no-tigers .tip {
+          color: #4CAF50;
+          font-weight: bold;
+          font-size: 0.9rem;
+        }
+        
         .selection-info {
           display: flex;
           justify-content: space-between;
@@ -297,11 +289,9 @@ export default function TigerSelector({
           border-radius: 8px;
         }
         
-        .level-legend {
-          display: flex;
-          gap: 1rem;
-          font-size: 0.9rem;
+        .available-info {
           color: #aaa;
+          font-size: 0.9rem;
         }
         
         .tigers-grid {
@@ -339,29 +329,10 @@ export default function TigerSelector({
           margin-bottom: 0.5rem;
         }
         
-        .guardian-badge {
-          position: absolute;
-          top: -5px;
-          right: -5px;
-          background: #ffd700;
-          border-radius: 50%;
-          width: 20px;
-          height: 20px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 0.8rem;
-        }
-        
         .tiger-info h4 {
           margin: 0 0 0.5rem 0;
           color: #ffd700;
           font-size: 0.9rem;
-        }
-        
-        .tiger-level {
-          font-size: 0.8rem;
-          font-weight: bold;
         }
         
         .selection-indicator {
@@ -426,10 +397,6 @@ export default function TigerSelector({
             flex-direction: column;
             gap: 1rem;
             text-align: center;
-          }
-          
-          .level-legend {
-            justify-content: center;
           }
         }
       `}</style>
