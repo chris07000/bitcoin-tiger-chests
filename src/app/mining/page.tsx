@@ -118,7 +118,7 @@ export default function SlotMachine() {
     // Check for scatter symbols (anywhere on reels)
     const scatterCount = resultReels.flat().filter(symbol => symbol === 'scatter').length;
     if (scatterCount >= 3) {
-      const scatterPayout = Math.floor(currentBet * scatterCount * 1.5); // Reduced from 2x
+      const scatterPayout = Math.floor(currentBet * scatterCount * 1.5);
       return {
         symbols: resultReels,
         payout: scatterPayout,
@@ -145,7 +145,7 @@ export default function SlotMachine() {
       // Three of a kind on center line
       const symbol = SLOT_SYMBOLS.find(s => s.id === centerLine[0]);
       if (symbol && symbol.id !== 'scatter' && symbol.id !== 'bonus') {
-        const payout = Math.floor(currentBet * symbol.value * 0.7); // Reduced from 0.8 to 0.7
+        const payout = Math.floor(currentBet * symbol.value * 0.7);
         return {
           symbols: resultReels,
           payout,
@@ -155,18 +155,35 @@ export default function SlotMachine() {
       }
     }
 
-    // Check for two of a kind (only high value symbols)
+    // Check for two of a kind (ANY value symbols now!)
     if (centerLine[0] === centerLine[1] || centerLine[1] === centerLine[2]) {
       const matchSymbol = centerLine[0] === centerLine[1] ? centerLine[0] : centerLine[1];
       const symbol = SLOT_SYMBOLS.find(s => s.id === matchSymbol);
-      if (symbol && symbol.id !== 'scatter' && symbol.id !== 'bonus' && symbol.value >= 8) { // Increased from 5 to 8
-        const payout = Math.floor(currentBet * symbol.value * 0.15); // Reduced from 0.2 to 0.15
+      if (symbol && symbol.id !== 'scatter' && symbol.id !== 'bonus') {
+        const payout = Math.floor(currentBet * symbol.value * 0.15); // Small win for any 2 of a kind
         return {
           symbols: resultReels,
-          payout,
+          payout: Math.max(payout, 50), // Minimum 50 sats win
           isWin: true,
           winType: `Two ${symbol.name}s!`
         };
+      }
+    }
+
+    // NEW: Single high-value symbol wins (Tiger #456 or #777)
+    const highValueSymbols = ['tiger456', 'tiger777'];
+    for (const symbolId of centerLine) {
+      if (highValueSymbols.includes(symbolId)) {
+        const symbol = SLOT_SYMBOLS.find(s => s.id === symbolId);
+        if (symbol) {
+          const payout = Math.floor(currentBet * 0.5); // 50% of bet back
+          return {
+            symbols: resultReels,
+            payout: Math.max(payout, 100), // Minimum 100 sats
+            isWin: true,
+            winType: `Lucky ${symbol.name}!`
+          };
+        }
       }
     }
 
@@ -407,9 +424,10 @@ export default function SlotMachine() {
                 {symbol.name}
               </span>
               <span className="paytable-payout">
-                3x = {Math.floor(currentBet * symbol.value * 0.7).toLocaleString()}
-                {symbol.value >= 8 && (
-                  <span className="two-kind"> | 2x = {Math.floor(currentBet * symbol.value * 0.15).toLocaleString()}</span>
+                3x = {Math.floor(currentBet * symbol.value * 0.7).toLocaleString()} | 
+                2x = {Math.max(Math.floor(currentBet * symbol.value * 0.15), 50).toLocaleString()}
+                {(symbol.id === 'tiger456' || symbol.id === 'tiger777') && (
+                  <span className="lucky-win"> | 1x = {Math.max(Math.floor(currentBet * 0.5), 100).toLocaleString()}</span>
                 )}
               </span>
             </div>
@@ -815,7 +833,7 @@ export default function SlotMachine() {
           font-weight: bold;
         }
         
-        .two-kind {
+        .lucky-win {
           color: #ffd700;
           font-weight: bold;
         }
