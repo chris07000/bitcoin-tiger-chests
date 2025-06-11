@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        type: 'SLOT_BET',
+        type: 'WITHDRAW',
         amount: betAmount,
         paymentHash: `slot-bet-${Date.now()}`
       })

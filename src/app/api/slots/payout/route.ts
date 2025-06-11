@@ -2,13 +2,30 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
-    const { walletAddress, payout, winType } = await request.json();
+    const { walletAddress, winAmount } = await request.json();
 
-    if (!walletAddress || !payout) {
+    if (!walletAddress || winAmount == null) {
       return NextResponse.json(
         { success: false, error: 'Missing required fields' },
         { status: 400 }
       );
+    }
+
+    // Validate win amount
+    if (winAmount < 0) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid win amount' },
+        { status: 400 }
+      );
+    }
+
+    // If no win, just return success
+    if (winAmount === 0) {
+      return NextResponse.json({
+        success: true,
+        message: 'No payout this time',
+        winAmount: 0
+      });
     }
 
     // Call the wallet API to add the win amount
@@ -18,8 +35,8 @@ export async function POST(request: NextRequest) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        type: 'SLOT_WIN',
-        amount: -payout, // Negative amount to add to balance (wallet API uses negative for credits)
+        type: 'DEPOSIT',
+        amount: winAmount,
         paymentHash: `slot-win-${Date.now()}`
       })
     });
@@ -27,7 +44,7 @@ export async function POST(request: NextRequest) {
     if (!walletResponse.ok) {
       const errorData = await walletResponse.json();
       return NextResponse.json(
-        { success: false, error: errorData.error || 'Failed to process win' },
+        { success: false, error: errorData.error || 'Failed to process payout' },
         { status: 400 }
       );
     }
@@ -36,14 +53,13 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: `Win payout: ${payout} sats (${winType})`,
-      payout,
-      winType,
+      message: 'Payout processed successfully',
+      winAmount,
       newBalance: walletData.balance
     });
 
   } catch (error) {
-    console.error('Error processing payout:', error);
+    console.error('Error processing slot payout:', error);
     return NextResponse.json(
       { success: false, error: 'Internal server error' },
       { status: 500 }
