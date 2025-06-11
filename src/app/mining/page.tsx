@@ -48,29 +48,64 @@ const WINLINES = [
 const getCustomPayout = (betAmount: number, symbolId: string): number => {
   const payoutTable: { [key: number]: { [key: string]: number } } = {
     400: {
-      'tiger777': 20000,   'tiger456': 6000,    'tiger234': 6000,
-      'tiger123': 6000,    'tiger89': 6000,     'tiger67': 2800,
-      'tiger45': 2800,     'tiger23': 2800,     'tiger12': 2800,     'tiger5': 2800
+      'tiger777': 8000,    // 20x bet
+      'tiger456': 3200,    // 8x bet
+      'tiger234': 2400,    // 6x bet
+      'tiger123': 1600,    // 4x bet
+      'tiger89': 1200,     // 3x bet
+      'tiger67': 800,      // 2x bet
+      'tiger45': 600,      // 1.5x bet
+      'tiger23': 500,      // 1.25x bet
+      'tiger12': 440,      // 1.1x bet
+      'tiger5': 420        // 1.05x bet
     },
     1000: {
-      'tiger777': 40000,   'tiger456': 16000,   'tiger234': 16000,
-      'tiger123': 16000,   'tiger89': 16000,    'tiger67': 8000,
-      'tiger45': 8000,     'tiger23': 8000,     'tiger12': 8000,     'tiger5': 8000
+      'tiger777': 20000,   // 20x bet
+      'tiger456': 8000,    // 8x bet
+      'tiger234': 6000,    // 6x bet
+      'tiger123': 4000,    // 4x bet
+      'tiger89': 3000,     // 3x bet
+      'tiger67': 2000,     // 2x bet
+      'tiger45': 1500,     // 1.5x bet
+      'tiger23': 1250,     // 1.25x bet
+      'tiger12': 1100,     // 1.1x bet
+      'tiger5': 1050      // 1.05x bet
     },
     2000: {
-      'tiger777': 80000,   'tiger456': 32000,   'tiger234': 32000,
-      'tiger123': 32000,   'tiger89': 32000,    'tiger67': 16000,
-      'tiger45': 16000,    'tiger23': 16000,    'tiger12': 16000,    'tiger5': 16000
+      'tiger777': 40000,   // 20x bet
+      'tiger456': 16000,   // 8x bet
+      'tiger234': 12000,   // 6x bet
+      'tiger123': 8000,    // 4x bet
+      'tiger89': 6000,     // 3x bet
+      'tiger67': 4000,     // 2x bet
+      'tiger45': 3000,     // 1.5x bet
+      'tiger23': 2500,     // 1.25x bet
+      'tiger12': 2200,     // 1.1x bet
+      'tiger5': 2100      // 1.05x bet
     },
     4000: {
-      'tiger777': 200000,  'tiger456': 80000,   'tiger234': 80000,
-      'tiger123': 64000,   'tiger89': 64000,    'tiger67': 32000,
-      'tiger45': 32000,    'tiger23': 32000,    'tiger12': 32000,    'tiger5': 32000
+      'tiger777': 80000,   // 20x bet
+      'tiger456': 32000,   // 8x bet
+      'tiger234': 24000,   // 6x bet
+      'tiger123': 16000,   // 4x bet
+      'tiger89': 12000,    // 3x bet
+      'tiger67': 8000,     // 2x bet
+      'tiger45': 6000,     // 1.5x bet
+      'tiger23': 5000,     // 1.25x bet
+      'tiger12': 4400,     // 1.1x bet
+      'tiger5': 4200      // 1.05x bet
     },
     8000: {
-      'tiger777': 400000,  'tiger456': 160000,  'tiger234': 160000,
-      'tiger123': 148000,  'tiger89': 128000,   'tiger67': 64000,
-      'tiger45': 64000,    'tiger23': 64000,    'tiger12': 64000,    'tiger5': 64000
+      'tiger777': 160000,  // 20x bet
+      'tiger456': 64000,   // 8x bet
+      'tiger234': 48000,   // 6x bet
+      'tiger123': 32000,   // 4x bet
+      'tiger89': 24000,    // 3x bet
+      'tiger67': 16000,    // 2x bet
+      'tiger45': 12000,    // 1.5x bet
+      'tiger23': 10000,    // 1.25x bet
+      'tiger12': 8800,     // 1.1x bet
+      'tiger5': 8400      // 1.05x bet
     }
   };
   
@@ -87,7 +122,9 @@ const getWeightedRandomSymbol = (): SlotSymbol => {
 
 export default function SlotMachine() {
   const [reels, setReels] = useState<string[][]>([[], [], []]);
+  const [spinningReels, setSpinningReels] = useState<string[][]>([[], [], []]);
   const [isSpinning, setIsSpinning] = useState(false);
+  const [reelStates, setReelStates] = useState<boolean[]>([false, false, false]);
   const [currentBet, setCurrentBet] = useState(1000); // Default to 1000 sats
   const [lastWin, setLastWin] = useState<SpinResult | null>(null);
   const [gamesPlayed, setGamesPlayed] = useState(0);
@@ -116,6 +153,7 @@ export default function SlotMachine() {
       generateRandomReel()
     ];
     setReels(initialReels);
+    setSpinningReels(initialReels);
   };
 
   const generateRandomReel = (): string[] => {
@@ -127,11 +165,30 @@ export default function SlotMachine() {
     return reel;
   };
 
+  // Generate a long spinning reel for animation (multiple symbols)
+  const generateSpinningReel = (): string[] => {
+    const reel: string[] = [];
+    for (let i = 0; i < 20; i++) { // Create 20 symbols for smooth spinning
+      const randomSymbol = getWeightedRandomSymbol();
+      reel.push(randomSymbol.id);
+    }
+    return reel;
+  };
+
   const spin = async () => {
     if (!walletAddress || balance < currentBet || isSpinning) return;
 
     setIsSpinning(true);
     setLastWin(null);
+    setReelStates([true, true, true]); // All reels spinning
+
+    // Generate spinning animation data
+    const spinningData = [
+      generateSpinningReel(),
+      generateSpinningReel(),
+      generateSpinningReel()
+    ];
+    setSpinningReels(spinningData);
 
     try {
       // Call secure server-side API that handles everything
@@ -149,6 +206,7 @@ export default function SlotMachine() {
       if (!apiResult.success) {
         alert(apiResult.error);
         setIsSpinning(false);
+        setReelStates([false, false, false]);
         return;
       }
 
@@ -159,40 +217,47 @@ export default function SlotMachine() {
       updateBalanceWithTimestamp(newBalance);
       console.log(`Spin result: Bet ${currentBet} sats, Payout ${gameResult.payout} sats, House Revenue ${houseRevenue} sats`);
 
-      // Simulate spinning animation
-      const spinDuration = 2000;
-      const intervalDuration = 100;
-      let elapsed = 0;
+      // Stop reels one by one with realistic timing
+      setTimeout(() => {
+        setReelStates([false, true, true]); // Stop first reel
+        // Update first reel with final result
+        setReels(prev => [gameResult.reels[0], prev[1], prev[2]]);
+      }, 1000);
 
-      const spinInterval = setInterval(() => {
-        // Show random symbols during animation (visual only)
-        setReels([
-          generateRandomReel(),
-          generateRandomReel(),
-          generateRandomReel()
-        ]);
-        elapsed += intervalDuration;
+      setTimeout(() => {
+        setReelStates([false, false, true]); // Stop second reel
+        // Update second reel with final result
+        setReels(prev => [prev[0], gameResult.reels[1], prev[2]]);
+      }, 1500);
 
-        if (elapsed >= spinDuration) {
-          clearInterval(spinInterval);
-          
-          // Show final server result
-          setReels(gameResult.reels);
-          setLastWin(gameResult);
-          setGamesPlayed(prev => prev + 1);
-          setIsSpinning(false);
-        }
-      }, intervalDuration);
+      setTimeout(() => {
+        setReelStates([false, false, false]); // Stop third reel
+        // Update third reel with final result and show complete result
+        setReels(gameResult.reels);
+        setLastWin(gameResult);
+        setGamesPlayed(prev => prev + 1);
+        setIsSpinning(false);
+      }, 2000);
 
     } catch (error) {
       console.error('Error processing spin:', error);
       alert('Failed to process spin. Please try again.');
       setIsSpinning(false);
+      setReelStates([false, false, false]);
       return;
     }
   };
 
   const getSymbolDisplay = (symbolId: string) => {
+    // Handle blank symbols
+    if (symbolId === 'blank') {
+      return (
+        <div className="blank-symbol">
+          <div className="blank-content">❌</div>
+        </div>
+      );
+    }
+    
     // Extract tiger number from symbolId (e.g., 'tiger777' -> '777')
     const tigerNumber = symbolId.replace('tiger', '');
     return (
@@ -244,15 +309,34 @@ export default function SlotMachine() {
       <div className="slot-container">
         <div className="reels-container">
           {reels.map((reel, reelIndex) => (
-            <div key={reelIndex} className={`reel ${isSpinning ? 'spinning' : ''}`}>
-              {reel.map((symbolId, symbolIndex) => (
-                <div 
-                  key={`${reelIndex}-${symbolIndex}`} 
-                  className={`symbol winline-symbol`}
-                >
-                  {getSymbolDisplay(symbolId)}
+            <div key={reelIndex} className="reel-wrapper">
+              <div className="reel-window">
+                <div className={`reel ${reelStates[reelIndex] ? 'spinning' : ''}`}>
+                  {reelStates[reelIndex] ? (
+                    // Show spinning animation
+                    <div className="spinning-symbols">
+                      {spinningReels[reelIndex].map((symbolId, symbolIndex) => (
+                        <div 
+                          key={`spin-${reelIndex}-${symbolIndex}`} 
+                          className="symbol"
+                        >
+                          {getSymbolDisplay(symbolId)}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    // Show final result
+                    reel.map((symbolId, symbolIndex) => (
+                      <div 
+                        key={`final-${reelIndex}-${symbolIndex}`} 
+                        className="symbol winline-symbol"
+                      >
+                        {getSymbolDisplay(symbolId)}
+                      </div>
+                    ))
+                  )}
                 </div>
-              ))}
+              </div>
             </div>
           ))}
         </div>
@@ -333,12 +417,12 @@ export default function SlotMachine() {
         </div>
         
         <div className="game-info">
-          <p>🎰 Traditional Bitcoin Tiger Slot Machine!</p>
-          <p>🏆 Tiger #777 = Jackpot | 🥈 Tiger #456 = Almost Jackpot</p>
-          <p>🍈 Tiger #234 = "Melons" | 🍓 Tiger #123 = "Strawberries" | 🔔 Tiger #89 = "Bells"</p>
-          <p>💰 Higher bets unlock massive payouts!</p>
-          <p>📊 RTP: ~80-85% (Traditional Reel Strip System)</p>
-          <p>🎯 Works like real casino machines with reel positioning!</p>
+          <p>🎰 REALISTIC Bitcoin Tiger Slot Machine!</p>
+          <p>🏆 Tiger #777 = 20x Bet Jackpot | 🥈 Tiger #456 = 8x Bet</p>
+          <p>🍈 Tiger #234 = 6x | 🍓 Tiger #123 = 4x | 🔔 Tiger #89 = 3x</p>
+          <p>💰 Much lower payouts but realistic casino experience!</p>
+          <p>📊 RTP: ~85% (15% House Edge - Like Real Casinos)</p>
+          <p>🎯 Blank symbols = No wins, much fewer winning combinations!</p>
         </div>
       </div>
 
@@ -406,7 +490,6 @@ export default function SlotMachine() {
           padding: 2rem;
           margin-bottom: 2rem;
           position: relative;
-          transform: none !important;
         }
         
         .reels-container {
@@ -414,68 +497,58 @@ export default function SlotMachine() {
           grid-template-columns: repeat(3, 1fr);
           gap: 1rem;
           margin-bottom: 1rem;
-          transform: none !important;
         }
         
-        .reel {
+        .reel-wrapper {
+          position: relative;
           background: #000;
           border: 2px solid #333;
           border-radius: 10px;
-          padding: 0.5rem;
-          display: flex;
-          flex-direction: column;
+          overflow: hidden;
+        }
+        
+        .reel-window {
+          height: 300px; /* Fixed height to show exactly 3 symbols */
           overflow: hidden;
           position: relative;
-          transform: none !important;
+        }
+        
+        .reel {
+          display: flex;
+          flex-direction: column;
           align-items: center;
-          justify-content: center;
+          justify-content: flex-start;
+          transition: none;
         }
         
-        .reel.spinning {
-          animation: none; /* Remove animation from reel container */
+        .reel.spinning .spinning-symbols {
+          animation: reelSpin 0.1s linear infinite;
         }
         
-        .reel.spinning .symbol {
-          animation: symbolBlur 0.15s infinite;
-        }
-        
-        @keyframes symbolBlur {
+        @keyframes reelSpin {
           0% { 
-            opacity: 1;
-            filter: blur(0px);
-            transform: none;
-          }
-          50% { 
-            opacity: 0.7;
-            filter: blur(0.5px);
-            transform: none;
+            transform: translateY(0px);
           }
           100% { 
-            opacity: 1;
-            filter: blur(0px);
-            transform: none;
+            transform: translateY(-100px); /* Move one symbol height */
           }
         }
         
-        @keyframes symbolSpin {
-          0% { transform: translateY(0); opacity: 1; }
-          50% { transform: translateY(-5px); opacity: 0.7; }
-          100% { transform: translateY(0); opacity: 1; }
+        .spinning-symbols {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
         }
         
         .symbol {
-          font-size: 3rem;
-          text-align: center;
-          padding: 0.5rem;
-          transition: none; /* Remove transition during spinning */
+          width: 100px;
+          height: 100px;
           display: flex;
           align-items: center;
           justify-content: center;
-          transform: none; /* Default state */
-          width: 100px;
-          height: 100px;
-          box-sizing: border-box;
-          margin: 0 auto;
+          flex-shrink: 0;
+          margin: 0;
+          padding: 0;
         }
         
         .tiger-symbol {
@@ -486,19 +559,6 @@ export default function SlotMachine() {
           border: 2px solid #333;
           transition: all 0.3s ease;
           display: block;
-          margin: 0 auto;
-        }
-        
-        .emoji-symbol {
-          font-size: 4rem;
-          width: 80px;
-          height: 80px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          line-height: 1;
-          margin: 0 auto;
-          text-align: center;
         }
         
         .winline-symbol {
@@ -523,17 +583,6 @@ export default function SlotMachine() {
         .winline-symbol .tiger-symbol {
           border-color: rgba(255, 215, 0, 0.4);
           box-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
-        }
-        
-        .symbol.center .tiger-symbol {
-          border-color: #ffd700;
-          box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-        }
-        
-        .symbol.center {
-          background: rgba(255, 215, 0, 0.2);
-          border-radius: 8px;
-          border: 2px solid #ffd700;
         }
         
         .paylines {
@@ -736,12 +785,6 @@ export default function SlotMachine() {
           to { opacity: 1; }
         }
         
-        @keyframes bounceIn {
-          0% { transform: scale(0.5); opacity: 0; }
-          50% { transform: scale(1.1); opacity: 1; }
-          100% { transform: scale(1); opacity: 1; }
-        }
-        
         @media (max-width: 768px) {
           .slot-machine {
             padding: 1rem 0.5rem;
@@ -767,20 +810,16 @@ export default function SlotMachine() {
             margin-bottom: 1rem;
           }
           
+          .reel-window {
+            height: 210px; /* Smaller for mobile */
+          }
+          
           .symbol {
-            font-size: 2rem;
-            padding: 0.2rem;
             width: 70px;
             height: 70px;
           }
           
           .tiger-symbol {
-            width: 50px;
-            height: 50px;
-          }
-          
-          .emoji-symbol {
-            font-size: 2.5rem;
             width: 50px;
             height: 50px;
           }
@@ -826,6 +865,59 @@ export default function SlotMachine() {
             padding: 0.3rem;
             font-size: 0.8rem;
           }
+          
+          @keyframes reelSpin {
+            0% { 
+              transform: translateY(0px);
+            }
+            100% { 
+              transform: translateY(-70px); /* Smaller movement for mobile */
+            }
+          }
+          
+          .blank-symbol {
+            width: 50px;
+            height: 50px;
+          }
+          
+          .blank-content {
+            font-size: 1.5rem;
+          }
+        }
+        
+        .blank-symbol {
+          width: 80px;
+          height: 80px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #1a1a1a;
+          border: 2px solid #444;
+          border-radius: 8px;
+          position: relative;
+        }
+        
+        .blank-content {
+          font-size: 2rem;
+          opacity: 0.5;
+          color: #666;
+        }
+        
+        .blank-symbol::before {
+          content: '';
+          position: absolute;
+          top: 2px;
+          left: 2px;
+          right: 2px;
+          bottom: 2px;
+          background: repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 2px,
+            rgba(255,0,0,0.1) 2px,
+            rgba(255,0,0,0.1) 4px
+          );
+          border-radius: 6px;
         }
       `}</style>
     </div>
