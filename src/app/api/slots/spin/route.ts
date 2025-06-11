@@ -1,119 +1,116 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// OPTIMIZED REEL STRIPS: High payouts, no blanks, perfect 95% RTP via frequency
-// Based on original Multiplayer slot machine style
+// MULTIPLAYER REEL STRIPS: Much rarer wins for proper balance
+// Most symbols are tiger5 (no payout) to make wins special
 const REEL_STRIPS = {
   reel1: [
-    // 100 positions - NO BLANKS, balanced frequencies for 95% RTP
+    // 100 positions - Mostly tiger5 (no payout) to make wins rare
     'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
-    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
-    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger23', 'tiger23', 'tiger23',
-    'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger45', 'tiger45', 'tiger45', 'tiger45',
-    'tiger45', 'tiger45', 'tiger45', 'tiger67', 'tiger67', 'tiger67', 'tiger67', 'tiger67', 'tiger67', 'tiger89',
-    'tiger89', 'tiger89', 'tiger89', 'tiger89', 'tiger123', 'tiger123', 'tiger123', 'tiger123', 'tiger234', 'tiger234',
-    'tiger234', 'tiger456', 'tiger456', 'tiger777', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
-    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger45',
-    'tiger45', 'tiger45', 'tiger67', 'tiger67', 'tiger67', 'tiger89', 'tiger89', 'tiger89', 'tiger123', 'tiger123',
-    'tiger234', 'tiger234', 'tiger456', 'tiger777', 'tiger5', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger89'
+    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
+    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
+    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
+    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
+    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
+    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
+    'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger45', 'tiger45', 'tiger45', 'tiger67', 'tiger67',
+    'tiger89', 'tiger89', 'tiger123', 'tiger123', 'tiger234', 'tiger234', 'tiger456', 'tiger456', 'tiger777', 'tiger777'
   ],
   reel2: [
-    // 100 positions - Different distribution but similar frequencies
+    // 100 positions - Similar distribution but different order
     'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
-    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
-    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger23', 'tiger23', 'tiger23', 'tiger23',
-    'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45',
-    'tiger45', 'tiger45', 'tiger67', 'tiger67', 'tiger67', 'tiger67', 'tiger67', 'tiger67', 'tiger89', 'tiger89',
-    'tiger89', 'tiger89', 'tiger89', 'tiger123', 'tiger123', 'tiger123', 'tiger123', 'tiger234', 'tiger234', 'tiger234',
-    'tiger456', 'tiger456', 'tiger777', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger12',
-    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger45', 'tiger45',
-    'tiger45', 'tiger67', 'tiger67', 'tiger67', 'tiger89', 'tiger89', 'tiger89', 'tiger123', 'tiger123', 'tiger234',
-    'tiger234', 'tiger456', 'tiger777', 'tiger5', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger89', 'tiger123'
+    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
+    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
+    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
+    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
+    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
+    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
+    'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger45', 'tiger45', 'tiger45', 'tiger67', 'tiger67',
+    'tiger89', 'tiger89', 'tiger123', 'tiger123', 'tiger234', 'tiger234', 'tiger456', 'tiger456', 'tiger777', 'tiger777'
   ],
   reel3: [
-    // 100 positions - Optimized for exciting near-misses
+    // 100 positions - Even distribution for balance
     'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
-    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
-    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger23', 'tiger23', 'tiger23', 'tiger23',
-    'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45',
-    'tiger45', 'tiger45', 'tiger67', 'tiger67', 'tiger67', 'tiger67', 'tiger67', 'tiger67', 'tiger89', 'tiger89',
-    'tiger89', 'tiger89', 'tiger89', 'tiger123', 'tiger123', 'tiger123', 'tiger123', 'tiger234', 'tiger234', 'tiger234',
-    'tiger456', 'tiger456', 'tiger777', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger12', 'tiger12',
-    'tiger12', 'tiger12', 'tiger12', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger45', 'tiger45', 'tiger45',
-    'tiger67', 'tiger67', 'tiger67', 'tiger89', 'tiger89', 'tiger89', 'tiger123', 'tiger123', 'tiger234', 'tiger234',
-    'tiger456', 'tiger777', 'tiger5', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger89', 'tiger123', 'tiger234'
+    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
+    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
+    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
+    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
+    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
+    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
+    'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger45', 'tiger45', 'tiger45', 'tiger67', 'tiger67',
+    'tiger89', 'tiger89', 'tiger123', 'tiger123', 'tiger234', 'tiger234', 'tiger456', 'tiger456', 'tiger777', 'tiger777'
   ]
 };
 
-// IMPROVED PAYOUTS - Even small wins feel rewarding!
-// All multipliers increased for better player satisfaction
+// ORIGINAL MULTIPLAYER PAYOUTS - Exact from real machine!
+// Win frequencies controlled by reel strips, not payout amounts
 const getCustomPayout = (betAmount: number, symbolId: string): number => {
   const payoutTable: { [key: number]: { [key: string]: number } } = {
     400: {
-      'tiger777': 80000,   // 200x bet - MASSIVE JACKPOT! 
-      'tiger456': 40000,   // 100x bet - Huge win
-      'tiger234': 20000,   // 50x bet - Big win  
-      'tiger123': 12000,   // 30x bet - Great win
-      'tiger89': 8000,     // 20x bet - Good win
-      'tiger67': 4000,     // 10x bet - Nice win
-      'tiger45': 2400,     // 6x bet - Decent win
-      'tiger23': 1600,     // 4x bet - Small win
-      'tiger12': 1200,     // 3x bet - Tiny win
-      'tiger5': 800        // 2x bet - Minimal win
+      'tiger777': 20000,   // 50x bet - TOP JACKPOT!
+      'tiger456': 6000,    // 15x bet - Great win
+      'tiger234': 6000,    // 15x bet - Great win  
+      'tiger123': 6000,    // 15x bet - Great win
+      'tiger89': 6000,     // 15x bet - Great win
+      'tiger67': 2800,     // 7x bet - Good win
+      'tiger45': 2800,     // 7x bet - Good win
+      'tiger23': 2800,     // 7x bet - Good win
+      'tiger12': 2800,     // 7x bet - Good win
+      'tiger5': 400        // 1x bet - Break even (covers bet)
     },
     1000: {
-      'tiger777': 200000,  // 200x bet - MASSIVE JACKPOT!
-      'tiger456': 100000,  // 100x bet - Huge win
-      'tiger234': 50000,   // 50x bet - Big win
-      'tiger123': 30000,   // 30x bet - Great win
-      'tiger89': 20000,    // 20x bet - Good win
-      'tiger67': 10000,    // 10x bet - Nice win
-      'tiger45': 6000,     // 6x bet - Decent win
-      'tiger23': 4000,     // 4x bet - Small win
-      'tiger12': 3000,     // 3x bet - Tiny win
-      'tiger5': 2000      // 2x bet - Minimal win
+      'tiger777': 40000,   // 40x bet - TOP JACKPOT!
+      'tiger456': 16000,   // 16x bet - Great win
+      'tiger234': 16000,   // 16x bet - Great win
+      'tiger123': 16000,   // 16x bet - Great win
+      'tiger89': 16000,    // 16x bet - Great win
+      'tiger67': 8000,     // 8x bet - Good win
+      'tiger45': 8000,     // 8x bet - Good win
+      'tiger23': 8000,     // 8x bet - Good win
+      'tiger12': 8000,     // 8x bet - Good win
+      'tiger5': 1000       // 1x bet - Break even (covers bet)
     },
     2000: {
-      'tiger777': 400000,  // 200x bet - MASSIVE JACKPOT!
-      'tiger456': 200000,  // 100x bet - Huge win
-      'tiger234': 100000,  // 50x bet - Big win
-      'tiger123': 60000,   // 30x bet - Great win
-      'tiger89': 40000,    // 20x bet - Good win
-      'tiger67': 20000,    // 10x bet - Nice win
-      'tiger45': 12000,    // 6x bet - Decent win
-      'tiger23': 8000,     // 4x bet - Small win
-      'tiger12': 6000,     // 3x bet - Tiny win
-      'tiger5': 4000      // 2x bet - Minimal win
+      'tiger777': 80000,   // 40x bet - TOP JACKPOT!
+      'tiger456': 32000,   // 16x bet - Great win
+      'tiger234': 32000,   // 16x bet - Great win
+      'tiger123': 32000,   // 16x bet - Great win
+      'tiger89': 32000,    // 16x bet - Great win
+      'tiger67': 16000,    // 8x bet - Good win
+      'tiger45': 16000,    // 8x bet - Good win
+      'tiger23': 16000,    // 8x bet - Good win
+      'tiger12': 16000,    // 8x bet - Good win
+      'tiger5': 2000       // 1x bet - Break even (covers bet)
     },
     4000: {
-      'tiger777': 800000,  // 200x bet - MASSIVE JACKPOT!
-      'tiger456': 400000,  // 100x bet - Huge win
-      'tiger234': 200000,  // 50x bet - Big win
-      'tiger123': 120000,  // 30x bet - Great win
-      'tiger89': 80000,    // 20x bet - Good win
-      'tiger67': 40000,    // 10x bet - Nice win
-      'tiger45': 24000,    // 6x bet - Decent win
-      'tiger23': 16000,    // 4x bet - Small win
-      'tiger12': 12000,    // 3x bet - Tiny win
-      'tiger5': 8000      // 2x bet - Minimal win
+      'tiger777': 200000,  // 50x bet - BIG JACKPOT!
+      'tiger456': 80000,   // 20x bet - Great win
+      'tiger234': 80000,   // 20x bet - Great win
+      'tiger123': 64000,   // 16x bet - Good win
+      'tiger89': 64000,    // 16x bet - Good win
+      'tiger67': 32000,    // 8x bet - Decent win
+      'tiger45': 32000,    // 8x bet - Decent win
+      'tiger23': 32000,    // 8x bet - Decent win
+      'tiger12': 32000,    // 8x bet - Decent win
+      'tiger5': 4000       // 1x bet - Break even (covers bet)
     },
     8000: {
-      'tiger777': 1600000, // 200x bet - MEGA JACKPOT! 
-      'tiger456': 800000,  // 100x bet - Huge win
-      'tiger234': 400000,  // 50x bet - Big win
-      'tiger123': 240000,  // 30x bet - Great win
-      'tiger89': 160000,   // 20x bet - Good win
-      'tiger67': 80000,    // 10x bet - Nice win
-      'tiger45': 48000,    // 6x bet - Decent win
-      'tiger23': 32000,    // 4x bet - Small win
-      'tiger12': 24000,    // 3x bet - Tiny win
-      'tiger5': 16000     // 2x bet - Minimal win
+      'tiger777': 400000,  // 50x bet - MEGA JACKPOT!
+      'tiger456': 160000,  // 20x bet - Huge win
+      'tiger234': 160000,  // 20x bet - Huge win
+      'tiger123': 148000,  // 18.5x bet - Big win
+      'tiger89': 128000,   // 16x bet - Big win
+      'tiger67': 64000,    // 8x bet - Good win
+      'tiger45': 64000,    // 8x bet - Good win
+      'tiger23': 64000,    // 8x bet - Good win
+      'tiger12': 64000,    // 8x bet - Good win
+      'tiger5': 8000       // 1x bet - Break even (covers bet)
     }
   };
   
   return payoutTable[betAmount]?.[symbolId] || 0;
 };
 
-// RTP CALCULATOR - Analyzes mathematical expectation (HIGH REWARD VERSION)
+// RTP CALCULATOR - Analyzes mathematical expectation (MULTIPLAYER VERSION)
 const calculateTheoreticalRTP = (): number => {
   // Count symbol frequencies across all reels
   const symbolCounts: { [key: string]: number } = {};
@@ -130,7 +127,7 @@ const calculateTheoreticalRTP = (): number => {
   let totalExpectedReturn = 0;
   const betAmount = 1000; // Use 1000 as base bet for calculation
   
-  console.log('🎰 HIGH REWARD SLOT ANALYSIS (No Blanks, Improved Payouts):');
+  console.log('🎰 ORIGINAL MULTIPLAYER ANALYSIS (Rare Wins, Big Payouts):');
   
   // For each symbol, calculate probability and expected return
   Object.keys(symbolCounts).forEach(symbol => {
@@ -155,7 +152,7 @@ const calculateTheoreticalRTP = (): number => {
   const rtp = (totalExpectedReturn / betAmount) * 100;
   const houseEdge = 100 - rtp;
   
-  console.log(`📊 HIGH REWARD SLOT RESULTS:`);
+  console.log(`📊 ORIGINAL MULTIPLAYER RESULTS:`);
   console.log(`Total Expected Return: ${totalExpectedReturn.toFixed(2)} sats`);
   console.log(`Theoretical RTP: ${rtp.toFixed(2)}%`);
   console.log(`House Edge: ${houseEdge.toFixed(2)}%`);
@@ -173,7 +170,7 @@ const calculateTheoreticalRTP = (): number => {
 };
 
 // Calculate RTP on server startup for monitoring
-console.log('🎰 HIGH REWARD SLOT MACHINE RTP ANALYSIS:');
+console.log('🎰 ORIGINAL MULTIPLAYER SLOT MACHINE RTP ANALYSIS:');
 calculateTheoreticalRTP();
 
 const SLOT_SYMBOLS = [
