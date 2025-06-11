@@ -843,41 +843,80 @@ export default function SlotMachine() {
             padding: 1rem 0.5rem;
           }
           
+          .slot-stats {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+          }
+          
+          .stat {
+            padding: 0.5rem;
+            font-size: 0.9rem;
+          }
+          
+          .slot-container {
+            padding: 1rem;
+            margin-bottom: 1rem;
+          }
+          
           .symbol {
             font-size: 2rem;
-            padding: 0.3rem;
-            width: 80px;
-            height: 80px;
+            padding: 0.2rem;
+            width: 70px;
+            height: 70px;
           }
           
           .tiger-symbol {
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
           }
           
           .emoji-symbol {
-            font-size: 3rem;
-            width: 60px;
-            height: 60px;
+            font-size: 2.5rem;
+            width: 50px;
+            height: 50px;
           }
           
-          .paytable-symbol-display .tiger-symbol {
-            width: 24px;
-            height: 24px;
+          .bet-controls {
+            margin-bottom: 1rem;
+          }
+          
+          .bet-selector {
+            margin-bottom: 0.5rem;
           }
           
           .bet-buttons {
-            flex-direction: column;
-            align-items: center;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.3rem;
+            justify-content: center;
+            margin-bottom: 0.5rem;
           }
           
           .bet-button {
-            width: 120px;
+            width: auto;
+            padding: 0.4rem 0.2rem;
+            font-size: 0.8rem;
           }
           
           .spin-button {
-            padding: 0.8rem 1.5rem;
+            padding: 0.8rem 1rem;
             font-size: 1rem;
+            width: 100%;
+          }
+          
+          .paytable {
+            padding: 1rem;
+          }
+          
+          .paytable-symbol-display .tiger-symbol {
+            width: 20px;
+            height: 20px;
+          }
+          
+          .paytable-row {
+            padding: 0.3rem;
+            font-size: 0.8rem;
           }
         }
       `}</style>
