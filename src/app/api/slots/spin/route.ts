@@ -1,17 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 // Server-side symbol weights (NEVER exposed to client)
+// Adjusted for realistic 80% RTP (20% house edge)
 const SYMBOL_WEIGHTS: { [key: string]: number } = {
-  'tiger5': 35,      // Most common (lowest payout)
-  'tiger12': 30,     // Very common
-  'tiger23': 25,     // Common
-  'tiger45': 20,     // Less common
-  'tiger67': 15,     // Uncommon
-  'tiger89': 8,      // "Bells" - rare
-  'tiger123': 5,     // "Strawberries" - very rare
-  'tiger234': 3,     // "Melons" - extremely rare
-  'tiger456': 2,     // Almost Jackpot - ultra rare
-  'tiger777': 1,     // Jackpot - legendary rare
+  'tiger5': 25,      // High frequency, lower payouts
+  'tiger12': 22,     // High frequency 
+  'tiger23': 20,     // Medium-high frequency
+  'tiger45': 18,     // Medium frequency
+  'tiger67': 15,     // Medium frequency
+  'tiger89': 12,     // Medium-low frequency ("Bells")
+  'tiger123': 8,     // Low frequency ("Strawberries")
+  'tiger234': 6,     // Very low frequency ("Melons")
+  'tiger456': 4,     // Ultra low frequency (Almost Jackpot)
+  'tiger777': 2,     // Jackpot - still rare but more frequent
 };
 
 const SLOT_SYMBOLS = [
