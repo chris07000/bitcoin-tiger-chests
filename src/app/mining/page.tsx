@@ -517,10 +517,11 @@ export default function SlotMachine() {
           padding: 0.5rem;
           display: flex;
           flex-direction: column;
-          transition: all 0.1s ease;
           overflow: hidden;
           position: relative;
           transform: none !important;
+          align-items: center;
+          justify-content: center;
         }
         
         .reel.spinning {
@@ -567,6 +568,7 @@ export default function SlotMachine() {
           width: 100px;
           height: 100px;
           box-sizing: border-box;
+          margin: 0 auto;
         }
         
         .tiger-symbol {
@@ -576,6 +578,8 @@ export default function SlotMachine() {
           border-radius: 8px;
           border: 2px solid #333;
           transition: all 0.3s ease;
+          display: block;
+          margin: 0 auto;
         }
         
         .emoji-symbol {
@@ -586,6 +590,8 @@ export default function SlotMachine() {
           align-items: center;
           justify-content: center;
           line-height: 1;
+          margin: 0 auto;
+          text-align: center;
         }
         
         .symbol.center .tiger-symbol {
