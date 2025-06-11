@@ -22,7 +22,6 @@ interface SpinResult {
 }
 
 const SLOT_SYMBOLS: SlotSymbol[] = [
-  { id: 'tiger5', emoji: '', name: 'Tiger #5', value: 1, rarity: 1 },
   { id: 'tiger12', emoji: '', name: 'Tiger #12', value: 1.2, rarity: 2 },
   { id: 'tiger23', emoji: '', name: 'Tiger #23', value: 1.4, rarity: 3 },
   { id: 'tiger45', emoji: '', name: 'Tiger #45', value: 1.6, rarity: 4 },
@@ -56,8 +55,7 @@ const getCustomPayout = (betAmount: number, symbolId: string): number => {
       'tiger67': 2800,     // 7x bet - Good win
       'tiger45': 2800,     // 7x bet - Good win
       'tiger23': 2800,     // 7x bet - Good win
-      'tiger12': 2800,     // 7x bet - Good win
-      'tiger5': 400        // 1x bet - Break even
+      'tiger12': 2800      // 7x bet - LOWEST SYMBOL
     },
     1000: {
       'tiger777': 40000,   // 40x bet - TOP JACKPOT!
@@ -68,8 +66,7 @@ const getCustomPayout = (betAmount: number, symbolId: string): number => {
       'tiger67': 8000,     // 8x bet - Good win
       'tiger45': 8000,     // 8x bet - Good win
       'tiger23': 8000,     // 8x bet - Good win
-      'tiger12': 8000,     // 8x bet - Good win
-      'tiger5': 1000       // 1x bet - Break even
+      'tiger12': 8000      // 8x bet - LOWEST SYMBOL
     },
     2000: {
       'tiger777': 80000,   // 40x bet - TOP JACKPOT!
@@ -80,8 +77,7 @@ const getCustomPayout = (betAmount: number, symbolId: string): number => {
       'tiger67': 16000,    // 8x bet - Good win
       'tiger45': 16000,    // 8x bet - Good win
       'tiger23': 16000,    // 8x bet - Good win
-      'tiger12': 16000,    // 8x bet - Good win
-      'tiger5': 2000       // 1x bet - Break even
+      'tiger12': 16000     // 8x bet - LOWEST SYMBOL
     },
     4000: {
       'tiger777': 200000,  // 50x bet - BIG JACKPOT!
@@ -92,8 +88,7 @@ const getCustomPayout = (betAmount: number, symbolId: string): number => {
       'tiger67': 32000,    // 8x bet - Decent win
       'tiger45': 32000,    // 8x bet - Decent win
       'tiger23': 32000,    // 8x bet - Decent win
-      'tiger12': 32000,    // 8x bet - Decent win
-      'tiger5': 4000       // 1x bet - Break even
+      'tiger12': 32000     // 8x bet - LOWEST SYMBOL
     },
     8000: {
       'tiger777': 400000,  // 50x bet - MEGA JACKPOT!
@@ -104,8 +99,7 @@ const getCustomPayout = (betAmount: number, symbolId: string): number => {
       'tiger67': 64000,    // 8x bet - Good win
       'tiger45': 64000,    // 8x bet - Good win
       'tiger23': 64000,    // 8x bet - Good win
-      'tiger12': 64000,    // 8x bet - Good win
-      'tiger5': 8000       // 1x bet - Break even
+      'tiger12': 64000     // 8x bet - LOWEST SYMBOL
     }
   };
   
@@ -274,7 +268,7 @@ export default function SlotMachine() {
       <header className="slot-header">
         <h1 className="slot-title">🎰 BITCOIN TIGER SLOTS 🐅</h1>
         <p className="slot-subtitle">
-          Original Multiplayer Payouts - Up to 400,000 sats jackpots!
+          Official 9-Symbol Multiplayer - Tiger #12 to #777!
         </p>
       </header>
 
@@ -382,10 +376,10 @@ export default function SlotMachine() {
       )}
 
       <div className="paytable">
-        <h3>💰 ORIGINAL MULTIPLAYER PAYTABLE (Current Bet: {currentBet.toLocaleString()} sats)</h3>
+        <h3>💰 OFFICIAL 9-SYMBOL PAYTABLE (Current Bet: {currentBet.toLocaleString()} sats)</h3>
         <div className="winlines-info">
           <p>🎯 5 WINLINES: Top Row, Center Row, Bottom Row, Diagonal \, Diagonal /</p>
-          <p>💎 Exact Multiplayer Payouts: Tiger #777 = 50x bet multiplier!</p>
+          <p>💎 Official Multiplayer: 9 symbols like real machine!</p>
         </div>
         <div className="paytable-grid">
           {SLOT_SYMBOLS.map(symbol => {
@@ -408,11 +402,11 @@ export default function SlotMachine() {
         </div>
         
         <div className="game-info">
-          <p>🎰 ORIGINAL MULTIPLAYER Bitcoin Tiger Slot Machine!</p>
+          <p>🎰 OFFICIAL 9-SYMBOL Bitcoin Tiger Slot Machine!</p>
           <p>🏆 Tiger #777 = 50x Bet JACKPOT! | 🥈 Tiger #456 = 20x Bet</p>
           <p>🍈 Tiger #234 = 16x | 🍓 Tiger #123 = 16x | 🔔 Tiger #89 = 16x</p>
-          <p>💰 Exact payouts from real Multiplayer kast!</p>
-          <p>📊 Rare wins but significant rewards!</p>
+          <p>💰 9 symbols like official Multiplayer kast!</p>
+          <p>📊 Tiger #12 is lowest symbol - no more Tiger #5!</p>
           <p>🎯 Max win: 400,000 sats on 8,000 sats bet! (50x multiplier)</p>
         </div>
       </div>

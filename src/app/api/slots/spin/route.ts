@@ -1,51 +1,51 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// MULTIPLAYER REEL STRIPS: Better variety, less predictable wins
-// Reduced Tiger #5, increased variety in win types
+// MULTIPLAYER REEL STRIPS: 9 symbols like official machine (NO Tiger #5!)
+// Tiger #12 is now the lowest symbol, proper 9-symbol balance
 const REEL_STRIPS = {
   reel1: [
-    // 100 positions - Much better variety and balance
-    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
-    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
-    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
+    // 100 positions - 9 symbols only, like official Multiplayer
     'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
-    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23',
+    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
+    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
+    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
     'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23',
-    'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger67', 'tiger67',
-    'tiger67', 'tiger67', 'tiger67', 'tiger67', 'tiger89', 'tiger89', 'tiger89', 'tiger89', 'tiger123', 'tiger123',
-    'tiger123', 'tiger123', 'tiger234', 'tiger234', 'tiger234', 'tiger234', 'tiger456', 'tiger456', 'tiger456', 'tiger456',
-    'tiger777', 'tiger777', 'tiger777', 'tiger5', 'tiger5', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger89'
+    'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23',
+    'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45',
+    'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger67', 'tiger67', 'tiger67', 'tiger67', 'tiger67',
+    'tiger89', 'tiger89', 'tiger89', 'tiger123', 'tiger123', 'tiger123', 'tiger234', 'tiger234', 'tiger456', 'tiger456',
+    'tiger777', 'tiger777', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger89', 'tiger123', 'tiger234', 'tiger456'
   ],
   reel2: [
     // 100 positions - Same distribution for consistency
-    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
-    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
-    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
     'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
-    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23',
+    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
+    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
+    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
     'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23',
-    'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger67', 'tiger67',
-    'tiger67', 'tiger67', 'tiger67', 'tiger67', 'tiger89', 'tiger89', 'tiger89', 'tiger89', 'tiger123', 'tiger123',
-    'tiger123', 'tiger123', 'tiger234', 'tiger234', 'tiger234', 'tiger234', 'tiger456', 'tiger456', 'tiger456', 'tiger456',
-    'tiger777', 'tiger777', 'tiger777', 'tiger5', 'tiger5', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger89'
+    'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23',
+    'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45',
+    'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger67', 'tiger67', 'tiger67', 'tiger67', 'tiger67',
+    'tiger89', 'tiger89', 'tiger89', 'tiger123', 'tiger123', 'tiger123', 'tiger234', 'tiger234', 'tiger456', 'tiger456',
+    'tiger777', 'tiger777', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger89', 'tiger123', 'tiger234', 'tiger456'
   ],
   reel3: [
     // 100 positions - Consistent across all reels
-    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
-    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
-    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
     'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
-    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23',
+    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
+    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
+    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
     'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23',
-    'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger67', 'tiger67',
-    'tiger67', 'tiger67', 'tiger67', 'tiger67', 'tiger89', 'tiger89', 'tiger89', 'tiger89', 'tiger123', 'tiger123',
-    'tiger123', 'tiger123', 'tiger234', 'tiger234', 'tiger234', 'tiger234', 'tiger456', 'tiger456', 'tiger456', 'tiger456',
-    'tiger777', 'tiger777', 'tiger777', 'tiger5', 'tiger5', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger89'
+    'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23',
+    'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45',
+    'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger67', 'tiger67', 'tiger67', 'tiger67', 'tiger67',
+    'tiger89', 'tiger89', 'tiger89', 'tiger123', 'tiger123', 'tiger123', 'tiger234', 'tiger234', 'tiger456', 'tiger456',
+    'tiger777', 'tiger777', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger89', 'tiger123', 'tiger234', 'tiger456'
   ]
 };
 
-// ORIGINAL MULTIPLAYER PAYOUTS - Exact from real machine!
-// Win frequencies controlled by reel strips, not payout amounts
+// ORIGINAL MULTIPLAYER PAYOUTS - 9 symbols like official machine!
+// Tiger #5 REMOVED - Tiger #12 is now the lowest symbol
 const getCustomPayout = (betAmount: number, symbolId: string): number => {
   const payoutTable: { [key: number]: { [key: string]: number } } = {
     400: {
@@ -57,8 +57,7 @@ const getCustomPayout = (betAmount: number, symbolId: string): number => {
       'tiger67': 2800,     // 7x bet - Good win
       'tiger45': 2800,     // 7x bet - Good win
       'tiger23': 2800,     // 7x bet - Good win
-      'tiger12': 2800,     // 7x bet - Good win
-      'tiger5': 400        // 1x bet - Break even (covers bet)
+      'tiger12': 2800      // 7x bet - LOWEST SYMBOL
     },
     1000: {
       'tiger777': 40000,   // 40x bet - TOP JACKPOT!
@@ -69,8 +68,7 @@ const getCustomPayout = (betAmount: number, symbolId: string): number => {
       'tiger67': 8000,     // 8x bet - Good win
       'tiger45': 8000,     // 8x bet - Good win
       'tiger23': 8000,     // 8x bet - Good win
-      'tiger12': 8000,     // 8x bet - Good win
-      'tiger5': 1000       // 1x bet - Break even (covers bet)
+      'tiger12': 8000      // 8x bet - LOWEST SYMBOL
     },
     2000: {
       'tiger777': 80000,   // 40x bet - TOP JACKPOT!
@@ -81,8 +79,7 @@ const getCustomPayout = (betAmount: number, symbolId: string): number => {
       'tiger67': 16000,    // 8x bet - Good win
       'tiger45': 16000,    // 8x bet - Good win
       'tiger23': 16000,    // 8x bet - Good win
-      'tiger12': 16000,    // 8x bet - Good win
-      'tiger5': 2000       // 1x bet - Break even (covers bet)
+      'tiger12': 16000     // 8x bet - LOWEST SYMBOL
     },
     4000: {
       'tiger777': 200000,  // 50x bet - BIG JACKPOT!
@@ -93,8 +90,7 @@ const getCustomPayout = (betAmount: number, symbolId: string): number => {
       'tiger67': 32000,    // 8x bet - Decent win
       'tiger45': 32000,    // 8x bet - Decent win
       'tiger23': 32000,    // 8x bet - Decent win
-      'tiger12': 32000,    // 8x bet - Decent win
-      'tiger5': 4000       // 1x bet - Break even (covers bet)
+      'tiger12': 32000     // 8x bet - LOWEST SYMBOL
     },
     8000: {
       'tiger777': 400000,  // 50x bet - MEGA JACKPOT!
@@ -105,8 +101,7 @@ const getCustomPayout = (betAmount: number, symbolId: string): number => {
       'tiger67': 64000,    // 8x bet - Good win
       'tiger45': 64000,    // 8x bet - Good win
       'tiger23': 64000,    // 8x bet - Good win
-      'tiger12': 64000,    // 8x bet - Good win
-      'tiger5': 8000       // 1x bet - Break even (covers bet)
+      'tiger12': 64000     // 8x bet - LOWEST SYMBOL
     }
   };
   
@@ -177,7 +172,7 @@ console.log('🎰 BALANCED MULTIPLAYER SLOT MACHINE RTP ANALYSIS:');
 calculateTheoreticalRTP();
 
 const SLOT_SYMBOLS = [
-  'tiger5', 'tiger12', 'tiger23', 'tiger45', 'tiger67',
+  'tiger12', 'tiger23', 'tiger45', 'tiger67',
   'tiger89', 'tiger123', 'tiger234', 'tiger456', 'tiger777'
 ];
 
