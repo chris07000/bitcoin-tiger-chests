@@ -1,52 +1,73 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// MULTIPLAYER REEL STRIPS: MUCH RARER WINS - Sustainable house edge
-// Drastically reduced frequencies for proper casino balance
+// MULTIPLAYER REEL STRIPS: REALISTIC CASINO FREQUENCIES - 15-20% House Edge
+// Very low frequencies like real casino machines
 const REEL_STRIPS = {
   reel1: [
-    // 100 positions - Most positions have NO winning symbols to reduce wins drastically
-    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
-    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
-    'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23',
-    'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger67', 'tiger67',
-    'tiger67', 'tiger67', 'tiger67', 'tiger67', 'tiger89', 'tiger89', 'tiger89', 'tiger123', 'tiger123', 'tiger234',
-    'tiger234', 'tiger456', 'tiger777', // Only a few higher symbols
-    // Fill rest with low frequency tigers to dilute wins
-    'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger12', 'tiger23',
-    'tiger45', 'tiger67', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger12', 'tiger23', 'tiger45', 'tiger67',
-    'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger12', 'tiger23',
-    'tiger45', 'tiger67', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger12', 'tiger23', 'tiger45', 'tiger67',
-    'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger89', 'tiger123', 'tiger234'
+    // 100 positions - Realistic casino distribution
+    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', // 5%
+    'tiger23', 'tiger23', 'tiger23', 'tiger23', // 4%
+    'tiger45', 'tiger45', 'tiger45', // 3%
+    'tiger67', 'tiger67', // 2%
+    'tiger89', // 1%
+    'tiger123', // 1%
+    'tiger234', // 1%
+    'tiger456', // 1%
+    'tiger777', // 1%
+    // Remaining 81 positions: mixed non-matching symbols to prevent wins
+    'cherry', 'lemon', 'orange', 'cherry', 'lemon', 'orange', 'cherry', 'lemon', 'orange',
+    'cherry', 'lemon', 'orange', 'cherry', 'lemon', 'orange', 'cherry', 'lemon', 'orange',
+    'cherry', 'lemon', 'orange', 'cherry', 'lemon', 'orange', 'cherry', 'lemon', 'orange',
+    'cherry', 'lemon', 'orange', 'cherry', 'lemon', 'orange', 'cherry', 'lemon', 'orange',
+    'cherry', 'lemon', 'orange', 'cherry', 'lemon', 'orange', 'cherry', 'lemon', 'orange',
+    'cherry', 'lemon', 'orange', 'cherry', 'lemon', 'orange', 'cherry', 'lemon', 'orange',
+    'cherry', 'lemon', 'orange', 'cherry', 'lemon', 'orange', 'cherry', 'lemon', 'orange',
+    'cherry', 'lemon', 'orange', 'cherry', 'lemon', 'orange', 'cherry', 'lemon', 'orange',
+    'cherry', 'lemon', 'orange', 'cherry', 'lemon', 'orange', 'cherry', 'lemon', 'orange'
   ],
   reel2: [
-    // 100 positions - Different pattern but same low frequency concept
-    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
-    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
-    'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23',
-    'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger67', 'tiger67',
-    'tiger67', 'tiger67', 'tiger67', 'tiger67', 'tiger89', 'tiger89', 'tiger89', 'tiger123', 'tiger123', 'tiger234',
-    'tiger234', 'tiger456', 'tiger777', // Only a few higher symbols
-    // Fill rest with low frequency tigers to dilute wins
-    'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger12', 'tiger23',
-    'tiger45', 'tiger67', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger12', 'tiger23', 'tiger45', 'tiger67',
-    'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger12', 'tiger23',
-    'tiger45', 'tiger67', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger12', 'tiger23', 'tiger45', 'tiger67',
-    'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger89', 'tiger123', 'tiger234'
+    // Same realistic distribution
+    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', // 5%
+    'tiger23', 'tiger23', 'tiger23', 'tiger23', // 4%
+    'tiger45', 'tiger45', 'tiger45', // 3%
+    'tiger67', 'tiger67', // 2%
+    'tiger89', // 1%
+    'tiger123', // 1%
+    'tiger234', // 1%
+    'tiger456', // 1%
+    'tiger777', // 1%
+    // Different pattern of non-matching symbols
+    'bell', 'star', 'grape', 'bell', 'star', 'grape', 'bell', 'star', 'grape',
+    'bell', 'star', 'grape', 'bell', 'star', 'grape', 'bell', 'star', 'grape',
+    'bell', 'star', 'grape', 'bell', 'star', 'grape', 'bell', 'star', 'grape',
+    'bell', 'star', 'grape', 'bell', 'star', 'grape', 'bell', 'star', 'grape',
+    'bell', 'star', 'grape', 'bell', 'star', 'grape', 'bell', 'star', 'grape',
+    'bell', 'star', 'grape', 'bell', 'star', 'grape', 'bell', 'star', 'grape',
+    'bell', 'star', 'grape', 'bell', 'star', 'grape', 'bell', 'star', 'grape',
+    'bell', 'star', 'grape', 'bell', 'star', 'grape', 'bell', 'star', 'grape',
+    'bell', 'star', 'grape', 'bell', 'star', 'grape', 'bell', 'star', 'grape'
   ],
   reel3: [
-    // 100 positions - Consistent low win rate
-    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
-    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
-    'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23',
-    'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger67', 'tiger67',
-    'tiger67', 'tiger67', 'tiger67', 'tiger67', 'tiger89', 'tiger89', 'tiger89', 'tiger123', 'tiger123', 'tiger234',
-    'tiger234', 'tiger456', 'tiger777', // Only a few higher symbols
-    // Fill rest with low frequency tigers to dilute wins
-    'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger12', 'tiger23',
-    'tiger45', 'tiger67', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger12', 'tiger23', 'tiger45', 'tiger67',
-    'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger12', 'tiger23',
-    'tiger45', 'tiger67', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger12', 'tiger23', 'tiger45', 'tiger67',
-    'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger89', 'tiger123', 'tiger234'
+    // Same realistic distribution
+    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', // 5%
+    'tiger23', 'tiger23', 'tiger23', 'tiger23', // 4%
+    'tiger45', 'tiger45', 'tiger45', // 3%
+    'tiger67', 'tiger67', // 2%
+    'tiger89', // 1%
+    'tiger123', // 1%
+    'tiger234', // 1%
+    'tiger456', // 1%
+    'tiger777', // 1%
+    // Third pattern of non-matching symbols
+    'diamond', 'seven', 'bar', 'diamond', 'seven', 'bar', 'diamond', 'seven', 'bar',
+    'diamond', 'seven', 'bar', 'diamond', 'seven', 'bar', 'diamond', 'seven', 'bar',
+    'diamond', 'seven', 'bar', 'diamond', 'seven', 'bar', 'diamond', 'seven', 'bar',
+    'diamond', 'seven', 'bar', 'diamond', 'seven', 'bar', 'diamond', 'seven', 'bar',
+    'diamond', 'seven', 'bar', 'diamond', 'seven', 'bar', 'diamond', 'seven', 'bar',
+    'diamond', 'seven', 'bar', 'diamond', 'seven', 'bar', 'diamond', 'seven', 'bar',
+    'diamond', 'seven', 'bar', 'diamond', 'seven', 'bar', 'diamond', 'seven', 'bar',
+    'diamond', 'seven', 'bar', 'diamond', 'seven', 'bar', 'diamond', 'seven', 'bar',
+    'diamond', 'seven', 'bar', 'diamond', 'seven', 'bar', 'diamond', 'seven', 'bar'
   ]
 };
 
