@@ -1,43 +1,46 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// MULTIPLAYER REEL STRIPS: Balanced for 85% RTP with original payouts
-// Reduced Tiger #5 frequency to control house edge
+// MULTIPLAYER REEL STRIPS: Better variety, less predictable wins
+// Reduced Tiger #5, increased variety in win types
 const REEL_STRIPS = {
   reel1: [
-    // 100 positions - Reduced Tiger #5 for proper house edge
+    // 100 positions - Much better variety and balance
     'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
     'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
-    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
-    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
+    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
     'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
-    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
+    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23',
     'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23',
-    'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger67', 'tiger67', 'tiger67', 'tiger89', 'tiger89',
-    'tiger123', 'tiger123', 'tiger234', 'tiger234', 'tiger456', 'tiger456', 'tiger777', 'tiger777', 'tiger5', 'tiger5'
+    'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger67', 'tiger67',
+    'tiger67', 'tiger67', 'tiger67', 'tiger67', 'tiger89', 'tiger89', 'tiger89', 'tiger89', 'tiger123', 'tiger123',
+    'tiger123', 'tiger123', 'tiger234', 'tiger234', 'tiger234', 'tiger234', 'tiger456', 'tiger456', 'tiger456', 'tiger456',
+    'tiger777', 'tiger777', 'tiger777', 'tiger5', 'tiger5', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger89'
   ],
   reel2: [
     // 100 positions - Same distribution for consistency
     'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
     'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
-    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
-    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
+    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
     'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
-    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
+    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23',
     'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23',
-    'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger67', 'tiger67', 'tiger67', 'tiger89', 'tiger89',
-    'tiger123', 'tiger123', 'tiger234', 'tiger234', 'tiger456', 'tiger456', 'tiger777', 'tiger777', 'tiger5', 'tiger5'
+    'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger67', 'tiger67',
+    'tiger67', 'tiger67', 'tiger67', 'tiger67', 'tiger89', 'tiger89', 'tiger89', 'tiger89', 'tiger123', 'tiger123',
+    'tiger123', 'tiger123', 'tiger234', 'tiger234', 'tiger234', 'tiger234', 'tiger456', 'tiger456', 'tiger456', 'tiger456',
+    'tiger777', 'tiger777', 'tiger777', 'tiger5', 'tiger5', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger89'
   ],
   reel3: [
     // 100 positions - Consistent across all reels
     'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
     'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
-    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
-    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
+    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
     'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
-    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
+    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23',
     'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23',
-    'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger67', 'tiger67', 'tiger67', 'tiger89', 'tiger89',
-    'tiger123', 'tiger123', 'tiger234', 'tiger234', 'tiger456', 'tiger456', 'tiger777', 'tiger777', 'tiger5', 'tiger5'
+    'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger67', 'tiger67',
+    'tiger67', 'tiger67', 'tiger67', 'tiger67', 'tiger89', 'tiger89', 'tiger89', 'tiger89', 'tiger123', 'tiger123',
+    'tiger123', 'tiger123', 'tiger234', 'tiger234', 'tiger234', 'tiger234', 'tiger456', 'tiger456', 'tiger456', 'tiger456',
+    'tiger777', 'tiger777', 'tiger777', 'tiger5', 'tiger5', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger89'
   ]
 };
 
