@@ -101,12 +101,12 @@ const calculatePayout = (resultReels: string[][], betAmount: number): SpinResult
     resultReels[0][2], resultReels[1][2], resultReels[2][2]  // Bottom row: left, center, right
   ];
   
-  // Check all 5 winlines
+  // Check all 5 winlines - ONLY 3-of-a-kind wins (classic slot machine)
   for (let lineIndex = 0; lineIndex < WINLINES.length; lineIndex++) {
     const line = WINLINES[lineIndex];
     const lineSymbols = line.map(pos => flatReels[pos]);
     
-    // Check for 3-of-a-kind
+    // Check for 3-of-a-kind ONLY
     if (lineSymbols[0] === lineSymbols[1] && lineSymbols[1] === lineSymbols[2]) {
       const symbol = SLOT_SYMBOLS.find(s => s.id === lineSymbols[0]);
       if (symbol) {
@@ -114,17 +114,6 @@ const calculatePayout = (resultReels: string[][], betAmount: number): SpinResult
         const payout = Math.floor(betAmount * multiplier);
         totalPayout += payout;
         winTypes.push(`Line ${lineIndex + 1}: Three ${symbol.name}s`);
-      }
-    }
-    // Check for 2-of-a-kind (20% of 3-of-a-kind payout)
-    else if (lineSymbols[0] === lineSymbols[1] || lineSymbols[1] === lineSymbols[2]) {
-      const matchSymbol = lineSymbols[0] === lineSymbols[1] ? lineSymbols[0] : lineSymbols[1];
-      const symbol = SLOT_SYMBOLS.find(s => s.id === matchSymbol);
-      if (symbol && symbol.value >= 2) { // Only medium+ value symbols give 2-of-a-kind
-        const multiplier = getPayoutMultiplier(betAmount, symbol.value);
-        const payout = Math.floor(betAmount * multiplier * 0.2); // 20% of 3-of-a-kind
-        totalPayout += payout;
-        winTypes.push(`Line ${lineIndex + 1}: Two ${symbol.name}s`);
       }
     }
   }
@@ -402,7 +391,6 @@ export default function SlotMachine() {
           {SLOT_SYMBOLS.map(symbol => {
             const multiplier = getPayoutMultiplier(currentBet, symbol.value);
             const payout = Math.floor(currentBet * multiplier);
-            const twoKindPayout = Math.floor(currentBet * multiplier * 0.2);
             
             return (
               <div key={symbol.id} className="paytable-row">
@@ -414,9 +402,6 @@ export default function SlotMachine() {
                 </span>
                 <span className="paytable-payout">
                   3 in a row = {payout.toLocaleString()} sats
-                  {symbol.value >= 2 && (
-                    <span className="two-kind"> | 2 in a row = {twoKindPayout.toLocaleString()} sats</span>
-                  )}
                 </span>
               </div>
             );
@@ -808,11 +793,6 @@ export default function SlotMachine() {
         }
         
         .paytable-payout {
-          color: #ffd700;
-          font-weight: bold;
-        }
-        
-        .two-kind {
           color: #ffd700;
           font-weight: bold;
         }
