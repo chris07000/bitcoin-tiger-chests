@@ -23,20 +23,111 @@ interface SpinResult {
 
 const SLOT_SYMBOLS: SlotSymbol[] = [
   { id: 'tiger5', emoji: '', name: 'Tiger #5', value: 1, rarity: 1 },
-  { id: 'tiger12', emoji: '', name: 'Tiger #12', value: 2, rarity: 2 },
-  { id: 'tiger23', emoji: '', name: 'Tiger #23', value: 3, rarity: 3 },
-  { id: 'tiger45', emoji: '', name: 'Tiger #45', value: 4, rarity: 4 },
-  { id: 'tiger67', emoji: '', name: 'Tiger #67', value: 5, rarity: 5 },
-  { id: 'tiger89', emoji: '', name: 'Tiger #89', value: 8, rarity: 6 },
-  { id: 'tiger123', emoji: '', name: 'Tiger #123', value: 12, rarity: 7 },
-  { id: 'tiger234', emoji: '', name: 'Tiger #234', value: 15, rarity: 8 },
-  { id: 'tiger456', emoji: '', name: 'Tiger #456', value: 25, rarity: 9 },
-  { id: 'tiger777', emoji: '', name: 'Tiger #777', value: 50, rarity: 10 },
-  { id: 'scatter', emoji: '🎰', name: 'Scatter', value: 0, rarity: 6 },
-  { id: 'bonus', emoji: '🎁', name: 'Bonus', value: 0, rarity: 7 },
+  { id: 'tiger12', emoji: '', name: 'Tiger #12', value: 1.25, rarity: 2 },
+  { id: 'tiger23', emoji: '', name: 'Tiger #23', value: 1.5, rarity: 3 },
+  { id: 'tiger45', emoji: '', name: 'Tiger #45', value: 2, rarity: 4 },
+  { id: 'tiger67', emoji: '', name: 'Tiger #67', value: 2.5, rarity: 5 },
+  { id: 'tiger89', emoji: '', name: 'Tiger #89', value: 3, rarity: 6 },
+  { id: 'tiger123', emoji: '', name: 'Tiger #123', value: 4, rarity: 7 },
+  { id: 'tiger234', emoji: '', name: 'Tiger #234', value: 5, rarity: 8 },
+  { id: 'tiger456', emoji: '', name: 'Tiger #456', value: 6, rarity: 9 },
+  { id: 'tiger777', emoji: '', name: 'Tiger #777', value: 8, rarity: 10 },
 ];
 
-const BET_AMOUNTS = [100, 500, 1000, 5000, 10000, 25000, 50000];
+const BET_AMOUNTS = [100, 500, 1000, 5000, 25000];
+
+const WINLINES = [
+  [0, 1, 2], // Top row
+  [3, 4, 5], // Center row  
+  [6, 7, 8], // Bottom row
+  [0, 4, 8], // Diagonal \
+  [2, 4, 6], // Diagonal /
+];
+
+// Escalating multipliers based on bet amount (like Multiplayer machine)
+const getPayoutMultiplier = (betAmount: number, symbolValue: number): number => {
+  const baseMultipliers = {
+    100: { 8: 20, 6: 15, 5: 12, 4: 8, 3: 6, 2.5: 4, 2: 3, 1.5: 2, 1.25: 1.5, 1: 1 },
+    500: { 8: 15, 6: 12, 5: 9, 4: 7, 3: 5, 2.5: 4, 2: 3, 1.5: 2, 1.25: 1.5, 1: 1 },
+    1000: { 8: 12, 6: 9, 5: 7, 4: 5, 3: 4, 2.5: 3, 2: 2.5, 1.5: 2, 1.25: 1.5, 1: 1 },
+    5000: { 8: 10, 6: 8, 5: 6, 4: 4.5, 3: 3.5, 2.5: 2.8, 2: 2.2, 1.5: 1.8, 1.25: 1.4, 1: 1 },
+    25000: { 8: 8, 6: 6, 5: 5, 4: 4, 3: 3, 2.5: 2.5, 2: 2, 1.5: 1.5, 1.25: 1.25, 1: 1 }
+  };
+  
+  const multipliers = baseMultipliers[betAmount as keyof typeof baseMultipliers] || baseMultipliers[100];
+  return multipliers[symbolValue as keyof typeof multipliers] || 1;
+};
+
+const getWeightedRandomSymbol = (): SlotSymbol => {
+  // Adjusted weights for better house edge
+  const weights: { [key: string]: number } = {
+    'tiger5': 30,     // Most common
+    'tiger12': 25,
+    'tiger23': 20,
+    'tiger45': 15,
+    'tiger67': 12,
+    'tiger89': 8,
+    'tiger123': 5,
+    'tiger234': 3,
+    'tiger456': 2,
+    'tiger777': 1,   // Rarest (jackpot)
+  };
+  
+  const totalWeight = Object.values(weights).reduce((sum, weight) => sum + weight, 0);
+  let randomNum = Math.random() * totalWeight;
+  
+  for (const symbol of SLOT_SYMBOLS) {
+    const weight = weights[symbol.id] || 1;
+    randomNum -= weight;
+    if (randomNum <= 0) {
+      return symbol;
+    }
+  }
+  return SLOT_SYMBOLS[0];
+};
+
+const calculatePayout = (resultReels: string[][], betAmount: number): SpinResult => {
+  let totalPayout = 0;
+  let winTypes: string[] = [];
+  
+  // Convert 3x3 reels to flat array for winline checking
+  const flatReels = resultReels.flat();
+  
+  // Check all 5 winlines
+  for (let lineIndex = 0; lineIndex < WINLINES.length; lineIndex++) {
+    const line = WINLINES[lineIndex];
+    const lineSymbols = line.map(pos => flatReels[pos]);
+    
+    // Check for 3-of-a-kind
+    if (lineSymbols[0] === lineSymbols[1] && lineSymbols[1] === lineSymbols[2]) {
+      const symbol = SLOT_SYMBOLS.find(s => s.id === lineSymbols[0]);
+      if (symbol) {
+        const multiplier = getPayoutMultiplier(betAmount, symbol.value);
+        const payout = Math.floor(betAmount * multiplier);
+        totalPayout += payout;
+        winTypes.push(`Line ${lineIndex + 1}: Three ${symbol.name}s`);
+      }
+    }
+    // Check for 2-of-a-kind (20% of 3-of-a-kind payout)
+    else if (lineSymbols[0] === lineSymbols[1] || lineSymbols[1] === lineSymbols[2]) {
+      const matchSymbol = lineSymbols[0] === lineSymbols[1] ? lineSymbols[0] : lineSymbols[1];
+      const symbol = SLOT_SYMBOLS.find(s => s.id === matchSymbol);
+      if (symbol && symbol.value >= 2) { // Only medium+ value symbols give 2-of-a-kind
+        const multiplier = getPayoutMultiplier(betAmount, symbol.value);
+        const payout = Math.floor(betAmount * multiplier * 0.2); // 20% of 3-of-a-kind
+        totalPayout += payout;
+        winTypes.push(`Line ${lineIndex + 1}: Two ${symbol.name}s`);
+      }
+    }
+  }
+  
+  return {
+    symbols: resultReels,
+    payout: totalPayout,
+    isWin: totalPayout > 0,
+    winType: winTypes.length > 0 ? winTypes.join(' + ') : undefined
+  };
+};
 
 export default function SlotMachine() {
   const [reels, setReels] = useState<string[][]>([[], [], []]);
@@ -44,8 +135,6 @@ export default function SlotMachine() {
   const [currentBet, setCurrentBet] = useState(1000);
   const [lastWin, setLastWin] = useState<SpinResult | null>(null);
   const [gamesPlayed, setGamesPlayed] = useState(0);
-  const [showBonus, setShowBonus] = useState(false);
-  const [bonusWin, setBonusWin] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
 
   const { walletAddress } = useWallet();
@@ -80,118 +169,6 @@ export default function SlotMachine() {
       reel.push(randomSymbol.id);
     }
     return reel;
-  };
-
-  const getWeightedRandomSymbol = (): SlotSymbol => {
-    // Adjusted weights for better house edge (8-10%)
-    const weights: { [key: string]: number } = {
-      'tiger5': 25,    // Most common
-      'tiger12': 20,
-      'tiger23': 15,
-      'tiger45': 12,
-      'tiger67': 10,
-      'tiger89': 8,
-      'tiger123': 5,
-      'tiger234': 3,
-      'tiger456': 2,
-      'tiger777': 1,      // Rarest
-      'scatter': 4,    // Medium rare for bonus features
-      'bonus': 3
-    };
-    
-    const totalWeight = Object.values(weights).reduce((sum, weight) => sum + weight, 0);
-    let randomNum = Math.random() * totalWeight;
-    
-    for (const symbol of SLOT_SYMBOLS) {
-      const weight = weights[symbol.id] || 1;
-      randomNum -= weight;
-      if (randomNum <= 0) {
-        return symbol;
-      }
-    }
-    return SLOT_SYMBOLS[0];
-  };
-
-  const calculatePayout = (resultReels: string[][]): SpinResult => {
-    const centerLine = [resultReels[0][1], resultReels[1][1], resultReels[2][1]];
-    
-    // Check for scatter symbols (anywhere on reels)
-    const scatterCount = resultReels.flat().filter(symbol => symbol === 'scatter').length;
-    if (scatterCount >= 3) {
-      const scatterPayout = Math.floor(currentBet * scatterCount * 1.5);
-      return {
-        symbols: resultReels,
-        payout: scatterPayout,
-        isWin: true,
-        winType: `${scatterCount} Scatters!`,
-        scatter: true
-      };
-    }
-
-    // Check for bonus symbols (center line only)
-    const bonusCount = centerLine.filter(symbol => symbol === 'bonus').length;
-    if (bonusCount >= 2) {
-      return {
-        symbols: resultReels,
-        payout: 0,
-        isWin: true,
-        winType: 'Bonus Round!',
-        bonus: true
-      };
-    }
-
-    // Check center line for wins
-    if (centerLine[0] === centerLine[1] && centerLine[1] === centerLine[2]) {
-      // Three of a kind on center line
-      const symbol = SLOT_SYMBOLS.find(s => s.id === centerLine[0]);
-      if (symbol && symbol.id !== 'scatter' && symbol.id !== 'bonus') {
-        const payout = Math.floor(currentBet * symbol.value * 0.7);
-        return {
-          symbols: resultReels,
-          payout,
-          isWin: true,
-          winType: `Three ${symbol.name}s!`
-        };
-      }
-    }
-
-    // Check for two of a kind (ANY value symbols now!)
-    if (centerLine[0] === centerLine[1] || centerLine[1] === centerLine[2]) {
-      const matchSymbol = centerLine[0] === centerLine[1] ? centerLine[0] : centerLine[1];
-      const symbol = SLOT_SYMBOLS.find(s => s.id === matchSymbol);
-      if (symbol && symbol.id !== 'scatter' && symbol.id !== 'bonus') {
-        const payout = Math.floor(currentBet * symbol.value * 0.15); // Small win for any 2 of a kind
-        return {
-          symbols: resultReels,
-          payout: Math.max(payout, 50), // Minimum 50 sats win
-          isWin: true,
-          winType: `Two ${symbol.name}s!`
-        };
-      }
-    }
-
-    // NEW: Single high-value symbol wins (Tiger #456 or #777)
-    const highValueSymbols = ['tiger456', 'tiger777'];
-    for (const symbolId of centerLine) {
-      if (highValueSymbols.includes(symbolId)) {
-        const symbol = SLOT_SYMBOLS.find(s => s.id === symbolId);
-        if (symbol) {
-          const payout = Math.floor(currentBet * 0.5); // 50% of bet back
-          return {
-            symbols: resultReels,
-            payout: Math.max(payout, 100), // Minimum 100 sats
-            isWin: true,
-            winType: `Lucky ${symbol.name}!`
-          };
-        }
-      }
-    }
-
-    return {
-      symbols: resultReels,
-      payout: 0,
-      isWin: false
-    };
   };
 
   const processWinPayout = async (winAmount: number, winType: string) => {
@@ -279,14 +256,12 @@ export default function SlotMachine() {
           generateRandomReel()
         ];
         
-        const result = calculatePayout(finalReels);
+        const result = calculatePayout(finalReels, currentBet);
         setReels(finalReels);
         setLastWin(result);
         setGamesPlayed(prev => prev + 1);
         
-        if (result.bonus) {
-          triggerBonusRound();
-        } else if (result.payout > 0) {
+        if (result.payout > 0) {
           // Process win payout
           processWinPayout(result.payout, result.winType || 'Win');
         }
@@ -296,34 +271,7 @@ export default function SlotMachine() {
     }, intervalDuration);
   };
 
-  const triggerBonusRound = () => {
-    setShowBonus(true);
-    // Bonus: pick from treasure chests (reduced payouts for better house edge)
-    const bonuses = [
-      Math.floor(currentBet * 1.5),
-      Math.floor(currentBet * 3),
-      Math.floor(currentBet * 6),
-      Math.floor(currentBet * 10),
-      Math.floor(currentBet * 15)
-    ];
-    const randomBonus = bonuses[Math.floor(Math.random() * bonuses.length)];
-    setBonusWin(randomBonus);
-    
-    setTimeout(() => {
-      setShowBonus(false);
-      // Process bonus payout
-      processWinPayout(randomBonus, 'Bonus Round');
-    }, 3000);
-  };
-
   const getSymbolDisplay = (symbolId: string) => {
-    if (symbolId === 'scatter') {
-      return <span className="emoji-symbol">🎰</span>;
-    }
-    if (symbolId === 'bonus') {
-      return <span className="emoji-symbol">🎁</span>;
-    }
-    
     // Extract tiger number from symbolId (e.g., 'tiger777' -> '777')
     const tigerNumber = symbolId.replace('tiger', '');
     return (
@@ -434,49 +382,39 @@ export default function SlotMachine() {
         </div>
       )}
 
-      {showBonus && (
-        <div className="bonus-overlay">
-          <div className="bonus-content">
-            <h2>🎁 BONUS ROUND! 🎁</h2>
-            <p>Tiger chose your treasure!</p>
-            <div className="bonus-amount">+{bonusWin.toLocaleString()} sats</div>
-          </div>
-        </div>
-      )}
-
       <div className="paytable">
-        <h3>💰 PAYTABLE</h3>
+        <h3>💰 PAYTABLE (Current Bet: {currentBet.toLocaleString()} sats)</h3>
+        <div className="winlines-info">
+          <p>🎯 5 WINLINES: Top Row, Center Row, Bottom Row, Diagonal \, Diagonal /</p>
+        </div>
         <div className="paytable-grid">
-          {SLOT_SYMBOLS.filter(s => s.id !== 'scatter' && s.id !== 'bonus').map(symbol => (
-            <div key={symbol.id} className="paytable-row">
-              <span className="paytable-symbol">
-                <span className="paytable-symbol-display">
-                  {getSymbolDisplay(symbol.id)}
+          {SLOT_SYMBOLS.map(symbol => {
+            const multiplier = getPayoutMultiplier(currentBet, symbol.value);
+            const payout = Math.floor(currentBet * multiplier);
+            const twoKindPayout = Math.floor(currentBet * multiplier * 0.2);
+            
+            return (
+              <div key={symbol.id} className="paytable-row">
+                <span className="paytable-symbol">
+                  <span className="paytable-symbol-display">
+                    {getSymbolDisplay(symbol.id)}
+                  </span>
+                  {symbol.name}
                 </span>
-                {symbol.name}
-              </span>
-              <span className="paytable-payout">
-                3x = {Math.floor(currentBet * symbol.value * 0.7).toLocaleString()} | 
-                2x = {Math.max(Math.floor(currentBet * symbol.value * 0.15), 50).toLocaleString()}
-                {(symbol.id === 'tiger456' || symbol.id === 'tiger777') && (
-                  <span className="lucky-win"> | 1x = {Math.max(Math.floor(currentBet * 0.5), 100).toLocaleString()}</span>
-                )}
-              </span>
-            </div>
-          ))}
-          <div className="paytable-row special">
-            <span className="paytable-symbol">🎰 3+ Scatters</span>
-            <span className="paytable-payout">1.5x bet per scatter</span>
-          </div>
-          <div className="paytable-row special">
-            <span className="paytable-symbol">🎁 2+ Bonus</span>
-            <span className="paytable-payout">Bonus Round! (1.5x - 15x)</span>
-          </div>
+                <span className="paytable-payout">
+                  3x = {payout.toLocaleString()} sats
+                  {symbol.value >= 2 && (
+                    <span className="two-kind"> | 2x = {twoKindPayout.toLocaleString()} sats</span>
+                  )}
+                </span>
+              </div>
+            );
+          })}
         </div>
         
         <div className="game-info">
-          <p>🎰 Play with Bitcoin Tigers and win big!</p>
-          <p>💡 Higher value tigers have better payout rates!</p>
+          <p>🎰 Pure Bitcoin Tiger slots with escalating payouts!</p>
+          <p>💡 Higher bets = better multipliers per symbol!</p>
         </div>
       </div>
 
@@ -771,42 +709,6 @@ export default function SlotMachine() {
           color: #fff;
         }
         
-        .bonus-overlay {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: rgba(0, 0, 0, 0.8);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          z-index: 1000;
-          animation: fadeIn 0.5s ease;
-        }
-        
-        .bonus-content {
-          background: linear-gradient(45deg, #8e44ad, #9b59b6);
-          border: 3px solid #ffd700;
-          border-radius: 20px;
-          padding: 3rem;
-          text-align: center;
-          animation: bounceIn 0.5s ease;
-        }
-        
-        .bonus-content h2 {
-          font-size: 2rem;
-          margin-bottom: 1rem;
-          color: #ffd700;
-        }
-        
-        .bonus-amount {
-          font-size: 2.5rem;
-          color: #ffd700;
-          font-weight: bold;
-          margin-top: 1rem;
-        }
-        
         .paytable {
           background: rgba(0, 0, 0, 0.5);
           border: 2px solid #333;
@@ -820,6 +722,13 @@ export default function SlotMachine() {
           margin-bottom: 1rem;
         }
         
+        .winlines-info {
+          text-align: center;
+          margin-bottom: 1rem;
+          color: #aaa;
+          font-size: 0.9rem;
+        }
+        
         .paytable-grid {
           display: grid;
           gap: 0.5rem;
@@ -831,10 +740,6 @@ export default function SlotMachine() {
           padding: 0.5rem;
           background: rgba(255, 255, 255, 0.05);
           border-radius: 5px;
-        }
-        
-        .paytable-row.special {
-          background: rgba(255, 215, 0, 0.1);
         }
         
         .paytable-symbol {
@@ -856,16 +761,12 @@ export default function SlotMachine() {
           border: 1px solid #333;
         }
         
-        .paytable-symbol-display .emoji-symbol {
-          font-size: 1.5rem;
-        }
-        
         .paytable-payout {
           color: #ffd700;
           font-weight: bold;
         }
         
-        .lucky-win {
+        .two-kind {
           color: #ffd700;
           font-weight: bold;
         }
