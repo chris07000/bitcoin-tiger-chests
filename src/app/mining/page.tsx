@@ -326,7 +326,7 @@ export default function SlotMachine() {
               {reel.map((symbolId, symbolIndex) => (
                 <div 
                   key={`${reelIndex}-${symbolIndex}`} 
-                  className={`symbol ${symbolIndex === 1 ? 'center' : ''}`}
+                  className={`symbol winline-symbol`}
                 >
                   {getSymbolDisplay(symbolId)}
                 </div>
@@ -335,8 +335,11 @@ export default function SlotMachine() {
           ))}
         </div>
 
-        <div className="payline">
-          <div className="payline-indicator">━━━ PAYLINE ━━━</div>
+        <div className="paylines">
+          <div className="paylines-indicator">
+            <div className="payline-text">🎯 5 ACTIVE WINLINES 🎯</div>
+            <div className="payline-description">Horizontal • Diagonal • All Ways Win!</div>
+          </div>
         </div>
       </div>
 
@@ -385,6 +388,7 @@ export default function SlotMachine() {
         <h3>💰 PAYTABLE (Current Bet: {currentBet.toLocaleString()} sats)</h3>
         <div className="winlines-info">
           <p>🎯 5 WINLINES: Top Row, Center Row, Bottom Row, Diagonal \, Diagonal /</p>
+          <p>💡 Higher bets unlock better multipliers per symbol!</p>
         </div>
         <div className="paytable-grid">
           {SLOT_SYMBOLS.map(symbol => {
@@ -401,9 +405,9 @@ export default function SlotMachine() {
                   {symbol.name}
                 </span>
                 <span className="paytable-payout">
-                  3x = {payout.toLocaleString()} sats
+                  3 in a row = {payout.toLocaleString()} sats
                   {symbol.value >= 2 && (
-                    <span className="two-kind"> | 2x = {twoKindPayout.toLocaleString()} sats</span>
+                    <span className="two-kind"> | 2 in a row = {twoKindPayout.toLocaleString()} sats</span>
                   )}
                 </span>
               </div>
@@ -412,8 +416,9 @@ export default function SlotMachine() {
         </div>
         
         <div className="game-info">
-          <p>🎰 Pure Bitcoin Tiger slots with escalating payouts!</p>
-          <p>💡 Higher bets = better multipliers per symbol!</p>
+          <p>🎰 Classic 5-winline Bitcoin Tiger slot machine!</p>
+          <p>📈 Escalating payouts: Higher bets = Better multipliers per symbol</p>
+          <p>🏆 Best multipliers at 100 sats bet, scaling down for higher bets</p>
         </div>
       </div>
 
@@ -576,6 +581,30 @@ export default function SlotMachine() {
           text-align: center;
         }
         
+        .winline-symbol {
+          background: rgba(255, 215, 0, 0.1);
+          border-radius: 8px;
+          border: 1px solid rgba(255, 215, 0, 0.3);
+          position: relative;
+        }
+        
+        .winline-symbol::before {
+          content: '';
+          position: absolute;
+          top: -2px;
+          left: -2px;
+          right: -2px;
+          bottom: -2px;
+          background: linear-gradient(45deg, transparent, rgba(255, 215, 0, 0.2), transparent);
+          border-radius: 10px;
+          z-index: -1;
+        }
+        
+        .winline-symbol .tiger-symbol {
+          border-color: rgba(255, 215, 0, 0.4);
+          box-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+        }
+        
         .symbol.center .tiger-symbol {
           border-color: #ffd700;
           box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
@@ -587,15 +616,25 @@ export default function SlotMachine() {
           border: 2px solid #ffd700;
         }
         
-        .payline {
+        .paylines {
           text-align: center;
           margin-top: 1rem;
         }
         
-        .payline-indicator {
+        .paylines-indicator {
           color: #ffd700;
           font-weight: bold;
           letter-spacing: 2px;
+        }
+        
+        .payline-text {
+          font-size: 1.2rem;
+          margin-bottom: 0.5rem;
+        }
+        
+        .payline-description {
+          font-size: 0.9rem;
+          color: #aaa;
         }
         
         .bet-controls {
