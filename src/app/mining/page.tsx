@@ -23,18 +23,18 @@ interface SpinResult {
 
 const SLOT_SYMBOLS: SlotSymbol[] = [
   { id: 'tiger5', emoji: '', name: 'Tiger #5', value: 1, rarity: 1 },
-  { id: 'tiger12', emoji: '', name: 'Tiger #12', value: 1.25, rarity: 2 },
-  { id: 'tiger23', emoji: '', name: 'Tiger #23', value: 1.5, rarity: 3 },
-  { id: 'tiger45', emoji: '', name: 'Tiger #45', value: 2, rarity: 4 },
-  { id: 'tiger67', emoji: '', name: 'Tiger #67', value: 2.5, rarity: 5 },
-  { id: 'tiger89', emoji: '', name: 'Tiger #89', value: 3, rarity: 6 },
-  { id: 'tiger123', emoji: '', name: 'Tiger #123', value: 4, rarity: 7 },
-  { id: 'tiger234', emoji: '', name: 'Tiger #234', value: 5, rarity: 8 },
-  { id: 'tiger456', emoji: '', name: 'Tiger #456', value: 6, rarity: 9 },
-  { id: 'tiger777', emoji: '', name: 'Tiger #777', value: 8, rarity: 10 },
+  { id: 'tiger12', emoji: '', name: 'Tiger #12', value: 1.2, rarity: 2 },
+  { id: 'tiger23', emoji: '', name: 'Tiger #23', value: 1.4, rarity: 3 },
+  { id: 'tiger45', emoji: '', name: 'Tiger #45', value: 1.6, rarity: 4 },
+  { id: 'tiger67', emoji: '', name: 'Tiger #67', value: 1.8, rarity: 5 },
+  { id: 'tiger89', emoji: '', name: 'Tiger #89', value: 2, rarity: 6 },     // "Bells"
+  { id: 'tiger123', emoji: '', name: 'Tiger #123', value: 3, rarity: 7 },   // "Strawberries"  
+  { id: 'tiger234', emoji: '', name: 'Tiger #234', value: 4, rarity: 8 },   // "Melons"
+  { id: 'tiger456', emoji: '', name: 'Tiger #456', value: 5, rarity: 9 },   // Almost Jackpot
+  { id: 'tiger777', emoji: '', name: 'Tiger #777', value: 6, rarity: 10 },  // Jackpot
 ];
 
-const BET_AMOUNTS = [100, 500, 1000, 5000, 25000];
+const BET_AMOUNTS = [400, 1000, 2000, 4000, 8000];
 
 const WINLINES = [
   [0, 1, 2], // Top row
@@ -44,33 +44,87 @@ const WINLINES = [
   [2, 4, 6], // Diagonal /
 ];
 
-// Escalating multipliers based on bet amount (like Multiplayer machine)
-const getPayoutMultiplier = (betAmount: number, symbolValue: number): number => {
-  const baseMultipliers = {
-    100: { 8: 20, 6: 15, 5: 12, 4: 8, 3: 6, 2.5: 4, 2: 3, 1.5: 2, 1.25: 1.5, 1: 1 },
-    500: { 8: 15, 6: 12, 5: 9, 4: 7, 3: 5, 2.5: 4, 2: 3, 1.5: 2, 1.25: 1.5, 1: 1 },
-    1000: { 8: 12, 6: 9, 5: 7, 4: 5, 3: 4, 2.5: 3, 2: 2.5, 1.5: 2, 1.25: 1.5, 1: 1 },
-    5000: { 8: 10, 6: 8, 5: 6, 4: 4.5, 3: 3.5, 2.5: 2.8, 2: 2.2, 1.5: 1.8, 1.25: 1.4, 1: 1 },
-    25000: { 8: 8, 6: 6, 5: 5, 4: 4, 3: 3, 2.5: 2.5, 2: 2, 1.5: 1.5, 1.25: 1.25, 1: 1 }
+// New custom payout table based on user specifications
+const getCustomPayout = (betAmount: number, symbolId: string): number => {
+  const payoutTable: { [key: number]: { [key: string]: number } } = {
+    400: {
+      'tiger777': 20000,   // Jackpot
+      'tiger456': 6000,    // Almost Jackpot  
+      'tiger234': 6000,    // "Melons"
+      'tiger123': 6000,    // "Strawberries"
+      'tiger89': 6000,     // "Bells"
+      'tiger67': 2800,     // Lower tier
+      'tiger45': 2800,
+      'tiger23': 2800,
+      'tiger12': 2800,
+      'tiger5': 2800
+    },
+    1000: {
+      'tiger777': 40000,   // Jackpot
+      'tiger456': 16000,   // Almost Jackpot
+      'tiger234': 16000,   // "Melons"  
+      'tiger123': 16000,   // "Strawberries"
+      'tiger89': 16000,    // "Bells"
+      'tiger67': 8000,     // Lower tier
+      'tiger45': 8000,
+      'tiger23': 8000,
+      'tiger12': 8000,
+      'tiger5': 8000
+    },
+    2000: {
+      'tiger777': 80000,   // Jackpot
+      'tiger456': 32000,   // Almost Jackpot
+      'tiger234': 32000,   // "Melons"
+      'tiger123': 32000,   // "Strawberries" 
+      'tiger89': 32000,    // "Bells"
+      'tiger67': 16000,    // Lower tier
+      'tiger45': 16000,
+      'tiger23': 16000,
+      'tiger12': 16000,
+      'tiger5': 16000
+    },
+    4000: {
+      'tiger777': 200000,  // Jackpot
+      'tiger456': 80000,   // Almost Jackpot
+      'tiger234': 80000,   // "Melons"
+      'tiger123': 64000,   // "Strawberries"
+      'tiger89': 64000,    // "Bells"
+      'tiger67': 32000,    // Lower tier
+      'tiger45': 32000,
+      'tiger23': 32000,
+      'tiger12': 32000,
+      'tiger5': 32000
+    },
+    8000: {
+      'tiger777': 400000,  // Jackpot
+      'tiger456': 160000,  // Almost Jackpot
+      'tiger234': 160000,  // "Melons"
+      'tiger123': 148000,  // "Strawberries"
+      'tiger89': 128000,   // "Bells"
+      'tiger67': 64000,    // Lower tier
+      'tiger45': 64000,
+      'tiger23': 64000,
+      'tiger12': 64000,
+      'tiger5': 64000
+    }
   };
   
-  const multipliers = baseMultipliers[betAmount as keyof typeof baseMultipliers] || baseMultipliers[100];
-  return multipliers[symbolValue as keyof typeof multipliers] || 1;
+  return payoutTable[betAmount]?.[symbolId] || 0;
 };
 
 const getWeightedRandomSymbol = (): SlotSymbol => {
-  // Adjusted weights for better house edge
+  // Adjusted weights for the new payout system - higher payouts should be much rarer
   const weights: { [key: string]: number } = {
-    'tiger5': 30,     // Most common
-    'tiger12': 25,
-    'tiger23': 20,
-    'tiger45': 15,
-    'tiger67': 12,
-    'tiger89': 8,
-    'tiger123': 5,
-    'tiger234': 3,
-    'tiger456': 2,
-    'tiger777': 1,   // Rarest (jackpot)
+    'tiger5': 35,      // Most common (lowest payout)
+    'tiger12': 30,     // Very common
+    'tiger23': 25,     // Common
+    'tiger45': 20,     // Less common
+    'tiger67': 15,     // Uncommon
+    'tiger89': 8,      // "Bells" - rare
+    'tiger123': 5,     // "Strawberries" - very rare
+    'tiger234': 3,     // "Melons" - extremely rare
+    'tiger456': 2,     // Almost Jackpot - ultra rare
+    'tiger777': 1,     // Jackpot - legendary rare
   };
   
   const totalWeight = Object.values(weights).reduce((sum, weight) => sum + weight, 0);
@@ -110,8 +164,7 @@ const calculatePayout = (resultReels: string[][], betAmount: number): SpinResult
     if (lineSymbols[0] === lineSymbols[1] && lineSymbols[1] === lineSymbols[2]) {
       const symbol = SLOT_SYMBOLS.find(s => s.id === lineSymbols[0]);
       if (symbol) {
-        const multiplier = getPayoutMultiplier(betAmount, symbol.value);
-        const payout = Math.floor(betAmount * multiplier);
+        const payout = getCustomPayout(betAmount, symbol.id);
         totalPayout += payout;
         winTypes.push(`Line ${lineIndex + 1}: Three ${symbol.name}s`);
       }
@@ -129,7 +182,7 @@ const calculatePayout = (resultReels: string[][], betAmount: number): SpinResult
 export default function SlotMachine() {
   const [reels, setReels] = useState<string[][]>([[], [], []]);
   const [isSpinning, setIsSpinning] = useState(false);
-  const [currentBet, setCurrentBet] = useState(1000);
+  const [currentBet, setCurrentBet] = useState(1000); // Default to 1000 sats
   const [lastWin, setLastWin] = useState<SpinResult | null>(null);
   const [gamesPlayed, setGamesPlayed] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
@@ -305,7 +358,7 @@ export default function SlotMachine() {
       <header className="slot-header">
         <h1 className="slot-title">🎰 BITCOIN TIGER SLOTS 🐅</h1>
         <p className="slot-subtitle">
-          Spin the reels and win big with Bitcoin Tiger magic!
+          Custom Win Table System - From 400 to 8,000 sats bets!
         </p>
       </header>
 
@@ -397,12 +450,11 @@ export default function SlotMachine() {
         <h3>💰 PAYTABLE (Current Bet: {currentBet.toLocaleString()} sats)</h3>
         <div className="winlines-info">
           <p>🎯 5 WINLINES: Top Row, Center Row, Bottom Row, Diagonal \, Diagonal /</p>
-          <p>💡 Higher bets unlock better multipliers per symbol!</p>
+          <p>💎 Custom Win Table: Tiger #777 Jackpots up to 400,000 sats!</p>
         </div>
         <div className="paytable-grid">
           {SLOT_SYMBOLS.map(symbol => {
-            const multiplier = getPayoutMultiplier(currentBet, symbol.value);
-            const payout = Math.floor(currentBet * multiplier);
+            const payout = getCustomPayout(currentBet, symbol.id);
             
             return (
               <div key={symbol.id} className="paytable-row">
@@ -421,9 +473,10 @@ export default function SlotMachine() {
         </div>
         
         <div className="game-info">
-          <p>🎰 Classic 5-winline Bitcoin Tiger slot machine!</p>
-          <p>📈 Escalating payouts: Higher bets = Better multipliers per symbol</p>
-          <p>🏆 Best multipliers at 100 sats bet, scaling down for higher bets</p>
+          <p>🎰 Custom Bitcoin Tiger Win Table Slot Machine!</p>
+          <p>🏆 Tiger #777 = Jackpot | 🥈 Tiger #456 = Almost Jackpot</p>
+          <p>🍈 Tiger #234 = "Melons" | 🍓 Tiger #123 = "Strawberries" | 🔔 Tiger #89 = "Bells"</p>
+          <p>💰 Higher bets unlock massive payouts!</p>
         </div>
       </div>
 
