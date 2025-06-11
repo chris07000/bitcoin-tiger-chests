@@ -1,46 +1,52 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// MULTIPLAYER REEL STRIPS: 9 symbols like official machine (NO Tiger #5!)
-// Tiger #12 is now the lowest symbol, proper 9-symbol balance
+// MULTIPLAYER REEL STRIPS: MUCH RARER WINS - Sustainable house edge
+// Drastically reduced frequencies for proper casino balance
 const REEL_STRIPS = {
   reel1: [
-    // 100 positions - 9 symbols only, like official Multiplayer
-    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
-    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
+    // 100 positions - Most positions have NO winning symbols to reduce wins drastically
     'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
     'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
     'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23',
-    'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23',
-    'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45',
-    'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger67', 'tiger67', 'tiger67', 'tiger67', 'tiger67',
-    'tiger89', 'tiger89', 'tiger89', 'tiger123', 'tiger123', 'tiger123', 'tiger234', 'tiger234', 'tiger456', 'tiger456',
-    'tiger777', 'tiger777', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger89', 'tiger123', 'tiger234', 'tiger456'
+    'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger67', 'tiger67',
+    'tiger67', 'tiger67', 'tiger67', 'tiger67', 'tiger89', 'tiger89', 'tiger89', 'tiger123', 'tiger123', 'tiger234',
+    'tiger234', 'tiger456', 'tiger777', // Only a few higher symbols
+    // Fill rest with low frequency tigers to dilute wins
+    'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger12', 'tiger23',
+    'tiger45', 'tiger67', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger12', 'tiger23', 'tiger45', 'tiger67',
+    'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger12', 'tiger23',
+    'tiger45', 'tiger67', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger12', 'tiger23', 'tiger45', 'tiger67',
+    'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger89', 'tiger123', 'tiger234'
   ],
   reel2: [
-    // 100 positions - Same distribution for consistency
-    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
-    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
+    // 100 positions - Different pattern but same low frequency concept
     'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
     'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
     'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23',
-    'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23',
-    'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45',
-    'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger67', 'tiger67', 'tiger67', 'tiger67', 'tiger67',
-    'tiger89', 'tiger89', 'tiger89', 'tiger123', 'tiger123', 'tiger123', 'tiger234', 'tiger234', 'tiger456', 'tiger456',
-    'tiger777', 'tiger777', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger89', 'tiger123', 'tiger234', 'tiger456'
+    'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger67', 'tiger67',
+    'tiger67', 'tiger67', 'tiger67', 'tiger67', 'tiger89', 'tiger89', 'tiger89', 'tiger123', 'tiger123', 'tiger234',
+    'tiger234', 'tiger456', 'tiger777', // Only a few higher symbols
+    // Fill rest with low frequency tigers to dilute wins
+    'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger12', 'tiger23',
+    'tiger45', 'tiger67', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger12', 'tiger23', 'tiger45', 'tiger67',
+    'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger12', 'tiger23',
+    'tiger45', 'tiger67', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger12', 'tiger23', 'tiger45', 'tiger67',
+    'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger89', 'tiger123', 'tiger234'
   ],
   reel3: [
-    // 100 positions - Consistent across all reels
-    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
-    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
+    // 100 positions - Consistent low win rate
     'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
     'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
     'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23',
-    'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23',
-    'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45',
-    'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger67', 'tiger67', 'tiger67', 'tiger67', 'tiger67',
-    'tiger89', 'tiger89', 'tiger89', 'tiger123', 'tiger123', 'tiger123', 'tiger234', 'tiger234', 'tiger456', 'tiger456',
-    'tiger777', 'tiger777', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger89', 'tiger123', 'tiger234', 'tiger456'
+    'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger67', 'tiger67',
+    'tiger67', 'tiger67', 'tiger67', 'tiger67', 'tiger89', 'tiger89', 'tiger89', 'tiger123', 'tiger123', 'tiger234',
+    'tiger234', 'tiger456', 'tiger777', // Only a few higher symbols
+    // Fill rest with low frequency tigers to dilute wins
+    'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger12', 'tiger23',
+    'tiger45', 'tiger67', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger12', 'tiger23', 'tiger45', 'tiger67',
+    'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger12', 'tiger23',
+    'tiger45', 'tiger67', 'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger12', 'tiger23', 'tiger45', 'tiger67',
+    'tiger12', 'tiger23', 'tiger45', 'tiger67', 'tiger89', 'tiger123', 'tiger234'
   ]
 };
 
