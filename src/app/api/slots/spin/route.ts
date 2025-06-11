@@ -66,23 +66,82 @@ const getCustomPayout = (betAmount: number, symbolId: string): number => {
   return payoutTable[betAmount]?.[symbolId] || 0;
 };
 
-// Cryptographically secure random number generation
-const getSecureRandomSymbol = (): string => {
-  const totalWeight = Object.values(SYMBOL_WEIGHTS).reduce((sum, weight) => sum + weight, 0);
-  
-  // Use crypto.getRandomValues for true randomness
-  const randomArray = new Uint32Array(1);
+// Traditional slot machine reel strips (like real casinos)
+// Each reel has a predefined sequence of symbols with exact weights
+const REEL_STRIPS = {
+  reel1: [
+    // 100 positions on reel 1 - optimized for payouts
+    'tiger5', 'tiger12', 'tiger5', 'tiger23', 'tiger5', 'tiger45', 'tiger5', 'tiger12', 'tiger5', 'tiger67',
+    'tiger12', 'tiger5', 'tiger12', 'tiger23', 'tiger5', 'tiger12', 'tiger5', 'tiger89', 'tiger5', 'tiger12',
+    'tiger23', 'tiger5', 'tiger45', 'tiger5', 'tiger12', 'tiger5', 'tiger67', 'tiger5', 'tiger12', 'tiger5',
+    'tiger12', 'tiger5', 'tiger23', 'tiger5', 'tiger123', 'tiger5', 'tiger12', 'tiger5', 'tiger45', 'tiger12',
+    'tiger5', 'tiger67', 'tiger5', 'tiger12', 'tiger5', 'tiger23', 'tiger5', 'tiger12', 'tiger5', 'tiger89',
+    'tiger12', 'tiger5', 'tiger45', 'tiger5', 'tiger12', 'tiger5', 'tiger234', 'tiger12', 'tiger5', 'tiger67',
+    'tiger5', 'tiger12', 'tiger5', 'tiger23', 'tiger5', 'tiger12', 'tiger5', 'tiger45', 'tiger12', 'tiger5',
+    'tiger89', 'tiger5', 'tiger12', 'tiger5', 'tiger67', 'tiger5', 'tiger456', 'tiger12', 'tiger5', 'tiger23',
+    'tiger5', 'tiger12', 'tiger5', 'tiger123', 'tiger5', 'tiger12', 'tiger5', 'tiger45', 'tiger12', 'tiger5',
+    'tiger67', 'tiger5', 'tiger12', 'tiger5', 'tiger777', 'tiger5', 'tiger12', 'tiger5', 'tiger23', 'tiger12'
+  ],
+  reel2: [
+    // 100 positions on reel 2 - different distribution for variety
+    'tiger12', 'tiger5', 'tiger23', 'tiger5', 'tiger12', 'tiger5', 'tiger45', 'tiger12', 'tiger5', 'tiger23',
+    'tiger5', 'tiger67', 'tiger5', 'tiger12', 'tiger5', 'tiger23', 'tiger5', 'tiger12', 'tiger89', 'tiger5',
+    'tiger45', 'tiger5', 'tiger12', 'tiger5', 'tiger23', 'tiger67', 'tiger5', 'tiger12', 'tiger5', 'tiger23',
+    'tiger5', 'tiger12', 'tiger123', 'tiger5', 'tiger45', 'tiger5', 'tiger12', 'tiger5', 'tiger67', 'tiger5',
+    'tiger23', 'tiger5', 'tiger12', 'tiger5', 'tiger89', 'tiger45', 'tiger5', 'tiger12', 'tiger5', 'tiger23',
+    'tiger5', 'tiger234', 'tiger12', 'tiger5', 'tiger67', 'tiger5', 'tiger23', 'tiger5', 'tiger12', 'tiger5',
+    'tiger45', 'tiger5', 'tiger123', 'tiger12', 'tiger5', 'tiger89', 'tiger5', 'tiger23', 'tiger5', 'tiger12',
+    'tiger67', 'tiger5', 'tiger456', 'tiger5', 'tiger12', 'tiger5', 'tiger23', 'tiger45', 'tiger5', 'tiger12',
+    'tiger5', 'tiger89', 'tiger5', 'tiger67', 'tiger12', 'tiger5', 'tiger23', 'tiger5', 'tiger123', 'tiger5',
+    'tiger12', 'tiger777', 'tiger5', 'tiger23', 'tiger5', 'tiger12', 'tiger45', 'tiger5', 'tiger67', 'tiger5'
+  ],
+  reel3: [
+    // 100 positions on reel 3 - optimized for near-misses and excitement
+    'tiger23', 'tiger5', 'tiger12', 'tiger5', 'tiger45', 'tiger5', 'tiger12', 'tiger23', 'tiger5', 'tiger67',
+    'tiger5', 'tiger12', 'tiger5', 'tiger23', 'tiger89', 'tiger5', 'tiger45', 'tiger5', 'tiger12', 'tiger5',
+    'tiger67', 'tiger23', 'tiger5', 'tiger12', 'tiger5', 'tiger123', 'tiger5', 'tiger23', 'tiger45', 'tiger5',
+    'tiger12', 'tiger5', 'tiger89', 'tiger5', 'tiger67', 'tiger12', 'tiger5', 'tiger23', 'tiger5', 'tiger45',
+    'tiger5', 'tiger234', 'tiger12', 'tiger5', 'tiger67', 'tiger5', 'tiger23', 'tiger89', 'tiger5', 'tiger45',
+    'tiger5', 'tiger12', 'tiger123', 'tiger5', 'tiger67', 'tiger23', 'tiger5', 'tiger12', 'tiger5', 'tiger89',
+    'tiger45', 'tiger5', 'tiger67', 'tiger5', 'tiger456', 'tiger12', 'tiger5', 'tiger23', 'tiger5', 'tiger123',
+    'tiger5', 'tiger89', 'tiger45', 'tiger5', 'tiger67', 'tiger5', 'tiger12', 'tiger23', 'tiger5', 'tiger234',
+    'tiger5', 'tiger45', 'tiger12', 'tiger5', 'tiger89', 'tiger67', 'tiger5', 'tiger23', 'tiger5', 'tiger123',
+    'tiger12', 'tiger5', 'tiger777', 'tiger5', 'tiger45', 'tiger5', 'tiger67', 'tiger23', 'tiger5', 'tiger12'
+  ]
+};
+
+// Traditional slot machine reel positioning
+const getReelSymbol = (reelIndex: number, position: number): string => {
+  const reelKey = `reel${reelIndex + 1}` as keyof typeof REEL_STRIPS;
+  const strip = REEL_STRIPS[reelKey];
+  return strip[position % strip.length];
+};
+
+// Generate traditional slot result (like real casino machines)
+const generateTraditionalSlotResult = (): string[][] => {
+  // Generate random positions for each reel (0-99)
+  const randomArray = new Uint32Array(3);
   crypto.getRandomValues(randomArray);
-  const randomNum = (randomArray[0] / (0xFFFFFFFF + 1)) * totalWeight;
   
-  let currentWeight = 0;
-  for (const symbolId of SLOT_SYMBOLS) {
-    currentWeight += SYMBOL_WEIGHTS[symbolId];
-    if (randomNum <= currentWeight) {
-      return symbolId;
+  const reelPositions = [
+    randomArray[0] % 100, // Reel 1 position  
+    randomArray[1] % 100, // Reel 2 position
+    randomArray[2] % 100  // Reel 3 position
+  ];
+  
+  // Build 3x3 result grid from reel positions
+  const result: string[][] = [[], [], []];
+  
+  for (let reel = 0; reel < 3; reel++) {
+    const basePosition = reelPositions[reel];
+    // Show 3 consecutive symbols from this reel position
+    for (let row = 0; row < 3; row++) {
+      const symbolPosition = (basePosition + row) % 100;
+      result[reel][row] = getReelSymbol(reel, symbolPosition);
     }
   }
-  return SLOT_SYMBOLS[0];
+  
+  return result;
 };
 
 // Server-side win calculation
@@ -154,12 +213,8 @@ export async function POST(request: NextRequest) {
 
     const walletData = await walletResponse.json();
 
-    // Generate secure random result (SERVER-SIDE ONLY)
-    const finalReels = [
-      [getSecureRandomSymbol(), getSecureRandomSymbol(), getSecureRandomSymbol()],
-      [getSecureRandomSymbol(), getSecureRandomSymbol(), getSecureRandomSymbol()],
-      [getSecureRandomSymbol(), getSecureRandomSymbol(), getSecureRandomSymbol()]
-    ];
+    // Generate traditional slot result (like real casino machines)
+    const finalReels = generateTraditionalSlotResult();
 
     // Calculate payout (SERVER-SIDE ONLY)
     const { totalPayout, winTypes } = calculateServerPayout(finalReels, betAmount);

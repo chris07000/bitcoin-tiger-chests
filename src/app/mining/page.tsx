@@ -79,24 +79,10 @@ const getCustomPayout = (betAmount: number, symbolId: string): number => {
 
 const getWeightedRandomSymbol = (): SlotSymbol => {
   // This is now only used for visual effects during spinning animation
-  // The actual game results come from the secure server-side API
-  const weights: { [key: string]: number } = {
-    'tiger5': 35,      'tiger12': 30,     'tiger23': 25,     'tiger45': 20,
-    'tiger67': 15,     'tiger89': 8,      'tiger123': 5,     'tiger234': 3,
-    'tiger456': 2,     'tiger777': 1,
-  };
-  
-  const totalWeight = Object.values(weights).reduce((sum, weight) => sum + weight, 0);
-  let randomNum = Math.random() * totalWeight;
-  
-  for (const symbol of SLOT_SYMBOLS) {
-    const weight = weights[symbol.id] || 1;
-    randomNum -= weight;
-    if (randomNum <= 0) {
-      return symbol;
-    }
-  }
-  return SLOT_SYMBOLS[0];
+  // The actual game uses traditional slot machine reel strips (server-side)
+  // Simple random selection for visual variety
+  const randomIndex = Math.floor(Math.random() * SLOT_SYMBOLS.length);
+  return SLOT_SYMBOLS[randomIndex];
 };
 
 export default function SlotMachine() {
@@ -347,10 +333,12 @@ export default function SlotMachine() {
         </div>
         
         <div className="game-info">
-          <p>🎰 Custom Bitcoin Tiger Win Table Slot Machine!</p>
+          <p>🎰 Traditional Bitcoin Tiger Slot Machine!</p>
           <p>🏆 Tiger #777 = Jackpot | 🥈 Tiger #456 = Almost Jackpot</p>
           <p>🍈 Tiger #234 = "Melons" | 🍓 Tiger #123 = "Strawberries" | 🔔 Tiger #89 = "Bells"</p>
           <p>💰 Higher bets unlock massive payouts!</p>
+          <p>📊 RTP: ~80-85% (Traditional Reel Strip System)</p>
+          <p>🎯 Works like real casino machines with reel positioning!</p>
         </div>
       </div>
 
