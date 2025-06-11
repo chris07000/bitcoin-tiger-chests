@@ -90,8 +90,16 @@ const calculatePayout = (resultReels: string[][], betAmount: number): SpinResult
   let totalPayout = 0;
   let winTypes: string[] = [];
   
-  // Convert 3x3 reels to flat array for winline checking
-  const flatReels = resultReels.flat();
+  // Correctly convert 3x3 reels to flat array for winline checking
+  // resultReels[0] = reel1 [top, center, bottom]
+  // resultReels[1] = reel2 [top, center, bottom]  
+  // resultReels[2] = reel3 [top, center, bottom]
+  // We need: [top-left, top-center, top-right, center-left, center-center, center-right, bottom-left, bottom-center, bottom-right]
+  const flatReels = [
+    resultReels[0][0], resultReels[1][0], resultReels[2][0], // Top row: left, center, right
+    resultReels[0][1], resultReels[1][1], resultReels[2][1], // Center row: left, center, right
+    resultReels[0][2], resultReels[1][2], resultReels[2][2]  // Bottom row: left, center, right
+  ];
   
   // Check all 5 winlines
   for (let lineIndex = 0; lineIndex < WINLINES.length; lineIndex++) {
