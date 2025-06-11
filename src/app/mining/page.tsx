@@ -135,7 +135,7 @@ export default function SlotMachine() {
   const [isMobile, setIsMobile] = useState(false);
 
   const { walletAddress } = useWallet();
-  const { balance, fetchBalance } = useLightning();
+  const { balance, fetchBalance, updateBalanceWithTimestamp } = useLightning();
 
   useEffect(() => {
     const checkMobile = () => {
@@ -183,9 +183,15 @@ export default function SlotMachine() {
       const result = await response.json();
       
       if (result.success) {
-        // Refresh balance from database
-        await fetchBalance();
-        console.log(`Win payout successful: ${winAmount} sats (${winType})`);
+        // Directly update balance with the new balance from API response (bypass cache)
+        if (result.newBalance !== undefined) {
+          updateBalanceWithTimestamp(result.newBalance);
+          console.log(`Win payout successful: ${winAmount} sats - Balance updated to: ${result.newBalance}`);
+        } else {
+          // Fallback to fetchBalance if newBalance not in response
+          await fetchBalance();
+          console.log(`Win payout successful: ${winAmount} sats (${winType})`);
+        }
       } else {
         console.error('Win payout failed:', result.error);
       }
@@ -219,9 +225,15 @@ export default function SlotMachine() {
         return;
       }
 
-      // Refresh balance from database
-      await fetchBalance();
-      console.log('Bet placed successfully via database');
+      // Directly update balance with the new balance from API response (bypass cache)
+      if (apiResult.remainingBalance !== undefined) {
+        updateBalanceWithTimestamp(apiResult.remainingBalance);
+        console.log(`Bet placed: ${currentBet} sats - Balance updated to: ${apiResult.remainingBalance}`);
+      } else {
+        // Fallback to fetchBalance if remainingBalance not in response
+        await fetchBalance();
+        console.log('Bet placed successfully via database');
+      }
     } catch (error) {
       console.error('Error processing bet:', error);
       alert('Failed to place bet. Please try again.');
