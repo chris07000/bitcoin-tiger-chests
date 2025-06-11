@@ -1,43 +1,43 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// MULTIPLAYER REEL STRIPS: Much rarer wins for proper balance
-// Most symbols are tiger5 (no payout) to make wins special
+// MULTIPLAYER REEL STRIPS: Balanced for 85% RTP with original payouts
+// Reduced Tiger #5 frequency to control house edge
 const REEL_STRIPS = {
   reel1: [
-    // 100 positions - Mostly tiger5 (no payout) to make wins rare
-    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
-    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
+    // 100 positions - Reduced Tiger #5 for proper house edge
     'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
     'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
     'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
     'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
     'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
-    'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger45', 'tiger45', 'tiger45', 'tiger67', 'tiger67',
-    'tiger89', 'tiger89', 'tiger123', 'tiger123', 'tiger234', 'tiger234', 'tiger456', 'tiger456', 'tiger777', 'tiger777'
+    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
+    'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23',
+    'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger67', 'tiger67', 'tiger67', 'tiger89', 'tiger89',
+    'tiger123', 'tiger123', 'tiger234', 'tiger234', 'tiger456', 'tiger456', 'tiger777', 'tiger777', 'tiger5', 'tiger5'
   ],
   reel2: [
-    // 100 positions - Similar distribution but different order
-    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
-    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
+    // 100 positions - Same distribution for consistency
     'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
     'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
     'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
     'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
     'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
-    'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger45', 'tiger45', 'tiger45', 'tiger67', 'tiger67',
-    'tiger89', 'tiger89', 'tiger123', 'tiger123', 'tiger234', 'tiger234', 'tiger456', 'tiger456', 'tiger777', 'tiger777'
+    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
+    'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23',
+    'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger67', 'tiger67', 'tiger67', 'tiger89', 'tiger89',
+    'tiger123', 'tiger123', 'tiger234', 'tiger234', 'tiger456', 'tiger456', 'tiger777', 'tiger777', 'tiger5', 'tiger5'
   ],
   reel3: [
-    // 100 positions - Even distribution for balance
-    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
-    'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
+    // 100 positions - Consistent across all reels
     'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
     'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
     'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
     'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5', 'tiger5',
     'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
-    'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger45', 'tiger45', 'tiger45', 'tiger67', 'tiger67',
-    'tiger89', 'tiger89', 'tiger123', 'tiger123', 'tiger234', 'tiger234', 'tiger456', 'tiger456', 'tiger777', 'tiger777'
+    'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12', 'tiger12',
+    'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23', 'tiger23',
+    'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger45', 'tiger67', 'tiger67', 'tiger67', 'tiger89', 'tiger89',
+    'tiger123', 'tiger123', 'tiger234', 'tiger234', 'tiger456', 'tiger456', 'tiger777', 'tiger777', 'tiger5', 'tiger5'
   ]
 };
 
@@ -110,7 +110,7 @@ const getCustomPayout = (betAmount: number, symbolId: string): number => {
   return payoutTable[betAmount]?.[symbolId] || 0;
 };
 
-// RTP CALCULATOR - Analyzes mathematical expectation (MULTIPLAYER VERSION)
+// RTP CALCULATOR - Analyzes mathematical expectation (BALANCED MULTIPLAYER)
 const calculateTheoreticalRTP = (): number => {
   // Count symbol frequencies across all reels
   const symbolCounts: { [key: string]: number } = {};
@@ -127,7 +127,7 @@ const calculateTheoreticalRTP = (): number => {
   let totalExpectedReturn = 0;
   const betAmount = 1000; // Use 1000 as base bet for calculation
   
-  console.log('🎰 ORIGINAL MULTIPLAYER ANALYSIS (Rare Wins, Big Payouts):');
+  console.log('🎰 BALANCED MULTIPLAYER ANALYSIS (Original Payouts, Adjusted Frequencies):');
   
   // For each symbol, calculate probability and expected return
   Object.keys(symbolCounts).forEach(symbol => {
@@ -146,31 +146,31 @@ const calculateTheoreticalRTP = (): number => {
     
     totalExpectedReturn += expectedReturnAllLines;
     
-    console.log(`${symbol}: Freq=(${probReel1.toFixed(2)},${probReel2.toFixed(2)},${probReel3.toFixed(2)}) Prob=${(prob3OfAKind * 100).toFixed(4)}% Payout=${payout.toLocaleString()} Expected=${expectedReturnPerLine.toFixed(2)}`);
+    const multiplier = payout / betAmount;
+    console.log(`${symbol}: Freq=${probReel1.toFixed(1)}% Prob=${(prob3OfAKind * 100).toFixed(3)}% Payout=${payout.toLocaleString()} (${multiplier}x) Expected=${expectedReturnAllLines.toFixed(1)}`);
   });
   
   const rtp = (totalExpectedReturn / betAmount) * 100;
   const houseEdge = 100 - rtp;
   
-  console.log(`📊 ORIGINAL MULTIPLAYER RESULTS:`);
+  console.log(`📊 BALANCED MULTIPLAYER RESULTS:`);
   console.log(`Total Expected Return: ${totalExpectedReturn.toFixed(2)} sats`);
   console.log(`Theoretical RTP: ${rtp.toFixed(2)}%`);
   console.log(`House Edge: ${houseEdge.toFixed(2)}%`);
+  console.log(`💰 House Profit per 1000 sats bet: ${(betAmount - totalExpectedReturn).toFixed(2)} sats`);
   
   // Show frequency distribution
-  console.log(`🎯 SYMBOL FREQUENCIES:`);
+  console.log(`🎯 NEW SYMBOL FREQUENCIES:`);
   Object.keys(symbolCounts).forEach(symbol => {
     const freq1 = REEL_STRIPS.reel1.filter(s => s === symbol).length;
-    const freq2 = REEL_STRIPS.reel2.filter(s => s === symbol).length; 
-    const freq3 = REEL_STRIPS.reel3.filter(s => s === symbol).length;
-    console.log(`${symbol}: ${freq1}/${freq2}/${freq3} (${freq1}%, ${freq2}%, ${freq3}%)`);
+    console.log(`${symbol}: ${freq1}% frequency per reel`);
   });
   
   return rtp;
 };
 
 // Calculate RTP on server startup for monitoring
-console.log('🎰 ORIGINAL MULTIPLAYER SLOT MACHINE RTP ANALYSIS:');
+console.log('🎰 BALANCED MULTIPLAYER SLOT MACHINE RTP ANALYSIS:');
 calculateTheoreticalRTP();
 
 const SLOT_SYMBOLS = [
