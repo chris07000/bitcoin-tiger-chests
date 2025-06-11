@@ -48,64 +48,64 @@ const WINLINES = [
 const getCustomPayout = (betAmount: number, symbolId: string): number => {
   const payoutTable: { [key: number]: { [key: string]: number } } = {
     400: {
-      'tiger777': 32000,   // 80x bet - BIG JACKPOT!
-      'tiger456': 8000,    // 20x bet - Great win
-      'tiger234': 4000,    // 10x bet - Good win
-      'tiger123': 2000,    // 5x bet - Nice win
-      'tiger89': 1200,     // 3x bet - Decent win
-      'tiger67': 800,      // 2x bet - Small win
-      'tiger45': 600,      // 1.5x bet - Tiny win
-      'tiger23': 520,      // 1.3x bet - Cover bet
-      'tiger12': 480,      // 1.2x bet - Small return
-      'tiger5': 440        // 1.1x bet - Minimal return
+      'tiger777': 200000,  // 500x bet - MASSIVE JACKPOT!
+      'tiger456': 40000,   // 100x bet - Huge win
+      'tiger234': 16000,   // 40x bet - Big win
+      'tiger123': 8000,    // 20x bet - Great win
+      'tiger89': 4000,     // 10x bet - Good win
+      'tiger67': 2000,     // 5x bet - Nice win
+      'tiger45': 1200,     // 3x bet - Decent win
+      'tiger23': 800,      // 2x bet - Small win
+      'tiger12': 600,      // 1.5x bet - Tiny win
+      'tiger5': 480        // 1.2x bet - Minimal win
     },
     1000: {
-      'tiger777': 80000,   // 80x bet - BIG JACKPOT!
-      'tiger456': 20000,   // 20x bet - Great win
-      'tiger234': 10000,   // 10x bet - Good win
-      'tiger123': 5000,    // 5x bet - Nice win
-      'tiger89': 3000,     // 3x bet - Decent win
-      'tiger67': 2000,     // 2x bet - Small win
-      'tiger45': 1500,     // 1.5x bet - Tiny win
-      'tiger23': 1300,     // 1.3x bet - Cover bet
-      'tiger12': 1200,     // 1.2x bet - Small return
-      'tiger5': 1100      // 1.1x bet - Minimal return
+      'tiger777': 500000,  // 500x bet - MASSIVE JACKPOT!
+      'tiger456': 100000,  // 100x bet - Huge win
+      'tiger234': 40000,   // 40x bet - Big win
+      'tiger123': 20000,   // 20x bet - Great win
+      'tiger89': 10000,    // 10x bet - Good win
+      'tiger67': 5000,     // 5x bet - Nice win
+      'tiger45': 3000,     // 3x bet - Decent win
+      'tiger23': 2000,     // 2x bet - Small win
+      'tiger12': 1500,     // 1.5x bet - Tiny win
+      'tiger5': 1200      // 1.2x bet - Minimal win
     },
     2000: {
-      'tiger777': 160000,  // 80x bet - BIG JACKPOT!
-      'tiger456': 40000,   // 20x bet - Great win
-      'tiger234': 20000,   // 10x bet - Good win
-      'tiger123': 10000,   // 5x bet - Nice win
-      'tiger89': 6000,     // 3x bet - Decent win
-      'tiger67': 4000,     // 2x bet - Small win
-      'tiger45': 3000,     // 1.5x bet - Tiny win
-      'tiger23': 2600,     // 1.3x bet - Cover bet
-      'tiger12': 2400,     // 1.2x bet - Small return
-      'tiger5': 2200      // 1.1x bet - Minimal return
+      'tiger777': 1000000, // 500x bet - MASSIVE JACKPOT!
+      'tiger456': 200000,  // 100x bet - Huge win
+      'tiger234': 80000,   // 40x bet - Big win
+      'tiger123': 40000,   // 20x bet - Great win
+      'tiger89': 20000,    // 10x bet - Good win
+      'tiger67': 10000,    // 5x bet - Nice win
+      'tiger45': 6000,     // 3x bet - Decent win
+      'tiger23': 4000,     // 2x bet - Small win
+      'tiger12': 3000,     // 1.5x bet - Tiny win
+      'tiger5': 2400      // 1.2x bet - Minimal win
     },
     4000: {
-      'tiger777': 320000,  // 80x bet - BIG JACKPOT!
-      'tiger456': 80000,   // 20x bet - Great win
-      'tiger234': 40000,   // 10x bet - Good win
-      'tiger123': 20000,   // 5x bet - Nice win
-      'tiger89': 12000,    // 3x bet - Decent win
-      'tiger67': 8000,     // 2x bet - Small win
-      'tiger45': 6000,     // 1.5x bet - Tiny win
-      'tiger23': 5200,     // 1.3x bet - Cover bet
-      'tiger12': 4800,     // 1.2x bet - Small return
-      'tiger5': 4400      // 1.1x bet - Minimal return
+      'tiger777': 2000000, // 500x bet - MEGA JACKPOT!
+      'tiger456': 400000,  // 100x bet - Huge win
+      'tiger234': 160000,  // 40x bet - Big win
+      'tiger123': 80000,   // 20x bet - Great win
+      'tiger89': 40000,    // 10x bet - Good win
+      'tiger67': 20000,    // 5x bet - Nice win
+      'tiger45': 12000,    // 3x bet - Decent win
+      'tiger23': 8000,     // 2x bet - Small win
+      'tiger12': 6000,     // 1.5x bet - Tiny win
+      'tiger5': 4800      // 1.2x bet - Minimal win
     },
     8000: {
-      'tiger777': 640000,  // 80x bet - MASSIVE JACKPOT!
-      'tiger456': 160000,  // 20x bet - Great win
-      'tiger234': 80000,   // 10x bet - Good win
-      'tiger123': 40000,   // 5x bet - Nice win
-      'tiger89': 24000,    // 3x bet - Decent win
-      'tiger67': 16000,    // 2x bet - Small win
-      'tiger45': 12000,    // 1.5x bet - Tiny win
-      'tiger23': 10400,    // 1.3x bet - Cover bet
-      'tiger12': 9600,     // 1.2x bet - Small return
-      'tiger5': 8800      // 1.1x bet - Minimal return
+      'tiger777': 4000000, // 500x bet - LEGENDARY JACKPOT!
+      'tiger456': 800000,  // 100x bet - Huge win
+      'tiger234': 320000,  // 40x bet - Big win
+      'tiger123': 160000,  // 20x bet - Great win
+      'tiger89': 80000,    // 10x bet - Good win
+      'tiger67': 40000,    // 5x bet - Nice win
+      'tiger45': 24000,    // 3x bet - Decent win
+      'tiger23': 16000,    // 2x bet - Small win
+      'tiger12': 12000,    // 1.5x bet - Tiny win
+      'tiger5': 9600      // 1.2x bet - Minimal win
     }
   };
   
@@ -249,15 +249,6 @@ export default function SlotMachine() {
   };
 
   const getSymbolDisplay = (symbolId: string) => {
-    // Handle blank symbols
-    if (symbolId === 'blank') {
-      return (
-        <div className="blank-symbol">
-          <div className="blank-content">❌</div>
-        </div>
-      );
-    }
-    
     // Extract tiger number from symbolId (e.g., 'tiger777' -> '777')
     const tigerNumber = symbolId.replace('tiger', '');
     return (
@@ -283,7 +274,7 @@ export default function SlotMachine() {
       <header className="slot-header">
         <h1 className="slot-title">🎰 BITCOIN TIGER SLOTS 🐅</h1>
         <p className="slot-subtitle">
-          Custom Win Table System - From 400 to 8,000 sats bets!
+          Multiplayer-Style High Payouts - Up to 4,000,000 sats jackpots!
         </p>
       </header>
 
@@ -391,10 +382,10 @@ export default function SlotMachine() {
       )}
 
       <div className="paytable">
-        <h3>💰 PAYTABLE (Current Bet: {currentBet.toLocaleString()} sats)</h3>
+        <h3>💰 MULTIPLAYER-STYLE PAYTABLE (Current Bet: {currentBet.toLocaleString()} sats)</h3>
         <div className="winlines-info">
           <p>🎯 5 WINLINES: Top Row, Center Row, Bottom Row, Diagonal \, Diagonal /</p>
-          <p>💎 Custom Win Table: Tiger #777 Jackpots up to 400,000 sats!</p>
+          <p>💎 Multiplayer-Style Jackpots: Tiger #777 = 500x bet multiplier!</p>
         </div>
         <div className="paytable-grid">
           {SLOT_SYMBOLS.map(symbol => {
@@ -417,12 +408,12 @@ export default function SlotMachine() {
         </div>
         
         <div className="game-info">
-          <p>🎰 MATHEMATICALLY OPTIMIZED Bitcoin Tiger Slot Machine!</p>
-          <p>🏆 Tiger #777 = 80x Bet JACKPOT! | 🥈 Tiger #456 = 20x Bet</p>
-          <p>🍈 Tiger #234 = 10x | 🍓 Tiger #123 = 5x | 🔔 Tiger #89 = 3x</p>
-          <p>💰 Perfect mathematical balance - 95% RTP calculated!</p>
-          <p>📊 Optimal player retention with sustainable house edge</p>
-          <p>🎯 Max win: 640,000 sats on 8,000 sats bet! (80x multiplier)</p>
+          <p>🎰 MULTIPLAYER-STYLE Bitcoin Tiger Slot Machine!</p>
+          <p>🏆 Tiger #777 = 500x Bet JACKPOT! | 🥈 Tiger #456 = 100x Bet</p>
+          <p>🍈 Tiger #234 = 40x | 🍓 Tiger #123 = 20x | 🔔 Tiger #89 = 10x</p>
+          <p>💰 High payouts like original Multiplayer kast!</p>
+          <p>📊 No blanks - pure tiger action with massive wins!</p>
+          <p>🎯 Max win: 4,000,000 sats on 8,000 sats bet! (500x multiplier)</p>
         </div>
       </div>
 
@@ -874,50 +865,6 @@ export default function SlotMachine() {
               transform: translateY(-70px); /* Smaller movement for mobile */
             }
           }
-          
-          .blank-symbol {
-            width: 50px;
-            height: 50px;
-          }
-          
-          .blank-content {
-            font-size: 1.5rem;
-          }
-        }
-        
-        .blank-symbol {
-          width: 80px;
-          height: 80px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: #1a1a1a;
-          border: 2px solid #444;
-          border-radius: 8px;
-          position: relative;
-        }
-        
-        .blank-content {
-          font-size: 2rem;
-          opacity: 0.5;
-          color: #666;
-        }
-        
-        .blank-symbol::before {
-          content: '';
-          position: absolute;
-          top: 2px;
-          left: 2px;
-          right: 2px;
-          bottom: 2px;
-          background: repeating-linear-gradient(
-            45deg,
-            transparent,
-            transparent 2px,
-            rgba(255,0,0,0.1) 2px,
-            rgba(255,0,0,0.1) 4px
-          );
-          border-radius: 6px;
         }
       `}</style>
     </div>
