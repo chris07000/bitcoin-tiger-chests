@@ -43,9 +43,7 @@ export default function SlotMachine() {
   const [isSpinning, setIsSpinning] = useState(false);
   const [currentBet, setCurrentBet] = useState(1000);
   const [lastWin, setLastWin] = useState<SpinResult | null>(null);
-  const [totalWins, setTotalWins] = useState(0);
   const [gamesPlayed, setGamesPlayed] = useState(0);
-  const [biggestWin, setBiggestWin] = useState(0);
   const [showBonus, setShowBonus] = useState(false);
   const [bonusWin, setBonusWin] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
@@ -194,8 +192,6 @@ export default function SlotMachine() {
     
     setTimeout(() => {
       setShowBonus(false);
-      setTotalWins(prev => prev + randomBonus);
-      setBiggestWin(prev => Math.max(prev, randomBonus));
     }, 3000);
   };
 
@@ -263,8 +259,7 @@ export default function SlotMachine() {
         if (result.bonus) {
           triggerBonusRound();
         } else if (result.payout > 0) {
-          setTotalWins(prev => prev + result.payout);
-          setBiggestWin(prev => Math.max(prev, result.payout));
+          // Win happened but no bonus
         }
         
         setIsSpinning(false);
@@ -315,16 +310,16 @@ export default function SlotMachine() {
           <span className="stat-value">{balance.toLocaleString()} sats</span>
         </div>
         <div className="stat">
-          <span className="stat-label">Total Won</span>
-          <span className="stat-value">{totalWins.toLocaleString()} sats</span>
-        </div>
-        <div className="stat">
-          <span className="stat-label">Biggest Win</span>
-          <span className="stat-value">{biggestWin.toLocaleString()} sats</span>
+          <span className="stat-label">Current Bet</span>
+          <span className="stat-value">{currentBet.toLocaleString()} sats</span>
         </div>
         <div className="stat">
           <span className="stat-label">Spins</span>
           <span className="stat-value">{gamesPlayed}</span>
+        </div>
+        <div className="stat">
+          <span className="stat-label">Status</span>
+          <span className="stat-value">{isSpinning ? 'Spinning...' : 'Ready'}</span>
         </div>
       </div>
 
@@ -429,9 +424,9 @@ export default function SlotMachine() {
           </div>
         </div>
         
-        <div className="house-edge-info">
-          <p>🎲 House Edge: ~8-10% | Expected RTP: ~90-92%</p>
-          <p>💡 Higher value symbols have better odds for 2-of-a-kind wins!</p>
+        <div className="game-info">
+          <p>🎰 Play with Bitcoin Tigers and win big!</p>
+          <p>💡 Higher value tigers have better payout rates!</p>
         </div>
       </div>
 
@@ -825,7 +820,7 @@ export default function SlotMachine() {
           font-weight: bold;
         }
         
-        .house-edge-info {
+        .game-info {
           text-align: center;
           margin-top: 1rem;
           color: #aaa;
