@@ -48,64 +48,64 @@ const WINLINES = [
 const getCustomPayout = (betAmount: number, symbolId: string): number => {
   const payoutTable: { [key: number]: { [key: string]: number } } = {
     400: {
-      'tiger777': 8000,    // 20x bet
-      'tiger456': 3200,    // 8x bet
-      'tiger234': 2400,    // 6x bet
-      'tiger123': 1600,    // 4x bet
-      'tiger89': 1200,     // 3x bet
-      'tiger67': 800,      // 2x bet
-      'tiger45': 600,      // 1.5x bet
-      'tiger23': 500,      // 1.25x bet
-      'tiger12': 440,      // 1.1x bet
-      'tiger5': 420        // 1.05x bet
+      'tiger777': 16000,   // 40x bet - REAL JACKPOT!
+      'tiger456': 6000,    // 15x bet - Big win
+      'tiger234': 4000,    // 10x bet - Great win
+      'tiger123': 2400,    // 6x bet - Good win
+      'tiger89': 1600,     // 4x bet - Nice win
+      'tiger67': 1200,     // 3x bet - Decent win
+      'tiger45': 800,      // 2x bet - Small profit
+      'tiger23': 600,      // 1.5x bet - Covers bet + extra
+      'tiger12': 480,      // 1.2x bet - Small profit
+      'tiger5': 440        // 1.1x bet - Tiny profit
     },
     1000: {
-      'tiger777': 20000,   // 20x bet
-      'tiger456': 8000,    // 8x bet
-      'tiger234': 6000,    // 6x bet
-      'tiger123': 4000,    // 4x bet
-      'tiger89': 3000,     // 3x bet
-      'tiger67': 2000,     // 2x bet
-      'tiger45': 1500,     // 1.5x bet
-      'tiger23': 1250,     // 1.25x bet
-      'tiger12': 1100,     // 1.1x bet
-      'tiger5': 1050      // 1.05x bet
+      'tiger777': 40000,   // 40x bet - JACKPOT!
+      'tiger456': 15000,   // 15x bet - Big win
+      'tiger234': 10000,   // 10x bet - Great win
+      'tiger123': 6000,    // 6x bet - Good win
+      'tiger89': 4000,     // 4x bet - Nice win
+      'tiger67': 3000,     // 3x bet - Decent win
+      'tiger45': 2000,     // 2x bet - Small profit
+      'tiger23': 1500,     // 1.5x bet - Covers bet + extra
+      'tiger12': 1200,     // 1.2x bet - Small profit
+      'tiger5': 1100      // 1.1x bet - Tiny profit
     },
     2000: {
-      'tiger777': 40000,   // 20x bet
-      'tiger456': 16000,   // 8x bet
-      'tiger234': 12000,   // 6x bet
-      'tiger123': 8000,    // 4x bet
-      'tiger89': 6000,     // 3x bet
-      'tiger67': 4000,     // 2x bet
-      'tiger45': 3000,     // 1.5x bet
-      'tiger23': 2500,     // 1.25x bet
-      'tiger12': 2200,     // 1.1x bet
-      'tiger5': 2100      // 1.05x bet
+      'tiger777': 80000,   // 40x bet - JACKPOT!
+      'tiger456': 30000,   // 15x bet - Big win
+      'tiger234': 20000,   // 10x bet - Great win
+      'tiger123': 12000,   // 6x bet - Good win
+      'tiger89': 8000,     // 4x bet - Nice win
+      'tiger67': 6000,     // 3x bet - Decent win
+      'tiger45': 4000,     // 2x bet - Small profit
+      'tiger23': 3000,     // 1.5x bet - Covers bet + extra
+      'tiger12': 2400,     // 1.2x bet - Small profit
+      'tiger5': 2200      // 1.1x bet - Tiny profit
     },
     4000: {
-      'tiger777': 80000,   // 20x bet
-      'tiger456': 32000,   // 8x bet
-      'tiger234': 24000,   // 6x bet
-      'tiger123': 16000,   // 4x bet
-      'tiger89': 12000,    // 3x bet
-      'tiger67': 8000,     // 2x bet
-      'tiger45': 6000,     // 1.5x bet
-      'tiger23': 5000,     // 1.25x bet
-      'tiger12': 4400,     // 1.1x bet
-      'tiger5': 4200      // 1.05x bet
+      'tiger777': 160000,  // 40x bet - MASSIVE JACKPOT!
+      'tiger456': 60000,   // 15x bet - Big win
+      'tiger234': 40000,   // 10x bet - Great win
+      'tiger123': 24000,   // 6x bet - Good win
+      'tiger89': 16000,    // 4x bet - Nice win
+      'tiger67': 12000,    // 3x bet - Decent win
+      'tiger45': 8000,     // 2x bet - Small profit
+      'tiger23': 6000,     // 1.5x bet - Covers bet + extra
+      'tiger12': 4800,     // 1.2x bet - Small profit
+      'tiger5': 4400      // 1.1x bet - Tiny profit
     },
     8000: {
-      'tiger777': 160000,  // 20x bet
-      'tiger456': 64000,   // 8x bet
-      'tiger234': 48000,   // 6x bet
-      'tiger123': 32000,   // 4x bet
-      'tiger89': 24000,    // 3x bet
-      'tiger67': 16000,    // 2x bet
-      'tiger45': 12000,    // 1.5x bet
-      'tiger23': 10000,    // 1.25x bet
-      'tiger12': 8800,     // 1.1x bet
-      'tiger5': 8400      // 1.05x bet
+      'tiger777': 320000,  // 40x bet - MEGA JACKPOT!
+      'tiger456': 120000,  // 15x bet - Big win
+      'tiger234': 80000,   // 10x bet - Great win
+      'tiger123': 48000,   // 6x bet - Good win
+      'tiger89': 32000,    // 4x bet - Nice win
+      'tiger67': 24000,    // 3x bet - Decent win
+      'tiger45': 16000,    // 2x bet - Small profit
+      'tiger23': 12000,    // 1.5x bet - Covers bet + extra
+      'tiger12': 9600,     // 1.2x bet - Small profit
+      'tiger5': 8800      // 1.1x bet - Tiny profit
     }
   };
   
@@ -417,12 +417,12 @@ export default function SlotMachine() {
         </div>
         
         <div className="game-info">
-          <p>🎰 REALISTIC Bitcoin Tiger Slot Machine!</p>
-          <p>🏆 Tiger #777 = 20x Bet Jackpot | 🥈 Tiger #456 = 8x Bet</p>
-          <p>🍈 Tiger #234 = 6x | 🍓 Tiger #123 = 4x | 🔔 Tiger #89 = 3x</p>
-          <p>💰 Much lower payouts but realistic casino experience!</p>
-          <p>📊 RTP: ~85% (15% House Edge - Like Real Casinos)</p>
-          <p>🎯 Blank symbols = No wins, much fewer winning combinations!</p>
+          <p>🎰 EXCITING Bitcoin Tiger Slot Machine!</p>
+          <p>🏆 Tiger #777 = 40x Bet JACKPOT! | 🥈 Tiger #456 = 15x Bet</p>
+          <p>🍈 Tiger #234 = 10x | 🍓 Tiger #123 = 6x | 🔔 Tiger #89 = 4x</p>
+          <p>💰 MUCH better payouts - Now actually worth playing!</p>
+          <p>📊 RTP: ~87% (13% House Edge - Competitive rates)</p>
+          <p>🎯 Max win: 320,000 sats on 8,000 sats bet!</p>
         </div>
       </div>
 
