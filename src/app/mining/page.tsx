@@ -44,68 +44,33 @@ const WINLINES = [
   [2, 4, 6], // Diagonal /
 ];
 
-// New custom payout table based on user specifications
+// Client-side payout table (for DISPLAY ONLY - not used for actual game logic)
 const getCustomPayout = (betAmount: number, symbolId: string): number => {
   const payoutTable: { [key: number]: { [key: string]: number } } = {
     400: {
-      'tiger777': 20000,   // Jackpot
-      'tiger456': 6000,    // Almost Jackpot  
-      'tiger234': 6000,    // "Melons"
-      'tiger123': 6000,    // "Strawberries"
-      'tiger89': 6000,     // "Bells"
-      'tiger67': 2800,     // Lower tier
-      'tiger45': 2800,
-      'tiger23': 2800,
-      'tiger12': 2800,
-      'tiger5': 2800
+      'tiger777': 20000,   'tiger456': 6000,    'tiger234': 6000,
+      'tiger123': 6000,    'tiger89': 6000,     'tiger67': 2800,
+      'tiger45': 2800,     'tiger23': 2800,     'tiger12': 2800,     'tiger5': 2800
     },
     1000: {
-      'tiger777': 40000,   // Jackpot
-      'tiger456': 16000,   // Almost Jackpot
-      'tiger234': 16000,   // "Melons"  
-      'tiger123': 16000,   // "Strawberries"
-      'tiger89': 16000,    // "Bells"
-      'tiger67': 8000,     // Lower tier
-      'tiger45': 8000,
-      'tiger23': 8000,
-      'tiger12': 8000,
-      'tiger5': 8000
+      'tiger777': 40000,   'tiger456': 16000,   'tiger234': 16000,
+      'tiger123': 16000,   'tiger89': 16000,    'tiger67': 8000,
+      'tiger45': 8000,     'tiger23': 8000,     'tiger12': 8000,     'tiger5': 8000
     },
     2000: {
-      'tiger777': 80000,   // Jackpot
-      'tiger456': 32000,   // Almost Jackpot
-      'tiger234': 32000,   // "Melons"
-      'tiger123': 32000,   // "Strawberries" 
-      'tiger89': 32000,    // "Bells"
-      'tiger67': 16000,    // Lower tier
-      'tiger45': 16000,
-      'tiger23': 16000,
-      'tiger12': 16000,
-      'tiger5': 16000
+      'tiger777': 80000,   'tiger456': 32000,   'tiger234': 32000,
+      'tiger123': 32000,   'tiger89': 32000,    'tiger67': 16000,
+      'tiger45': 16000,    'tiger23': 16000,    'tiger12': 16000,    'tiger5': 16000
     },
     4000: {
-      'tiger777': 200000,  // Jackpot
-      'tiger456': 80000,   // Almost Jackpot
-      'tiger234': 80000,   // "Melons"
-      'tiger123': 64000,   // "Strawberries"
-      'tiger89': 64000,    // "Bells"
-      'tiger67': 32000,    // Lower tier
-      'tiger45': 32000,
-      'tiger23': 32000,
-      'tiger12': 32000,
-      'tiger5': 32000
+      'tiger777': 200000,  'tiger456': 80000,   'tiger234': 80000,
+      'tiger123': 64000,   'tiger89': 64000,    'tiger67': 32000,
+      'tiger45': 32000,    'tiger23': 32000,    'tiger12': 32000,    'tiger5': 32000
     },
     8000: {
-      'tiger777': 400000,  // Jackpot
-      'tiger456': 160000,  // Almost Jackpot
-      'tiger234': 160000,  // "Melons"
-      'tiger123': 148000,  // "Strawberries"
-      'tiger89': 128000,   // "Bells"
-      'tiger67': 64000,    // Lower tier
-      'tiger45': 64000,
-      'tiger23': 64000,
-      'tiger12': 64000,
-      'tiger5': 64000
+      'tiger777': 400000,  'tiger456': 160000,  'tiger234': 160000,
+      'tiger123': 148000,  'tiger89': 128000,   'tiger67': 64000,
+      'tiger45': 64000,    'tiger23': 64000,    'tiger12': 64000,    'tiger5': 64000
     }
   };
   
@@ -113,18 +78,12 @@ const getCustomPayout = (betAmount: number, symbolId: string): number => {
 };
 
 const getWeightedRandomSymbol = (): SlotSymbol => {
-  // Adjusted weights for the new payout system - higher payouts should be much rarer
+  // This is now only used for visual effects during spinning animation
+  // The actual game results come from the secure server-side API
   const weights: { [key: string]: number } = {
-    'tiger5': 35,      // Most common (lowest payout)
-    'tiger12': 30,     // Very common
-    'tiger23': 25,     // Common
-    'tiger45': 20,     // Less common
-    'tiger67': 15,     // Uncommon
-    'tiger89': 8,      // "Bells" - rare
-    'tiger123': 5,     // "Strawberries" - very rare
-    'tiger234': 3,     // "Melons" - extremely rare
-    'tiger456': 2,     // Almost Jackpot - ultra rare
-    'tiger777': 1,     // Jackpot - legendary rare
+    'tiger5': 35,      'tiger12': 30,     'tiger23': 25,     'tiger45': 20,
+    'tiger67': 15,     'tiger89': 8,      'tiger123': 5,     'tiger234': 3,
+    'tiger456': 2,     'tiger777': 1,
   };
   
   const totalWeight = Object.values(weights).reduce((sum, weight) => sum + weight, 0);
@@ -138,45 +97,6 @@ const getWeightedRandomSymbol = (): SlotSymbol => {
     }
   }
   return SLOT_SYMBOLS[0];
-};
-
-const calculatePayout = (resultReels: string[][], betAmount: number): SpinResult => {
-  let totalPayout = 0;
-  let winTypes: string[] = [];
-  
-  // Correctly convert 3x3 reels to flat array for winline checking
-  // resultReels[0] = reel1 [top, center, bottom]
-  // resultReels[1] = reel2 [top, center, bottom]  
-  // resultReels[2] = reel3 [top, center, bottom]
-  // We need: [top-left, top-center, top-right, center-left, center-center, center-right, bottom-left, bottom-center, bottom-right]
-  const flatReels = [
-    resultReels[0][0], resultReels[1][0], resultReels[2][0], // Top row: left, center, right
-    resultReels[0][1], resultReels[1][1], resultReels[2][1], // Center row: left, center, right
-    resultReels[0][2], resultReels[1][2], resultReels[2][2]  // Bottom row: left, center, right
-  ];
-  
-  // Check all 5 winlines - ONLY 3-of-a-kind wins (classic slot machine)
-  for (let lineIndex = 0; lineIndex < WINLINES.length; lineIndex++) {
-    const line = WINLINES[lineIndex];
-    const lineSymbols = line.map(pos => flatReels[pos]);
-    
-    // Check for 3-of-a-kind ONLY
-    if (lineSymbols[0] === lineSymbols[1] && lineSymbols[1] === lineSymbols[2]) {
-      const symbol = SLOT_SYMBOLS.find(s => s.id === lineSymbols[0]);
-      if (symbol) {
-        const payout = getCustomPayout(betAmount, symbol.id);
-        totalPayout += payout;
-        winTypes.push(`Line ${lineIndex + 1}: Three ${symbol.name}s`);
-      }
-    }
-  }
-  
-  return {
-    symbols: resultReels,
-    payout: totalPayout,
-    isWin: totalPayout > 0,
-    winType: winTypes.length > 0 ? winTypes.join(' + ') : undefined
-  };
 };
 
 export default function SlotMachine() {
@@ -221,38 +141,6 @@ export default function SlotMachine() {
     return reel;
   };
 
-  const processWinPayout = async (winAmount: number, winType: string) => {
-    try {
-      // Call payout API to add win to database balance
-      const response = await fetch('/api/slots/payout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          walletAddress,
-          winAmount
-        })
-      });
-
-      const result = await response.json();
-      
-      if (result.success) {
-        // Directly update balance with the new balance from API response (bypass cache)
-        if (result.newBalance !== undefined) {
-          updateBalanceWithTimestamp(result.newBalance);
-          console.log(`Win payout successful: ${winAmount} sats - Balance updated to: ${result.newBalance}`);
-        } else {
-          // Fallback to fetchBalance if newBalance not in response
-          await fetchBalance();
-          console.log(`Win payout successful: ${winAmount} sats (${winType})`);
-        }
-      } else {
-        console.error('Win payout failed:', result.error);
-      }
-    } catch (error) {
-      console.error('Error processing win payout:', error);
-    }
-  };
-
   const spin = async () => {
     if (!walletAddress || balance < currentBet || isSpinning) return;
 
@@ -260,7 +148,7 @@ export default function SlotMachine() {
     setLastWin(null);
 
     try {
-      // Call API to deduct bet from database balance
+      // Call secure server-side API that handles everything
       const response = await fetch('/api/slots/spin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -278,58 +166,44 @@ export default function SlotMachine() {
         return;
       }
 
-      // Directly update balance with the new balance from API response (bypass cache)
-      if (apiResult.remainingBalance !== undefined) {
-        updateBalanceWithTimestamp(apiResult.remainingBalance);
-        console.log(`Bet placed: ${currentBet} sats - Balance updated to: ${apiResult.remainingBalance}`);
-      } else {
-        // Fallback to fetchBalance if remainingBalance not in response
-        await fetchBalance();
-        console.log('Bet placed successfully via database');
-      }
-    } catch (error) {
-      console.error('Error processing bet:', error);
-      alert('Failed to place bet. Please try again.');
-      setIsSpinning(false);
-      return;
-    }
+      // Extract server-generated results
+      const { gameResult, balance: newBalance, houseRevenue } = apiResult;
+      
+      // Update balance immediately with server response
+      updateBalanceWithTimestamp(newBalance);
+      console.log(`Spin result: Bet ${currentBet} sats, Payout ${gameResult.payout} sats, House Revenue ${houseRevenue} sats`);
 
-    // Simulate spinning animation
-    const spinDuration = 2000;
-    const intervalDuration = 100;
-    let elapsed = 0;
+      // Simulate spinning animation
+      const spinDuration = 2000;
+      const intervalDuration = 100;
+      let elapsed = 0;
 
-    const spinInterval = setInterval(() => {
-      setReels([
-        generateRandomReel(),
-        generateRandomReel(),
-        generateRandomReel()
-      ]);
-      elapsed += intervalDuration;
-
-      if (elapsed >= spinDuration) {
-        clearInterval(spinInterval);
-        
-        // Final result calculation
-        const finalReels = [
+      const spinInterval = setInterval(() => {
+        // Show random symbols during animation (visual only)
+        setReels([
           generateRandomReel(),
           generateRandomReel(),
           generateRandomReel()
-        ];
-        
-        const result = calculatePayout(finalReels, currentBet);
-        setReels(finalReels);
-        setLastWin(result);
-        setGamesPlayed(prev => prev + 1);
-        
-        if (result.payout > 0) {
-          // Process win payout
-          processWinPayout(result.payout, result.winType || 'Win');
+        ]);
+        elapsed += intervalDuration;
+
+        if (elapsed >= spinDuration) {
+          clearInterval(spinInterval);
+          
+          // Show final server result
+          setReels(gameResult.reels);
+          setLastWin(gameResult);
+          setGamesPlayed(prev => prev + 1);
+          setIsSpinning(false);
         }
-        
-        setIsSpinning(false);
-      }
-    }, intervalDuration);
+      }, intervalDuration);
+
+    } catch (error) {
+      console.error('Error processing spin:', error);
+      alert('Failed to process spin. Please try again.');
+      setIsSpinning(false);
+      return;
+    }
   };
 
   const getSymbolDisplay = (symbolId: string) => {

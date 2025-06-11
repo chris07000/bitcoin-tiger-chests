@@ -564,24 +564,24 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
   useEffect(() => {
     if (!isClient || !tigerStakingDB || Object.keys(tigerStakingDB).length === 0) return;
     
-    try {
-      localStorage.setItem('tigerStakingDB', JSON.stringify(tigerStakingDB));
-      console.log('Synced tigerStakingDB to localStorage:', tigerStakingDB);
-    } catch (error) {
-      console.error('Error syncing tigerStakingDB to localStorage:', error);
-    }
+      try {
+        localStorage.setItem('tigerStakingDB', JSON.stringify(tigerStakingDB));
+        console.log('Synced tigerStakingDB to localStorage:', tigerStakingDB);
+      } catch (error) {
+        console.error('Error syncing tigerStakingDB to localStorage:', error);
+      }
   }, [tigerStakingDB, isClient]);
 
   // Sla tiger level op in localStorage wanneer het verandert
   useEffect(() => {
     if (!isClient || !walletAddress || tigerLevel <= 0) return;
     
-    try {
-      localStorage.setItem(`tigerLevel_${walletAddress}`, tigerLevel.toString());
-      console.log(`Saved tiger level ${tigerLevel} for wallet ${walletAddress}`);
-    } catch (error) {
-      console.error('Error saving tiger level:', error);
-    }
+      try {
+        localStorage.setItem(`tigerLevel_${walletAddress}`, tigerLevel.toString());
+        console.log(`Saved tiger level ${tigerLevel} for wallet ${walletAddress}`);
+      } catch (error) {
+        console.error('Error saving tiger level:', error);
+      }
   }, [tigerLevel, walletAddress, isClient]);
 
   // Removed complex image loading system to prevent flickering
@@ -1109,8 +1109,8 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
     // Check if we're already loading
     if (loadingLock && !forceReload) {
       console.log('Already loading data, skipping...');
-      return;
-    }
+        return;
+      }
 
     // Check cache validity (skip for force reload)
     const now = Date.now();
@@ -1143,7 +1143,7 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
               localStorage.setItem('walletAddress', effectiveWalletAddress);
             }
           }
-        } catch (error) {
+                    } catch (error) {
           console.error('Error parsing wallet cookie in loadWalletAndStakingData:', error);
         }
       }
@@ -1210,7 +1210,7 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
               console.error('Error parsing cached tigers:', parseError);
               setUserTigers([]);
             }
-          } else {
+              } else {
             setUserTigers([]);
           }
         } else {
@@ -2570,9 +2570,9 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
           key: tigerToUnstake.id,
           name: tigerToUnstake.name,
           image: tigerToUnstake.image || '',
-          inscriptionNumber: 0,
+        inscriptionNumber: 0,
           inscriptionId: tigerToUnstake.id,
-          isKnownTiger: false,
+        isKnownTiger: false,
           isRuneGuardian: isRuneGuardian(tigerToUnstake)
         };
         
