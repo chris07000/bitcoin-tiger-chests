@@ -44,76 +44,76 @@ const REEL_STRIPS = {
   ]
 };
 
-// REALISTIC BALANCED PAYOUTS - Exciting but sustainable!
-// Higher than original but not crazy like 4 million sats
+// IMPROVED PAYOUTS - Even small wins feel rewarding!
+// All multipliers increased for better player satisfaction
 const getCustomPayout = (betAmount: number, symbolId: string): number => {
   const payoutTable: { [key: number]: { [key: string]: number } } = {
     400: {
-      'tiger777': 40000,   // 100x bet - BIG JACKPOT! (realistic but exciting)
-      'tiger456': 16000,   // 40x bet - Great win
-      'tiger234': 8000,    // 20x bet - Good win
-      'tiger123': 4000,    // 10x bet - Nice win
-      'tiger89': 2000,     // 5x bet - Decent win
-      'tiger67': 1200,     // 3x bet - Small win
-      'tiger45': 800,      // 2x bet - Tiny win
-      'tiger23': 600,      // 1.5x bet - Cover bet
-      'tiger12': 520,      // 1.3x bet - Small return
-      'tiger5': 480        // 1.2x bet - Minimal return
+      'tiger777': 80000,   // 200x bet - MASSIVE JACKPOT! 
+      'tiger456': 40000,   // 100x bet - Huge win
+      'tiger234': 20000,   // 50x bet - Big win  
+      'tiger123': 12000,   // 30x bet - Great win
+      'tiger89': 8000,     // 20x bet - Good win
+      'tiger67': 4000,     // 10x bet - Nice win
+      'tiger45': 2400,     // 6x bet - Decent win
+      'tiger23': 1600,     // 4x bet - Small win
+      'tiger12': 1200,     // 3x bet - Tiny win
+      'tiger5': 800        // 2x bet - Minimal win
     },
     1000: {
-      'tiger777': 100000,  // 100x bet - BIG JACKPOT!
-      'tiger456': 40000,   // 40x bet - Great win
-      'tiger234': 20000,   // 20x bet - Good win
-      'tiger123': 10000,   // 10x bet - Nice win
-      'tiger89': 5000,     // 5x bet - Decent win
-      'tiger67': 3000,     // 3x bet - Small win
-      'tiger45': 2000,     // 2x bet - Tiny win
-      'tiger23': 1500,     // 1.5x bet - Cover bet
-      'tiger12': 1300,     // 1.3x bet - Small return
-      'tiger5': 1200      // 1.2x bet - Minimal return
+      'tiger777': 200000,  // 200x bet - MASSIVE JACKPOT!
+      'tiger456': 100000,  // 100x bet - Huge win
+      'tiger234': 50000,   // 50x bet - Big win
+      'tiger123': 30000,   // 30x bet - Great win
+      'tiger89': 20000,    // 20x bet - Good win
+      'tiger67': 10000,    // 10x bet - Nice win
+      'tiger45': 6000,     // 6x bet - Decent win
+      'tiger23': 4000,     // 4x bet - Small win
+      'tiger12': 3000,     // 3x bet - Tiny win
+      'tiger5': 2000      // 2x bet - Minimal win
     },
     2000: {
-      'tiger777': 200000,  // 100x bet - BIG JACKPOT!
-      'tiger456': 80000,   // 40x bet - Great win
-      'tiger234': 40000,   // 20x bet - Good win
-      'tiger123': 20000,   // 10x bet - Nice win
-      'tiger89': 10000,    // 5x bet - Decent win
-      'tiger67': 6000,     // 3x bet - Small win
-      'tiger45': 4000,     // 2x bet - Tiny win
-      'tiger23': 3000,     // 1.5x bet - Cover bet
-      'tiger12': 2600,     // 1.3x bet - Small return
-      'tiger5': 2400      // 1.2x bet - Minimal return
+      'tiger777': 400000,  // 200x bet - MASSIVE JACKPOT!
+      'tiger456': 200000,  // 100x bet - Huge win
+      'tiger234': 100000,  // 50x bet - Big win
+      'tiger123': 60000,   // 30x bet - Great win
+      'tiger89': 40000,    // 20x bet - Good win
+      'tiger67': 20000,    // 10x bet - Nice win
+      'tiger45': 12000,    // 6x bet - Decent win
+      'tiger23': 8000,     // 4x bet - Small win
+      'tiger12': 6000,     // 3x bet - Tiny win
+      'tiger5': 4000      // 2x bet - Minimal win
     },
     4000: {
-      'tiger777': 400000,  // 100x bet - BIG JACKPOT!
-      'tiger456': 160000,  // 40x bet - Great win
-      'tiger234': 80000,   // 20x bet - Good win
-      'tiger123': 40000,   // 10x bet - Nice win
-      'tiger89': 20000,    // 5x bet - Decent win
-      'tiger67': 12000,    // 3x bet - Small win
-      'tiger45': 8000,     // 2x bet - Tiny win
-      'tiger23': 6000,     // 1.5x bet - Cover bet
-      'tiger12': 5200,     // 1.3x bet - Small return
-      'tiger5': 4800      // 1.2x bet - Minimal return
+      'tiger777': 800000,  // 200x bet - MASSIVE JACKPOT!
+      'tiger456': 400000,  // 100x bet - Huge win
+      'tiger234': 200000,  // 50x bet - Big win
+      'tiger123': 120000,  // 30x bet - Great win
+      'tiger89': 80000,    // 20x bet - Good win
+      'tiger67': 40000,    // 10x bet - Nice win
+      'tiger45': 24000,    // 6x bet - Decent win
+      'tiger23': 16000,    // 4x bet - Small win
+      'tiger12': 12000,    // 3x bet - Tiny win
+      'tiger5': 8000      // 2x bet - Minimal win
     },
     8000: {
-      'tiger777': 800000,  // 100x bet - BIG JACKPOT! (realistic max)
-      'tiger456': 320000,  // 40x bet - Great win
-      'tiger234': 160000,  // 20x bet - Good win
-      'tiger123': 80000,   // 10x bet - Nice win
-      'tiger89': 40000,    // 5x bet - Decent win
-      'tiger67': 24000,    // 3x bet - Small win
-      'tiger45': 16000,    // 2x bet - Tiny win
-      'tiger23': 12000,    // 1.5x bet - Cover bet
-      'tiger12': 10400,    // 1.3x bet - Small return
-      'tiger5': 9600      // 1.2x bet - Minimal return
+      'tiger777': 1600000, // 200x bet - MEGA JACKPOT! 
+      'tiger456': 800000,  // 100x bet - Huge win
+      'tiger234': 400000,  // 50x bet - Big win
+      'tiger123': 240000,  // 30x bet - Great win
+      'tiger89': 160000,   // 20x bet - Good win
+      'tiger67': 80000,    // 10x bet - Nice win
+      'tiger45': 48000,    // 6x bet - Decent win
+      'tiger23': 32000,    // 4x bet - Small win
+      'tiger12': 24000,    // 3x bet - Tiny win
+      'tiger5': 16000     // 2x bet - Minimal win
     }
   };
   
   return payoutTable[betAmount]?.[symbolId] || 0;
 };
 
-// RTP CALCULATOR - Analyzes mathematical expectation (BALANCED VERSION)
+// RTP CALCULATOR - Analyzes mathematical expectation (HIGH REWARD VERSION)
 const calculateTheoreticalRTP = (): number => {
   // Count symbol frequencies across all reels
   const symbolCounts: { [key: string]: number } = {};
@@ -130,7 +130,7 @@ const calculateTheoreticalRTP = (): number => {
   let totalExpectedReturn = 0;
   const betAmount = 1000; // Use 1000 as base bet for calculation
   
-  console.log('🎰 BALANCED SLOT ANALYSIS (No Blanks, Realistic Payouts):');
+  console.log('🎰 HIGH REWARD SLOT ANALYSIS (No Blanks, Improved Payouts):');
   
   // For each symbol, calculate probability and expected return
   Object.keys(symbolCounts).forEach(symbol => {
@@ -155,7 +155,7 @@ const calculateTheoreticalRTP = (): number => {
   const rtp = (totalExpectedReturn / betAmount) * 100;
   const houseEdge = 100 - rtp;
   
-  console.log(`📊 BALANCED SLOT RESULTS:`);
+  console.log(`📊 HIGH REWARD SLOT RESULTS:`);
   console.log(`Total Expected Return: ${totalExpectedReturn.toFixed(2)} sats`);
   console.log(`Theoretical RTP: ${rtp.toFixed(2)}%`);
   console.log(`House Edge: ${houseEdge.toFixed(2)}%`);
@@ -173,7 +173,7 @@ const calculateTheoreticalRTP = (): number => {
 };
 
 // Calculate RTP on server startup for monitoring
-console.log('🎰 BALANCED SLOT MACHINE RTP ANALYSIS:');
+console.log('🎰 HIGH REWARD SLOT MACHINE RTP ANALYSIS:');
 calculateTheoreticalRTP();
 
 const SLOT_SYMBOLS = [
