@@ -49,7 +49,7 @@ export default function SlotMachine() {
   const [isMobile, setIsMobile] = useState(false);
 
   const { walletAddress } = useWallet();
-  const { balance } = useLightning();
+  const { balance, fetchBalance } = useLightning();
 
   useEffect(() => {
     const checkMobile = () => {
@@ -194,22 +194,31 @@ export default function SlotMachine() {
     };
   };
 
-  const triggerBonusRound = () => {
-    setShowBonus(true);
-    // Bonus: pick from treasure chests (reduced payouts for better house edge)
-    const bonuses = [
-      Math.floor(currentBet * 1.5),
-      Math.floor(currentBet * 3),
-      Math.floor(currentBet * 6),
-      Math.floor(currentBet * 10),
-      Math.floor(currentBet * 15)
-    ];
-    const randomBonus = bonuses[Math.floor(Math.random() * bonuses.length)];
-    setBonusWin(randomBonus);
-    
-    setTimeout(() => {
-      setShowBonus(false);
-    }, 3000);
+  const processWinPayout = async (winAmount: number, winType: string) => {
+    try {
+      // Call payout API to add win to database balance
+      const response = await fetch('/api/slots/payout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          walletAddress,
+          payout: winAmount,
+          winType
+        })
+      });
+
+      const result = await response.json();
+      
+      if (result.success) {
+        // Refresh balance from database
+        await fetchBalance();
+        console.log(`Win payout successful: ${winAmount} sats (${winType})`);
+      } else {
+        console.error('Win payout failed:', result.error);
+      }
+    } catch (error) {
+      console.error('Error processing win payout:', error);
+    }
   };
 
   const spin = async () => {
@@ -219,7 +228,7 @@ export default function SlotMachine() {
     setLastWin(null);
 
     try {
-      // Call API to place bet
+      // Call API to deduct bet from database balance
       const response = await fetch('/api/slots/spin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -237,7 +246,9 @@ export default function SlotMachine() {
         return;
       }
 
-      console.log('Bet placed:', apiResult.message);
+      // Refresh balance from database
+      await fetchBalance();
+      console.log('Bet placed successfully via database');
     } catch (error) {
       console.error('Error processing bet:', error);
       alert('Failed to place bet. Please try again.');
@@ -276,12 +287,33 @@ export default function SlotMachine() {
         if (result.bonus) {
           triggerBonusRound();
         } else if (result.payout > 0) {
-          // Win happened but no bonus
+          // Process win payout
+          processWinPayout(result.payout, result.winType || 'Win');
         }
         
         setIsSpinning(false);
       }
     }, intervalDuration);
+  };
+
+  const triggerBonusRound = () => {
+    setShowBonus(true);
+    // Bonus: pick from treasure chests (reduced payouts for better house edge)
+    const bonuses = [
+      Math.floor(currentBet * 1.5),
+      Math.floor(currentBet * 3),
+      Math.floor(currentBet * 6),
+      Math.floor(currentBet * 10),
+      Math.floor(currentBet * 15)
+    ];
+    const randomBonus = bonuses[Math.floor(Math.random() * bonuses.length)];
+    setBonusWin(randomBonus);
+    
+    setTimeout(() => {
+      setShowBonus(false);
+      // Process bonus payout
+      processWinPayout(randomBonus, 'Bonus Round');
+    }, 3000);
   };
 
   const getSymbolDisplay = (symbolId: string) => {
