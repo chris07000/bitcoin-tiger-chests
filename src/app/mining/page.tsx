@@ -319,7 +319,7 @@ export default function SlotMachine() {
         </div>
         <div className="stat">
           <span className="stat-label">Status</span>
-          <span className="stat-value">{isSpinning ? 'Spinning...' : 'Ready'}</span>
+          <span className="stat-value">{isSpinning ? '🎰' : 'Ready'}</span>
         </div>
       </div>
 
@@ -852,6 +852,10 @@ export default function SlotMachine() {
           .stat {
             padding: 0.5rem;
             font-size: 0.9rem;
+          }
+          
+          .stat-value {
+            font-size: 0.8rem;
           }
           
           .slot-container {
