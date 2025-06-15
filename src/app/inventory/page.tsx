@@ -265,8 +265,8 @@ export default function InventoryPage() {
           <Image
             src="/bolt.png"
             alt="Energy"
-            width={14}
-            height={14}
+            width={18}
+            height={18}
             unoptimized
           />
         </span>
@@ -279,8 +279,8 @@ export default function InventoryPage() {
           <Image
             src="/shards.png"
             alt="Crystal Shards"
-            width={14}
-            height={14}
+            width={18}
+            height={18}
             unoptimized
           />
         </span>
@@ -293,8 +293,8 @@ export default function InventoryPage() {
           <Image
             src="/ancientrelic.png"
             alt="Ancient Relics"
-            width={14}
-            height={14}
+            width={18}
+            height={18}
             unoptimized
           />
         </span>
@@ -435,8 +435,8 @@ export default function InventoryPage() {
                 <Image
                   src="/bolt.png"
                   alt="Energy"
-                  width={16}
-                  height={16}
+                  width={18}
+                  height={18}
                   unoptimized
                 />
                 Extra Casts: +{userUpgrades.extraCasts}/day
