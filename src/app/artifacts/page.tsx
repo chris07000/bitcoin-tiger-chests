@@ -387,7 +387,6 @@ export default function ArtifactsPage() {
           height: 200%;
           border-radius: 50%;
           opacity: 0.3;
-          animation: rotate-glow 8s linear infinite;
         }
 
         .legendary-glow {
@@ -400,15 +399,6 @@ export default function ArtifactsPage() {
 
         .common-glow {
           background: radial-gradient(circle, #4cc9f0 0%, #7209b7 30%, transparent 70%);
-        }
-
-        @keyframes rotate-glow {
-          0% {
-            transform: rotate(0deg);
-          }
-          100% {
-            transform: rotate(360deg);
-          }
         }
 
         .artifact-container {
@@ -446,7 +436,6 @@ export default function ArtifactsPage() {
           width: 120px;
           height: 120px;
           border-radius: 50%;
-          animation: essence-flow 4s ease-in-out infinite;
         }
 
         .legendary-essence {
@@ -459,17 +448,6 @@ export default function ArtifactsPage() {
 
         .common-essence {
           background: radial-gradient(circle, rgba(76, 201, 240, 0.3) 0%, rgba(114, 9, 183, 0.2) 50%, transparent 80%);
-        }
-
-        @keyframes essence-flow {
-          0%, 100% {
-            transform: scale(1);
-            opacity: 0.6;
-          }
-          50% {
-            transform: scale(1.2);
-            opacity: 0.9;
-          }
         }
 
         .artifact-core {
