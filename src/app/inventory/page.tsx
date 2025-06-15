@@ -258,10 +258,33 @@ export default function InventoryPage() {
 
   const getCostDisplay = (cost: ShopItem['cost']) => {
     const parts = []
-    if (cost.energyPoints) parts.push(`${cost.energyPoints} ⚡`)
+    if (cost.energyPoints) {
+      parts.push(
+        <span key="energy" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+          {cost.energyPoints}
+          <Image
+            src="/bolt.png"
+            alt="Energy"
+            width={14}
+            height={14}
+            unoptimized
+          />
+        </span>
+      )
+    }
     if (cost.crystalShards) parts.push(`${cost.crystalShards} 💎`)
     if (cost.rareFinds) parts.push(`${cost.rareFinds} 🏺`)
-    return parts.join(' + ')
+    
+    return parts.length > 1 ? (
+      <span>
+        {parts.map((part, index) => (
+          <span key={index}>
+            {part}
+            {index < parts.length - 1 && ' + '}
+          </span>
+        ))}
+      </span>
+    ) : parts[0]
   }
 
   return (
@@ -320,7 +343,15 @@ export default function InventoryPage() {
       {/* Resource Display */}
       <div className="resources-panel">
         <div className="resource-item">
-          <div className="resource-icon">⚡</div>
+          <div className="resource-icon">
+            <Image
+              src="/bolt.png"
+              alt="Energy"
+              width={40}
+              height={40}
+              unoptimized
+            />
+          </div>
           <div className="resource-info">
             <div className="resource-amount">{userStats.energyPoints}</div>
             <div className="resource-name">Energy Points</div>
@@ -358,7 +389,16 @@ export default function InventoryPage() {
           )}
           {userUpgrades.extraCasts > 0 && (
             <div className="upgrade-item">
-              <span>⚡ Extra Casts: +{userUpgrades.extraCasts}/day</span>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                <Image
+                  src="/bolt.png"
+                  alt="Energy"
+                  width={16}
+                  height={16}
+                  unoptimized
+                />
+                Extra Casts: +{userUpgrades.extraCasts}/day
+              </span>
             </div>
           )}
           {userUpgrades.autoCollect && (

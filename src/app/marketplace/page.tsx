@@ -328,7 +328,15 @@ export default function MarketplacePage() {
           </a>
           
           <Link href="/mining" className="promo-card">
-            <div className="promo-icon">⚡</div>
+            <div className="promo-icon">
+              <Image
+                src="/bolt.png"
+                alt="Energy"
+                width={32}
+                height={32}
+                unoptimized
+              />
+            </div>
             <div className="promo-content">
               <h4>Mine More</h4>
               <p>Daily free shards</p>

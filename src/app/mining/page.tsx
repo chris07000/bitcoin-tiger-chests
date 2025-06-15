@@ -283,7 +283,19 @@ export default function MiningPage() {
             </div>
             {(userStats.energyPoints > 0 || userStats.crystalShards > 0 || userStats.rareFinds > 0) && (
               <div className="resource-badges">
-                {userStats.energyPoints > 0 && <span className="badge energy">{userStats.energyPoints} ⚡</span>}
+                {userStats.energyPoints > 0 && (
+                  <span className="badge energy">
+                    {userStats.energyPoints}
+                    <Image
+                      src="/bolt.png"
+                      alt="Energy"
+                      width={12}
+                      height={12}
+                      style={{ marginLeft: '4px', display: 'inline-block' }}
+                      unoptimized
+                    />
+                  </span>
+                )}
                 {userStats.crystalShards > 0 && <span className="badge shards">{userStats.crystalShards} 💎</span>}
                 {userStats.rareFinds > 0 && <span className="badge rare">{userStats.rareFinds} 🏺</span>}
               </div>
@@ -334,7 +346,15 @@ export default function MiningPage() {
             {canCast && castsRemaining > 0 ? (
               <div className="cast-button-container">
                 <div className="cast-button">
-                  <div className="cast-icon">⚡</div>
+                  <div className="cast-icon">
+                    <Image
+                      src="/bolt.png"
+                      alt="Energy"
+                      width={64}
+                      height={64}
+                      unoptimized
+                    />
+                  </div>
                   <div className="cast-text">Cast Spell</div>
                   <div className="cast-subtitle">
                     {castsRemaining} cast{castsRemaining !== 1 ? 's' : ''} remaining today
@@ -373,7 +393,15 @@ export default function MiningPage() {
         <h2 className="stats-title">🧙‍♂️ Mining Stats</h2>
         <div className="stats-grid">
           <div className="stat-item">
-            <div className="stat-icon">⚡</div>
+            <div className="stat-icon">
+              <Image
+                src="/bolt.png"
+                alt="Energy"
+                width={32}
+                height={32}
+                unoptimized
+              />
+            </div>
             <div className="stat-value">{userStats.energyPoints}</div>
             <div className="stat-label">Energy Points</div>
           </div>
@@ -406,7 +434,17 @@ export default function MiningPage() {
                 <div className="upgrade-badge">🍀 +{userUpgrades.rareChance}% rare</div>
               )}
               {userUpgrades.extraCasts > 0 && (
-                <div className="upgrade-badge">⚡ +{userUpgrades.extraCasts} daily casts</div>
+                <div className="upgrade-badge">
+                  <Image
+                    src="/bolt.png"
+                    alt="Energy"
+                    width={14}
+                    height={14}
+                    style={{ marginRight: '4px', display: 'inline-block' }}
+                    unoptimized
+                  />
+                  +{userUpgrades.extraCasts} daily casts
+                </div>
               )}
             </div>
           </div>
