@@ -430,24 +430,6 @@ export default function ArtifactsPage() {
           justify-content: center;
           align-items: center;
           position: relative;
-          animation: rune-rotation 12s linear infinite;
-        }
-
-        @keyframes rune-rotation {
-          0% {
-            transform: rotate(0deg);
-            border-color: rgba(157, 78, 221, 0.5);
-          }
-          33% {
-            border-color: rgba(199, 125, 255, 0.7);
-          }
-          66% {
-            border-color: rgba(224, 170, 255, 0.5);
-          }
-          100% {
-            transform: rotate(360deg);
-            border-color: rgba(157, 78, 221, 0.5);
-          }
         }
 
         .mystical-artifact {
