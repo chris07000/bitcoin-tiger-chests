@@ -288,23 +288,23 @@ export default function InventoryPage() {
       {/* Cross-Promotion Banners */}
       <div className="promo-section">
         <div className="promo-grid">
-          <Link href="/coinflip" className="promo-card coinflip">
+          <a href="https://bitcointigercollective.xyz/jackpot" target="_blank" rel="noopener noreferrer" className="promo-card coinflip">
             <div className="promo-icon">🪙</div>
             <div className="promo-content">
               <h3>Coinflip Casino</h3>
               <p>Double your sats instantly!</p>
               <div className="promo-cta">Play Now →</div>
             </div>
-          </Link>
+          </a>
           
-          <Link href="/chests" className="promo-card chests">
+          <a href="https://bitcointigercollective.xyz" target="_blank" rel="noopener noreferrer" className="promo-card chests">
             <div className="promo-icon">📦</div>
             <div className="promo-content">
               <h3>Mystery Chests</h3>
               <p>Rare prizes & big wins!</p>
               <div className="promo-cta">Open Chests →</div>
             </div>
-          </Link>
+          </a>
           
           <Link href="/marketplace" className="promo-card marketplace">
             <div className="promo-icon">🏪</div>

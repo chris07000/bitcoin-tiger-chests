@@ -319,13 +319,13 @@ export default function MarketplacePage() {
             </div>
           </Link>
           
-          <Link href="/chests" className="promo-card">
+          <a href="https://bitcointigercollective.xyz" target="_blank" rel="noopener noreferrer" className="promo-card">
             <div className="promo-icon">🔑</div>
             <div className="promo-content">
               <h4>Chest Keys</h4>
               <p>8-75 shards → Instant chests</p>
             </div>
-          </Link>
+          </a>
           
           <Link href="/mining" className="promo-card">
             <div className="promo-icon">⚡</div>
