@@ -928,6 +928,84 @@ export default function ArtifactsPage() {
           .acquisition-methods {
             grid-template-columns: 1fr;
           }
+
+          .alchemy-tome,
+          .acquisition-grimoire {
+            padding: 1.5rem;
+            margin: 0 auto 2rem;
+          }
+
+          .tome-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+          }
+
+          .chapter-title {
+            font-size: 1.5rem;
+            text-align: center;
+            line-height: 1.3;
+            margin-bottom: 1rem;
+          }
+
+          .magical-formula {
+            padding: 1.5rem;
+            text-align: left;
+          }
+
+          .formula-title {
+            font-size: 1.1rem;
+            text-align: center;
+            margin-bottom: 1rem;
+          }
+
+          .arcane-knowledge {
+            font-size: 0.9rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+          }
+
+          .component {
+            font-size: 0.85rem;
+            padding: 0.6rem 0;
+            padding-left: 0.8rem;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+          }
+
+          .distribution-spell {
+            font-size: 1rem;
+            text-align: center;
+            margin: 1.5rem 0 1rem;
+          }
+
+          .power-level {
+            font-size: 0.9rem;
+            text-align: center;
+          }
+
+          .sats-manifestation {
+            font-size: 0.8rem;
+            text-align: center;
+          }
+
+          .method-title {
+            font-size: 1.1rem;
+            text-align: center;
+            margin-bottom: 1rem;
+          }
+
+          .method-description,
+          .prophecy-text {
+            font-size: 0.9rem;
+            text-align: center;
+            line-height: 1.5;
+          }
+
+          .ritual {
+            font-size: 0.85rem;
+            text-align: center;
+            padding: 0.6rem;
+          }
         }
       `}</style>
     </div>
