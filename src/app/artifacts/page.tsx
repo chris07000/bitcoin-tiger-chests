@@ -134,6 +134,7 @@ export default function ArtifactsPage() {
       </div>
 
       <div className="alchemy-tome">
+        <div className="laboratory-background"></div>
         <div className="tome-header">
           <div className="mystical-symbol">📜</div>
           <h2 className="chapter-title">The Ancient Art of Profit Alchemy</h2>
@@ -652,6 +653,71 @@ export default function ArtifactsPage() {
           backdrop-filter: blur(15px);
           border: 1px solid rgba(157, 78, 221, 0.3);
           z-index: 3;
+          overflow: hidden;
+        }
+
+        .laboratory-background {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-image: url('/lab.png');
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+          opacity: 0.15;
+          z-index: 1;
+          border-radius: 20px;
+          transition: opacity 0.3s ease;
+          animation: subtle-shift 20s ease-in-out infinite;
+        }
+
+        @keyframes subtle-shift {
+          0%, 100% {
+            background-position: center center;
+            opacity: 0.15;
+          }
+          25% {
+            background-position: 51% 49%;
+            opacity: 0.18;
+          }
+          50% {
+            background-position: 49% 51%;
+            opacity: 0.15;
+          }
+          75% {
+            background-position: 51% 51%;
+            opacity: 0.18;
+          }
+        }
+
+        .alchemy-tome:hover .laboratory-background {
+          opacity: 0.25;
+          background-size: 110%;
+        }
+
+        .laboratory-background::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: linear-gradient(
+            135deg, 
+            rgba(16, 18, 56, 0.7) 0%, 
+            rgba(26, 26, 62, 0.6) 50%, 
+            rgba(16, 18, 56, 0.7) 100%
+          );
+          z-index: 2;
+          border-radius: 20px;
+        }
+
+        .tome-header,
+        .magical-formula {
+          position: relative;
+          z-index: 3;
         }
 
         .tome-header {
@@ -668,10 +734,11 @@ export default function ArtifactsPage() {
         }
 
         .magical-formula {
-          background: rgba(0, 0, 0, 0.3);
+          background: rgba(0, 0, 0, 0.4);
           border-radius: 15px;
           padding: 2rem;
-          border: 1px solid rgba(157, 78, 221, 0.2);
+          border: 1px solid rgba(157, 78, 221, 0.3);
+          backdrop-filter: blur(5px);
         }
 
         .formula-title {
