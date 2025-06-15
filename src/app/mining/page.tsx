@@ -452,7 +452,7 @@ export default function MiningPage() {
       <style jsx>{`
         .mining-laboratory {
           min-height: 100vh;
-          background: linear-gradient(135deg, #0a0a2e 0%, #16213e 25%, #1a1a3e 50%, #0e0e2a 75%, #0a0618 100%);
+          background: #000;
           position: relative;
           overflow: hidden;
         }
@@ -579,13 +579,13 @@ export default function MiningPage() {
           border-radius: 20px;
           margin: 2rem;
           overflow: hidden;
-          border: 2px solid rgba(157, 78, 221, 0.3);
+          border: 2px solid rgba(255, 255, 255, 0.1);
         }
 
         .laboratory-chamber:hover:not(.disabled) {
-          border-color: rgba(157, 78, 221, 0.8);
+          border-color: rgba(255, 255, 255, 0.3);
           transform: translateY(-5px);
-          box-shadow: 0 20px 40px rgba(157, 78, 221, 0.3);
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
         }
 
         .laboratory-chamber.disabled {
@@ -662,12 +662,7 @@ export default function MiningPage() {
           left: 0;
           right: 0;
           bottom: 0;
-          background: linear-gradient(
-            135deg, 
-            rgba(16, 18, 56, 0.7) 0%, 
-            rgba(26, 26, 62, 0.6) 50%, 
-            rgba(16, 18, 56, 0.7) 100%
-          );
+          background: rgba(0, 0, 0, 0.3);
           display: flex;
           justify-content: center;
           align-items: center;
