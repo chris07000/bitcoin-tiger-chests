@@ -3,636 +3,843 @@ import Image from 'next/image'
 
 export default function ArtifactsPage() {
   return (
-    <div className="artifacts-container">
-      <div className="artifacts-header">
-        <h1 className="pixel-title">BTC Tiger Artifacts</h1>
-        <p className="artifacts-intro">
-          Exclusive Ordinals that give holders a share in the Tiger's games profits. These rare artifacts were distributed through airdrops, 
-          player rewards, raffles, and exclusive auctions.
+    <div className="mystical-laboratory">
+      {/* Floating magical particles */}
+      <div className="magical-particles">
+        {Array.from({length: 20}).map((_, i) => (
+          <div key={i} className="particle" style={{
+            left: `${Math.random() * 100}%`,
+            animationDelay: `${Math.random() * 5}s`,
+            animationDuration: `${3 + Math.random() * 4}s`
+          }}></div>
+        ))}
+      </div>
+
+      <div className="lab-header">
+        <div className="mystical-symbol">🔮</div>
+        <h1 className="arcane-title">Mystical Alchemist's Laboratory</h1>
+        <p className="enchanted-intro">
+          Welcome to the ancient laboratory where mystical artifacts hold the secrets of eternal profit sharing. 
+          These legendary relics were forged in the depths of arcane knowledge and bestow their holders with 
+          magical powers over the realm's treasury.
         </p>
+        <div className="energy-orb"></div>
       </div>
 
-      <div className="artifacts-grid">
-        <div className="artifact-card gold">
-          <div className="artifact-image-container">
-            <Image 
-              src="/artifacts/gold.png"
-              alt="Golden Artifact"
-              width={160}
-              height={160}
-              className="artifact-image"
-              unoptimized
-              priority
-            />
+      <div className="artifacts-cauldron">
+        <div className="artifact-vessel legendary">
+          <div className="artifact-glow legendary-glow"></div>
+          <div className="artifact-container">
+            <div className="rune-circle">
+              <div className="mystical-artifact">
+                <div className="artifact-essence legendary-essence"></div>
+                <div className="artifact-core">💎</div>
+              </div>
+            </div>
           </div>
-          <div className="artifact-info">
-            <h2>Golden Artifact</h2>
-            <ul className="artifact-features">
-              <li>5.0% Profit Share</li>
-              <li>Only 5 in existence</li>
-              <li>Highest tier of profit sharing</li>
-              <li>Ultra-rare collectible</li>
-            </ul>
-            <a 
-              href="https://magiceden.io/ordinals/marketplace/tigerartifacts" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="marketplace-link"
-            >
-              Trade on Magic Eden
-            </a>
+          <div className="artifact-grimoire">
+            <h2 className="spell-name">Legendary Philosopher's Stone</h2>
+            <div className="magic-properties">
+              <div className="enchantment">⚡ 5.0% Eternal Profit Share</div>
+              <div className="enchantment">🔥 Only 5 Forged in Existence</div>
+              <div className="enchantment">👑 Supreme Arcane Power</div>
+              <div className="enchantment">✨ Legendary Magical Aura</div>
+            </div>
+            <button className="transmutation-portal">
+              <span className="portal-text">Enter Magical Marketplace</span>
+              <div className="portal-energy"></div>
+            </button>
           </div>
         </div>
 
-        <div className="artifact-card silver">
-          <div className="artifact-image-container">
-            <Image 
-              src="/artifacts/silver.png"
-              alt="Silver Artifact"
-              width={160}
-              height={160}
-              className="artifact-image"
-              unoptimized
-              priority
-            />
+        <div className="artifact-vessel rare">
+          <div className="artifact-glow rare-glow"></div>
+          <div className="artifact-container">
+            <div className="rune-circle">
+              <div className="mystical-artifact">
+                <div className="artifact-essence rare-essence"></div>
+                <div className="artifact-core">🌟</div>
+              </div>
+            </div>
           </div>
-          <div className="artifact-info">
-            <h2>Silver Artifact</h2>
-            <ul className="artifact-features">
-              <li>2.5% Profit Share</li>
-              <li>Only 15 in existence</li>
-              <li>Medium tier of profit sharing</li>
-              <li>Rare collectible</li>
-            </ul>
-            <a 
-              href="https://magiceden.io/ordinals/marketplace/tigerartifacts" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="marketplace-link"
-            >
-              Trade on Magic Eden
-            </a>
+          <div className="artifact-grimoire">
+            <h2 className="spell-name">Rare Crystal of Power</h2>
+            <div className="magic-properties">
+              <div className="enchantment">⚡ 2.5% Mystical Profit Share</div>
+              <div className="enchantment">🔥 Only 15 Crystals Exist</div>
+              <div className="enchantment">🌙 Medium Arcane Influence</div>
+              <div className="enchantment">✨ Rare Magical Resonance</div>
+            </div>
+            <button className="transmutation-portal">
+              <span className="portal-text">Enter Magical Marketplace</span>
+              <div className="portal-energy"></div>
+            </button>
           </div>
         </div>
 
-        <div className="artifact-card bronze">
-          <div className="artifact-image-container">
-            <Image 
-              src="/artifacts/bronze.png"
-              alt="Bronze Artifact"
-              width={160}
-              height={160}
-              className="artifact-image"
-              unoptimized
-              priority
-            />
+        <div className="artifact-vessel common">
+          <div className="artifact-glow common-glow"></div>
+          <div className="artifact-container">
+            <div className="rune-circle">
+              <div className="mystical-artifact">
+                <div className="artifact-essence common-essence"></div>
+                <div className="artifact-core">🌕</div>
+              </div>
+            </div>
           </div>
-          <div className="artifact-info">
-            <h2>Bronze Artifact</h2>
-            <ul className="artifact-features">
-              <li>1.26% Profit Share</li>
-              <li>Only 30 in existence</li>
-              <li>Entry tier of profit sharing</li>
-              <li>Limited collectible</li>
-            </ul>
-            <a 
-              href="https://magiceden.io/ordinals/marketplace/tigerartifacts" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="marketplace-link"
-            >
-              Trade on Magic Eden
-            </a>
+          <div className="artifact-grimoire">
+            <h2 className="spell-name">Mystic Moonstone Shard</h2>
+            <div className="magic-properties">
+              <div className="enchantment">⚡ 1.26% Ethereal Profit Share</div>
+              <div className="enchantment">🔥 Only 30 Shards Remain</div>
+              <div className="enchantment">🌙 Beginner's Magical Focus</div>
+              <div className="enchantment">✨ Common Arcane Properties</div>
+            </div>
+            <button className="transmutation-portal">
+              <span className="portal-text">Enter Magical Marketplace</span>
+              <div className="portal-energy"></div>
+            </button>
           </div>
         </div>
       </div>
 
-      <div className="profit-sharing-explanation">
-        <h2 className="section-title">How Profit Sharing Works</h2>
-        <div className="profit-example">
-          <h3>Example Calculation:</h3>
-          <p>When BTC Tiger games generate profit (e.g. 20M sats):</p>
-          <ul className="profit-list">
-            <li>20% goes to the project (4M sats)</li>
-            <li>80% is distributed to artifact holders (16M sats)</li>
-          </ul>
-          <div className="distribution-title">Example distribution per artifact type:</div>
-          <div className="distribution-grid">
-            <div className="artifact-type gold">
-              <div className="artifact-percentage">Golden Artifacts: 5.0% each</div>
-              <div className="artifact-count">(800,000 Sats per Artifact)</div>
+      <div className="alchemy-tome">
+        <div className="tome-header">
+          <div className="mystical-symbol">📜</div>
+          <h2 className="chapter-title">The Ancient Art of Profit Alchemy</h2>
+        </div>
+        <div className="magical-formula">
+          <h3 className="formula-title">Sacred Transmutation Ritual:</h3>
+          <p className="arcane-knowledge">When the realm's mystical energies generate power (e.g. 20M sats):</p>
+          <div className="spell-components">
+            <div className="component">🔮 20% flows to the Grand Arcanum (4M sats)</div>
+            <div className="component">✨ 80% is channeled to artifact holders (16M sats)</div>
+          </div>
+          <div className="distribution-spell">Mystical Distribution per Artifact Type:</div>
+          <div className="enchantment-grid">
+            <div className="artifact-power legendary">
+              <div className="power-level">Philosopher's Stone: 5.0% each</div>
+              <div className="sats-manifestation">(800,000 Sats per Stone)</div>
             </div>
-            <div className="artifact-type silver">
-              <div className="artifact-percentage">Silver Artifacts: 2.5% each</div>
-              <div className="artifact-count">(400,000 Sats per Artifact)</div>
+            <div className="artifact-power rare">
+              <div className="power-level">Crystal of Power: 2.5% each</div>
+              <div className="sats-manifestation">(400,000 Sats per Crystal)</div>
             </div>
-            <div className="artifact-type bronze">
-              <div className="artifact-percentage">Bronze Artifacts: 1.26% each</div>
-              <div className="artifact-count">(201,600 Sats per Artifact)</div>
+            <div className="artifact-power common">
+              <div className="power-level">Moonstone Shard: 1.26% each</div>
+              <div className="sats-manifestation">(201,600 Sats per Shard)</div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="artifacts-footer">
-        <h2 className="section-title">How to Obtain Artifacts</h2>
-        <div className="obtain-methods">
-          <div className="method">
-            <h3>Past Distributions</h3>
-            <p>Artifacts were previously distributed through:</p>
-            <ul className="method-list">
-              <li>Community airdrops</li>
-              <li>Player rewards</li>
-              <li>Exclusive raffles</li>
-              <li>Project auctions</li>
-            </ul>
+      <div className="acquisition-grimoire">
+        <div className="tome-header">
+          <div className="mystical-symbol">🧙‍♂️</div>
+          <h2 className="chapter-title">How to Acquire Mystical Artifacts</h2>
+        </div>
+        <div className="acquisition-methods">
+          <div className="ancient-method">
+            <h3 className="method-title">Past Magical Rituals</h3>
+            <p className="method-description">Artifacts were previously bestowed through:</p>
+            <div className="ritual-list">
+              <div className="ritual">🌟 Celestial Airdrops</div>
+              <div className="ritual">⚔️ Heroic Quest Rewards</div>
+              <div className="ritual">🎲 Mystical Lottery Draws</div>
+              <div className="ritual">🏛️ Sacred Auction Ceremonies</div>
+            </div>
           </div>
-          <div className="method">
-            <h3>Current Opportunities</h3>
-            <p>Keep an eye on our announcements for future opportunities to acquire artifacts through special events and promotions.</p>
+          <div className="future-prophecy">
+            <h3 className="method-title">Future Magical Opportunities</h3>
+            <p className="prophecy-text">
+              The ancient spirits whisper of future opportunities to acquire artifacts through 
+              legendary events and mystical promotions. Keep your magical senses attuned to our 
+              arcane announcements.
+            </p>
           </div>
         </div>
       </div>
 
-      <footer className="pixel-footer">
-        <p className="pixel-footer-text">
-          ⚡ Powered by Bitcoin Lightning Network ⚡
+      <footer className="mystical-footer">
+        <div className="footer-runes">
+          <div className="rune">⚡</div>
+          <div className="rune">🔮</div>
+          <div className="rune">⚡</div>
+        </div>
+        <p className="footer-incantation">
+          Powered by the Lightning Realm's Mystical Energies
         </p>
-        <p className="pixel-footer-subtext">
-          Bitcoin Tiger Collective
+        <p className="footer-signature">
+          The Arcane Bitcoin Tiger Collective
         </p>
       </footer>
 
       <style jsx>{`
-        .artifacts-container {
+        .mystical-laboratory {
+          min-height: 100vh;
+          background: linear-gradient(135deg, #0a0a2e 0%, #16213e 25%, #1a1a3e 50%, #0e0e2a 75%, #0a0618 100%);
+          position: relative;
+          overflow-x: hidden;
+          padding: 2rem 1rem;
+        }
+
+        .mystical-laboratory::before {
+          content: '';
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: 
+            radial-gradient(circle at 20% 20%, rgba(138, 43, 226, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(75, 0, 130, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 40% 60%, rgba(147, 0, 211, 0.05) 0%, transparent 50%);
+          pointer-events: none;
+          z-index: 1;
+        }
+
+        .magical-particles {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          pointer-events: none;
+          z-index: 2;
+        }
+
+        .particle {
+          position: absolute;
+          width: 4px;
+          height: 4px;
+          background: radial-gradient(circle, #9d4edd 0%, #7209b7 50%, transparent 100%);
+          border-radius: 50%;
+          animation: float infinite ease-in-out;
+        }
+
+        @keyframes float {
+          0%, 100% {
+            transform: translateY(100vh) rotate(0deg);
+            opacity: 0;
+          }
+          10% {
+            opacity: 1;
+          }
+          90% {
+            opacity: 1;
+          }
+        }
+
+        .lab-header {
           max-width: 1200px;
           margin: 0 auto;
-          padding: 2rem 1rem 4rem;
-          color: white;
-          font-family: 'Press Start 2P', monospace;
-        }
-        
-        .artifacts-header {
           text-align: center;
-          margin-bottom: 3rem;
-          padding-top: 2rem;
+          padding: 3rem 0 4rem;
+          position: relative;
+          z-index: 3;
         }
-        
-        .pixel-title {
-          font-size: 2.5rem;
-          color: var(--gold);
-          margin-bottom: 1.5rem;
-          text-shadow: var(--pixel-size) var(--pixel-size) #000;
-          letter-spacing: 2px;
+
+        .mystical-symbol {
+          font-size: 4rem;
+          margin-bottom: 1rem;
+          filter: drop-shadow(0 0 20px #9d4edd);
+          animation: pulse-glow 3s ease-in-out infinite;
         }
-        
-        .artifacts-intro {
+
+        @keyframes pulse-glow {
+          0%, 100% {
+            filter: drop-shadow(0 0 20px #9d4edd);
+            transform: scale(1);
+          }
+          50% {
+            filter: drop-shadow(0 0 40px #c77dff);
+            transform: scale(1.1);
+          }
+        }
+
+        .arcane-title {
+          font-size: 3rem;
+          background: linear-gradient(45deg, #9d4edd, #c77dff, #e0aaff);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          margin-bottom: 2rem;
+          font-weight: 700;
+          text-shadow: 0 0 30px rgba(157, 78, 221, 0.5);
+          font-family: 'Cinzel', serif;
+        }
+
+        .enchanted-intro {
           max-width: 800px;
-          margin: 0 auto;
+          margin: 0 auto 2rem;
+          font-size: 1.1rem;
           line-height: 1.8;
-          font-size: 0.9rem;
-          color: #ccc;
+          color: #e0aaff;
+          text-align: center;
+          text-shadow: 0 0 10px rgba(224, 170, 255, 0.3);
         }
-        
-        .artifacts-grid {
+
+        .energy-orb {
+          width: 60px;
+          height: 60px;
+          margin: 2rem auto;
+          border-radius: 50%;
+          background: radial-gradient(circle, #9d4edd 0%, #7209b7 50%, transparent 100%);
+          animation: energy-pulse 2s ease-in-out infinite;
+          position: relative;
+        }
+
+        .energy-orb::before {
+          content: '';
+          position: absolute;
+          top: -10px;
+          left: -10px;
+          right: -10px;
+          bottom: -10px;
+          border-radius: 50%;
+          background: radial-gradient(circle, transparent 60%, #9d4edd 70%, transparent 80%);
+          animation: energy-ring 3s linear infinite;
+        }
+
+        @keyframes energy-pulse {
+          0%, 100% {
+            transform: scale(1);
+            opacity: 0.8;
+          }
+          50% {
+            transform: scale(1.2);
+            opacity: 1;
+          }
+        }
+
+        @keyframes energy-ring {
+          0% {
+            transform: rotate(0deg) scale(1);
+          }
+          100% {
+            transform: rotate(360deg) scale(1.1);
+          }
+        }
+
+        .artifacts-cauldron {
+          max-width: 1200px;
+          margin: 0 auto;
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-          gap: 2rem;
-          margin-bottom: 4rem;
+          grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+          gap: 3rem;
+          padding: 2rem 0 4rem;
+          position: relative;
+          z-index: 3;
         }
-        
-        .artifact-card {
-          background: linear-gradient(135deg, #000000, #0d1320);
-          border: var(--pixel-size) solid;
-          border-radius: 8px;
+
+        .artifact-vessel {
+          background: linear-gradient(135deg, rgba(16, 18, 56, 0.8), rgba(26, 26, 62, 0.8));
+          border-radius: 20px;
+          padding: 2rem;
+          position: relative;
           overflow: hidden;
-          display: flex;
-          flex-direction: column;
-          transition: all 0.3s ease;
-          padding: 1.5rem;
-          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(157, 78, 221, 0.3);
+          transition: all 0.5s ease;
         }
-        
-        .artifact-card:hover {
-          transform: translateY(-8px);
+
+        .artifact-vessel:hover {
+          transform: translateY(-10px);
+          border-color: rgba(157, 78, 221, 0.8);
         }
-        
-        .artifact-card.gold {
-          border-color: var(--gold);
+
+        .artifact-glow {
+          position: absolute;
+          top: -50%;
+          left: -50%;
+          width: 200%;
+          height: 200%;
+          border-radius: 50%;
+          opacity: 0.3;
+          animation: rotate-glow 8s linear infinite;
         }
-        
-        .artifact-card.gold:hover {
-          box-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
+
+        .legendary-glow {
+          background: radial-gradient(circle, #ffd700 0%, #ff8c00 30%, transparent 70%);
         }
-        
-        .artifact-card.silver {
-          border-color: var(--silver);
+
+        .rare-glow {
+          background: radial-gradient(circle, #9d4edd 0%, #7209b7 30%, transparent 70%);
         }
-        
-        .artifact-card.silver:hover {
-          box-shadow: 0 0 20px rgba(192, 192, 192, 0.7);
+
+        .common-glow {
+          background: radial-gradient(circle, #4cc9f0 0%, #7209b7 30%, transparent 70%);
         }
-        
-        .artifact-card.bronze {
-          border-color: var(--bronze);
+
+        @keyframes rotate-glow {
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
         }
-        
-        .artifact-card.bronze:hover {
-          box-shadow: 0 0 20px rgba(205, 127, 50, 0.7);
-        }
-        
-        .artifact-image-container {
+
+        .artifact-container {
+          position: relative;
+          z-index: 2;
           display: flex;
           justify-content: center;
           align-items: center;
+          height: 200px;
+          margin-bottom: 2rem;
+        }
+
+        .rune-circle {
+          width: 150px;
+          height: 150px;
+          border: 2px solid rgba(157, 78, 221, 0.5);
+          border-radius: 50%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          position: relative;
+          animation: rune-rotation 12s linear infinite;
+        }
+
+        @keyframes rune-rotation {
+          0% {
+            transform: rotate(0deg);
+            border-color: rgba(157, 78, 221, 0.5);
+          }
+          33% {
+            border-color: rgba(199, 125, 255, 0.7);
+          }
+          66% {
+            border-color: rgba(224, 170, 255, 0.5);
+          }
+          100% {
+            transform: rotate(360deg);
+            border-color: rgba(157, 78, 221, 0.5);
+          }
+        }
+
+        .mystical-artifact {
+          position: relative;
+          width: 100px;
+          height: 100px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .artifact-essence {
+          position: absolute;
+          width: 120px;
+          height: 120px;
+          border-radius: 50%;
+          animation: essence-flow 4s ease-in-out infinite;
+        }
+
+        .legendary-essence {
+          background: radial-gradient(circle, rgba(255, 215, 0, 0.3) 0%, rgba(255, 140, 0, 0.2) 50%, transparent 80%);
+        }
+
+        .rare-essence {
+          background: radial-gradient(circle, rgba(157, 78, 221, 0.3) 0%, rgba(114, 9, 183, 0.2) 50%, transparent 80%);
+        }
+
+        .common-essence {
+          background: radial-gradient(circle, rgba(76, 201, 240, 0.3) 0%, rgba(114, 9, 183, 0.2) 50%, transparent 80%);
+        }
+
+        @keyframes essence-flow {
+          0%, 100% {
+            transform: scale(1);
+            opacity: 0.6;
+          }
+          50% {
+            transform: scale(1.2);
+            opacity: 0.9;
+          }
+        }
+
+        .artifact-core {
+          font-size: 3rem;
+          z-index: 2;
+          position: relative;
+          filter: drop-shadow(0 0 15px currentColor);
+          animation: core-levitate 3s ease-in-out infinite;
+        }
+
+        @keyframes core-levitate {
+          0%, 100% {
+            transform: translateY(0px);
+          }
+          50% {
+            transform: translateY(-8px);
+          }
+        }
+
+        .artifact-grimoire {
+          position: relative;
+          z-index: 2;
+        }
+
+        .spell-name {
+          font-size: 1.4rem;
+          text-align: center;
           margin-bottom: 1.5rem;
-          background: rgba(0, 0, 0, 0.5);
-          border-radius: 8px;
+          font-family: 'Cinzel', serif;
+          font-weight: 600;
+        }
+
+        .legendary .spell-name {
+          color: #ffd700;
+          text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+        }
+
+        .rare .spell-name {
+          color: #c77dff;
+          text-shadow: 0 0 15px rgba(199, 125, 255, 0.5);
+        }
+
+        .common .spell-name {
+          color: #4cc9f0;
+          text-shadow: 0 0 15px rgba(76, 201, 240, 0.5);
+        }
+
+        .magic-properties {
+          margin-bottom: 2rem;
+        }
+
+        .enchantment {
+          padding: 0.8rem 0;
+          font-size: 0.95rem;
+          color: #e0aaff;
+          border-bottom: 1px solid rgba(157, 78, 221, 0.2);
+          position: relative;
+          padding-left: 1.5rem;
+        }
+
+        .enchantment:last-child {
+          border-bottom: none;
+        }
+
+        .enchantment::before {
+          content: '✨';
+          position: absolute;
+          left: 0;
+          animation: sparkle 2s ease-in-out infinite;
+        }
+
+        @keyframes sparkle {
+          0%, 100% {
+            opacity: 0.6;
+            transform: scale(1);
+          }
+          50% {
+            opacity: 1;
+            transform: scale(1.2);
+          }
+        }
+
+        .transmutation-portal {
+          width: 100%;
+          background: linear-gradient(45deg, rgba(157, 78, 221, 0.2), rgba(114, 9, 183, 0.2));
+          border: 2px solid rgba(157, 78, 221, 0.5);
+          border-radius: 15px;
+          padding: 1rem;
+          color: #e0aaff;
+          font-size: 1rem;
+          font-weight: 600;
+          cursor: pointer;
+          position: relative;
+          overflow: hidden;
+          transition: all 0.3s ease;
+        }
+
+        .transmutation-portal:hover {
+          background: linear-gradient(45deg, rgba(157, 78, 221, 0.4), rgba(114, 9, 183, 0.4));
+          border-color: rgba(157, 78, 221, 0.8);
+          transform: translateY(-2px);
+          box-shadow: 0 10px 25px rgba(157, 78, 221, 0.3);
+        }
+
+        .portal-text {
+          position: relative;
+          z-index: 2;
+        }
+
+        .portal-energy {
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+          transition: left 0.5s ease;
+        }
+
+        .transmutation-portal:hover .portal-energy {
+          left: 100%;
+        }
+
+        .alchemy-tome,
+        .acquisition-grimoire {
+          max-width: 1200px;
+          margin: 0 auto 4rem;
+          background: linear-gradient(135deg, rgba(16, 18, 56, 0.9), rgba(26, 26, 62, 0.9));
+          border-radius: 20px;
+          padding: 3rem;
+          position: relative;
+          backdrop-filter: blur(15px);
+          border: 1px solid rgba(157, 78, 221, 0.3);
+          z-index: 3;
+        }
+
+        .tome-header {
+          text-align: center;
+          margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+          font-size: 2rem;
+          color: #c77dff;
+          margin-bottom: 1rem;
+          font-family: 'Cinzel', serif;
+          text-shadow: 0 0 20px rgba(199, 125, 255, 0.5);
+        }
+
+        .magical-formula {
+          background: rgba(0, 0, 0, 0.3);
+          border-radius: 15px;
+          padding: 2rem;
+          border: 1px solid rgba(157, 78, 221, 0.2);
+        }
+
+        .formula-title {
+          color: #ffd700;
+          font-size: 1.3rem;
+          margin-bottom: 1rem;
+          text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+        }
+
+        .arcane-knowledge {
+          color: #e0aaff;
+          font-size: 1rem;
+          margin-bottom: 1.5rem;
+          line-height: 1.6;
+        }
+
+        .spell-components {
+          margin-bottom: 2rem;
+        }
+
+        .component {
+          padding: 0.8rem 0;
+          color: #c77dff;
+          font-size: 0.95rem;
+          border-left: 3px solid rgba(157, 78, 221, 0.5);
+          padding-left: 1rem;
+          margin-bottom: 0.5rem;
+        }
+
+        .distribution-spell {
+          color: #ffd700;
+          font-size: 1.1rem;
+          text-align: center;
+          margin: 2rem 0 1rem;
+          text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+        }
+
+        .enchantment-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          gap: 1.5rem;
+          margin-top: 1.5rem;
+        }
+
+        .artifact-power {
+          background: rgba(0, 0, 0, 0.3);
+          border-radius: 12px;
           padding: 1.5rem;
+          text-align: center;
+          border: 1px solid;
           position: relative;
           overflow: hidden;
         }
-        
-        .artifact-image-container::before {
+
+        .artifact-power::before {
           content: '';
           position: absolute;
-          width: 200%;
-          height: 200%;
-          background: radial-gradient(
-            circle at center,
-            rgba(255, 215, 0, 0.2) 0%,
-            rgba(255, 215, 0, 0.1) 30%,
-            transparent 70%
-          );
-          animation: rotate 10s linear infinite;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+          animation: power-sweep 4s ease-in-out infinite;
         }
-        
-        .artifact-card.gold .artifact-image-container::before {
-          background: radial-gradient(
-            circle at center,
-            rgba(255, 215, 0, 0.2) 0%,
-            rgba(255, 215, 0, 0.1) 30%,
-            transparent 70%
-          );
+
+        @keyframes power-sweep {
+          0% {
+            left: -100%;
+          }
+          50% {
+            left: 100%;
+          }
+          100% {
+            left: 100%;
+          }
         }
-        
-        .artifact-card.silver .artifact-image-container::before {
-          background: radial-gradient(
-            circle at center,
-            rgba(192, 192, 192, 0.2) 0%,
-            rgba(192, 192, 192, 0.1) 30%,
-            transparent 70%
-          );
+
+        .artifact-power.legendary {
+          border-color: #ffd700;
+          background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 140, 0, 0.05));
         }
-        
-        .artifact-card.bronze .artifact-image-container::before {
-          background: radial-gradient(
-            circle at center,
-            rgba(205, 127, 50, 0.2) 0%,
-            rgba(205, 127, 50, 0.1) 30%,
-            transparent 70%
-          );
+
+        .artifact-power.rare {
+          border-color: #c77dff;
+          background: linear-gradient(135deg, rgba(199, 125, 255, 0.1), rgba(157, 78, 221, 0.05));
         }
-        
-        @keyframes rotate {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
+
+        .artifact-power.common {
+          border-color: #4cc9f0;
+          background: linear-gradient(135deg, rgba(76, 201, 240, 0.1), rgba(114, 9, 183, 0.05));
         }
-        
-        .artifact-image {
-          position: relative;
-          z-index: 1;
-          filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
-          transition: transform 0.3s ease;
-        }
-        
-        .artifact-card:hover .artifact-image {
-          transform: scale(1.1);
-        }
-        
-        .artifact-info {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-        }
-        
-        .artifact-info h2 {
-          font-size: 1.4rem;
-          margin-bottom: 1rem;
-          text-align: center;
-        }
-        
-        .artifact-card.gold h2 {
-          color: var(--gold);
-        }
-        
-        .artifact-card.silver h2 {
-          color: var(--silver);
-        }
-        
-        .artifact-card.bronze h2 {
-          color: var(--bronze);
-        }
-        
-        .artifact-features {
-          list-style: none;
-          padding: 0;
-          margin: 0 0 1.5rem 0;
-          flex: 1;
-        }
-        
-        .artifact-features li {
-          padding: 0.5rem 0;
-          position: relative;
-          padding-left: 1.2rem;
-          font-size: 0.8rem;
-          line-height: 1.4;
-          color: #ccc;
-        }
-        
-        .artifact-features li::before {
-          content: '►';
-          position: absolute;
-          left: 0;
-          color: currentColor;
-        }
-        
-        .marketplace-link {
-          background: linear-gradient(to bottom, #222, #000);
-          color: var(--gold);
-          text-decoration: none;
-          padding: 1rem;
-          text-align: center;
-          border: 2px solid var(--gold);
-          border-radius: 4px;
-          transition: all 0.3s ease;
-          font-size: 0.8rem;
-          display: block;
-          margin-top: auto;
-        }
-        
-        .marketplace-link:hover {
-          background: var(--gold);
-          color: #000;
-          transform: translateY(-2px);
-          box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
-        }
-        
-        .profit-sharing-explanation,
-        .artifacts-footer {
-          background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(13, 19, 32, 0.7));
-          border: 2px solid var(--gold);
-          border-radius: 8px;
-          padding: 2rem;
-          margin-bottom: 3rem;
-          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-        
-        .section-title {
-          color: var(--gold);
-          font-size: 1.5rem;
-          margin-bottom: 1.5rem;
-          text-align: center;
-        }
-        
-        .profit-example {
-          background: rgba(0, 0, 0, 0.5);
-          border-radius: 8px;
-          padding: 1.5rem;
-        }
-        
-        .profit-example h3 {
-          color: var(--gold);
-          font-size: 1.2rem;
-          margin-bottom: 1rem;
-        }
-        
-        .profit-list {
-          padding-left: 1.5rem;
-          margin-bottom: 1.5rem;
-        }
-        
-        .profit-list li {
-          padding: 0.5rem 0;
-          font-size: 0.9rem;
-        }
-        
-        .distribution-title {
-          color: var(--gold);
-          margin: 1.5rem 0 1rem;
+
+        .power-level {
           font-size: 1rem;
-          text-align: center;
-        }
-        
-        .distribution-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-          gap: 1rem;
-        }
-        
-        .artifact-type {
-          padding: 1rem;
-          border-radius: 8px;
-          text-align: center;
-        }
-        
-        .artifact-type.gold {
-          background: rgba(255, 215, 0, 0.1);
-          border: 2px solid var(--gold);
-        }
-        
-        .artifact-type.silver {
-          background: rgba(192, 192, 192, 0.1);
-          border: 2px solid var(--silver);
-        }
-        
-        .artifact-type.bronze {
-          background: rgba(205, 127, 50, 0.1);
-          border: 2px solid var(--bronze);
-        }
-        
-        .artifact-percentage {
-          font-size: 0.9rem;
+          font-weight: 600;
           margin-bottom: 0.5rem;
-          font-weight: bold;
+          position: relative;
+          z-index: 2;
         }
-        
-        .artifact-type.gold .artifact-percentage {
-          color: var(--gold);
+
+        .artifact-power.legendary .power-level {
+          color: #ffd700;
         }
-        
-        .artifact-type.silver .artifact-percentage {
-          color: var(--silver);
+
+        .artifact-power.rare .power-level {
+          color: #c77dff;
         }
-        
-        .artifact-type.bronze .artifact-percentage {
-          color: var(--bronze);
+
+        .artifact-power.common .power-level {
+          color: #4cc9f0;
         }
-        
-        .artifact-count {
-          font-size: 0.8rem;
-          color: #ccc;
+
+        .sats-manifestation {
+          font-size: 0.9rem;
+          color: #e0aaff;
+          opacity: 0.8;
+          position: relative;
+          z-index: 2;
         }
-        
-        .obtain-methods {
+
+        .acquisition-methods {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
           gap: 2rem;
         }
-        
-        .method {
-          background: rgba(0, 0, 0, 0.5);
-          padding: 1.5rem;
+
+        .ancient-method,
+        .future-prophecy {
+          background: rgba(0, 0, 0, 0.3);
+          border-radius: 15px;
+          padding: 2rem;
+          border: 1px solid rgba(157, 78, 221, 0.2);
+        }
+
+        .method-title {
+          color: #ffd700;
+          font-size: 1.2rem;
+          margin-bottom: 1rem;
+          text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+        }
+
+        .method-description,
+        .prophecy-text {
+          color: #e0aaff;
+          font-size: 0.95rem;
+          line-height: 1.6;
+          margin-bottom: 1.5rem;
+        }
+
+        .ritual-list {
+          display: grid;
+          gap: 0.8rem;
+        }
+
+        .ritual {
+          padding: 0.8rem;
+          background: rgba(157, 78, 221, 0.1);
           border-radius: 8px;
+          color: #c77dff;
+          border-left: 3px solid rgba(157, 78, 221, 0.5);
         }
-        
-        .method h3 {
-          color: var(--gold);
-          font-size: 1.1rem;
-          margin-bottom: 1rem;
-        }
-        
-        .method p {
-          font-size: 0.9rem;
-          margin-bottom: 1rem;
-          line-height: 1.5;
-          color: #ccc;
-        }
-        
-        .method-list {
-          padding-left: 1.5rem;
-        }
-        
-        .method-list li {
-          padding: 0.3rem 0;
-          font-size: 0.9rem;
-          color: #ccc;
-        }
-        
-        .pixel-footer {
+
+        .mystical-footer {
           text-align: center;
-          padding: 2rem 1rem;
-          margin-top: 4rem;
-          border-top: 1px solid rgba(255, 215, 0, 0.1);
+          padding: 3rem 0;
+          border-top: 1px solid rgba(157, 78, 221, 0.3);
+          position: relative;
+          z-index: 3;
         }
-        
-        .pixel-footer-text {
-          color: var(--gold);
-          font-family: 'Press Start 2P', monospace;
-          font-size: 0.9rem;
+
+        .footer-runes {
+          display: flex;
+          justify-content: center;
+          gap: 2rem;
+          margin-bottom: 1.5rem;
+        }
+
+        .rune {
+          font-size: 2rem;
+          filter: drop-shadow(0 0 15px #9d4edd);
+          animation: rune-glow 3s ease-in-out infinite;
+        }
+
+        .rune:nth-child(2) {
+          animation-delay: 1s;
+        }
+
+        .rune:nth-child(3) {
+          animation-delay: 2s;
+        }
+
+        @keyframes rune-glow {
+          0%, 100% {
+            filter: drop-shadow(0 0 15px #9d4edd);
+          }
+          50% {
+            filter: drop-shadow(0 0 30px #c77dff);
+          }
+        }
+
+        .footer-incantation {
+          color: #c77dff;
+          font-size: 1.1rem;
           margin-bottom: 0.5rem;
+          text-shadow: 0 0 10px rgba(199, 125, 255, 0.5);
         }
-        
-        .pixel-footer-subtext {
-          color: #aaa;
-          font-size: 0.8rem;
+
+        .footer-signature {
+          color: #e0aaff;
+          font-size: 0.9rem;
+          opacity: 0.8;
         }
-        
-        /* Mobile responsiveness */
+
         @media (max-width: 768px) {
-          .artifacts-container {
-            padding: 1rem;
+          .arcane-title {
+            font-size: 2rem;
           }
           
-          .pixel-title {
-            font-size: 1.8rem;
-            margin-top: 2rem;
-          }
-          
-          .artifacts-intro {
-            font-size: 0.8rem;
-            line-height: 1.6;
-          }
-          
-          .artifacts-grid {
+          .artifacts-cauldron {
             grid-template-columns: 1fr;
-            gap: 1.5rem;
+            gap: 2rem;
           }
           
-          .artifact-image {
-            width: 120px;
-            height: 120px;
-          }
-          
-          .artifact-info h2 {
-            font-size: 1.2rem;
-          }
-          
-          .artifact-features li {
-            font-size: 0.75rem;
-          }
-          
-          .marketplace-link {
-            font-size: 0.7rem;
-            padding: 0.8rem;
-          }
-          
-          .profit-sharing-explanation,
-          .artifacts-footer {
-            padding: 1.5rem;
-          }
-          
-          .section-title {
-            font-size: 1.3rem;
-          }
-          
-          .distribution-grid {
+          .enchantment-grid {
             grid-template-columns: 1fr;
           }
           
-          .obtain-methods {
+          .acquisition-methods {
             grid-template-columns: 1fr;
-            gap: 1.5rem;
-          }
-          
-          .pixel-footer {
-            padding: 1.5rem 1rem;
-            margin-top: 3rem;
-          }
-          
-          .pixel-footer-text {
-            font-size: 0.8rem;
-          }
-          
-          .pixel-footer-subtext {
-            font-size: 0.7rem;
-          }
-        }
-        
-        @media (max-width: 480px) {
-          .pixel-title {
-            font-size: 1.5rem;
-          }
-          
-          .artifacts-intro {
-            font-size: 0.7rem;
-          }
-          
-          .artifact-image {
-            width: 100px;
-            height: 100px;
-          }
-          
-          .profit-example h3 {
-            font-size: 1rem;
-          }
-          
-          .profit-list li,
-          .method-list li {
-            font-size: 0.75rem;
-          }
-          
-          .pixel-footer {
-            padding: 1rem;
-            margin-top: 2rem;
-          }
-          
-          .pixel-footer-text {
-            font-size: 0.7rem;
-          }
-          
-          .pixel-footer-subtext {
-            font-size: 0.6rem;
           }
         }
       `}</style>
