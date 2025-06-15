@@ -286,7 +286,20 @@ export default function InventoryPage() {
         </span>
       )
     }
-    if (cost.rareFinds) parts.push(`${cost.rareFinds} 🏺`)
+    if (cost.rareFinds) {
+      parts.push(
+        <span key="relics" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+          {cost.rareFinds}
+          <Image
+            src="/ancientrelic.png"
+            alt="Ancient Relics"
+            width={14}
+            height={14}
+            unoptimized
+          />
+        </span>
+      )
+    }
     
     return parts.length > 1 ? (
       <span>
@@ -386,7 +399,15 @@ export default function InventoryPage() {
           </div>
         </div>
         <div className="resource-item">
-          <div className="resource-icon">🏺</div>
+          <div className="resource-icon">
+            <Image
+              src="/ancientrelic.png"
+              alt="Ancient Relics"
+              width={40}
+              height={40}
+              unoptimized
+            />
+          </div>
           <div className="resource-info">
             <div className="resource-amount">{userStats.rareFinds}</div>
             <div className="resource-name">Ancient Relics</div>
