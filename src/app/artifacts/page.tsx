@@ -502,7 +502,6 @@ export default function ArtifactsPage() {
           position: relative;
           z-index: 2;
           filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
-          animation: core-levitate 3s ease-in-out infinite;
           transition: all 0.3s ease;
           border-radius: 10px;
         }
@@ -706,9 +705,9 @@ export default function ArtifactsPage() {
           bottom: 0;
           background: linear-gradient(
             135deg, 
-            rgba(16, 18, 56, 0.7) 0%, 
-            rgba(26, 26, 62, 0.6) 50%, 
-            rgba(16, 18, 56, 0.7) 100%
+            rgba(16, 18, 56, 0.2) 0%, 
+            rgba(26, 26, 62, 0.1) 50%, 
+            rgba(16, 18, 56, 0.2) 100%
           );
           z-index: 2;
           border-radius: 20px;
