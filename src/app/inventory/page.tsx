@@ -272,7 +272,20 @@ export default function InventoryPage() {
         </span>
       )
     }
-    if (cost.crystalShards) parts.push(`${cost.crystalShards} 💎`)
+    if (cost.crystalShards) {
+      parts.push(
+        <span key="shards" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+          {cost.crystalShards}
+          <Image
+            src="/shards.png"
+            alt="Crystal Shards"
+            width={14}
+            height={14}
+            unoptimized
+          />
+        </span>
+      )
+    }
     if (cost.rareFinds) parts.push(`${cost.rareFinds} 🏺`)
     
     return parts.length > 1 ? (
@@ -358,7 +371,15 @@ export default function InventoryPage() {
           </div>
         </div>
         <div className="resource-item">
-          <div className="resource-icon">💎</div>
+          <div className="resource-icon">
+            <Image
+              src="/shards.png"
+              alt="Crystal Shards"
+              width={40}
+              height={40}
+              unoptimized
+            />
+          </div>
           <div className="resource-info">
             <div className="resource-amount">{userStats.crystalShards}</div>
             <div className="resource-name">Crystal Shards</div>

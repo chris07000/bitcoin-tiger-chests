@@ -183,7 +183,17 @@ export default function MarketplacePage() {
       <div className="market-stats">
         <div className="stat-card">
           <div className="stat-label">Your Shards</div>
-          <div className="stat-value">{userStats.crystalShards} 💎</div>
+          <div className="stat-value">
+            {userStats.crystalShards}
+            <Image
+              src="/shards.png"
+              alt="Crystal Shards"
+              width={24}
+              height={24}
+              style={{ marginLeft: '8px', display: 'inline-block' }}
+              unoptimized
+            />
+          </div>
         </div>
         <div className="stat-card">
           <div className="stat-label">Your Balance</div>
@@ -264,7 +274,17 @@ export default function MarketplacePage() {
               {getSellOrders().map(order => (
                 <div key={order.id} className="order-item sell-order">
                   <div className="order-info">
-                    <div className="order-amount">{order.amount} 💎</div>
+                    <div className="order-amount">
+                      {order.amount}
+                      <Image
+                        src="/shards.png"
+                        alt="Crystal Shards"
+                        width={16}
+                        height={16}
+                        style={{ marginLeft: '4px', display: 'inline-block' }}
+                        unoptimized
+                      />
+                    </div>
                     <div className="order-price">{order.pricePerShard} sats/shard</div>
                     <div className="order-total">{order.totalSats.toLocaleString()} sats total</div>
                     <div className="order-time">{formatTimeAgo(order.timestamp)}</div>
@@ -288,7 +308,17 @@ export default function MarketplacePage() {
               {getBuyOrders().map(order => (
                 <div key={order.id} className="order-item buy-order">
                   <div className="order-info">
-                    <div className="order-amount">{order.amount} 💎</div>
+                    <div className="order-amount">
+                      {order.amount}
+                      <Image
+                        src="/shards.png"
+                        alt="Crystal Shards"
+                        width={16}
+                        height={16}
+                        style={{ marginLeft: '4px', display: 'inline-block' }}
+                        unoptimized
+                      />
+                    </div>
                     <div className="order-price">{order.pricePerShard} sats/shard</div>
                     <div className="order-total">{order.totalSats.toLocaleString()} sats total</div>
                     <div className="order-time">{formatTimeAgo(order.timestamp)}</div>
@@ -358,7 +388,16 @@ export default function MarketplacePage() {
                 <div className="trade-amounts">
                   <div className="amount-item">
                     <span className="label">Amount:</span>
-                    <span className="value">{selectedOrder.amount} 💎</span>
+                    <span className="value" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                      {selectedOrder.amount}
+                      <Image
+                        src="/shards.png"
+                        alt="Crystal Shards"
+                        width={16}
+                        height={16}
+                        unoptimized
+                      />
+                    </span>
                   </div>
                   <div className="amount-item">
                     <span className="label">Price per shard:</span>

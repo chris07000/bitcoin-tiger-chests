@@ -296,7 +296,19 @@ export default function MiningPage() {
                     />
                   </span>
                 )}
-                {userStats.crystalShards > 0 && <span className="badge shards">{userStats.crystalShards} 💎</span>}
+                {userStats.crystalShards > 0 && (
+                  <span className="badge shards">
+                    {userStats.crystalShards}
+                    <Image
+                      src="/shards.png"
+                      alt="Crystal Shards"
+                      width={12}
+                      height={12}
+                      style={{ marginLeft: '4px', display: 'inline-block' }}
+                      unoptimized
+                    />
+                  </span>
+                )}
                 {userStats.rareFinds > 0 && <span className="badge rare">{userStats.rareFinds} 🏺</span>}
               </div>
             )}
@@ -406,7 +418,15 @@ export default function MiningPage() {
             <div className="stat-label">Energy Points</div>
           </div>
           <div className="stat-item">
-            <div className="stat-icon">💎</div>
+            <div className="stat-icon">
+              <Image
+                src="/shards.png"
+                alt="Crystal Shards"
+                width={32}
+                height={32}
+                unoptimized
+              />
+            </div>
             <div className="stat-value">{userStats.crystalShards}</div>
             <div className="stat-label">Crystal Shards</div>
           </div>
