@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useLightning } from '@/context/LightningContext'
 import { useWallet } from '@/context/WalletContext'
 import Image from 'next/image'
+import Link from 'next/link'
 
 interface SpellResult {
   hash: string
@@ -11,6 +12,14 @@ interface SpellResult {
   reward: string
   type: 'nothing' | 'energy' | 'shards' | 'raffle' | 'sats' | 'rare'
   amount?: number
+}
+
+interface UserUpgrades {
+  cooldownReduction: number
+  rareChance: number
+  extraCasts: number
+  autoCollect: boolean
+  luckyStreak: number
 }
 
 export default function MiningPage() {
@@ -22,17 +31,27 @@ export default function MiningPage() {
   const [lastCast, setLastCast] = useState<Date | null>(null)
   const [spellResult, setSpellResult] = useState<SpellResult | null>(null)
   const [showResult, setShowResult] = useState(false)
+  const [castsToday, setCastsToday] = useState(0)
   const [userStats, setUserStats] = useState({
     totalCasts: 0,
     energyPoints: 0,
     crystalShards: 0,
     rareFinds: 0
   })
+  const [userUpgrades, setUserUpgrades] = useState<UserUpgrades>({
+    cooldownReduction: 0,
+    rareChance: 0,
+    extraCasts: 0,
+    autoCollect: false,
+    luckyStreak: 0
+  })
 
   useEffect(() => {
     if (walletAddress) {
       loadUserStats()
+      loadUserUpgrades()
       checkLastCast()
+      checkDailyReset()
     }
   }, [walletAddress])
 
@@ -44,10 +63,37 @@ export default function MiningPage() {
     }
   }
 
+  const loadUserUpgrades = () => {
+    if (!walletAddress) return
+    const stored = localStorage.getItem(`mining_upgrades_${walletAddress}`)
+    if (stored) {
+      setUserUpgrades(JSON.parse(stored))
+    }
+  }
+
   const saveUserStats = (newStats: typeof userStats) => {
     if (!walletAddress) return
     localStorage.setItem(`mining_stats_${walletAddress}`, JSON.stringify(newStats))
     setUserStats(newStats)
+  }
+
+  const checkDailyReset = () => {
+    if (!walletAddress) return
+    const today = new Date().toDateString()
+    const lastResetDate = localStorage.getItem(`last_reset_${walletAddress}`)
+    
+    if (lastResetDate !== today) {
+      // Reset daily casts
+      setCastsToday(0)
+      localStorage.setItem(`daily_casts_${walletAddress}`, '0')
+      localStorage.setItem(`last_reset_${walletAddress}`, today)
+    } else {
+      // Load current daily casts
+      const stored = localStorage.getItem(`daily_casts_${walletAddress}`)
+      if (stored) {
+        setCastsToday(parseInt(stored))
+      }
+    }
   }
 
   const checkLastCast = () => {
@@ -59,9 +105,11 @@ export default function MiningPage() {
       
       const now = new Date()
       const timeDiff = now.getTime() - lastCastDate.getTime()
+      const baseCooldownHours = 24
+      const actualCooldownHours = Math.max(1, baseCooldownHours - userUpgrades.cooldownReduction)
       const hoursDiff = timeDiff / (1000 * 3600)
       
-      if (hoursDiff < 24) {
+      if (hoursDiff < actualCooldownHours) {
         setCanCast(false)
       }
     }
@@ -85,17 +133,28 @@ export default function MiningPage() {
     const hash = generatePseudoHash()
     const lowerCase = lastFour.toLowerCase()
     
+    // Apply rare chance bonus from upgrades
+    const baseRareChance = 10 // Base 10% for rare patterns
+    const bonusRareChance = userUpgrades.rareChance
+    const totalRareChance = baseRareChance + bonusRareChance
+    const rareRoll = Math.random() * 100
+    
+    // Force rare if within bonus chance
+    const forceRare = rareRoll < totalRareChance
+    
     // Different patterns for different rewards
-    if (lowerCase.endsWith('7')) {
+    if (lowerCase.endsWith('7') && !forceRare) {
       return { hash, lastFour, reward: 'Nothing... The spirits are silent', type: 'nothing' }
     }
     
-    if (lowerCase.includes('33')) {
-      return { hash, lastFour, reward: '3 Energy Points', type: 'energy', amount: 3 }
+    if (lowerCase.includes('33') || forceRare) {
+      const amount = forceRare ? 5 : 3
+      return { hash, lastFour, reward: `${amount} Energy Points`, type: 'energy', amount }
     }
     
-    if (lowerCase.includes('69')) {
-      return { hash, lastFour, reward: '5 Crystal Shards', type: 'shards', amount: 5 }
+    if (lowerCase.includes('69') || forceRare) {
+      const amount = forceRare ? 8 : 5
+      return { hash, lastFour, reward: `${amount} Crystal Shards`, type: 'shards', amount }
     }
     
     if (lowerCase.includes('888')) {
@@ -103,18 +162,19 @@ export default function MiningPage() {
     }
     
     if (lowerCase.includes('ff') || lowerCase.includes('aa')) {
-      return { hash, lastFour, reward: '100 Free Sats!', type: 'sats', amount: 100 }
+      const amount = forceRare ? 150 : 100
+      return { hash, lastFour, reward: `${amount} Free Sats!`, type: 'sats', amount }
     }
     
-    if (lowerCase === 'dead' || lowerCase === 'beef') {
+    if (lowerCase === 'dead' || lowerCase === 'beef' || forceRare) {
       return { hash, lastFour, reward: 'RARE: Ancient Relic Fragment!', type: 'rare', amount: 1 }
     }
     
-    // Default small rewards
+    // Default small rewards with upgrade bonuses
     const randomRewards = [
-      { reward: '1 Energy Point', type: 'energy' as const, amount: 1 },
-      { reward: '2 Crystal Shards', type: 'shards' as const, amount: 2 },
-      { reward: '50 Sats', type: 'sats' as const, amount: 50 }
+      { reward: forceRare ? '3 Energy Points' : '1 Energy Point', type: 'energy' as const, amount: forceRare ? 3 : 1 },
+      { reward: forceRare ? '4 Crystal Shards' : '2 Crystal Shards', type: 'shards' as const, amount: forceRare ? 4 : 2 },
+      { reward: forceRare ? '75 Sats' : '50 Sats', type: 'sats' as const, amount: forceRare ? 75 : 50 }
     ]
     
     const selected = randomRewards[Math.floor(Math.random() * randomRewards.length)]
@@ -122,7 +182,9 @@ export default function MiningPage() {
   }
 
   const castSpell = async () => {
-    if (!canCast || !walletAddress || isCasting) return
+    const maxCastsPerDay = 1 + userUpgrades.extraCasts
+    
+    if (!canCast || !walletAddress || isCasting || castsToday >= maxCastsPerDay) return
     
     setIsCasting(true)
     
@@ -137,6 +199,11 @@ export default function MiningPage() {
       setShowResult(true)
       setIsCasting(false)
       setCanCast(false)
+      
+      // Update daily casts
+      const newCastsToday = castsToday + 1
+      setCastsToday(newCastsToday)
+      localStorage.setItem(`daily_casts_${walletAddress}`, newCastsToday.toString())
       
       // Update user stats
       const newStats = { ...userStats }
@@ -156,6 +223,14 @@ export default function MiningPage() {
       const now = new Date()
       setLastCast(now)
       localStorage.setItem(`last_cast_${walletAddress}`, now.toISOString())
+      
+      // Use cooldown reduction from upgrades
+      setTimeout(() => {
+        const maxCasts = 1 + userUpgrades.extraCasts
+        if (castsToday < maxCasts - 1) { // Allow more casts if player has extra casts
+          setCanCast(true)
+        }
+      }, 100)
     }, 2000)
   }
 
@@ -164,10 +239,15 @@ export default function MiningPage() {
     
     const now = new Date()
     const timeDiff = now.getTime() - lastCast.getTime()
-    const hoursLeft = 24 - (timeDiff / (1000 * 3600))
+    const baseCooldownHours = 24
+    const actualCooldownHours = Math.max(1, baseCooldownHours - userUpgrades.cooldownReduction)
+    const hoursLeft = actualCooldownHours - (timeDiff / (1000 * 3600))
     
     if (hoursLeft <= 0) {
-      setCanCast(true)
+      const maxCasts = 1 + userUpgrades.extraCasts
+      if (castsToday < maxCasts) {
+        setCanCast(true)
+      }
       return ''
     }
     
@@ -187,8 +267,18 @@ export default function MiningPage() {
     }
   }
 
+  const maxCastsPerDay = 1 + userUpgrades.extraCasts
+  const castsRemaining = maxCastsPerDay - castsToday
+
   return (
     <div className="mining-laboratory">
+      {/* Navigation Link */}
+      <div className="nav-link">
+        <Link href="/inventory" className="inventory-link">
+          🎒 Inventory & Shop
+        </Link>
+      </div>
+
       {/* Floating magical particles */}
       <div className="magical-particles">
         {Array.from({length: 15}).map((_, i) => (
@@ -202,7 +292,7 @@ export default function MiningPage() {
 
       {/* Clickable Laboratory Background */}
       <div 
-        className={`laboratory-chamber ${isCasting ? 'casting' : ''} ${!canCast ? 'disabled' : ''}`}
+        className={`laboratory-chamber ${isCasting ? 'casting' : ''} ${!canCast || castsRemaining <= 0 ? 'disabled' : ''}`}
         onClick={castSpell}
       >
         <Image
@@ -228,18 +318,37 @@ export default function MiningPage() {
         {/* Cast Button Overlay */}
         {!isCasting && (
           <div className="cast-overlay">
-            {canCast ? (
+            {canCast && castsRemaining > 0 ? (
               <div className="cast-button-container">
                 <div className="cast-button">
                   <div className="cast-icon">⚡</div>
-                  <div className="cast-text">Cast Daily Spell</div>
-                  <div className="cast-subtitle">Click the laboratory to cast!</div>
+                  <div className="cast-text">Cast Spell</div>
+                  <div className="cast-subtitle">
+                    {castsRemaining} cast{castsRemaining !== 1 ? 's' : ''} remaining today
+                  </div>
+                  {userUpgrades.rareChance > 0 && (
+                    <div className="bonus-text">+{userUpgrades.rareChance}% rare chance!</div>
+                  )}
                 </div>
               </div>
             ) : (
               <div className="cooldown-container">
-                <div className="cooldown-text">Spell on Cooldown</div>
-                <div className="cooldown-time">Next cast in: {getTimeUntilNextCast()}</div>
+                {castsRemaining <= 0 ? (
+                  <div>
+                    <div className="cooldown-text">Daily Limit Reached</div>
+                    <div className="cooldown-time">
+                      {maxCastsPerDay} cast{maxCastsPerDay !== 1 ? 's' : ''} used today
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <div className="cooldown-text">Spell on Cooldown</div>
+                    <div className="cooldown-time">Next cast in: {getTimeUntilNextCast()}</div>
+                    {userUpgrades.cooldownReduction > 0 && (
+                      <div className="bonus-text">-{userUpgrades.cooldownReduction}h cooldown reduction!</div>
+                    )}
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -271,6 +380,24 @@ export default function MiningPage() {
             <div className="stat-label">Total Casts</div>
           </div>
         </div>
+        
+        {/* Active Upgrades Display */}
+        {(userUpgrades.cooldownReduction > 0 || userUpgrades.rareChance > 0 || userUpgrades.extraCasts > 0) && (
+          <div className="upgrades-display">
+            <h3>🔮 Active Upgrades</h3>
+            <div className="upgrade-list">
+              {userUpgrades.cooldownReduction > 0 && (
+                <div className="upgrade-badge">⏰ -{userUpgrades.cooldownReduction}h cooldown</div>
+              )}
+              {userUpgrades.rareChance > 0 && (
+                <div className="upgrade-badge">🍀 +{userUpgrades.rareChance}% rare</div>
+              )}
+              {userUpgrades.extraCasts > 0 && (
+                <div className="upgrade-badge">⚡ +{userUpgrades.extraCasts} daily casts</div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Result Modal */}
@@ -310,6 +437,30 @@ export default function MiningPage() {
           background: linear-gradient(135deg, #0a0a2e 0%, #16213e 25%, #1a1a3e 50%, #0e0e2a 75%, #0a0618 100%);
           position: relative;
           overflow: hidden;
+        }
+
+        .nav-link {
+          position: fixed;
+          top: 2rem;
+          right: 2rem;
+          z-index: 10;
+        }
+
+        .inventory-link {
+          background: linear-gradient(45deg, rgba(157, 78, 221, 0.3), rgba(114, 9, 183, 0.3));
+          border: 2px solid rgba(157, 78, 221, 0.5);
+          border-radius: 12px;
+          padding: 1rem 1.5rem;
+          color: #e0aaff;
+          text-decoration: none;
+          font-weight: 600;
+          transition: all 0.3s ease;
+          display: block;
+        }
+
+        .inventory-link:hover {
+          background: linear-gradient(45deg, rgba(157, 78, 221, 0.5), rgba(114, 9, 183, 0.5));
+          transform: translateY(-2px);
         }
 
         .magical-particles {
@@ -484,6 +635,14 @@ export default function MiningPage() {
           font-size: 1rem;
           color: #c77dff;
           opacity: 0.8;
+          margin-bottom: 0.5rem;
+        }
+
+        .bonus-text {
+          font-size: 0.9rem;
+          color: #4afc4a;
+          font-weight: 600;
+          margin-top: 0.5rem;
         }
 
         .cooldown-container {
@@ -527,6 +686,7 @@ export default function MiningPage() {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
           gap: 1.5rem;
+          margin-bottom: 2rem;
         }
 
         .stat-item {
@@ -559,6 +719,36 @@ export default function MiningPage() {
           font-size: 0.9rem;
           color: #c77dff;
           opacity: 0.8;
+        }
+
+        .upgrades-display {
+          background: rgba(0, 0, 0, 0.3);
+          border-radius: 15px;
+          padding: 1.5rem;
+          border: 1px solid rgba(157, 78, 221, 0.2);
+        }
+
+        .upgrades-display h3 {
+          color: #c77dff;
+          margin-bottom: 1rem;
+          text-align: center;
+        }
+
+        .upgrade-list {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+          justify-content: center;
+        }
+
+        .upgrade-badge {
+          background: rgba(157, 78, 221, 0.3);
+          border: 1px solid rgba(157, 78, 221, 0.5);
+          border-radius: 8px;
+          padding: 0.5rem 1rem;
+          font-size: 0.9rem;
+          color: #e0aaff;
+          font-weight: 600;
         }
 
         .result-modal {
@@ -653,6 +843,16 @@ export default function MiningPage() {
         }
 
         @media (max-width: 768px) {
+          .nav-link {
+            top: 1rem;
+            right: 1rem;
+          }
+
+          .inventory-link {
+            padding: 0.8rem 1rem;
+            font-size: 0.9rem;
+          }
+
           .laboratory-chamber {
             margin: 1rem;
             height: 60vh;
