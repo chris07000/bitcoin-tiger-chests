@@ -302,8 +302,8 @@ export default function MiningPage() {
                     <Image
                       src="/shards.png"
                       alt="Crystal Shards"
-                      width={12}
-                      height={12}
+                      width={32}
+                      height={32}
                       style={{ marginLeft: '4px', display: 'inline-block' }}
                       unoptimized
                     />
@@ -315,8 +315,8 @@ export default function MiningPage() {
                     <Image
                       src="/ancientrelic.png"
                       alt="Ancient Relics"
-                      width={12}
-                      height={12}
+                      width={32}
+                      height={32}
                       style={{ marginLeft: '4px', display: 'inline-block' }}
                       unoptimized
                     />
@@ -361,8 +361,8 @@ export default function MiningPage() {
               <Image
                 src="/bolt.png"
                 alt="Energy"
-                width={24}
-                height={24}
+                width={32}
+                height={32}
                 unoptimized
               />
             </div>
@@ -377,8 +377,8 @@ export default function MiningPage() {
               <Image
                 src="/shards.png"
                 alt="Crystal Shards"
-                width={24}
-                height={24}
+                width={32}
+                height={32}
                 unoptimized
               />
             </div>
@@ -393,8 +393,8 @@ export default function MiningPage() {
               <Image
                 src="/ancientrelic.png"
                 alt="Ancient Relics"
-                width={24}
-                height={24}
+                width={32}
+                height={32}
                 unoptimized
               />
             </div>
@@ -737,7 +737,7 @@ export default function MiningPage() {
 
         .casting-text {
           color: #e0aaff;
-          font-size: 1.2rem;
+          font-size: 1.3rem;
           font-weight: 600;
           text-align: center;
         }
@@ -854,7 +854,7 @@ export default function MiningPage() {
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 1.5rem;
+          font-size: 2rem;
         }
 
         .stat-content {
