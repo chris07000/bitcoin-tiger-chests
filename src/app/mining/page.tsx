@@ -353,6 +353,65 @@ export default function MiningPage() {
           unoptimized
           priority
         />
+
+        {/* Stats Overlay - Left Side */}
+        <div className="stats-overlay">
+          <div className="stat-item-overlay">
+            <div className="stat-icon-small">
+              <Image
+                src="/bolt.png"
+                alt="Energy"
+                width={24}
+                height={24}
+                unoptimized
+              />
+            </div>
+            <div className="stat-content">
+              <div className="stat-value-small">{userStats.energyPoints}</div>
+              <div className="stat-label-small">Energy</div>
+            </div>
+          </div>
+          
+          <div className="stat-item-overlay">
+            <div className="stat-icon-small">
+              <Image
+                src="/shards.png"
+                alt="Crystal Shards"
+                width={24}
+                height={24}
+                unoptimized
+              />
+            </div>
+            <div className="stat-content">
+              <div className="stat-value-small">{userStats.crystalShards}</div>
+              <div className="stat-label-small">Shards</div>
+            </div>
+          </div>
+          
+          <div className="stat-item-overlay">
+            <div className="stat-icon-small">
+              <Image
+                src="/ancientrelic.png"
+                alt="Ancient Relics"
+                width={24}
+                height={24}
+                unoptimized
+              />
+            </div>
+            <div className="stat-content">
+              <div className="stat-value-small">{userStats.rareFinds}</div>
+              <div className="stat-label-small">Relics</div>
+            </div>
+          </div>
+          
+          <div className="stat-item-overlay">
+            <div className="stat-icon-small">🎯</div>
+            <div className="stat-content">
+              <div className="stat-value-small">{userStats.totalCasts}</div>
+              <div className="stat-label-small">Casts</div>
+            </div>
+          </div>
+        </div>
         
         {/* Casting Overlay */}
         {isCasting && (
@@ -412,84 +471,33 @@ export default function MiningPage() {
         )}
       </div>
 
-      {/* Stats Panel */}
-      <div className="stats-panel">
-        <h2 className="stats-title">🧙‍♂️ Mining Stats</h2>
-        <div className="stats-grid">
-          <div className="stat-item">
-            <div className="stat-icon">
-              <Image
-                src="/bolt.png"
-                alt="Energy"
-                width={32}
-                height={32}
-                unoptimized
-              />
-            </div>
-            <div className="stat-value">{userStats.energyPoints}</div>
-            <div className="stat-label">Energy Points</div>
-          </div>
-          <div className="stat-item">
-            <div className="stat-icon">
-              <Image
-                src="/shards.png"
-                alt="Crystal Shards"
-                width={32}
-                height={32}
-                unoptimized
-              />
-            </div>
-            <div className="stat-value">{userStats.crystalShards}</div>
-            <div className="stat-label">Crystal Shards</div>
-          </div>
-          <div className="stat-item">
-            <div className="stat-icon">
-              <Image
-                src="/ancientrelic.png"
-                alt="Ancient Relics"
-                width={32}
-                height={32}
-                unoptimized
-              />
-            </div>
-            <div className="stat-value">{userStats.rareFinds}</div>
-            <div className="stat-label">Rare Finds</div>
-          </div>
-          <div className="stat-item">
-            <div className="stat-icon">🎯</div>
-            <div className="stat-value">{userStats.totalCasts}</div>
-            <div className="stat-label">Total Casts</div>
+      {/* Active Upgrades Display */}
+      {(userUpgrades.cooldownReduction > 0 || userUpgrades.rareChance > 0 || userUpgrades.extraCasts > 0) && (
+        <div className="upgrades-panel">
+          <h3>🔮 Active Upgrades</h3>
+          <div className="upgrade-list">
+            {userUpgrades.cooldownReduction > 0 && (
+              <div className="upgrade-badge">⏰ -{userUpgrades.cooldownReduction}h cooldown</div>
+            )}
+            {userUpgrades.rareChance > 0 && (
+              <div className="upgrade-badge">🍀 +{userUpgrades.rareChance}% rare</div>
+            )}
+            {userUpgrades.extraCasts > 0 && (
+              <div className="upgrade-badge">
+                <Image
+                  src="/bolt.png"
+                  alt="Energy"
+                  width={14}
+                  height={14}
+                  style={{ marginRight: '4px', display: 'inline-block' }}
+                  unoptimized
+                />
+                +{userUpgrades.extraCasts} daily casts
+              </div>
+            )}
           </div>
         </div>
-        
-        {/* Active Upgrades Display */}
-        {(userUpgrades.cooldownReduction > 0 || userUpgrades.rareChance > 0 || userUpgrades.extraCasts > 0) && (
-          <div className="upgrades-display">
-            <h3>🔮 Active Upgrades</h3>
-            <div className="upgrade-list">
-              {userUpgrades.cooldownReduction > 0 && (
-                <div className="upgrade-badge">⏰ -{userUpgrades.cooldownReduction}h cooldown</div>
-              )}
-              {userUpgrades.rareChance > 0 && (
-                <div className="upgrade-badge">🍀 +{userUpgrades.rareChance}% rare</div>
-              )}
-              {userUpgrades.extraCasts > 0 && (
-                <div className="upgrade-badge">
-                  <Image
-                    src="/bolt.png"
-                    alt="Energy"
-                    width={14}
-                    height={14}
-                    style={{ marginRight: '4px', display: 'inline-block' }}
-                    unoptimized
-                  />
-                  +{userUpgrades.extraCasts} daily casts
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
+      )}
 
       {/* Result Modal */}
       {showResult && spellResult && (
@@ -812,7 +820,65 @@ export default function MiningPage() {
           font-weight: 600;
         }
 
-        .stats-panel {
+        .stats-overlay {
+          position: absolute;
+          top: 2rem;
+          left: 2rem;
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+          z-index: 4;
+          pointer-events: none;
+        }
+
+        .stat-item-overlay {
+          display: flex;
+          align-items: center;
+          gap: 0.8rem;
+          background: rgba(0, 0, 0, 0.7);
+          border-radius: 12px;
+          padding: 0.8rem 1.2rem;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          backdrop-filter: blur(10px);
+          transition: all 0.3s ease;
+        }
+
+        .stat-item-overlay:hover {
+          background: rgba(0, 0, 0, 0.8);
+          border-color: rgba(157, 78, 221, 0.5);
+          transform: translateX(5px);
+        }
+
+        .stat-icon-small {
+          flex-shrink: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.5rem;
+        }
+
+        .stat-content {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          min-width: 60px;
+        }
+
+        .stat-value-small {
+          font-size: 1.3rem;
+          font-weight: 700;
+          color: #e0aaff;
+          margin-bottom: 0.1rem;
+        }
+
+        .stat-label-small {
+          font-size: 0.75rem;
+          color: #c77dff;
+          opacity: 0.9;
+          font-weight: 500;
+        }
+
+        .upgrades-panel {
           background: linear-gradient(135deg, rgba(16, 18, 56, 0.9), rgba(26, 26, 62, 0.9));
           border-radius: 20px;
           padding: 2rem;
@@ -821,61 +887,7 @@ export default function MiningPage() {
           backdrop-filter: blur(15px);
         }
 
-        .stats-title {
-          font-size: 1.8rem;
-          color: #c77dff;
-          text-align: center;
-          margin-bottom: 2rem;
-          font-weight: 700;
-        }
-
-        .stats-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-          gap: 1.5rem;
-          margin-bottom: 2rem;
-        }
-
-        .stat-item {
-          background: rgba(0, 0, 0, 0.3);
-          border-radius: 15px;
-          padding: 1.5rem;
-          text-align: center;
-          border: 1px solid rgba(157, 78, 221, 0.2);
-          transition: all 0.3s ease;
-        }
-
-        .stat-item:hover {
-          border-color: rgba(157, 78, 221, 0.5);
-          transform: translateY(-5px);
-        }
-
-        .stat-icon {
-          font-size: 2rem;
-          margin-bottom: 0.5rem;
-        }
-
-        .stat-value {
-          font-size: 1.8rem;
-          font-weight: 700;
-          color: #e0aaff;
-          margin-bottom: 0.5rem;
-        }
-
-        .stat-label {
-          font-size: 0.9rem;
-          color: #c77dff;
-          opacity: 0.8;
-        }
-
-        .upgrades-display {
-          background: rgba(0, 0, 0, 0.3);
-          border-radius: 15px;
-          padding: 1.5rem;
-          border: 1px solid rgba(157, 78, 221, 0.2);
-        }
-
-        .upgrades-display h3 {
+        .upgrades-panel h3 {
           color: #c77dff;
           margin-bottom: 1rem;
           text-align: center;
@@ -1042,6 +1054,25 @@ export default function MiningPage() {
             min-height: 400px;
           }
 
+          .stats-overlay {
+            top: 1rem;
+            left: 1rem;
+            gap: 0.8rem;
+          }
+
+          .stat-item-overlay {
+            padding: 0.6rem 0.8rem;
+            gap: 0.6rem;
+          }
+
+          .stat-value-small {
+            font-size: 1.1rem;
+          }
+
+          .stat-label-small {
+            font-size: 0.7rem;
+          }
+
           .cast-icon {
             font-size: 3rem;
           }
@@ -1050,14 +1081,9 @@ export default function MiningPage() {
             font-size: 1.4rem;
           }
 
-          .stats-panel {
+          .upgrades-panel {
             margin: 1rem;
             padding: 1.5rem;
-          }
-
-          .stats-grid {
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
           }
 
           .result-content {
