@@ -105,31 +105,13 @@ const SHOP_ITEMS: ShopItem[] = [
   
   // Tiger Minting
   {
-    id: 'mint_common_tiger',
-    name: 'Common Tiger Mint',
-    description: 'Mint a new Common Tiger NFT',
+    id: 'mint_tiger',
+    name: 'Tiger Mint',
+    description: 'Mint a new Tiger NFT',
     icon: '🐅',
-    cost: { crystalShards: 100 },
-    category: 'tigers',
-    effect: 'Mints 1 Common Tiger NFT'
-  },
-  {
-    id: 'mint_rare_tiger',
-    name: 'Rare Tiger Mint',
-    description: 'Mint a new Rare Tiger NFT',
-    icon: '🐯',
-    cost: { crystalShards: 300 },
-    category: 'tigers',
-    effect: 'Mints 1 Rare Tiger NFT'
-  },
-  {
-    id: 'mint_legendary_tiger',
-    name: 'Legendary Tiger Mint',
-    description: 'Mint a new Legendary Tiger NFT',
-    icon: '🦁',
     cost: { crystalShards: 1000 },
     category: 'tigers',
-    effect: 'Mints 1 Legendary Tiger NFT'
+    effect: 'Mints 1 Tiger NFT'
   },
   
   // Rare Ancient Relic Items
@@ -257,9 +239,7 @@ export default function InventoryPage() {
       case 'auto_collect':
         newUpgrades.autoCollect = true
         break
-      case 'mint_common_tiger':
-      case 'mint_rare_tiger':
-      case 'mint_legendary_tiger':
+      case 'mint_tiger':
         // Tiger minting would be handled by backend
         alert(`Successfully minted ${selectedItem.name.split(' ')[0]} Tiger! Check your collection.`)
         break

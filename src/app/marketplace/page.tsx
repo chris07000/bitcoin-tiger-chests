@@ -315,7 +315,7 @@ export default function MarketplacePage() {
             <div className="promo-icon">🐅</div>
             <div className="promo-content">
               <h4>Mint Tigers</h4>
-              <p>100+ shards → Tiger NFTs</p>
+              <p>1000 shards → Tiger NFT</p>
             </div>
           </Link>
           
