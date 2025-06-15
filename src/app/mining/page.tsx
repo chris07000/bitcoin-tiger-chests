@@ -272,10 +272,23 @@ export default function MiningPage() {
 
   return (
     <div className="mining-laboratory">
-      {/* Navigation Link */}
-      <div className="nav-link">
-        <Link href="/inventory" className="inventory-link">
-          🎒 Inventory & Shop
+      {/* Prominent Inventory Navigation */}
+      <div className="nav-section">
+        <Link href="/inventory" className="inventory-cta">
+          <div className="cta-content">
+            <div className="cta-icon">🎒</div>
+            <div className="cta-text">
+              <div className="cta-title">Shop & Inventory</div>
+              <div className="cta-subtitle">Use your resources!</div>
+            </div>
+            {(userStats.energyPoints > 0 || userStats.crystalShards > 0 || userStats.rareFinds > 0) && (
+              <div className="resource-badges">
+                {userStats.energyPoints > 0 && <span className="badge energy">{userStats.energyPoints} ⚡</span>}
+                {userStats.crystalShards > 0 && <span className="badge shards">{userStats.crystalShards} 💎</span>}
+                {userStats.rareFinds > 0 && <span className="badge rare">{userStats.rareFinds} 🏺</span>}
+              </div>
+            )}
+          </div>
         </Link>
       </div>
 
@@ -421,12 +434,17 @@ export default function MiningPage() {
             >
               {spellResult.reward}
             </div>
-            <button 
-              className="result-close"
-              onClick={() => setShowResult(false)}
-            >
-              Continue Mining
-            </button>
+            <div className="result-actions">
+              <button 
+                className="result-close"
+                onClick={() => setShowResult(false)}
+              >
+                Continue Mining
+              </button>
+              <Link href="/inventory" className="result-shop">
+                🎒 Use Resources
+              </Link>
+            </div>
           </div>
         </div>
       )}
@@ -439,28 +457,84 @@ export default function MiningPage() {
           overflow: hidden;
         }
 
-        .nav-link {
+        .nav-section {
           position: fixed;
-          top: 2rem;
-          right: 2rem;
+          top: 1rem;
+          right: 1rem;
           z-index: 10;
         }
 
-        .inventory-link {
-          background: linear-gradient(45deg, rgba(157, 78, 221, 0.3), rgba(114, 9, 183, 0.3));
-          border: 2px solid rgba(157, 78, 221, 0.5);
-          border-radius: 12px;
-          padding: 1rem 1.5rem;
+        .inventory-cta {
+          background: linear-gradient(135deg, rgba(157, 78, 221, 0.2), rgba(114, 9, 183, 0.3));
+          border: 2px solid rgba(157, 78, 221, 0.6);
+          border-radius: 15px;
+          padding: 1rem;
           color: #e0aaff;
           text-decoration: none;
-          font-weight: 600;
-          transition: all 0.3s ease;
           display: block;
+          transition: all 0.3s ease;
+          backdrop-filter: blur(10px);
+          min-width: 200px;
         }
 
-        .inventory-link:hover {
-          background: linear-gradient(45deg, rgba(157, 78, 221, 0.5), rgba(114, 9, 183, 0.5));
-          transform: translateY(-2px);
+        .inventory-cta:hover {
+          background: linear-gradient(135deg, rgba(157, 78, 221, 0.4), rgba(114, 9, 183, 0.5));
+          border-color: rgba(157, 78, 221, 0.9);
+          transform: translateY(-3px) scale(1.02);
+          box-shadow: 0 10px 30px rgba(157, 78, 221, 0.3);
+        }
+
+        .cta-content {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+        }
+
+        .cta-icon {
+          font-size: 2rem;
+          filter: drop-shadow(0 0 10px rgba(157, 78, 221, 0.8));
+        }
+
+        .cta-title {
+          font-size: 1.1rem;
+          font-weight: 700;
+          margin-bottom: 0.2rem;
+        }
+
+        .cta-subtitle {
+          font-size: 0.8rem;
+          opacity: 0.8;
+          color: #c77dff;
+        }
+
+        .resource-badges {
+          display: flex;
+          flex-direction: column;
+          gap: 0.3rem;
+          margin-left: auto;
+        }
+
+        .badge {
+          font-size: 0.7rem;
+          padding: 0.2rem 0.5rem;
+          border-radius: 10px;
+          font-weight: 600;
+          text-align: center;
+        }
+
+        .badge.energy {
+          background: rgba(157, 78, 221, 0.3);
+          border: 1px solid rgba(157, 78, 221, 0.6);
+        }
+
+        .badge.shards {
+          background: rgba(76, 201, 240, 0.3);
+          border: 1px solid rgba(76, 201, 240, 0.6);
+        }
+
+        .badge.rare {
+          background: rgba(255, 215, 0, 0.3);
+          border: 1px solid rgba(255, 215, 0, 0.6);
         }
 
         .magical-particles {
@@ -825,16 +899,29 @@ export default function MiningPage() {
           border-radius: 12px;
         }
 
-        .result-close {
-          background: linear-gradient(45deg, rgba(157, 78, 221, 0.3), rgba(114, 9, 183, 0.3));
-          border: 2px solid rgba(157, 78, 221, 0.5);
+        .result-actions {
+          display: flex;
+          gap: 1rem;
+        }
+
+        .result-close, .result-shop {
+          flex: 1;
+          padding: 1rem 1.5rem;
           border-radius: 12px;
-          padding: 1rem 2rem;
-          color: #e0aaff;
           font-size: 1rem;
           font-weight: 600;
           cursor: pointer;
           transition: all 0.3s ease;
+          text-decoration: none;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .result-close {
+          background: linear-gradient(45deg, rgba(157, 78, 221, 0.3), rgba(114, 9, 183, 0.3));
+          border: 2px solid rgba(157, 78, 221, 0.5);
+          color: #e0aaff;
         }
 
         .result-close:hover {
@@ -842,15 +929,38 @@ export default function MiningPage() {
           transform: translateY(-2px);
         }
 
+        .result-shop {
+          background: linear-gradient(45deg, rgba(74, 252, 74, 0.3), rgba(34, 197, 34, 0.3));
+          border: 2px solid rgba(74, 252, 74, 0.5);
+          color: #4afc4a;
+        }
+
+        .result-shop:hover {
+          background: linear-gradient(45deg, rgba(74, 252, 74, 0.5), rgba(34, 197, 34, 0.5));
+          transform: translateY(-2px);
+        }
+
         @media (max-width: 768px) {
-          .nav-link {
-            top: 1rem;
-            right: 1rem;
+          .nav-section {
+            top: 0.5rem;
+            right: 0.5rem;
           }
 
-          .inventory-link {
-            padding: 0.8rem 1rem;
-            font-size: 0.9rem;
+          .inventory-cta {
+            padding: 0.8rem;
+            min-width: 160px;
+          }
+
+          .cta-icon {
+            font-size: 1.5rem;
+          }
+
+          .cta-title {
+            font-size: 1rem;
+          }
+
+          .cta-subtitle {
+            font-size: 0.7rem;
           }
 
           .laboratory-chamber {
@@ -879,6 +989,10 @@ export default function MiningPage() {
 
           .result-content {
             padding: 2rem;
+          }
+
+          .result-actions {
+            flex-direction: column;
           }
         }
       `}</style>

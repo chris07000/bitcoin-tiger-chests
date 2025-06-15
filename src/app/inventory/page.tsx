@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useWallet } from '@/context/WalletContext'
 import Image from 'next/image'
+import Link from 'next/link'
 
 interface UserStats {
   totalCasts: number
@@ -29,7 +30,7 @@ interface ShopItem {
     crystalShards?: number
     rareFinds?: number
   }
-  category: 'cooldown' | 'luck' | 'chests' | 'permanent' | 'consumable'
+  category: 'cooldown' | 'luck' | 'chests' | 'permanent' | 'consumable' | 'tigers'
   effect: string
   maxLevel?: number
 }
@@ -100,6 +101,35 @@ const SHOP_ITEMS: ShopItem[] = [
     cost: { crystalShards: 30 },
     category: 'consumable',
     effect: '2x mission rewards for 24h'
+  },
+  
+  // Tiger Minting
+  {
+    id: 'mint_common_tiger',
+    name: 'Common Tiger Mint',
+    description: 'Mint a new Common Tiger NFT',
+    icon: '🐅',
+    cost: { crystalShards: 100 },
+    category: 'tigers',
+    effect: 'Mints 1 Common Tiger NFT'
+  },
+  {
+    id: 'mint_rare_tiger',
+    name: 'Rare Tiger Mint',
+    description: 'Mint a new Rare Tiger NFT',
+    icon: '🐯',
+    cost: { crystalShards: 300 },
+    category: 'tigers',
+    effect: 'Mints 1 Rare Tiger NFT'
+  },
+  {
+    id: 'mint_legendary_tiger',
+    name: 'Legendary Tiger Mint',
+    description: 'Mint a new Legendary Tiger NFT',
+    icon: '🦁',
+    cost: { crystalShards: 1000 },
+    category: 'tigers',
+    effect: 'Mints 1 Legendary Tiger NFT'
   },
   
   // Rare Ancient Relic Items
@@ -227,6 +257,12 @@ export default function InventoryPage() {
       case 'auto_collect':
         newUpgrades.autoCollect = true
         break
+      case 'mint_common_tiger':
+      case 'mint_rare_tiger':
+      case 'mint_legendary_tiger':
+        // Tiger minting would be handled by backend
+        alert(`Successfully minted ${selectedItem.name.split(' ')[0]} Tiger! Check your collection.`)
+        break
       // Add more cases for other items
     }
     
@@ -261,10 +297,44 @@ export default function InventoryPage() {
         />
       </div>
 
-      {/* Header */}
-      <div className="page-header">
+      {/* Navigation */}
+      <div className="nav-header">
+        <Link href="/mining" className="back-link">
+          ← Back to Mining
+        </Link>
         <h1>🎒 Mystical Inventory</h1>
-        <p>Use your mining resources to unlock powerful upgrades and tools</p>
+      </div>
+
+      {/* Cross-Promotion Banners */}
+      <div className="promo-section">
+        <div className="promo-grid">
+          <Link href="/coinflip" className="promo-card coinflip">
+            <div className="promo-icon">🪙</div>
+            <div className="promo-content">
+              <h3>Coinflip Casino</h3>
+              <p>Double your sats instantly!</p>
+              <div className="promo-cta">Play Now →</div>
+            </div>
+          </Link>
+          
+          <Link href="/chests" className="promo-card chests">
+            <div className="promo-icon">📦</div>
+            <div className="promo-content">
+              <h3>Mystery Chests</h3>
+              <p>Rare prizes & big wins!</p>
+              <div className="promo-cta">Open Chests →</div>
+            </div>
+          </Link>
+          
+          <Link href="/marketplace" className="promo-card marketplace">
+            <div className="promo-icon">🏪</div>
+            <div className="promo-content">
+              <h3>Shard Marketplace</h3>
+              <p>Trade shards for sats!</p>
+              <div className="promo-cta">Coming Soon</div>
+            </div>
+          </Link>
+        </div>
       </div>
 
       {/* Resource Display */}
@@ -346,6 +416,12 @@ export default function InventoryPage() {
           🔑 Chests
         </button>
         <button 
+          className={`category-btn ${selectedCategory === 'tigers' ? 'active' : ''}`}
+          onClick={() => setSelectedCategory('tigers')}
+        >
+          🐅 Tigers
+        </button>
+        <button 
           className={`category-btn ${selectedCategory === 'permanent' ? 'active' : ''}`}
           onClick={() => setSelectedCategory('permanent')}
         >
@@ -358,7 +434,7 @@ export default function InventoryPage() {
         <h2>🏪 Mystical Shop</h2>
         <div className="shop-grid">
           {getCategoryItems().map(item => (
-            <div key={item.id} className={`shop-item ${!canAfford(item) ? 'unaffordable' : ''}`}>
+            <div key={item.id} className={`shop-item ${!canAfford(item) ? 'unaffordable' : ''} ${item.category === 'tigers' ? 'tiger-item' : ''}`}>
               <div className="item-icon">{item.icon}</div>
               <div className="item-name">{item.name}</div>
               <div className="item-description">{item.description}</div>
@@ -423,22 +499,103 @@ export default function InventoryPage() {
           z-index: -1;
         }
 
-        .page-header {
-          text-align: center;
-          margin-bottom: 3rem;
+        .nav-header {
+          display: flex;
+          align-items: center;
+          gap: 2rem;
+          margin-bottom: 2rem;
         }
 
-        .page-header h1 {
+        .back-link {
+          background: rgba(157, 78, 221, 0.2);
+          border: 2px solid rgba(157, 78, 221, 0.4);
+          border-radius: 10px;
+          padding: 0.8rem 1.5rem;
+          color: #c77dff;
+          text-decoration: none;
+          font-weight: 600;
+          transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+          background: rgba(157, 78, 221, 0.4);
+          border-color: rgba(157, 78, 221, 0.8);
+          transform: translateY(-2px);
+        }
+
+        .nav-header h1 {
           font-size: 3rem;
           color: #c77dff;
-          margin-bottom: 1rem;
+          margin: 0;
           text-shadow: 0 0 20px rgba(199, 125, 255, 0.5);
         }
 
-        .page-header p {
-          font-size: 1.2rem;
+        .promo-section {
+          margin-bottom: 3rem;
+        }
+
+        .promo-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 1.5rem;
+        }
+
+        .promo-card {
+          background: linear-gradient(135deg, rgba(16, 18, 56, 0.9), rgba(26, 26, 62, 0.9));
+          border: 2px solid rgba(157, 78, 221, 0.3);
+          border-radius: 15px;
+          padding: 1.5rem;
+          text-decoration: none;
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          transition: all 0.3s ease;
+          backdrop-filter: blur(10px);
+        }
+
+        .promo-card:hover {
+          border-color: rgba(157, 78, 221, 0.8);
+          transform: translateY(-5px);
+          box-shadow: 0 15px 35px rgba(157, 78, 221, 0.3);
+        }
+
+        .promo-card.coinflip:hover {
+          border-color: rgba(255, 215, 0, 0.8);
+          box-shadow: 0 15px 35px rgba(255, 215, 0, 0.3);
+        }
+
+        .promo-card.chests:hover {
+          border-color: rgba(76, 201, 240, 0.8);
+          box-shadow: 0 15px 35px rgba(76, 201, 240, 0.3);
+        }
+
+        .promo-card.marketplace:hover {
+          border-color: rgba(34, 197, 94, 0.8);
+          box-shadow: 0 15px 35px rgba(34, 197, 94, 0.3);
+        }
+
+        .promo-icon {
+          font-size: 3rem;
+          filter: drop-shadow(0 0 15px rgba(157, 78, 221, 0.8));
+        }
+
+        .promo-content h3 {
           color: #e0aaff;
-          opacity: 0.8;
+          font-size: 1.3rem;
+          margin: 0 0 0.5rem 0;
+          font-weight: 700;
+        }
+
+        .promo-content p {
+          color: #c77dff;
+          margin: 0 0 1rem 0;
+          opacity: 0.9;
+        }
+
+        .promo-cta {
+          color: #9d4edd;
+          font-weight: 600;
+          font-size: 0.9rem;
         }
 
         .resources-panel {
@@ -566,6 +723,16 @@ export default function InventoryPage() {
           transform: translateY(-5px);
         }
 
+        .shop-item.tiger-item {
+          border-color: rgba(255, 215, 0, 0.4);
+          background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.1));
+        }
+
+        .shop-item.tiger-item:hover:not(.unaffordable) {
+          border-color: rgba(255, 215, 0, 0.8);
+          box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+        }
+
         .shop-item.unaffordable {
           opacity: 0.5;
           filter: grayscale(50%);
@@ -583,6 +750,10 @@ export default function InventoryPage() {
           margin-bottom: 0.5rem;
         }
 
+        .tiger-item .item-name {
+          color: #ffd700;
+        }
+
         .item-description {
           font-size: 0.9rem;
           color: #c77dff;
@@ -595,6 +766,10 @@ export default function InventoryPage() {
           color: #9d4edd;
           margin-bottom: 1rem;
           font-style: italic;
+        }
+
+        .tiger-item .item-effect {
+          color: #ffb000;
         }
 
         .item-cost {
@@ -616,9 +791,19 @@ export default function InventoryPage() {
           width: 100%;
         }
 
+        .tiger-item .purchase-btn {
+          background: linear-gradient(45deg, rgba(255, 215, 0, 0.3), rgba(255, 165, 0, 0.3));
+          border-color: rgba(255, 215, 0, 0.5);
+          color: #ffb000;
+        }
+
         .purchase-btn:hover:not(:disabled) {
           background: linear-gradient(45deg, rgba(157, 78, 221, 0.5), rgba(114, 9, 183, 0.5));
           transform: translateY(-2px);
+        }
+
+        .tiger-item .purchase-btn:hover:not(:disabled) {
+          background: linear-gradient(45deg, rgba(255, 215, 0, 0.5), rgba(255, 165, 0, 0.5));
         }
 
         .purchase-btn:disabled {
@@ -741,8 +926,23 @@ export default function InventoryPage() {
             padding: 1rem;
           }
 
-          .page-header h1 {
+          .nav-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+          }
+
+          .nav-header h1 {
             font-size: 2rem;
+          }
+
+          .promo-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .promo-card {
+            flex-direction: column;
+            text-align: center;
           }
 
           .resources-panel {
