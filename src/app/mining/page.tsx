@@ -459,7 +459,7 @@ export default function MiningPage() {
 
         .nav-section {
           position: fixed;
-          top: 1rem;
+          top: 8rem;
           right: 1rem;
           z-index: 10;
         }
