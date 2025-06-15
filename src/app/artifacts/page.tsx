@@ -33,7 +33,17 @@ export default function ArtifactsPage() {
             <div className="rune-circle">
               <div className="mystical-artifact">
                 <div className="artifact-essence legendary-essence"></div>
-                <div className="artifact-core">💎</div>
+                <div className="artifact-core">
+                  <Image 
+                    src="/artifacts/gold.png"
+                    alt="Legendary Philosopher's Stone"
+                    width={80}
+                    height={80}
+                    className="artifact-image"
+                    unoptimized
+                    priority
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -58,7 +68,17 @@ export default function ArtifactsPage() {
             <div className="rune-circle">
               <div className="mystical-artifact">
                 <div className="artifact-essence rare-essence"></div>
-                <div className="artifact-core">🌟</div>
+                <div className="artifact-core">
+                  <Image 
+                    src="/artifacts/silver.png"
+                    alt="Rare Crystal of Power"
+                    width={80}
+                    height={80}
+                    className="artifact-image"
+                    unoptimized
+                    priority
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -83,7 +103,17 @@ export default function ArtifactsPage() {
             <div className="rune-circle">
               <div className="mystical-artifact">
                 <div className="artifact-essence common-essence"></div>
-                <div className="artifact-core">🌕</div>
+                <div className="artifact-core">
+                  <Image 
+                    src="/artifacts/bronze.png"
+                    alt="Mystic Moonstone Shard"
+                    width={80}
+                    height={80}
+                    className="artifact-image"
+                    unoptimized
+                    priority
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -465,6 +495,37 @@ export default function ArtifactsPage() {
           position: relative;
           filter: drop-shadow(0 0 15px currentColor);
           animation: core-levitate 3s ease-in-out infinite;
+        }
+
+        .artifact-image {
+          position: relative;
+          z-index: 2;
+          filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
+          animation: core-levitate 3s ease-in-out infinite;
+          transition: all 0.3s ease;
+          border-radius: 10px;
+        }
+
+        .legendary .artifact-image {
+          filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.9)) 
+                  drop-shadow(0 0 40px rgba(255, 140, 0, 0.6));
+        }
+
+        .rare .artifact-image {
+          filter: drop-shadow(0 0 25px rgba(157, 78, 221, 0.9)) 
+                  drop-shadow(0 0 40px rgba(199, 125, 255, 0.6));
+        }
+
+        .common .artifact-image {
+          filter: drop-shadow(0 0 25px rgba(76, 201, 240, 0.9)) 
+                  drop-shadow(0 0 40px rgba(114, 9, 183, 0.6));
+        }
+
+        .artifact-vessel:hover .artifact-image {
+          transform: scale(1.1);
+          filter: drop-shadow(0 0 30px currentColor) 
+                  drop-shadow(0 0 50px currentColor) 
+                  brightness(1.2);
         }
 
         @keyframes core-levitate {
