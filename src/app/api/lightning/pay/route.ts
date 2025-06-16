@@ -88,7 +88,6 @@ export async function POST(request: Request) {
           },
           body: JSON.stringify({
             payment_request: invoice,
-            timeout_seconds: 60,
             fee_limit: {
               fixed: Math.max(1, Math.floor(withdrawAmount * 0.01)) // 1% fee limit, minimum 1 sat
             }
