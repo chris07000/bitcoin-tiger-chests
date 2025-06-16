@@ -106,6 +106,9 @@ export default function BitcoinPrice() {
       const price = parseFloat(data.data.amount);
       setBtcPrice(price);
       setSatsPerUSD(Math.round(100000000 / price));
+      
+      // Save BTC price to localStorage for use in other components
+      localStorage.setItem('btcPrice', price.toString());
     } catch (error) {
       console.error('Error fetching Bitcoin price:', error);
     }
