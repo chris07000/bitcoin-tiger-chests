@@ -1435,6 +1435,193 @@ export default function RafflePage() {
             padding: 0 1.5rem 1.5rem;
           }
         }
+
+        /* Hot Raffles Table Section */
+        .hot-raffles-section {
+          max-width: 1400px;
+          margin: 0 auto 4rem;
+          background: rgba(255, 255, 255, 0.02);
+          border: 1px solid rgba(255, 255, 255, 0.06);
+          border-radius: 20px;
+          overflow: hidden;
+          backdrop-filter: blur(20px);
+        }
+
+        .hot-raffles-header {
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+          padding: 1.5rem 2rem;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+
+        .hot-raffles-title {
+          font-size: 1.5rem;
+          font-weight: 800;
+          color: #FFFFFF;
+          margin: 0;
+          letter-spacing: 0.5px;
+        }
+
+        .hot-raffles-tagline {
+          font-size: 0.9rem;
+          color: rgba(255, 255, 255, 0.9);
+          font-weight: 500;
+          letter-spacing: 0.5px;
+        }
+
+        .hot-raffles-table {
+          width: 100%;
+          border-collapse: collapse;
+          background: transparent;
+        }
+
+        .table-header {
+          background: rgba(255, 255, 255, 0.03);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .table-header th {
+          padding: 1rem 1.5rem;
+          text-align: left;
+          font-size: 0.8rem;
+          font-weight: 700;
+          color: #94A3B8;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .table-header th:last-child {
+          border-right: none;
+        }
+
+        .table-row {
+          border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .table-row:hover {
+          background: rgba(255, 107, 0, 0.02);
+        }
+
+        .table-row:last-child {
+          border-bottom: none;
+        }
+
+        .table-cell {
+          padding: 1.25rem 1.5rem;
+          font-size: 0.9rem;
+          color: #FFFFFF;
+          border-right: 1px solid rgba(255, 255, 255, 0.05);
+          vertical-align: middle;
+        }
+
+        .table-cell:last-child {
+          border-right: none;
+        }
+
+        .rank-cell {
+          font-weight: 800;
+          color: #FF6B00;
+          font-size: 1rem;
+        }
+
+        .raffle-info-cell {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+        }
+
+        .raffle-avatar {
+          width: 32px;
+          height: 32px;
+          border-radius: 8px;
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 0.8rem;
+          font-weight: 700;
+          color: #FFFFFF;
+        }
+
+        .raffle-id {
+          font-family: 'Courier New', monospace;
+          color: #94A3B8;
+          font-size: 0.85rem;
+        }
+
+        .status-indicator {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.25rem 0.75rem;
+          border-radius: 12px;
+          font-size: 0.75rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .status-active {
+          background: rgba(34, 197, 94, 0.15);
+          color: #22C55E;
+          border: 1px solid rgba(34, 197, 94, 0.25);
+        }
+
+        .tickets-sold {
+          font-weight: 700;
+          color: #FF6B00;
+        }
+
+        .price-cell {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-weight: 600;
+        }
+
+        .price-icon {
+          font-size: 0.9rem;
+        }
+
+        .value-cell {
+          font-weight: 700;
+          color: #22C55E;
+        }
+
+        .countdown-cell {
+          font-family: 'Courier New', monospace;
+          font-weight: 600;
+          color: #FFB800;
+        }
+
+        /* Section Divider */
+        .section-divider {
+          max-width: 1400px;
+          margin: 4rem auto;
+          text-align: center;
+        }
+
+        .divider-line {
+          height: 1px;
+          background: linear-gradient(90deg, transparent, rgba(255, 107, 0, 0.3), transparent);
+          margin: 2rem 0;
+        }
+
+        .ending-soon-title {
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: #FFFFFF;
+          margin-bottom: 0.5rem;
+          letter-spacing: -0.01em;
+        }
+
+        .ending-soon-subtitle {
+          color: #94A3B8;
+          font-size: 1rem;
+        }
       `}</style>
 
       <div className="page-content">
@@ -1487,6 +1674,132 @@ export default function RafflePage() {
         </div>
         
         {message && <div className="message">{message}</div>}
+        
+        {/* Hot Raffles Section */}
+        <div className="hot-raffles-section">
+          <div className="hot-raffles-header">
+            <h2 className="hot-raffles-title">HOT RAFFLES</h2>
+            <div className="hot-raffles-tagline">PEER TO PEER, LUCK TO LUCK.</div>
+          </div>
+          
+          {loading ? (
+            <div className="loading-state">
+              <div className="loading-spinner"></div>
+              <div>Loading hot raffles...</div>
+            </div>
+          ) : filteredRaffles.length === 0 ? (
+            <div className="empty-state">
+              <div className="empty-icon">🔥</div>
+              <div className="empty-title">No hot raffles</div>
+              <div className="empty-description">
+                Check back soon for exciting new raffles!
+              </div>
+            </div>
+          ) : (
+            <table className="hot-raffles-table">
+              <thead className="table-header">
+                <tr>
+                  <th>RANK</th>
+                  <th>RAFFLE</th>
+                  <th>RAFFLE ID</th>
+                  <th>STATUS</th>
+                  <th>TICKETS SOLD</th>
+                  <th>TICKET PRICE</th>
+                  <th>VALUE</th>
+                  <th>FINISHES IN</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredRaffles.slice(0, 5).map((raffle, index) => {
+                  const isActive = new Date(raffle.endsAt) > new Date() && !raffle.winner
+                  const progressPercentage = (raffle.soldTickets / raffle.totalTickets) * 100
+                  const estimatedValue = raffle.ticketPrice * raffle.totalTickets
+                  
+                  return (
+                    <tr key={raffle.id} className="table-row">
+                      <td className="table-cell rank-cell">
+                        #{index + 1}
+                      </td>
+                      
+                      <td className="table-cell">
+                        <div className="raffle-info-cell">
+                          <div className="raffle-avatar">
+                            {raffle.name.charAt(0).toUpperCase()}
+                          </div>
+                          <div>
+                            <div style={{ fontWeight: 600, marginBottom: '0.25rem' }}>
+                              {raffle.name.length > 20 ? `${raffle.name.slice(0, 20)}...` : raffle.name}
+                            </div>
+                            <div style={{ fontSize: '0.8rem', color: '#94A3B8' }}>
+                              {progressPercentage.toFixed(0)}% sold
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      
+                      <td className="table-cell">
+                        <div className="raffle-id">#{raffle.id}</div>
+                      </td>
+                      
+                      <td className="table-cell">
+                        <div className={`status-indicator ${isActive ? 'status-active' : 'status-ended'}`}>
+                          <div style={{ 
+                            width: '6px', 
+                            height: '6px', 
+                            borderRadius: '50%', 
+                            backgroundColor: isActive ? '#22C55E' : '#EF4444' 
+                          }}></div>
+                          {isActive ? 'LIVE' : 'ENDED'}
+                        </div>
+                      </td>
+                      
+                      <td className="table-cell">
+                        <div className="tickets-sold">
+                          {raffle.soldTickets}
+                        </div>
+                      </td>
+                      
+                      <td className="table-cell">
+                        <div className="price-cell">
+                          {raffle.isFree ? (
+                            <>
+                              <span className="price-icon">🐅</span>
+                              <span>{raffle.pointCost}</span>
+                            </>
+                          ) : (
+                            <>
+                              <span className="price-icon">⚡</span>
+                              <span>{raffle.ticketPrice.toLocaleString()}</span>
+                            </>
+                          )}
+                        </div>
+                      </td>
+                      
+                      <td className="table-cell">
+                        <div className="value-cell">
+                          ${raffle.isFree ? (raffle.pointCost * raffle.totalTickets * 0.01).toFixed(2) : (estimatedValue * 0.00005).toFixed(2)}
+                        </div>
+                      </td>
+                      
+                      <td className="table-cell">
+                        <div className="countdown-cell">
+                          {isActive ? formatTimeLeft(raffle.endsAt) : 'ENDED'}
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          )}
+        </div>
+
+        {/* Section Divider */}
+        <div className="section-divider">
+          <div className="divider-line"></div>
+          <h2 className="ending-soon-title">ENDING SOON</h2>
+          <div className="ending-soon-subtitle">Discover Almost Over Raffles</div>
+        </div>
         
         {/* Controls Section */}
         <div className="controls-section">
@@ -1630,7 +1943,6 @@ export default function RafflePage() {
                       width={320} 
                       height={200} 
                       className="raffle-image"
-                      style={{ imageRendering: 'pixelated' }}
                     />
                   </div>
                   
