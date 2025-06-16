@@ -50,6 +50,9 @@ export default function RafflePage() {
   const [userPoints, setUserPoints] = useState<number>(0)
   const [refreshingPoints, setRefreshingPoints] = useState(false)
 
+  // BTC Price for USD conversion  
+  const [btcPrice, setBtcPrice] = useState<number>(60000) // Default $60k, can be updated from API
+
   useEffect(() => {
     // Use wallet address from LightningContext or localStorage as fallback
     const storedWallet = contextWalletAddress || localStorage.getItem('walletAddress')
@@ -1716,12 +1719,16 @@ export default function RafflePage() {
                   const estimatedValue = raffle.ticketPrice * raffle.totalTickets
                   
                   // Calculate realistic Tiger NFT value based on $300 floor price
-                  const getTigerValue = (raffleName: string) => {
-                    // Base floor price for Tigers is $300
-                    const baseValue = 300
-                    // Add some variation based on rarity/name
-                    const rarityMultiplier = 1 + (Math.abs(raffleName.length * 7) % 100) / 200 // 1.0 to 1.5x
-                    return (baseValue * rarityMultiplier).toFixed(0)
+                  const getTigerValue = () => {
+                    // Fixed floor price for all Tigers is $300
+                    return "300"
+                  }
+
+                  // Convert sats to USD
+                  const satsToDollars = (sats: number) => {
+                    const btcAmount = sats / 100000000 // Convert sats to BTC
+                    const usdAmount = btcAmount * btcPrice
+                    return usdAmount.toFixed(2)
                   }
                   
                   return (
@@ -1776,17 +1783,22 @@ export default function RafflePage() {
                               <span>{raffle.pointCost}</span>
                             </>
                           ) : (
-                            <>
-                              <span className="price-icon">⚡</span>
-                              <span>{raffle.ticketPrice.toLocaleString()}</span>
-                            </>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '0.25rem' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                <span className="price-icon">⚡</span>
+                                <span>{raffle.ticketPrice.toLocaleString()}</span>
+                              </div>
+                              <div style={{ fontSize: '0.75rem', color: '#94A3B8', marginLeft: '1.25rem' }}>
+                                ${satsToDollars(raffle.ticketPrice)}
+                              </div>
+                            </div>
                           )}
                         </div>
                       </td>
                       
                       <td className="table-cell">
                         <div className="value-cell">
-                          ${raffle.isFree ? getTigerValue(raffle.name) : getTigerValue(raffle.name)}
+                          ${raffle.isFree ? getTigerValue() : getTigerValue()}
                         </div>
                       </td>
                       
