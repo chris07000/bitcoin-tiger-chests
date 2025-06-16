@@ -586,100 +586,113 @@ export default function RafflePage() {
         body {
           margin: 0;
           padding: 0;
-          background: #0d1320;
+          background: #0A0A0B;
+          color: #FFFFFF;
+          font-family: 'Inter', sans-serif;
         }
         
         .page-content {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
           min-height: 100vh;
-          width: 100%;
-          padding: 5rem 0 2rem 0;
-          color: #fff;
-          background: #0d1320;
+          background: linear-gradient(135deg, #0A0A0B 0%, #1A1A1B 100%);
+          color: #FFFFFF;
+          padding: 2rem 1rem;
+        }
+
+        .hero-section {
+          text-align: center;
+          margin-bottom: 3rem;
         }
 
         .title {
-          font-size: 2rem;
-          font-family: 'Press Start 2P', monospace;
-          color: #ffd700;
-          margin-bottom: 1.5rem;
-          text-align: center;
-          text-shadow: 2px 2px #000;
+          font-size: 3rem;
+          font-weight: 700;
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          margin-bottom: 1rem;
+          letter-spacing: -0.02em;
         }
         
         .subtitle {
-          font-size: 1rem;
-          font-family: 'Press Start 2P', monospace;
-          color: #ccc;
+          font-size: 1.1rem;
+          color: #A0A0A0;
           margin-bottom: 2rem;
-          text-align: center;
-          max-width: 800px;
+          max-width: 600px;
+          margin-left: auto;
+          margin-right: auto;
           line-height: 1.6;
         }
+
+        .stats-bar {
+          display: flex;
+          justify-content: center;
+          gap: 2rem;
+          margin-bottom: 3rem;
+          flex-wrap: wrap;
+        }
         
-        .balance-display {
-          font-size: 1.1rem;
-          color: #ffd700;
-          margin: 0 0 1.5rem 0;
-          padding: 0.8rem 1.5rem;
-          background: rgba(0, 0, 0, 0.4);
-          border: 2px solid #ffd700;
-          display: inline-flex;
+        .stat-card {
+          background: rgba(255, 107, 0, 0.05);
+          border: 1px solid rgba(255, 107, 0, 0.2);
+          border-radius: 12px;
+          padding: 1rem 1.5rem;
+          display: flex;
           align-items: center;
-          border-radius: 8px;
-          text-align: center;
-          box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
-          font-family: 'Press Start 2P', monospace;
+          gap: 0.75rem;
+          min-width: 200px;
           transition: all 0.3s ease;
         }
         
-        .balance-display:hover {
-          box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
-          transform: translateY(-2px);
+        .stat-card:hover {
+          border-color: rgba(255, 107, 0, 0.4);
+          background: rgba(255, 107, 0, 0.08);
         }
         
-        .balance-value {
-          font-weight: bold;
-          color: #ffd700;
+        .stat-icon {
+          font-size: 1.5rem;
         }
         
-        .balance-sats {
-          font-size: 0.9rem;
-          margin-left: 4px;
+        .stat-content {
+          display: flex;
+          flex-direction: column;
+        }
+        
+        .stat-label {
+          font-size: 0.85rem;
+          color: #A0A0A0;
+          margin-bottom: 0.25rem;
+        }
+        
+        .stat-value {
+          font-size: 1.1rem;
+          font-weight: 600;
+          color: #FF6B00;
         }
         
         .refresh-button {
-          background: rgba(255, 215, 0, 0.2);
-          color: #ffd700;
-          border: none;
-          width: 24px;
-          height: 24px;
-          border-radius: 50%;
-          margin-left: 10px;
-          font-size: 0.8rem;
+          background: rgba(255, 107, 0, 0.1);
+          border: 1px solid rgba(255, 107, 0, 0.3);
+          border-radius: 6px;
+          color: #FF6B00;
+          width: 32px;
+          height: 32px;
           display: flex;
           align-items: center;
           justify-content: center;
           cursor: pointer;
-          transition: all 0.2s;
+          transition: all 0.2s ease;
+          margin-left: auto;
         }
         
         .refresh-button:hover:not(:disabled) {
-          background: rgba(255, 215, 0, 0.4);
-          transform: rotate(180deg);
+          background: rgba(255, 107, 0, 0.2);
+          border-color: rgba(255, 107, 0, 0.5);
         }
         
         .refresh-button:disabled {
           opacity: 0.5;
           cursor: not-allowed;
-        }
-        
-        .refresh-icon {
-          display: inline-block;
-          transition: transform 0.3s ease;
         }
         
         .rotating {
@@ -690,315 +703,585 @@ export default function RafflePage() {
           from { transform: rotate(0deg); }
           to { transform: rotate(360deg); }
         }
-        
+
         .message {
-          font-size: 1rem;
-          font-family: 'Press Start 2P', monospace;
-          padding: 0.5rem 1rem;
-          margin: 0.5rem auto 1.5rem;
-          display: inline-block;
-          text-shadow: 1px 1px #000;
-          color: #4afc4a;
-          background: rgba(0, 0, 0, 0.3);
-          border-radius: 4px;
+          background: rgba(34, 197, 94, 0.1);
+          border: 1px solid rgba(34, 197, 94, 0.3);
+          border-radius: 8px;
+          padding: 0.75rem 1rem;
+          margin: 0 auto 2rem;
+          color: #22C55E;
           text-align: center;
+          max-width: 500px;
+          font-size: 0.9rem;
+        }
+
+        .controls-section {
+          max-width: 1400px;
+          margin: 0 auto 2rem;
+        }
+
+        .section-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 1.5rem;
+          flex-wrap: wrap;
+          gap: 1rem;
+        }
+
+        .section-title {
+          font-size: 1.5rem;
+          font-weight: 600;
+          color: #FFFFFF;
+        }
+
+        .filter-tabs {
+          display: flex;
+          gap: 0.5rem;
+          background: rgba(255, 255, 255, 0.05);
+          border-radius: 10px;
+          padding: 0.25rem;
         }
         
-        .raffles-container {
+        .filter-tab {
+          background: transparent;
+          border: none;
+          color: #A0A0A0;
+          padding: 0.5rem 1rem;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          font-size: 0.9rem;
+          font-weight: 500;
+        }
+        
+        .filter-tab:hover {
+          color: #FFFFFF;
+          background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .filter-tab.active {
+          background: #FF6B00;
+          color: #FFFFFF;
+        }
+
+        .sort-dropdown {
+          position: relative;
+        }
+        
+        .sort-button {
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 8px;
+          color: #FFFFFF;
+          padding: 0.5rem 1rem;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-size: 0.9rem;
+          transition: all 0.2s ease;
+        }
+        
+        .sort-button:hover {
+          border-color: rgba(255, 107, 0, 0.3);
+          background: rgba(255, 107, 0, 0.05);
+        }
+
+        .raffles-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-          gap: 1rem;
-          width: 100%;
+          grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+          gap: 1.5rem;
           max-width: 1400px;
-          margin-bottom: 2rem;
+          margin: 0 auto;
         }
         
         .raffle-card {
-          background: rgba(0, 0, 0, 0.5);
-          border: 2px solid rgba(255, 215, 0, 0.3);
-          border-radius: 8px;
-          padding: 0.6rem;
-          display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
+          background: rgba(255, 255, 255, 0.02);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          border-radius: 16px;
+          overflow: hidden;
           transition: all 0.3s ease;
           position: relative;
-          overflow: hidden;
-          height: 100%;
+          backdrop-filter: blur(10px);
         }
         
         .raffle-card:hover {
-          transform: translateY(-5px);
-          border-color: rgba(255, 215, 0, 0.8);
-          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+          transform: translateY(-4px);
+          border-color: rgba(255, 107, 0, 0.3);
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
-        
-        .raffle-card.selected {
-          border-color: #ffd700;
-          background: rgba(25, 25, 25, 0.5);
-        }
-        
+
         .raffle-image-container {
+          position: relative;
+          width: 100%;
+          height: 200px;
+          background: linear-gradient(135deg, rgba(255, 107, 0, 0.05) 0%, rgba(255, 184, 0, 0.05) 100%);
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 100%;
-          background: rgba(0, 0, 0, 0.3);
-          border-radius: 8px;
           overflow: hidden;
-          position: relative;
-          aspect-ratio: 1 / 1;
-          padding: 1rem;
         }
         
         .raffle-image {
           width: 100%;
-          height: auto;
-          object-fit: contain;
-          border-radius: 4px;
+          height: 100%;
+          object-fit: cover;
+          transition: transform 0.3s ease;
         }
         
-        .raffle-details {
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
+        .raffle-card:hover .raffle-image {
+          transform: scale(1.05);
+        }
+
+        .raffle-content {
+          padding: 1.5rem;
+        }
+        
+        .raffle-header {
+          margin-bottom: 1rem;
         }
         
         .raffle-name {
-          font-size: 0.9rem;
-          font-family: 'Press Start 2P', monospace;
-          color: #ffd700;
-          margin-bottom: 0.2rem;
+          font-size: 1.1rem;
+          font-weight: 600;
+          color: #FFFFFF;
+          margin-bottom: 0.5rem;
+          line-height: 1.3;
         }
         
         .raffle-description {
-          font-size: 0.75rem;
-          color: #ccc;
-          margin-bottom: 0.3rem;
-          font-family: Arial, sans-serif;
-          line-height: 1.2;
+          font-size: 0.9rem;
+          color: #A0A0A0;
+          line-height: 1.4;
           display: -webkit-box;
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
           overflow: hidden;
         }
-        
+
         .raffle-stats {
           display: flex;
           justify-content: space-between;
           align-items: center;
           margin-bottom: 1rem;
+          padding: 0.75rem;
+          background: rgba(255, 255, 255, 0.02);
+          border-radius: 8px;
         }
         
-        .raffle-price {
-          font-size: 1.1rem;
-          color: #ffd700;
+        .price-display {
           display: flex;
           align-items: center;
-          gap: 0.3rem;
+          gap: 0.5rem;
+          color: #FF6B00;
+          font-weight: 600;
         }
         
-        .raffle-time {
-          font-size: 0.9rem;
-          color: #ff9c00;
+        .time-display {
           display: flex;
           align-items: center;
-          gap: 0.3rem;
+          gap: 0.5rem;
+          color: #A0A0A0;
+          font-size: 0.85rem;
+        }
+
+        .progress-section {
+          margin-bottom: 1.5rem;
         }
         
         .progress-bar {
           width: 100%;
           height: 6px;
-          background: rgba(0, 0, 0, 0.3);
+          background: rgba(255, 255, 255, 0.05);
           border-radius: 3px;
           overflow: hidden;
-          margin-bottom: 0.3rem;
+          margin-bottom: 0.5rem;
         }
         
         .progress-fill {
           height: 100%;
-          background: linear-gradient(90deg, #ffd700, #ffaa00);
-          border-radius: 5px;
-          transition: width 0.3s ease;
+          background: linear-gradient(90deg, #FF6B00 0%, #FFB800 100%);
+          border-radius: 3px;
+          transition: width 0.5s ease;
         }
         
         .progress-text {
           display: flex;
           justify-content: space-between;
           font-size: 0.8rem;
-          color: #ccc;
+          color: #A0A0A0;
         }
-        
-        .user-tickets {
-          display: inline-block;
-          padding: 0.3rem 0.6rem;
-          background: rgba(0, 0, 0, 0.3);
-          border-radius: 4px;
-          color: #4afc4a;
-          font-size: 0.9rem;
-          margin-top: 0.5rem;
-        }
-        
-        .ticket-purchase {
+
+        .raffle-actions {
           display: flex;
-          flex-direction: column;
+          gap: 0.75rem;
           align-items: center;
-          gap: 1rem;
-          width: 100%;
-          max-width: 600px;
-          background: rgba(0, 0, 0, 0.3);
+        }
+        
+        .ticket-controls {
+          display: flex;
+          align-items: center;
+          background: rgba(255, 255, 255, 0.05);
           border-radius: 8px;
-          padding: 1.5rem;
-          margin-bottom: 2rem;
-          border: 2px solid rgba(255, 215, 0, 0.3);
+          overflow: hidden;
         }
         
-        .ticket-amount {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-        }
-        
-        .ticket-input {
-          width: 80px;
-          padding: 0.8rem;
-          font-size: 1.2rem;
-          text-align: center;
-          background: #111;
-          color: #ffd700;
-          border: 2px solid #ffd700;
-          border-radius: 4px;
-          font-family: 'Press Start 2P', monospace;
-        }
-        
-        .ticket-button {
-          background: #333;
-          color: #fff;
+        .ticket-btn {
+          background: transparent;
           border: none;
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
-          font-size: 1.5rem;
+          color: #A0A0A0;
+          width: 32px;
+          height: 32px;
           display: flex;
           align-items: center;
           justify-content: center;
           cursor: pointer;
-          transition: all 0.2s;
+          transition: all 0.2s ease;
         }
         
-        .ticket-button:hover {
-          background: #555;
+        .ticket-btn:hover:not(:disabled) {
+          background: rgba(255, 107, 0, 0.1);
+          color: #FF6B00;
         }
         
-        .purchase-button {
-          padding: 1rem 2rem;
-          font-size: 1.2rem;
-          font-family: 'Press Start 2P', monospace;
-          background: #ffd700;
+        .ticket-input {
+          width: 50px;
+          background: transparent;
           border: none;
-          color: #000;
-          cursor: pointer;
-          transition: all 0.2s;
-          display: block;
-          min-width: 300px;
+          color: #FFFFFF;
           text-align: center;
-          border-radius: 4px;
+          font-size: 0.9rem;
+          padding: 0;
+          height: 32px;
         }
         
-        .purchase-button:hover:not(:disabled) {
-          transform: translateY(-2px);
-          background: #ffe970;
+        .ticket-input:focus {
+          outline: none;
         }
         
-        .purchase-button:active:not(:disabled) {
-          transform: translateY(2px);
+        .enter-button {
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+          border: none;
+          color: #FFFFFF;
+          padding: 0.5rem 1rem;
+          border-radius: 8px;
+          cursor: pointer;
+          font-weight: 600;
+          font-size: 0.9rem;
+          transition: all 0.2s ease;
+          flex: 1;
         }
         
-        .purchase-button:disabled {
+        .enter-button:hover:not(:disabled) {
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
+        }
+        
+        .enter-button:disabled {
           opacity: 0.5;
           cursor: not-allowed;
         }
+
+        .status-badge {
+          position: absolute;
+          top: 1rem;
+          right: 1rem;
+          padding: 0.25rem 0.75rem;
+          border-radius: 20px;
+          font-size: 0.75rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
         
-        .total-cost {
-          font-size: 1.1rem;
-          color: #ffd700;
+        .badge-ended {
+          background: rgba(239, 68, 68, 0.2);
+          color: #EF4444;
+          border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        
+        .badge-winner {
+          background: rgba(34, 197, 94, 0.2);
+          color: #22C55E;
+          border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+        
+        .badge-you-won {
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+          color: #FFFFFF;
+          animation: pulse-glow 2s infinite;
+        }
+        
+        @keyframes pulse-glow {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(255, 107, 0, 0.4); }
+          50% { box-shadow: 0 0 0 8px rgba(255, 107, 0, 0); }
+        }
+
+        .user-tickets-badge {
+          position: absolute;
+          top: 1rem;
+          left: 1rem;
+          background: rgba(255, 107, 0, 0.9);
+          color: #FFFFFF;
+          padding: 0.25rem 0.5rem;
+          border-radius: 6px;
+          font-size: 0.75rem;
+          font-weight: 600;
+        }
+
+        .winner-section {
+          padding: 1rem;
+          background: rgba(34, 197, 94, 0.05);
+          border: 1px solid rgba(34, 197, 94, 0.2);
+          border-radius: 12px;
+          margin-top: 1rem;
+        }
+        
+        .winner-section.user-won {
+          background: rgba(255, 107, 0, 0.05);
+          border-color: rgba(255, 107, 0, 0.2);
+        }
+        
+        .winner-label {
+          font-size: 0.8rem;
+          color: #A0A0A0;
+          margin-bottom: 0.25rem;
+        }
+        
+        .winner-address {
+          font-weight: 600;
+          color: #22C55E;
+          margin-bottom: 0.5rem;
+        }
+        
+        .winner-address.user-won {
+          color: #FF6B00;
+        }
+
+        .loading-state {
+          text-align: center;
+          padding: 4rem 2rem;
+          color: #A0A0A0;
+        }
+        
+        .loading-spinner {
+          width: 40px;
+          height: 40px;
+          border: 3px solid rgba(255, 107, 0, 0.1);
+          border-top: 3px solid #FF6B00;
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+          margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+          text-align: center;
+          padding: 4rem 2rem;
+          max-width: 500px;
+          margin: 0 auto;
+        }
+        
+        .empty-icon {
+          font-size: 3rem;
+          margin-bottom: 1rem;
+          opacity: 0.3;
+        }
+        
+        .empty-title {
+          font-size: 1.2rem;
+          font-weight: 600;
+          color: #A0A0A0;
+          margin-bottom: 0.5rem;
+        }
+        
+        .empty-description {
+          color: #6B7280;
+          font-size: 0.9rem;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.8);
+          backdrop-filter: blur(8px);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 1000;
+          padding: 1rem;
+        }
+        
+        .confirmation-modal {
+          background: #1A1A1B;
+          border: 1px solid rgba(255, 107, 0, 0.2);
+          border-radius: 16px;
+          max-width: 500px;
+          width: 100%;
+          overflow: hidden;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal-header {
+          padding: 1.5rem;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        
+        .modal-header h3 {
+          margin: 0;
+          font-size: 1.3rem;
+          font-weight: 600;
+          color: #FFFFFF;
+        }
+        
+        .modal-close {
+          background: none;
+          border: none;
+          color: #A0A0A0;
+          font-size: 1.5rem;
+          cursor: pointer;
+          padding: 0;
+          width: 32px;
+          height: 32px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 50%;
+          transition: all 0.2s ease;
+        }
+        
+        .modal-close:hover {
+          background: rgba(255, 255, 255, 0.1);
+          color: #FFFFFF;
+        }
+        
+        .modal-body {
+          padding: 1.5rem;
+        }
+        
+        .purchase-details, .balance-check {
+          background: rgba(255, 255, 255, 0.02);
+          border-radius: 8px;
+          padding: 1rem;
           margin-bottom: 1rem;
         }
         
-        .winner-tag {
-          position: absolute;
-          top: 0;
-          right: 0;
-          background: #4afc4a;
-          color: #000;
-          padding: 0.3rem 0.6rem;
-          font-size: 0.8rem;
-          font-weight: bold;
-          z-index: 2;
-        }
-        
-        .user-won-tag {
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          background: linear-gradient(135deg, #ffd700, #ff9500);
-          color: #000;
-          padding: 0.5rem;
-          font-size: 1rem;
-          font-weight: bold;
-          text-align: center;
-          z-index: 3;
-          font-family: 'Press Start 2P', monospace;
-          box-shadow: 0 3px 10px rgba(255, 215, 0, 0.5);
-          animation: pulse 2s infinite;
-        }
-        
-        .user-won-ribbon {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          border: 3px solid #ffd700;
-          box-sizing: border-box;
-          border-radius: 8px;
-          pointer-events: none;
-          z-index: 1;
-          animation: glow 1.5s infinite alternate;
-        }
-        
-        @keyframes pulse {
-          0% { transform: scale(1); }
-          50% { transform: scale(1.05); }
-          100% { transform: scale(1); }
-        }
-        
-        @keyframes glow {
-          from { box-shadow: 0 0 5px #ffd700; }
-          to { box-shadow: 0 0 20px #ffd700; }
-        }
-        
-        .winner-name {
-          color: #4afc4a;
+        .detail-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 0.5rem;
           font-size: 0.9rem;
+        }
+        
+        .detail-row:last-child {
+          margin-bottom: 0;
+        }
+        
+        .detail-row span:first-child {
+          color: #A0A0A0;
+        }
+        
+        .detail-row span:last-child {
+          color: #FFFFFF;
+          font-weight: 600;
+        }
+        
+        .total-row {
+          border-top: 1px solid rgba(255, 107, 0, 0.2);
+          padding-top: 0.5rem;
           margin-top: 0.5rem;
         }
         
-        .footer {
-          text-align: center;
-          margin-top: 2rem;
+        .total-row span {
+          color: #FF6B00;
+          font-size: 1rem;
+          font-weight: 700;
+        }
+        
+        .modal-actions {
+          display: flex;
+          gap: 1rem;
+          padding: 0 1.5rem 1.5rem;
+        }
+        
+        .cancel-button, .confirm-button {
+          flex: 1;
           padding: 0.75rem;
-          color: #aaa;
-          font-family: 'Press Start 2P', monospace;
-          font-size: 0.7rem;
-          line-height: 1.5;
+          border: none;
+          border-radius: 8px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s ease;
         }
         
-        .footer p {
-          margin: 0.4rem 0;
+        .cancel-button {
+          background: rgba(255, 255, 255, 0.05);
+          color: #A0A0A0;
+          border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
+        .cancel-button:hover {
+          background: rgba(255, 255, 255, 0.1);
+          color: #FFFFFF;
+        }
+        
+        .confirm-button {
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+          color: #FFFFFF;
+        }
+        
+        .confirm-button:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
+        }
+
+        @media (max-width: 768px) {
+          .title {
+            font-size: 2rem;
+          }
+          
+          .stats-bar {
+            gap: 1rem;
+          }
+          
+          .stat-card {
+            min-width: auto;
+            flex: 1;
+          }
+          
+          .section-header {
+            flex-direction: column;
+            align-items: stretch;
+          }
+          
+          .filter-tabs {
+            justify-content: center;
+          }
+          
+          .raffles-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+          }
+          
+          .modal-actions {
+            flex-direction: column;
+          }
+        }
+
         .filter-container {
           display: flex;
           flex-wrap: wrap;
@@ -1037,19 +1320,6 @@ export default function RafflePage() {
           margin-left: auto;
         }
         
-        .user-tickets-badge {
-          position: absolute;
-          top: 5px;
-          left: 5px;
-          background: rgba(255, 215, 0, 0.9);
-          color: #000;
-          padding: 0.2rem 0.4rem;
-          font-size: 0.7rem;
-          font-weight: bold;
-          border-radius: 4px;
-          z-index: 2;
-        }
-        
         .raffle-price-bar {
           display: flex;
           justify-content: space-between;
@@ -1077,715 +1347,458 @@ export default function RafflePage() {
         
         .ticket-sold {
           color: var(--gold);
-          font-weight: bold;
         }
-        
-        .ticket-total {
-          color: #aaa;
-        }
-        
-        .ticket-percentage {
-          color: #ccc;
-          background: rgba(0, 0, 0, 0.3);
-          padding: 0.2rem 0.4rem;
-          border-radius: 4px;
-          margin-left: 0.3rem;
-          font-size: 0.7rem;
-        }
-        
+
         .raffle-action-area {
-          display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
-          margin-top: auto;
+          margin-top: 1rem;
         }
-        
+
         .ticket-control {
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 100%;
           gap: 0.5rem;
+          margin-bottom: 1rem;
         }
-        
+
         .ticket-control-button {
-          background: rgba(0, 0, 0, 0.5);
-          color: #fff;
-          border: 1px solid rgba(255, 215, 0, 0.3);
-          width: 24px;
-          height: 24px;
-          border-radius: 4px;
-          font-size: 1rem;
+          background: rgba(255, 107, 0, 0.1);
+          border: 1px solid rgba(255, 107, 0, 0.3);
+          color: #FF6B00;
+          width: 32px;
+          height: 32px;
+          border-radius: 6px;
+          cursor: pointer;
+          transition: all 0.2s ease;
           display: flex;
           align-items: center;
           justify-content: center;
-          cursor: pointer;
-          transition: all 0.2s;
         }
-        
+
         .ticket-control-button:hover:not(:disabled) {
-          background: rgba(255, 215, 0, 0.2);
+          background: rgba(255, 107, 0, 0.2);
+          border-color: rgba(255, 107, 0, 0.5);
         }
-        
+
         .ticket-control-input {
-          width: 40px;
-          padding: 0.3rem;
+          width: 60px;
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 6px;
+          color: #FFFFFF;
           text-align: center;
-          background: rgba(0, 0, 0, 0.5);
-          color: #fff;
-          border: 1px solid rgba(255, 215, 0, 0.3);
-          border-radius: 4px;
-          font-size: 0.8rem;
+          padding: 0.5rem;
+          font-size: 0.9rem;
         }
-        
+
+        .ticket-control-input:focus {
+          outline: none;
+          border-color: rgba(255, 107, 0, 0.5);
+        }
+
         .raffle-timer {
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 0.65rem;
-          color: #ff9c00;
-          white-space: nowrap;
-          background: rgba(0, 0, 0, 0.2);
-          padding: 0.2rem;
-          border-radius: 4px;
-          width: 100%;
-          margin-top: 0.1rem;
-          margin-bottom: 0.2rem;
-        }
-        
-        .timer-icon {
-          margin-right: 0.2rem;
-        }
-        
-        .enter-button {
-          background: var(--gold);
-          color: #000;
-          border: none;
-          border-radius: 4px;
-          padding: 0.3rem;
-          font-family: 'Press Start 2P', monospace;
-          font-size: 0.7rem;
-          cursor: pointer;
-          transition: all 0.2s;
-          white-space: nowrap;
-          width: 100%;
-        }
-        
-        .enter-button:hover:not(:disabled) {
-          transform: translateY(-2px);
-          background: #ffe970;
-        }
-        
-        .enter-button:active:not(:disabled) {
-          transform: translateY(2px);
-        }
-        
-        .raffle-winner-info {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 0.3rem;
-          margin-top: auto;
-          background: rgba(74, 252, 74, 0.1);
-          padding: 0.6rem;
-          border-radius: 4px;
-        }
-        
-        .winner-label {
-          font-size: 0.8rem;
-          color: #aaa;
-        }
-        
-        .winner-address {
+          gap: 0.5rem;
+          margin-bottom: 1rem;
           font-size: 0.9rem;
-          color: #4afc4a;
-          font-weight: bold;
+          color: #A0A0A0;
         }
-        
+
+        .timer-icon {
+          color: #FF6B00;
+        }
+
+        .raffle-winner-info {
+          padding: 1rem;
+          border-radius: 8px;
+          margin-top: 1rem;
+          text-align: center;
+        }
+
         .winner-date {
           font-size: 0.8rem;
-          color: #aaa;
-          margin-top: 0.3rem;
+          color: #6B7280;
+          margin-top: 0.5rem;
         }
-        
+
         .user-participation {
-          margin-top: 0.5rem;
           font-size: 0.8rem;
-          color: #ffd700;
-          background: rgba(255, 215, 0, 0.1);
-          padding: 0.3rem 0.5rem;
-          border-radius: 4px;
+          color: #A0A0A0;
+          margin-top: 0.5rem;
         }
-        
+
         .winner-instructions {
-          margin-top: 0.5rem;
           font-size: 0.8rem;
-          color: #ffd700;
-          background: rgba(255, 215, 0, 0.1);
-          padding: 0.3rem 0.5rem;
-          border-radius: 4px;
-        }
-        
-        @media (max-width: 1200px) {
-          .raffles-container {
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-          }
-        }
-        
-        @media (max-width: 768px) {
-          .raffles-container {
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-          }
-          
-          .filter-container {
-            gap: 0.5rem;
-          }
-          
-          .filter-button {
-            padding: 0.6rem 1rem;
-            font-size: 0.8rem;
-          }
-          
-          .balance-display, .points-display {
-            padding: 0.6rem 1.2rem;
-            font-size: 0.9rem;
-          }
-
-          .points-display {
-            margin-left: 0;
-            margin-top: 0.5rem;
-          }
-        }
-        
-        @media (max-width: 480px) {
-          .raffles-container {
-            grid-template-columns: 1fr;
-          }
-          
-          .filter-button {
-            padding: 0.5rem 0.8rem;
-            font-size: 0.7rem;
-          }
-          
-          .raffle-name {
-            font-size: 1rem;
-          }
-          
-          .raffle-description {
-            font-size: 0.8rem;
-          }
-          
-          .balance-display, .points-display {
-            padding: 0.5rem 1rem;
-            font-size: 0.8rem;
-            width: 80%;
-            margin-left: 0;
-            margin-bottom: 0.5rem;
-          }
-
-          .points-display {
-            margin-top: 0.5rem;
-          }
-        }
-        
-        .filter-button.active {
-          background: rgba(255, 215, 0, 0.2);
-          border-color: #ffd700;
-        }
-        
-        /* Extra opvallende stijl voor de actieve filter knop */
-        .filter-button.active.primary {
-          background: rgba(255, 215, 0, 0.4);
-          border-color: #ffd700;
-          box-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
-        }
-
-        /* Confirmation Modal Styles */
-        .modal-overlay {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100vw;
-          height: 100vh;
-          background: rgba(0, 0, 0, 0.8);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          z-index: 10000;
-          padding: 1rem;
-          box-sizing: border-box;
-        }
-
-        .confirmation-modal {
-          background: #0d1320;
-          border: 2px solid #ffd700;
-          border-radius: 8px;
-          width: 100%;
-          max-width: 500px;
-          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-          animation: modalSlideIn 0.3s ease-out;
-        }
-
-        @keyframes modalSlideIn {
-          from {
-            opacity: 0;
-            transform: translateY(-20px) scale(0.95);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-          }
-        }
-
-        .modal-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 1.5rem;
-          border-bottom: 1px solid rgba(255, 215, 0, 0.3);
-        }
-
-        .modal-header h3 {
-          font-family: 'Press Start 2P', monospace;
-          font-size: 1.2rem;
-          color: #ffd700;
-          margin: 0;
-        }
-
-        .modal-close {
-          background: none;
-          border: none;
-          color: #fff;
-          font-size: 1.5rem;
-          cursor: pointer;
-          padding: 0.5rem;
-          line-height: 1;
-          transition: color 0.2s;
-        }
-
-        .modal-close:hover {
-          color: #ffd700;
-        }
-
-        .modal-body {
-          padding: 1.5rem;
-        }
-
-        .raffle-info h4 {
-          font-family: 'Press Start 2P', monospace;
-          color: #fff;
-          font-size: 1rem;
-          margin: 0 0 1rem 0;
-          text-align: center;
-        }
-
-        .purchase-details, .balance-check {
-          background: rgba(0, 0, 0, 0.3);
-          border-radius: 6px;
-          padding: 1rem;
-          margin-bottom: 1rem;
-        }
-
-        .detail-row {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 0.5rem;
-          font-size: 0.9rem;
-        }
-
-        .detail-row:last-child {
-          margin-bottom: 0;
-        }
-
-        .detail-row span:first-child {
-          color: #ccc;
-        }
-
-        .detail-row span:last-child {
-          color: #fff;
-          font-weight: bold;
-        }
-
-        .total-row {
-          border-top: 1px solid rgba(255, 215, 0, 0.3);
-          padding-top: 0.5rem;
+          color: #FF6B00;
           margin-top: 0.5rem;
-        }
-
-        .total-row span {
-          color: #ffd700;
-          font-size: 1rem;
-        }
-
-        .modal-actions {
-          display: flex;
-          gap: 1rem;
-          padding: 0 1.5rem 1.5rem 1.5rem;
-        }
-
-        .cancel-button, .confirm-button {
-          flex: 1;
-          padding: 0.8rem;
-          border: none;
-          border-radius: 4px;
-          font-family: 'Press Start 2P', monospace;
-          font-size: 0.8rem;
-          cursor: pointer;
-          transition: all 0.2s;
-        }
-
-        .cancel-button {
-          background: rgba(255, 255, 255, 0.1);
-          color: #fff;
-          border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .cancel-button:hover {
-          background: rgba(255, 255, 255, 0.2);
-        }
-
-        .confirm-button {
-          background: #ffd700;
-          color: #000;
-        }
-
-        .confirm-button:hover {
-          background: #ffe970;
-          transform: translateY(-2px);
-        }
-
-        /* Mobile-specific modal styles */
-        @media (max-width: 480px) {
-          .modal-overlay {
-            padding: 0.5rem;
-          }
-
-          .modal-header {
-            padding: 1rem;
-          }
-
-          .modal-header h3 {
-            font-size: 1rem;
-          }
-
-          .modal-body {
-            padding: 1rem;
-          }
-
-          .modal-actions {
-            flex-direction: column;
-            padding: 0 1rem 1rem 1rem;
-          }
-
-          .cancel-button, .confirm-button {
-            padding: 1rem;
-            font-size: 0.9rem;
-          }
-        }
-
-        .points-display {
-          font-size: 1.1rem;
-          color: #ff6b00;
-          margin: 0 0 1.5rem 0;
-          padding: 0.8rem 1.5rem;
-          background: rgba(0, 0, 0, 0.4);
-          border: 2px solid #ff6b00;
-          display: inline-flex;
-          align-items: center;
-          border-radius: 8px;
-          text-align: center;
-          box-shadow: 0 0 10px rgba(255, 107, 0, 0.2);
-          font-family: 'Press Start 2P', monospace;
-          transition: all 0.3s ease;
-          margin-left: 1rem;
-        }
-        
-        .points-display:hover {
-          box-shadow: 0 0 15px rgba(255, 107, 0, 0.4);
-          transform: translateY(-2px);
+          font-weight: 600;
         }
       `}</style>
 
       <div className="page-content">
-        <h1 className="title">Bitcoin Tiger Raffles</h1>
-        <p className="subtitle">Win exclusive Bitcoin Tiger Ordinals by purchasing raffle tickets</p>
-        
-        <div className="balance-display">
-          Available Balance: <span className="balance-value">{balance.toLocaleString()}</span>
-          <span className="balance-sats"> sats</span>
-          <button 
-            className="refresh-button"
-            onClick={refreshBalance}
-            disabled={refreshingBalance}
-            title="Refresh balance"
-          >
-            <div className={`refresh-icon ${refreshingBalance ? 'rotating' : ''}`}>↻</div>
-          </button>
+        {/* Hero Section */}
+        <div className="hero-section">
+          <h1 className="title">Bitcoin Tiger Raffles</h1>
+          <p className="subtitle">
+            Participate in exclusive raffles to win rare Bitcoin Tiger ordinals. 
+            Use Lightning sats or earn entries with Tiger Points.
+          </p>
         </div>
 
-        <div className="points-display">
-          Tiger Points: <span className="points-value">{userPoints.toLocaleString()}</span>
-          <span className="points-label"> pts</span>
-          <button 
-            className="refresh-button"
-            onClick={refreshPoints}
-            disabled={refreshingPoints}
-            title="Refresh points"
-          >
-            <div className={`refresh-icon ${refreshingPoints ? 'rotating' : ''}`}>🐅</div>
-          </button>
+        {/* Stats Bar */}
+        <div className="stats-bar">
+          <div className="stat-card">
+            <div className="stat-icon">⚡</div>
+            <div className="stat-content">
+              <div className="stat-label">Lightning Balance</div>
+              <div className="stat-value">{balance.toLocaleString()} sats</div>
+            </div>
+            <button 
+              className="refresh-button"
+              onClick={refreshBalance}
+              disabled={refreshingBalance}
+              title="Refresh balance"
+            >
+              <div className={`refresh-icon ${refreshingBalance ? 'rotating' : ''}`}>
+                ↻
+              </div>
+            </button>
+          </div>
+
+          <div className="stat-card">
+            <div className="stat-icon">🐅</div>
+            <div className="stat-content">
+              <div className="stat-label">Tiger Points</div>
+              <div className="stat-value">{userPoints.toLocaleString()}</div>
+            </div>
+            <button 
+              className="refresh-button"
+              onClick={refreshPoints}
+              disabled={refreshingPoints}
+              title="Refresh points"
+            >
+              <div className={`refresh-icon ${refreshingPoints ? 'rotating' : ''}`}>
+                ↻
+              </div>
+            </button>
+          </div>
         </div>
         
         {message && <div className="message">{message}</div>}
         
-        <div className="filter-container">
-          <div className="filter-dropdown">
-            <button 
-              className={`filter-button ${statusFilter === 'all' ? 'active' : ''}`}
-              onClick={() => handleStatusFilterChange('all')}
-            >
-              All Raffles
-            </button>
+        {/* Controls Section */}
+        <div className="controls-section">
+          <div className="section-header">
+            <div className="section-title">
+              {statusFilter === 'active' && `Active Raffles (${filteredRaffles.length})`}
+              {statusFilter === 'ended' && `Ended Raffles (${filteredRaffles.length})`}
+              {statusFilter === 'all' && `All Raffles (${filteredRaffles.length})`}
+            </div>
+            
+            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+              {/* Filter Tabs */}
+              <div className="filter-tabs">
+                <button 
+                  className={`filter-tab ${statusFilter === 'active' ? 'active' : ''}`}
+                  onClick={() => handleStatusFilterChange('active')}
+                >
+                  Active
+                </button>
+                <button 
+                  className={`filter-tab ${statusFilter === 'ended' ? 'active' : ''}`}
+                  onClick={() => handleStatusFilterChange('ended')}
+                >
+                  Ended
+                </button>
+                <button 
+                  className={`filter-tab ${statusFilter === 'all' ? 'active' : ''}`}
+                  onClick={() => handleStatusFilterChange('all')}
+                >
+                  All
+                </button>
+              </div>
+
+              {/* Sort Dropdown */}
+              <div className="sort-dropdown">
+                <button className="sort-button">
+                  <span>
+                    {sortBy === 'end_time' && 'Ending Soon'}
+                    {sortBy === 'price_low' && 'Price: Low to High'}
+                    {sortBy === 'price_high' && 'Price: High to Low'}
+                    {sortBy === 'popularity' && 'Most Popular'}
+                  </span>
+                  <span>▼</span>
+                </button>
+                {/* Simplified - in real implementation would add dropdown menu */}
+              </div>
+            </div>
           </div>
-          <div className="filter-dropdown">
+
+          {/* Quick Sort Buttons */}
+          <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
             <button 
-              className={`filter-button ${statusFilter === 'active' ? 'active primary' : ''}`}
-              onClick={() => handleStatusFilterChange('active')}
-            >
-              Active Raffles
-            </button>
-          </div>
-          <div className="filter-dropdown">
-            <button 
-              className={`filter-button ${statusFilter === 'ended' ? 'active' : ''}`}
-              onClick={() => handleStatusFilterChange('ended')}
-            >
-              Ended Raffles
-            </button>
-          </div>
-          <div className="filter-dropdown">
-            <button 
-              className={`filter-button ${sortBy === 'end_time' ? 'active primary' : ''}`}
+              className={`filter-tab ${sortBy === 'end_time' ? 'active' : ''}`}
               onClick={() => handleSortChange('end_time')}
+              style={{ marginBottom: 0 }}
             >
-              Ending Soon
+              🕒 Ending Soon
             </button>
-          </div>
-          <div className="filter-dropdown">
             <button 
-              className={`filter-button ${sortBy === 'price_low' ? 'active' : ''}`}
+              className={`filter-tab ${sortBy === 'price_low' ? 'active' : ''}`}
               onClick={() => handleSortChange('price_low')}
+              style={{ marginBottom: 0 }}
             >
-              Price Low to High
+              💰 Lowest Price
+            </button>
+            <button 
+              className={`filter-tab ${sortBy === 'price_high' ? 'active' : ''}`}
+              onClick={() => handleSortChange('price_high')}
+              style={{ marginBottom: 0 }}
+            >
+              💎 Highest Price
+            </button>
+            <button 
+              className={`filter-tab ${sortBy === 'popularity' ? 'active' : ''}`}
+              onClick={() => handleSortChange('popularity')}
+              style={{ marginBottom: 0 }}
+            >
+              🔥 Most Popular
             </button>
           </div>
         </div>
 
+        {/* Raffles Grid */}
         {loading ? (
-          <div style={{
-            padding: '2rem',
-            textAlign: 'center',
-            fontFamily: "'Press Start 2P', monospace",
-            color: '#ffd700'
-          }}>
-            Loading raffles...
+          <div className="loading-state">
+            <div className="loading-spinner"></div>
+            <div>Loading raffles...</div>
           </div>
         ) : filteredRaffles.length === 0 ? (
-          <div style={{
-            padding: '2rem',
-            textAlign: 'center',
-            fontFamily: "'Press Start 2P', monospace",
-            color: '#ccc',
-            background: 'rgba(0, 0, 0, 0.2)',
-            borderRadius: '8px',
-            maxWidth: '600px',
-            margin: '0 auto'
-          }}>
-            <p>No raffles found for current filter</p>
-            <p style={{ fontSize: '0.8rem', marginTop: '1rem' }}>Try changing filters or check back later</p>
+          <div className="empty-state">
+            <div className="empty-icon">🎫</div>
+            <div className="empty-title">No raffles found</div>
+            <div className="empty-description">
+              {statusFilter === 'active' 
+                ? 'No active raffles at the moment. Check back soon!'
+                : statusFilter === 'ended'
+                ? 'No ended raffles to display.'
+                : 'No raffles available. New raffles are added regularly!'
+              }
+            </div>
           </div>
         ) : (
-          <div className="raffles-container">
-            {filteredRaffles.map((raffle, index) => {
-              // Bepaal of raffle actief of beëindigd is
+          <div className="raffles-grid">
+            {filteredRaffles.map((raffle) => {
               const isActive = new Date(raffle.endsAt) > new Date() && !raffle.winner
               const isEnded = !isActive
               const userIsWinner = raffle.winner === walletAddress
+              const userHasTickets = userTickets[raffle.id] > 0
               
               return (
                 <div key={raffle.id} className="raffle-card">
-                  {/* Toon een speciale markering als de gebruiker gewonnen heeft */}
+                  {/* Status Badges */}
                   {userIsWinner && (
-                    <>
-                      <div className="user-won-tag">YOU WON! 🏆</div>
-                      <div className="user-won-ribbon"></div>
-                    </>
+                    <div className="status-badge badge-you-won">
+                      YOU WON! 🏆
+                    </div>
                   )}
-                  
-                  {isEnded && (
-                    <div className="winner-tag" style={{
-                      background: userIsWinner ? '#ffd700' : '#4afc4a'
-                    }}>
-                      {raffle.winner ? 'COMPLETED' : 'ENDED'}
+                  {isEnded && !userIsWinner && raffle.winner && (
+                    <div className="status-badge badge-winner">
+                      Completed
+                    </div>
+                  )}
+                  {isEnded && !raffle.winner && (
+                    <div className="status-badge badge-ended">
+                      Ended
+                    </div>
+                  )}
+
+                  {/* User Tickets Badge */}
+                  {userHasTickets && (
+                    <div className="user-tickets-badge">
+                      {userTickets[raffle.id]} ticket{userTickets[raffle.id] > 1 ? 's' : ''}
                     </div>
                   )}
                   
+                  {/* Raffle Image */}
                   <div className="raffle-image-container">
                     <Image 
                       src={raffle.image} 
                       alt={raffle.name} 
-                      width={300} 
-                      height={300} 
+                      width={320} 
+                      height={200} 
                       className="raffle-image"
                       style={{ imageRendering: 'pixelated' }}
                     />
-                    {userTickets[raffle.id] && (
-                      <div className="user-tickets-badge">
-                        {userTickets[raffle.id]} ticket{userTickets[raffle.id] > 1 ? 's' : ''}
+                  </div>
+                  
+                  {/* Raffle Content */}
+                  <div className="raffle-content">
+                    <div className="raffle-header">
+                      <h3 className="raffle-name">{raffle.name}</h3>
+                      <p className="raffle-description">{raffle.description}</p>
+                    </div>
+                    
+                    {/* Stats */}
+                    <div className="raffle-stats">
+                      <div className="price-display">
+                        {raffle.isFree ? (
+                          <>
+                            <span>🐅</span>
+                            <span>{raffle.pointCost} points</span>
+                          </>
+                        ) : (
+                          <>
+                            <span>⚡</span>
+                            <span>{raffle.ticketPrice.toLocaleString()} sats</span>
+                          </>
+                        )}
+                      </div>
+                      
+                      <div className="time-display">
+                        <span>⏱️</span>
+                        <span>{isEnded ? 'Ended' : formatTimeLeft(raffle.endsAt)}</span>
+                      </div>
+                    </div>
+                    
+                    {/* Progress */}
+                    <div className="progress-section">
+                      <div className="progress-bar">
+                        <div 
+                          className="progress-fill" 
+                          style={{ width: `${getProgressPercentage(raffle)}%` }}
+                        ></div>
+                      </div>
+                      <div className="progress-text">
+                        <span>{raffle.soldTickets} sold</span>
+                        <span>{raffle.totalTickets} total</span>
+                        <span>{Math.round(getProgressPercentage(raffle))}%</span>
+                      </div>
+                    </div>
+                    
+                    {/* Actions */}
+                    {!raffle.winner && !isEnded ? (
+                      <div className="raffle-actions">
+                        <div className="ticket-controls">
+                          <button 
+                            className="ticket-btn"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (selectedRaffle === raffle.id) {
+                                setTicketAmount(prev => Math.max(1, prev - 1));
+                              } else {
+                                setSelectedRaffle(raffle.id);
+                                setTicketAmount(1);
+                              }
+                            }}
+                          >
+                            −
+                          </button>
+                          
+                          <input
+                            type="number"
+                            className="ticket-input"
+                            value={selectedRaffle === raffle.id ? ticketAmount : 1}
+                            onChange={(e) => {
+                              e.stopPropagation();
+                              const value = parseInt(e.target.value);
+                              if (!isNaN(value) && value >= 1) {
+                                setTicketAmount(value);
+                                setSelectedRaffle(raffle.id);
+                              }
+                            }}
+                            min="1"
+                            max="100"
+                            onClick={(e) => e.stopPropagation()}
+                          />
+                          
+                          <button 
+                            className="ticket-btn"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (selectedRaffle === raffle.id) {
+                                setTicketAmount(prev => prev + 1);
+                              } else {
+                                setSelectedRaffle(raffle.id);
+                                setTicketAmount(2);
+                              }
+                            }}
+                          >
+                            +
+                          </button>
+                        </div>
+
+                        <button
+                          className="enter-button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDirectPurchase(raffle.id, selectedRaffle === raffle.id ? ticketAmount : 1);
+                          }}
+                          disabled={
+                            isEnded || 
+                            (raffle.isFree ? userPoints < raffle.pointCost : balance < raffle.ticketPrice)
+                          }
+                        >
+                          {isEnded ? 'Ended' : 'Enter'}
+                        </button>
+                      </div>
+                    ) : raffle.winner ? (
+                      <div className={`winner-section ${userIsWinner ? 'user-won' : ''}`}>
+                        <div className="winner-label">
+                          {userIsWinner ? 'Congratulations! 🎉' : 'Winner'}
+                        </div>
+                        <div className={`winner-address ${userIsWinner ? 'user-won' : ''}`}>
+                          {userIsWinner 
+                            ? 'You won this raffle!' 
+                            : `${raffle.winner.slice(0, 8)}...${raffle.winner.slice(-6)}`
+                          }
+                        </div>
+                        {raffle.winnerPickedAt && (
+                          <div style={{ fontSize: '0.8rem', color: '#6B7280', marginTop: '0.5rem' }}>
+                            Drawn: {formatDate(raffle.winnerPickedAt)}
+                          </div>
+                        )}
+                        {userHasTickets && !userIsWinner && (
+                          <div style={{ fontSize: '0.8rem', color: '#A0A0A0', marginTop: '0.5rem' }}>
+                            You had {userTickets[raffle.id]} ticket{userTickets[raffle.id] > 1 ? 's' : ''}
+                          </div>
+                        )}
+                        {userIsWinner && (
+                          <div style={{ fontSize: '0.8rem', color: '#FF6B00', marginTop: '0.5rem' }}>
+                            Contact us to claim your prize! 🏆
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div style={{ 
+                        textAlign: 'center', 
+                        padding: '1rem',
+                        color: '#6B7280',
+                        fontSize: '0.9rem'
+                      }}>
+                        This raffle has ended
                       </div>
                     )}
                   </div>
-                  
-                  <div className="raffle-details">
-                    <h3 className="raffle-name">{raffle.name}</h3>
-                    <p className="raffle-description">{raffle.description}</p>
-                  </div>
-                  
-                  <div className="raffle-price-bar">
-                    <div className="raffle-price-tag">
-                      {raffle.isFree ? (
-                        <>
-                          <span>🐅</span> {raffle.pointCost} points
-                        </>
-                      ) : (
-                        <>
-                          <span>₿</span> {raffle.ticketPrice.toLocaleString()} sats
-                        </>
-                      )}
-                    </div>
-                    
-                    <div className="raffle-ticket-count">
-                      <span className="ticket-icon">🎟️</span> 
-                      <span className="ticket-sold">{raffle.soldTickets}</span>
-                      <span className="ticket-total">/{raffle.totalTickets}</span>
-                      <span className="ticket-percentage">{Math.round(getProgressPercentage(raffle))}%</span>
-                    </div>
-                  </div>
-                  
-                  <div className="progress-bar">
-                    <div 
-                      className="progress-fill" 
-                      style={{ width: `${getProgressPercentage(raffle)}%` }}
-                    ></div>
-                  </div>
-                  
-                  {!raffle.winner ? (
-                    <div className="raffle-action-area">
-                      <div className="ticket-control">
-                        <button 
-                          className="ticket-control-button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            if (selectedRaffle === raffle.id) {
-                              setTicketAmount(prev => Math.max(1, prev - 1));
-                            } else {
-                              setSelectedRaffle(raffle.id);
-                              setTicketAmount(1);
-                            }
-                          }}
-                          disabled={raffle.winner !== null || isEnded}
-                        >-</button>
-                        
-                        <input
-                          type="number"
-                          className="ticket-control-input"
-                          value={selectedRaffle === raffle.id ? ticketAmount : 1}
-                          onChange={(e) => {
-                            e.stopPropagation();
-                            const value = parseInt(e.target.value);
-                            if (!isNaN(value) && value >= 1) {
-                              setTicketAmount(value);
-                              setSelectedRaffle(raffle.id);
-                            }
-                          }}
-                          min="1"
-                          max="100"
-                          onClick={(e) => e.stopPropagation()}
-                          disabled={isEnded}
-                        />
-                        
-                        <button 
-                          className="ticket-control-button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            if (selectedRaffle === raffle.id) {
-                              setTicketAmount(prev => prev + 1);
-                            } else {
-                              setSelectedRaffle(raffle.id);
-                              setTicketAmount(1);
-                            }
-                          }}
-                          disabled={raffle.winner !== null || isEnded}
-                        >+</button>
-                      </div>
-
-                      <div className="raffle-timer">
-                        <span className="timer-icon">⏱️</span>
-                        <span className="timer-text">{isEnded ? 'Ended' : formatTimeLeft(raffle.endsAt)}</span>
-                      </div>
-                      
-                      <button
-                        className="enter-button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDirectPurchase(raffle.id, selectedRaffle === raffle.id ? ticketAmount : 1);
-                        }}
-                        disabled={isEnded || (raffle.isFree ? userPoints < raffle.pointCost : balance < raffle.ticketPrice)}
-                      >
-                        {isEnded ? 'Ended' : 'Enter'}
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="raffle-winner-info" style={{
-                      background: userIsWinner ? 'rgba(255, 215, 0, 0.2)' : 'rgba(74, 252, 74, 0.1)'
-                    }}>
-                      <div className="winner-label">
-                        {userIsWinner ? 'You won this raffle! 🎉' : 'Winner:'}
-                      </div>
-                      <div className="winner-address" title={raffle.winner} style={{
-                        color: userIsWinner ? '#ffd700' : '#4afc4a'
-                      }}>
-                        {userIsWinner 
-                          ? 'Your wallet' 
-                          : `${raffle.winner.slice(0, 6)}...${raffle.winner.slice(-4)}`}
-                      </div>
-                      {raffle.winnerPickedAt && (
-                        <div className="winner-date">
-                          Drawn: {formatDate(raffle.winnerPickedAt)}
-                        </div>
-                      )}
-                      {userTickets[raffle.id] > 0 && !userIsWinner && (
-                        <div className="user-participation">
-                          You had {userTickets[raffle.id]} ticket{userTickets[raffle.id] > 1 ? 's' : ''}
-                        </div>
-                      )}
-                      {userIsWinner && (
-                        <div className="winner-instructions">
-                          Contact us to claim your prize!
-                        </div>
-                      )}
-                    </div>
-                  )}
                 </div>
               );
             })}
           </div>
         )}
         
-        <div className="footer">
-          <p>⚡ Powered by Bitcoin Lightning Network ⚡</p>
-          <p>Bitcoin Tiger Collective</p>
+        {/* Footer */}
+        <div style={{
+          textAlign: 'center',
+          marginTop: '4rem',
+          padding: '2rem',
+          borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+          color: '#6B7280',
+          fontSize: '0.9rem'
+        }}>
+          <p style={{ margin: '0 0 0.5rem 0' }}>⚡ Powered by Bitcoin Lightning Network</p>
+          <p style={{ margin: 0 }}>Bitcoin Tiger Collective - Where Community Meets Fortune</p>
         </div>
       </div>
 
