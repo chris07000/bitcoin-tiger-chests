@@ -163,21 +163,28 @@ export default function RafflePage() {
   // Effect voor Bitcoin price updates van localStorage (gedeeld met homepage)
   useEffect(() => {
     const fetchBtcPrice = () => {
+      // Probeer eerst localStorage
       const storedPrice = localStorage.getItem('btcPrice')
       if (storedPrice) {
         const price = parseFloat(storedPrice)
         if (!isNaN(price) && price > 0) {
           setBtcPrice(price)
-          console.log('Raffle: Updated BTC price from localStorage:', price)
+          return
         }
+      }
+      
+      // Fallback naar global variable
+      if ((window as any).currentBtcPrice) {
+        setBtcPrice((window as any).currentBtcPrice)
+        return
       }
     }
 
     // Haal BTC prijs op bij component mount
     fetchBtcPrice()
 
-    // Check elke 10 seconden voor updates van de homepage
-    const priceInterval = setInterval(fetchBtcPrice, 10000)
+    // Check elke 5 seconden voor updates
+    const priceInterval = setInterval(fetchBtcPrice, 5000)
 
     return () => clearInterval(priceInterval)
   }, [])

@@ -109,6 +109,9 @@ export default function BitcoinPrice() {
       
       // Save BTC price to localStorage for use in other components
       localStorage.setItem('btcPrice', price.toString());
+      
+      // Also create a global variable for immediate access
+      (window as any).currentBtcPrice = price;
     } catch (error) {
       console.error('Error fetching Bitcoin price:', error);
     }
