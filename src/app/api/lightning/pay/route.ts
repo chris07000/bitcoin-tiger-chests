@@ -21,7 +21,11 @@ export async function POST(request: Request) {
     }
 
     if (!process.env.NEXT_PUBLIC_VOLTAGE_API_ENDPOINT || !process.env.VOLTAGE_REST_PORT || !process.env.VOLTAGE_ADMIN_MACAROON) {
-      console.error('Missing environment variables');
+      console.error('Missing environment variables:', {
+        VOLTAGE_API_ENDPOINT: !!process.env.NEXT_PUBLIC_VOLTAGE_API_ENDPOINT,
+        VOLTAGE_REST_PORT: !!process.env.VOLTAGE_REST_PORT,
+        VOLTAGE_ADMIN_MACAROON: !!process.env.VOLTAGE_ADMIN_MACAROON
+      });
       throw new Error('Missing required environment variables');
     }
 
@@ -84,38 +88,62 @@ export async function POST(request: Request) {
           },
           body: JSON.stringify({
             payment_request: invoice,
+            timeout_seconds: 60,
+            fee_limit: {
+              fixed: Math.max(1, Math.floor(withdrawAmount * 0.01)) // 1% fee limit, minimum 1 sat
+            }
           }),
         }
       );
 
       console.log('Voltage API response status:', response.status);
+      console.log('Voltage API response headers:', Object.fromEntries(response.headers.entries()));
       
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('Error response from Voltage:', errorText);
-        throw new Error(`Failed to pay invoice: ${errorText}`);
+        console.error('Error response from Voltage:', {
+          status: response.status,
+          statusText: response.statusText,
+          headers: Object.fromEntries(response.headers.entries()),
+          body: errorText
+        });
+        throw new Error(`Failed to pay invoice: ${response.status} ${response.statusText} - ${errorText}`);
       }
 
       const data = await response.json();
       console.log('Payment successful:', data);
 
-      // Voeg alleen een transactie toe voor auditing, zonder de balans te updaten
-      await prisma.transaction.create({
-        data: {
-          id: uuidv4(),
-          walletId: wallet.id,
-          type: TransactionType.WITHDRAW,
-          amount: withdrawAmount,
-          paymentHash: data.payment_hash,
-          status: TransactionStatus.COMPLETED
-        }
-      });
+      // Update wallet balance and add transaction record
+      await prisma.$transaction([
+        // Add transaction record
+        prisma.transaction.create({
+          data: {
+            id: uuidv4(),
+            walletId: wallet.id,
+            type: TransactionType.WITHDRAW,
+            amount: withdrawAmount,
+            paymentHash: data.payment_hash || `payment-${Date.now()}`,
+            status: TransactionStatus.COMPLETED
+          }
+        }),
+        // Update wallet balance
+        prisma.wallet.update({
+          where: { id: wallet.id },
+          data: { 
+            balance: wallet.balance - withdrawAmount,
+            updatedAt: new Date()
+          }
+        })
+      ]);
+
+      console.log('Wallet balance updated after successful payment. New balance:', wallet.balance - withdrawAmount);
       
       return NextResponse.json({
         paymentHash: data.payment_hash,
         paymentPreimage: data.payment_preimage,
         status: data.status,
-        amount: invoiceAmount
+        amount: invoiceAmount,
+        newBalance: wallet.balance - withdrawAmount
       });
     } catch (decodeError) {
       console.error('Error decoding or paying invoice:', decodeError);

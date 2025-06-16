@@ -370,26 +370,8 @@ export const LightningProvider = ({ children }: { children: ReactNode }) => {
       const baseUrl = typeof window !== 'undefined' ? 
         (process.env.NEXT_PUBLIC_API_BASE_URL || window.location.origin) : '';
 
-      // First call the wallet endpoint to update the balance
-      const walletResponse = await fetch(`${baseUrl}/api/wallet/${walletAddress}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          type: 'WITHDRAW',
-          amount,
-          paymentHash: `withdraw-${Date.now()}`
-        }),
-      });
-
-      if (!walletResponse.ok) {
-        const errorData = await walletResponse.json();
-        console.error('Wallet update failed:', errorData);
-        throw new Error(errorData.error || 'Failed to update wallet');
-      }
-
-      // Then call the lightning pay endpoint
+      // FIRST: Execute the Lightning payment (this should happen before database changes)
+      console.log('Step 1: Attempting Lightning payment...');
       const payResponse = await fetch(`${baseUrl}/api/lightning/pay`, {
         method: 'POST',
         headers: {
@@ -404,26 +386,51 @@ export const LightningProvider = ({ children }: { children: ReactNode }) => {
 
       if (!payResponse.ok) {
         const errorData = await payResponse.json();
-        console.error('Payment failed:', errorData);
-        throw new Error(errorData.error || 'Failed to process payment');
+        console.error('Lightning payment failed:', errorData);
+        throw new Error(errorData.error || 'Failed to process Lightning payment');
       }
 
-      const data = await payResponse.json();
-      console.log('Withdrawal successful:', data);
+      const paymentData = await payResponse.json();
+      console.log('Lightning payment successful:', paymentData);
 
-      // Update balance after successful withdrawal
+      // SECOND: Only update database balance after successful Lightning payment
+      console.log('Step 2: Updating database balance after successful payment...');
+      const walletResponse = await fetch(`${baseUrl}/api/wallet/${walletAddress}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: 'WITHDRAW',
+          amount,
+          paymentHash: paymentData.paymentHash || `withdraw-${Date.now()}`
+        }),
+      });
+
+      if (!walletResponse.ok) {
+        const errorData = await walletResponse.json();
+        console.error('Database update failed after successful payment:', errorData);
+        // Note: Payment was successful but database update failed
+        // This requires manual intervention or retry logic
+        throw new Error(`Payment successful but database update failed: ${errorData.error || 'Unknown error'}`);
+      }
+
+      console.log('Withdrawal completed successfully');
+
+      // Update local state after successful withdrawal
       setBalance(balance - amount);
       setTransactions(prev => [...prev, {
         type: 'withdraw',
         amount,
-        paymentHash: data.paymentHash,
+        paymentHash: paymentData.paymentHash,
         status: 'completed',
         createdAt: new Date()
       }]);
       
       setPendingWithdrawal(false);
-      return data.paymentHash;
+      return paymentData.paymentHash;
     } catch (error) {
+      console.error('Withdrawal failed:', error);
       setPendingWithdrawal(false);
       throw error;
     }
