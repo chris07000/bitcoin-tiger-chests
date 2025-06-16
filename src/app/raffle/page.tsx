@@ -588,7 +588,7 @@ export default function RafflePage() {
           padding: 0;
           background: #0A0A0B;
           color: #FFFFFF;
-          font-family: 'Inter', sans-serif;
+          font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
         
         .page-content {
@@ -601,93 +601,117 @@ export default function RafflePage() {
         .hero-section {
           text-align: center;
           margin-bottom: 3rem;
+          max-width: 800px;
+          margin-left: auto;
+          margin-right: auto;
         }
 
         .title {
-          font-size: 3rem;
-          font-weight: 700;
+          font-size: clamp(2.5rem, 5vw, 4rem);
+          font-weight: 800;
           background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
           margin-bottom: 1rem;
           letter-spacing: -0.02em;
+          line-height: 1.1;
         }
         
         .subtitle {
-          font-size: 1.1rem;
-          color: #A0A0A0;
+          font-size: 1.125rem;
+          color: #94A3B8;
           margin-bottom: 2rem;
-          max-width: 600px;
-          margin-left: auto;
-          margin-right: auto;
+          font-weight: 400;
           line-height: 1.6;
         }
 
         .stats-bar {
           display: flex;
           justify-content: center;
-          gap: 2rem;
+          gap: 1.5rem;
           margin-bottom: 3rem;
           flex-wrap: wrap;
+          max-width: 600px;
+          margin-left: auto;
+          margin-right: auto;
         }
         
         .stat-card {
-          background: rgba(255, 107, 0, 0.05);
-          border: 1px solid rgba(255, 107, 0, 0.2);
+          background: rgba(255, 255, 255, 0.03);
+          border: 1px solid rgba(255, 107, 0, 0.15);
           border-radius: 12px;
-          padding: 1rem 1.5rem;
+          padding: 1.25rem 1.5rem;
           display: flex;
           align-items: center;
-          gap: 0.75rem;
-          min-width: 200px;
-          transition: all 0.3s ease;
+          gap: 1rem;
+          min-width: 220px;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          backdrop-filter: blur(10px);
+          position: relative;
+          overflow: hidden;
+        }
+        
+        .stat-card::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 1px;
+          background: linear-gradient(90deg, transparent, rgba(255, 107, 0, 0.3), transparent);
         }
         
         .stat-card:hover {
-          border-color: rgba(255, 107, 0, 0.4);
-          background: rgba(255, 107, 0, 0.08);
+          border-color: rgba(255, 107, 0, 0.3);
+          background: rgba(255, 107, 0, 0.05);
+          transform: translateY(-1px);
         }
         
         .stat-icon {
-          font-size: 1.5rem;
+          font-size: 1.75rem;
+          filter: drop-shadow(0 0 8px rgba(255, 107, 0, 0.3));
         }
         
         .stat-content {
           display: flex;
           flex-direction: column;
+          flex: 1;
         }
         
         .stat-label {
-          font-size: 0.85rem;
-          color: #A0A0A0;
+          font-size: 0.875rem;
+          color: #94A3B8;
           margin-bottom: 0.25rem;
+          font-weight: 500;
         }
         
         .stat-value {
-          font-size: 1.1rem;
-          font-weight: 600;
+          font-size: 1.25rem;
+          font-weight: 700;
           color: #FF6B00;
+          letter-spacing: -0.01em;
         }
         
         .refresh-button {
           background: rgba(255, 107, 0, 0.1);
-          border: 1px solid rgba(255, 107, 0, 0.3);
-          border-radius: 6px;
+          border: 1px solid rgba(255, 107, 0, 0.2);
+          border-radius: 8px;
           color: #FF6B00;
-          width: 32px;
-          height: 32px;
+          width: 36px;
+          height: 36px;
           display: flex;
           align-items: center;
           justify-content: center;
           cursor: pointer;
-          transition: all 0.2s ease;
-          margin-left: auto;
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+          font-size: 1rem;
         }
         
         .refresh-button:hover:not(:disabled) {
-          background: rgba(255, 107, 0, 0.2);
-          border-color: rgba(255, 107, 0, 0.5);
+          background: rgba(255, 107, 0, 0.15);
+          border-color: rgba(255, 107, 0, 0.4);
+          transform: scale(1.05);
         }
         
         .refresh-button:disabled {
@@ -706,92 +730,111 @@ export default function RafflePage() {
 
         .message {
           background: rgba(34, 197, 94, 0.1);
-          border: 1px solid rgba(34, 197, 94, 0.3);
-          border-radius: 8px;
-          padding: 0.75rem 1rem;
+          border: 1px solid rgba(34, 197, 94, 0.25);
+          border-radius: 12px;
+          padding: 1rem 1.5rem;
           margin: 0 auto 2rem;
           color: #22C55E;
           text-align: center;
           max-width: 500px;
           font-size: 0.9rem;
+          font-weight: 500;
         }
 
         .controls-section {
           max-width: 1400px;
-          margin: 0 auto 2rem;
+          margin: 0 auto 3rem;
         }
 
         .section-header {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 1.5rem;
+          margin-bottom: 2rem;
           flex-wrap: wrap;
-          gap: 1rem;
+          gap: 1.5rem;
         }
 
         .section-title {
-          font-size: 1.5rem;
-          font-weight: 600;
+          font-size: 1.75rem;
+          font-weight: 700;
           color: #FFFFFF;
+          letter-spacing: -0.01em;
         }
 
         .filter-tabs {
           display: flex;
-          gap: 0.5rem;
-          background: rgba(255, 255, 255, 0.05);
-          border-radius: 10px;
+          gap: 0;
+          background: rgba(255, 255, 255, 0.04);
+          border-radius: 12px;
           padding: 0.25rem;
+          border: 1px solid rgba(255, 255, 255, 0.08);
         }
         
         .filter-tab {
           background: transparent;
           border: none;
-          color: #A0A0A0;
-          padding: 0.5rem 1rem;
-          border-radius: 8px;
+          color: #94A3B8;
+          padding: 0.75rem 1.25rem;
+          border-radius: 10px;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
           font-size: 0.9rem;
-          font-weight: 500;
-        }
-        
-        .filter-tab:hover {
-          color: #FFFFFF;
-          background: rgba(255, 255, 255, 0.05);
-        }
-        
-        .filter-tab.active {
-          background: #FF6B00;
-          color: #FFFFFF;
-        }
-
-        .sort-dropdown {
+          font-weight: 600;
+          white-space: nowrap;
           position: relative;
         }
         
-        .sort-button {
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          border-radius: 8px;
+        .filter-tab:hover:not(.active) {
           color: #FFFFFF;
-          padding: 0.5rem 1rem;
+          background: rgba(255, 255, 255, 0.06);
+        }
+        
+        .filter-tab.active {
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+          color: #FFFFFF;
+          box-shadow: 0 4px 12px rgba(255, 107, 0, 0.25);
+        }
+
+        .sort-controls {
+          display: flex;
+          gap: 0.75rem;
+          flex-wrap: wrap;
+          justify-content: center;
+          margin-bottom: 2rem;
+        }
+
+        .sort-button {
+          background: rgba(255, 255, 255, 0.04);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          border-radius: 10px;
+          color: #94A3B8;
+          padding: 0.75rem 1rem;
           cursor: pointer;
           display: flex;
           align-items: center;
           gap: 0.5rem;
           font-size: 0.9rem;
-          transition: all 0.2s ease;
+          font-weight: 500;
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+          white-space: nowrap;
         }
         
-        .sort-button:hover {
+        .sort-button:hover:not(.active) {
+          border-color: rgba(255, 107, 0, 0.2);
+          background: rgba(255, 107, 0, 0.04);
+          color: #FFFFFF;
+        }
+
+        .sort-button.active {
+          background: rgba(255, 107, 0, 0.1);
           border-color: rgba(255, 107, 0, 0.3);
-          background: rgba(255, 107, 0, 0.05);
+          color: #FF6B00;
         }
 
         .raffles-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+          grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
           gap: 1.5rem;
           max-width: 1400px;
           margin: 0 auto;
@@ -799,25 +842,37 @@ export default function RafflePage() {
         
         .raffle-card {
           background: rgba(255, 255, 255, 0.02);
-          border: 1px solid rgba(255, 255, 255, 0.08);
+          border: 1px solid rgba(255, 255, 255, 0.06);
           border-radius: 16px;
           overflow: hidden;
-          transition: all 0.3s ease;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           position: relative;
-          backdrop-filter: blur(10px);
+          backdrop-filter: blur(20px);
+          display: flex;
+          flex-direction: column;
+        }
+        
+        .raffle-card::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 1px;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
         }
         
         .raffle-card:hover {
           transform: translateY(-4px);
-          border-color: rgba(255, 107, 0, 0.3);
-          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+          border-color: rgba(255, 107, 0, 0.2);
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 107, 0, 0.1);
         }
 
         .raffle-image-container {
           position: relative;
           width: 100%;
-          height: 200px;
-          background: linear-gradient(135deg, rgba(255, 107, 0, 0.05) 0%, rgba(255, 184, 0, 0.05) 100%);
+          height: 220px;
+          background: linear-gradient(135deg, rgba(255, 107, 0, 0.03) 0%, rgba(255, 184, 0, 0.03) 100%);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -828,33 +883,37 @@ export default function RafflePage() {
           width: 100%;
           height: 100%;
           object-fit: cover;
-          transition: transform 0.3s ease;
+          transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .raffle-card:hover .raffle-image {
-          transform: scale(1.05);
+          transform: scale(1.02);
         }
 
         .raffle-content {
           padding: 1.5rem;
+          display: flex;
+          flex-direction: column;
+          flex: 1;
         }
         
         .raffle-header {
-          margin-bottom: 1rem;
+          margin-bottom: 1.25rem;
         }
         
         .raffle-name {
-          font-size: 1.1rem;
-          font-weight: 600;
+          font-size: 1.25rem;
+          font-weight: 700;
           color: #FFFFFF;
-          margin-bottom: 0.5rem;
+          margin-bottom: 0.75rem;
           line-height: 1.3;
+          letter-spacing: -0.01em;
         }
         
         .raffle-description {
-          font-size: 0.9rem;
-          color: #A0A0A0;
-          line-height: 1.4;
+          font-size: 0.95rem;
+          color: #94A3B8;
+          line-height: 1.5;
           display: -webkit-box;
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
@@ -865,26 +924,34 @@ export default function RafflePage() {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 1rem;
-          padding: 0.75rem;
+          margin-bottom: 1.25rem;
+          padding: 1rem;
           background: rgba(255, 255, 255, 0.02);
-          border-radius: 8px;
+          border-radius: 12px;
+          border: 1px solid rgba(255, 255, 255, 0.05);
         }
         
         .price-display {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
+          gap: 0.75rem;
           color: #FF6B00;
-          font-weight: 600;
+          font-weight: 700;
+          font-size: 1rem;
+        }
+        
+        .price-display .icon {
+          font-size: 1.25rem;
+          filter: drop-shadow(0 0 6px rgba(255, 107, 0, 0.3));
         }
         
         .time-display {
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          color: #A0A0A0;
-          font-size: 0.85rem;
+          color: #94A3B8;
+          font-size: 0.875rem;
+          font-weight: 500;
         }
 
         .progress-section {
@@ -893,52 +960,72 @@ export default function RafflePage() {
         
         .progress-bar {
           width: 100%;
-          height: 6px;
+          height: 8px;
           background: rgba(255, 255, 255, 0.05);
-          border-radius: 3px;
+          border-radius: 4px;
           overflow: hidden;
-          margin-bottom: 0.5rem;
+          margin-bottom: 0.75rem;
+          position: relative;
+        }
+        
+        .progress-bar::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: linear-gradient(90deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+          border-radius: 4px;
         }
         
         .progress-fill {
           height: 100%;
           background: linear-gradient(90deg, #FF6B00 0%, #FFB800 100%);
-          border-radius: 3px;
-          transition: width 0.5s ease;
+          border-radius: 4px;
+          transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+          position: relative;
+          box-shadow: 0 0 12px rgba(255, 107, 0, 0.3);
         }
         
         .progress-text {
           display: flex;
           justify-content: space-between;
-          font-size: 0.8rem;
-          color: #A0A0A0;
+          align-items: center;
+          font-size: 0.85rem;
+          color: #94A3B8;
+          font-weight: 500;
         }
 
         .raffle-actions {
           display: flex;
-          gap: 0.75rem;
+          gap: 1rem;
           align-items: center;
+          margin-top: auto;
         }
         
         .ticket-controls {
           display: flex;
           align-items: center;
-          background: rgba(255, 255, 255, 0.05);
-          border-radius: 8px;
+          background: rgba(255, 255, 255, 0.04);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          border-radius: 10px;
           overflow: hidden;
         }
         
         .ticket-btn {
           background: transparent;
           border: none;
-          color: #A0A0A0;
-          width: 32px;
-          height: 32px;
+          color: #94A3B8;
+          width: 36px;
+          height: 36px;
           display: flex;
           align-items: center;
           justify-content: center;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+          font-weight: 600;
+          font-size: 1rem;
         }
         
         .ticket-btn:hover:not(:disabled) {
@@ -947,14 +1034,15 @@ export default function RafflePage() {
         }
         
         .ticket-input {
-          width: 50px;
+          width: 60px;
           background: transparent;
           border: none;
           color: #FFFFFF;
           text-align: center;
-          font-size: 0.9rem;
+          font-size: 0.95rem;
+          font-weight: 600;
           padding: 0;
-          height: 32px;
+          height: 36px;
         }
         
         .ticket-input:focus {
@@ -965,58 +1053,84 @@ export default function RafflePage() {
           background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
           border: none;
           color: #FFFFFF;
-          padding: 0.5rem 1rem;
-          border-radius: 8px;
+          padding: 0.75rem 1.5rem;
+          border-radius: 10px;
           cursor: pointer;
-          font-weight: 600;
+          font-weight: 700;
           font-size: 0.9rem;
-          transition: all 0.2s ease;
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
           flex: 1;
+          box-shadow: 0 4px 12px rgba(255, 107, 0, 0.2);
+          position: relative;
+          overflow: hidden;
+        }
+        
+        .enter-button::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+          transition: left 0.5s;
+        }
+        
+        .enter-button:hover:not(:disabled)::before {
+          left: 100%;
         }
         
         .enter-button:hover:not(:disabled) {
           transform: translateY(-1px);
-          box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
+          box-shadow: 0 8px 24px rgba(255, 107, 0, 0.3);
         }
         
         .enter-button:disabled {
           opacity: 0.5;
           cursor: not-allowed;
+          box-shadow: none;
         }
 
         .status-badge {
           position: absolute;
           top: 1rem;
           right: 1rem;
-          padding: 0.25rem 0.75rem;
+          padding: 0.5rem 1rem;
           border-radius: 20px;
           font-size: 0.75rem;
-          font-weight: 600;
+          font-weight: 700;
           text-transform: uppercase;
           letter-spacing: 0.5px;
+          backdrop-filter: blur(10px);
         }
         
         .badge-ended {
-          background: rgba(239, 68, 68, 0.2);
+          background: rgba(239, 68, 68, 0.15);
           color: #EF4444;
-          border: 1px solid rgba(239, 68, 68, 0.3);
+          border: 1px solid rgba(239, 68, 68, 0.25);
         }
         
         .badge-winner {
-          background: rgba(34, 197, 94, 0.2);
+          background: rgba(34, 197, 94, 0.15);
           color: #22C55E;
-          border: 1px solid rgba(34, 197, 94, 0.3);
+          border: 1px solid rgba(34, 197, 94, 0.25);
         }
         
         .badge-you-won {
           background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
           color: #FFFFFF;
+          border: none;
           animation: pulse-glow 2s infinite;
+          box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
         }
         
         @keyframes pulse-glow {
-          0%, 100% { box-shadow: 0 0 0 0 rgba(255, 107, 0, 0.4); }
-          50% { box-shadow: 0 0 0 8px rgba(255, 107, 0, 0); }
+          0%, 100% { 
+            box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3), 0 0 0 0 rgba(255, 107, 0, 0.4);
+          }
+          50% { 
+            box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3), 0 0 0 8px rgba(255, 107, 0, 0);
+          }
         }
 
         .user-tickets-badge {
@@ -1025,35 +1139,42 @@ export default function RafflePage() {
           left: 1rem;
           background: rgba(255, 107, 0, 0.9);
           color: #FFFFFF;
-          padding: 0.25rem 0.5rem;
-          border-radius: 6px;
+          padding: 0.5rem 0.75rem;
+          border-radius: 12px;
           font-size: 0.75rem;
-          font-weight: 600;
+          font-weight: 700;
+          backdrop-filter: blur(10px);
+          box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
         }
 
         .winner-section {
-          padding: 1rem;
+          padding: 1.25rem;
           background: rgba(34, 197, 94, 0.05);
-          border: 1px solid rgba(34, 197, 94, 0.2);
+          border: 1px solid rgba(34, 197, 94, 0.15);
           border-radius: 12px;
           margin-top: 1rem;
+          backdrop-filter: blur(10px);
         }
         
         .winner-section.user-won {
           background: rgba(255, 107, 0, 0.05);
-          border-color: rgba(255, 107, 0, 0.2);
+          border-color: rgba(255, 107, 0, 0.15);
         }
         
         .winner-label {
-          font-size: 0.8rem;
-          color: #A0A0A0;
-          margin-bottom: 0.25rem;
+          font-size: 0.85rem;
+          color: #94A3B8;
+          margin-bottom: 0.5rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
         }
         
         .winner-address {
-          font-weight: 600;
+          font-weight: 700;
           color: #22C55E;
-          margin-bottom: 0.5rem;
+          margin-bottom: 0.75rem;
+          font-size: 1rem;
         }
         
         .winner-address.user-won {
@@ -1062,18 +1183,18 @@ export default function RafflePage() {
 
         .loading-state {
           text-align: center;
-          padding: 4rem 2rem;
-          color: #A0A0A0;
+          padding: 6rem 2rem;
+          color: #94A3B8;
         }
         
         .loading-spinner {
-          width: 40px;
-          height: 40px;
+          width: 48px;
+          height: 48px;
           border: 3px solid rgba(255, 107, 0, 0.1);
           border-top: 3px solid #FF6B00;
           border-radius: 50%;
           animation: spin 1s linear infinite;
-          margin: 0 auto 1rem;
+          margin: 0 auto 1.5rem;
         }
         
         @keyframes spin {
@@ -1083,27 +1204,29 @@ export default function RafflePage() {
 
         .empty-state {
           text-align: center;
-          padding: 4rem 2rem;
+          padding: 6rem 2rem;
           max-width: 500px;
           margin: 0 auto;
         }
         
         .empty-icon {
-          font-size: 3rem;
-          margin-bottom: 1rem;
-          opacity: 0.3;
+          font-size: 4rem;
+          margin-bottom: 1.5rem;
+          opacity: 0.2;
+          filter: grayscale(1);
         }
         
         .empty-title {
-          font-size: 1.2rem;
-          font-weight: 600;
-          color: #A0A0A0;
-          margin-bottom: 0.5rem;
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: #94A3B8;
+          margin-bottom: 0.75rem;
         }
         
         .empty-description {
-          color: #6B7280;
-          font-size: 0.9rem;
+          color: #64748B;
+          font-size: 1rem;
+          line-height: 1.6;
         }
 
         /* Modal Styles */
@@ -1113,8 +1236,8 @@ export default function RafflePage() {
           left: 0;
           right: 0;
           bottom: 0;
-          background: rgba(0, 0, 0, 0.8);
-          backdrop-filter: blur(8px);
+          background: rgba(0, 0, 0, 0.85);
+          backdrop-filter: blur(12px);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -1123,18 +1246,19 @@ export default function RafflePage() {
         }
         
         .confirmation-modal {
-          background: #1A1A1B;
-          border: 1px solid rgba(255, 107, 0, 0.2);
-          border-radius: 16px;
+          background: rgba(26, 26, 27, 0.95);
+          border: 1px solid rgba(255, 107, 0, 0.15);
+          border-radius: 20px;
           max-width: 500px;
           width: 100%;
           overflow: hidden;
-          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+          box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+          backdrop-filter: blur(20px);
         }
         
         .modal-header {
-          padding: 1.5rem;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+          padding: 2rem 2rem 1rem;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
           display: flex;
           justify-content: space-between;
           align-items: center;
@@ -1142,40 +1266,52 @@ export default function RafflePage() {
         
         .modal-header h3 {
           margin: 0;
-          font-size: 1.3rem;
-          font-weight: 600;
+          font-size: 1.5rem;
+          font-weight: 700;
           color: #FFFFFF;
+          letter-spacing: -0.01em;
         }
         
         .modal-close {
-          background: none;
-          border: none;
-          color: #A0A0A0;
-          font-size: 1.5rem;
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          color: #94A3B8;
+          font-size: 1.25rem;
           cursor: pointer;
           padding: 0;
-          width: 32px;
-          height: 32px;
+          width: 36px;
+          height: 36px;
           display: flex;
           align-items: center;
           justify-content: center;
-          border-radius: 50%;
-          transition: all 0.2s ease;
+          border-radius: 12px;
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .modal-close:hover {
           background: rgba(255, 255, 255, 0.1);
           color: #FFFFFF;
+          transform: scale(1.05);
         }
         
         .modal-body {
-          padding: 1.5rem;
+          padding: 1.5rem 2rem;
+        }
+        
+        .raffle-info h4 {
+          font-size: 1.25rem;
+          font-weight: 700;
+          color: #FFFFFF;
+          margin: 0 0 1.5rem 0;
+          text-align: center;
+          letter-spacing: -0.01em;
         }
         
         .purchase-details, .balance-check {
           background: rgba(255, 255, 255, 0.02);
-          border-radius: 8px;
-          padding: 1rem;
+          border: 1px solid rgba(255, 255, 255, 0.05);
+          border-radius: 12px;
+          padding: 1.25rem;
           margin-bottom: 1rem;
         }
         
@@ -1183,8 +1319,8 @@ export default function RafflePage() {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 0.5rem;
-          font-size: 0.9rem;
+          margin-bottom: 0.75rem;
+          font-size: 0.95rem;
         }
         
         .detail-row:last-child {
@@ -1192,80 +1328,86 @@ export default function RafflePage() {
         }
         
         .detail-row span:first-child {
-          color: #A0A0A0;
+          color: #94A3B8;
+          font-weight: 500;
         }
         
         .detail-row span:last-child {
           color: #FFFFFF;
-          font-weight: 600;
+          font-weight: 700;
         }
         
         .total-row {
-          border-top: 1px solid rgba(255, 107, 0, 0.2);
-          padding-top: 0.5rem;
-          margin-top: 0.5rem;
+          border-top: 1px solid rgba(255, 107, 0, 0.15);
+          padding-top: 0.75rem;
+          margin-top: 0.75rem;
         }
         
         .total-row span {
           color: #FF6B00;
-          font-size: 1rem;
-          font-weight: 700;
+          font-size: 1.1rem;
+          font-weight: 800;
         }
         
         .modal-actions {
           display: flex;
           gap: 1rem;
-          padding: 0 1.5rem 1.5rem;
+          padding: 0 2rem 2rem;
         }
         
         .cancel-button, .confirm-button {
           flex: 1;
-          padding: 0.75rem;
+          padding: 1rem;
           border: none;
-          border-radius: 8px;
-          font-weight: 600;
+          border-radius: 12px;
+          font-weight: 700;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+          font-size: 0.95rem;
         }
         
         .cancel-button {
           background: rgba(255, 255, 255, 0.05);
-          color: #A0A0A0;
+          color: #94A3B8;
           border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .cancel-button:hover {
           background: rgba(255, 255, 255, 0.1);
           color: #FFFFFF;
+          transform: translateY(-1px);
         }
         
         .confirm-button {
           background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
           color: #FFFFFF;
+          box-shadow: 0 4px 12px rgba(255, 107, 0, 0.25);
         }
         
         .confirm-button:hover {
-          transform: translateY(-1px);
-          box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
+          transform: translateY(-2px);
+          box-shadow: 0 8px 24px rgba(255, 107, 0, 0.4);
         }
 
         @media (max-width: 768px) {
           .title {
-            font-size: 2rem;
+            font-size: 2.5rem;
           }
           
           .stats-bar {
             gap: 1rem;
+            flex-direction: column;
+            max-width: 400px;
           }
           
           .stat-card {
             min-width: auto;
-            flex: 1;
           }
           
           .section-header {
             flex-direction: column;
             align-items: stretch;
+            gap: 1rem;
           }
           
           .filter-tabs {
@@ -1280,160 +1422,18 @@ export default function RafflePage() {
           .modal-actions {
             flex-direction: column;
           }
-        }
-
-        .filter-container {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 1rem;
-          margin-bottom: 2rem;
-          width: 100%;
-          max-width: 1200px;
-          justify-content: center;
-        }
-        
-        .filter-dropdown {
-          position: relative;
-        }
-        
-        .filter-button {
-          background: rgba(0, 0, 0, 0.6);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          border-radius: 8px;
-          color: #fff;
-          padding: 0.8rem 1.5rem;
-          font-size: 0.9rem;
-          cursor: pointer;
-          transition: all 0.2s;
-          font-family: 'Press Start 2P', monospace;
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-        }
-        
-        .filter-button:hover {
-          border-color: rgba(255, 215, 0, 0.5);
-        }
-        
-        .dropdown-arrow {
-          font-size: 0.7rem;
-          margin-left: auto;
-        }
-        
-        .raffle-price-bar {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          font-size: 0.8rem;
-        }
-        
-        .raffle-price-tag {
-          color: var(--gold);
-          font-weight: bold;
-          display: flex;
-          align-items: center;
-          gap: 0.3rem;
-        }
-        
-        .raffle-ticket-count {
-          display: flex;
-          align-items: center;
-          gap: 0.3rem;
-        }
-        
-        .ticket-icon {
-          font-size: 1rem;
-        }
-        
-        .ticket-sold {
-          color: var(--gold);
-        }
-
-        .raffle-action-area {
-          margin-top: 1rem;
-        }
-
-        .ticket-control {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 0.5rem;
-          margin-bottom: 1rem;
-        }
-
-        .ticket-control-button {
-          background: rgba(255, 107, 0, 0.1);
-          border: 1px solid rgba(255, 107, 0, 0.3);
-          color: #FF6B00;
-          width: 32px;
-          height: 32px;
-          border-radius: 6px;
-          cursor: pointer;
-          transition: all 0.2s ease;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .ticket-control-button:hover:not(:disabled) {
-          background: rgba(255, 107, 0, 0.2);
-          border-color: rgba(255, 107, 0, 0.5);
-        }
-
-        .ticket-control-input {
-          width: 60px;
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          border-radius: 6px;
-          color: #FFFFFF;
-          text-align: center;
-          padding: 0.5rem;
-          font-size: 0.9rem;
-        }
-
-        .ticket-control-input:focus {
-          outline: none;
-          border-color: rgba(255, 107, 0, 0.5);
-        }
-
-        .raffle-timer {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 0.5rem;
-          margin-bottom: 1rem;
-          font-size: 0.9rem;
-          color: #A0A0A0;
-        }
-
-        .timer-icon {
-          color: #FF6B00;
-        }
-
-        .raffle-winner-info {
-          padding: 1rem;
-          border-radius: 8px;
-          margin-top: 1rem;
-          text-align: center;
-        }
-
-        .winner-date {
-          font-size: 0.8rem;
-          color: #6B7280;
-          margin-top: 0.5rem;
-        }
-
-        .user-participation {
-          font-size: 0.8rem;
-          color: #A0A0A0;
-          margin-top: 0.5rem;
-        }
-
-        .winner-instructions {
-          font-size: 0.8rem;
-          color: #FF6B00;
-          margin-top: 0.5rem;
-          font-weight: 600;
+          
+          .modal-header {
+            padding: 1.5rem 1.5rem 1rem;
+          }
+          
+          .modal-body {
+            padding: 1rem 1.5rem;
+          }
+          
+          .modal-actions {
+            padding: 0 1.5rem 1.5rem;
+          }
         }
       `}</style>
 
@@ -1521,7 +1521,7 @@ export default function RafflePage() {
               </div>
 
               {/* Sort Dropdown */}
-              <div className="sort-dropdown">
+              <div className="sort-controls">
                 <button className="sort-button">
                   <span>
                     {sortBy === 'end_time' && 'Ending Soon'}
