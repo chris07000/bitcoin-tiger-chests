@@ -1760,199 +1760,116 @@ export default function RafflePage() {
         }
 
         /* Mobile HOT RAFFLES - Make table scrollable and adjust sizing */
-        .hot-raffles-section {
-          margin: 0 auto 2rem;
-        }
-        
-        .hot-raffles-header {
-          padding: 1rem;
-          flex-direction: column;
-          text-align: center;
-          gap: 0.5rem;
-        }
-        
-        .hot-raffles-title {
-          font-size: 1.25rem;
-        }
-        
-        .hot-raffles-tagline {
-          font-size: 0.8rem;
-        }
-        
-        .hot-raffles-table-container {
-          padding: 0 1rem;
-        }
-        
-        .hot-raffles-table {
-          width: 100%;
-          font-size: 0.75rem;
-        }
-        
-        .table-cell {
-          padding: 0.75rem 0.5rem;
-          font-size: 0.75rem;
-        }
-        
-        .table-header th {
-          padding: 0.75rem 0.5rem;
-          font-size: 0.7rem;
-        }
-        
-        .raffle-avatar {
-          width: 32px;
-          height: 32px;
-        }
-        
-        .raffle-info-cell {
-          gap: 0.5rem;
-        }
-        
-        .raffle-info-cell > div {
-          min-width: 0;
-        }
-        
-        .raffle-info-cell > div > div:first-child {
-          font-size: 0.7rem !important;
-          line-height: 1.2;
-        }
-        
-        .raffle-info-cell > div > div:last-child {
-          font-size: 0.65rem !important;
-        }
-        
-        .progress-bar-small {
-          width: 40px;
-          height: 4px;
-        }
-        
-        .progress-text-small {
-          font-size: 0.65rem;
-        }
-        
-        .rank-cell {
-          min-width: 60px;
-        }
-        
-        .raffle-id {
-          font-size: 0.7rem;
-        }
-        
-        .tickets-sold {
-          font-size: 0.75rem;
-        }
-        
-        .price-cell {
-          min-width: 80px;
-        }
-        
-        .value-cell {
-          min-width: 60px;
-        }
-        
-        .countdown-cell {
-          min-width: 80px;
-          font-size: 0.7rem;
-        }
-
-        /* Mobile HOT RAFFLES - Make table responsive without horizontal scroll */
-        .hot-raffles-section {
-          margin: 0 auto 2rem;
-        }
-        
-        .hot-raffles-header {
-          padding: 1rem;
-          flex-direction: column;
-          text-align: center;
-          gap: 0.5rem;
-        }
-        
-        .hot-raffles-title {
-          font-size: 1.25rem;
-        }
-        
-        .hot-raffles-tagline {
-          font-size: 0.8rem;
-        }
-        
-        .hot-raffles-table-container {
-          padding: 0 1rem;
-        }
-        
-        .hot-raffles-table {
-          width: 100%;
-          font-size: 0.7rem;
-        }
-        
-        .table-cell {
-          padding: 0.5rem 0.25rem;
-          font-size: 0.7rem;
-        }
-        
-        /* Hide less important columns on mobile ONLY */
-        .table-header th:nth-child(3),
-        .table-row td:nth-child(3) {
-          display: none; /* Hide RAFFLE ID */
-        }
-        
-        .table-header th:nth-child(5),
-        .table-row td:nth-child(5) {
-          display: none; /* Hide TICKETS SOLD */
-        }
-        
-        .table-header th:nth-child(7),
-        .table-row td:nth-child(7) {
-          display: none; /* Hide VALUE */
-        }
-        
-        .raffle-avatar {
-          width: 28px;
-          height: 28px;
-        }
-        
-        .raffle-info-cell {
-          gap: 0.25rem;
-        }
-        
-        .raffle-info-cell > div > div:first-child {
-          font-size: 0.65rem !important;
-          line-height: 1.1;
-          max-width: 60px;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-        
-        .raffle-info-cell > div > div:last-child {
-          font-size: 0.6rem !important;
-        }
-        
-        .progress-bar-small {
-          width: 30px;
-          height: 3px;
-        }
-        
-        .progress-text-small {
-          font-size: 0.6rem;
-        }
-        
-        .rank-cell {
-          font-size: 0.65rem;
-        }
-        
-        .tickets-sold {
-          font-size: 0.65rem;
-        }
-        
-        .price-cell {
-          font-size: 0.6rem;
-        }
-        
-        .price-cell > div > div:last-child {
-          display: none; /* Hide USD conversion on mobile */
-        }
-        
-        .countdown-cell {
-          font-size: 0.6rem;
+        @media (max-width: 768px) {
+          .hot-raffles-section {
+            margin: 0 auto 2rem;
+          }
+          
+          .hot-raffles-header {
+            padding: 1rem;
+            flex-direction: column;
+            text-align: center;
+            gap: 0.5rem;
+          }
+          
+          .hot-raffles-title {
+            font-size: 1.25rem;
+          }
+          
+          .hot-raffles-tagline {
+            font-size: 0.8rem;
+          }
+          
+          .hot-raffles-table-container {
+            padding: 0 1rem;
+          }
+          
+          .hot-raffles-table {
+            width: 100%;
+            font-size: 0.75rem;
+          }
+          
+          .table-cell {
+            padding: 0.75rem 0.5rem;
+            font-size: 0.75rem;
+          }
+          
+          .table-header th {
+            padding: 0.75rem 0.5rem;
+            font-size: 0.7rem;
+          }
+          
+          /* Hide less important columns on mobile ONLY */
+          .table-header th:nth-child(3),
+          .table-row td:nth-child(3) {
+            display: none; /* Hide RAFFLE ID */
+          }
+          
+          .table-header th:nth-child(5),
+          .table-row td:nth-child(5) {
+            display: none; /* Hide TICKETS SOLD */
+          }
+          
+          .table-header th:nth-child(7),
+          .table-row td:nth-child(7) {
+            display: none; /* Hide VALUE */
+          }
+          
+          .raffle-avatar {
+            width: 32px;
+            height: 32px;
+          }
+          
+          .raffle-info-cell {
+            gap: 0.5rem;
+          }
+          
+          .raffle-info-cell > div {
+            min-width: 0;
+          }
+          
+          .raffle-info-cell > div > div:first-child {
+            font-size: 0.7rem !important;
+            line-height: 1.2;
+          }
+          
+          .raffle-info-cell > div > div:last-child {
+            font-size: 0.65rem !important;
+          }
+          
+          .progress-bar-small {
+            width: 40px;
+            height: 4px;
+          }
+          
+          .progress-text-small {
+            font-size: 0.65rem;
+          }
+          
+          .rank-cell {
+            min-width: 60px;
+          }
+          
+          .raffle-id {
+            font-size: 0.7rem;
+          }
+          
+          .tickets-sold {
+            font-size: 0.75rem;
+          }
+          
+          .price-cell {
+            min-width: 80px;
+          }
+          
+          .value-cell {
+            min-width: 60px;
+          }
+          
+          .countdown-cell {
+            min-width: 80px;
+            font-size: 0.7rem;
+          }
         }
       `}</style>
 
