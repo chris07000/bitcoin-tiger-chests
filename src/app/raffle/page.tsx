@@ -689,9 +689,7 @@ export default function RafflePage() {
         .stats-bar {
           display: flex;
           justify-content: center;
-          gap: 1.5rem;
           margin-bottom: 3rem;
-          flex-wrap: wrap;
           max-width: 900px;
           margin-left: auto;
           margin-right: auto;
@@ -701,17 +699,14 @@ export default function RafflePage() {
           background: rgba(255, 255, 255, 0.03);
           border: 1px solid rgba(255, 107, 0, 0.15);
           border-radius: 12px;
-          padding: 1.25rem 1.5rem;
+          padding: 1.25rem 2rem;
           display: flex;
           align-items: center;
-          gap: 1rem;
-          min-width: 220px;
-          flex: 1;
-          max-width: 280px;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          gap: 3rem;
           backdrop-filter: blur(10px);
           position: relative;
           overflow: hidden;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .stat-card::before {
@@ -728,6 +723,14 @@ export default function RafflePage() {
           border-color: rgba(255, 107, 0, 0.3);
           background: rgba(255, 107, 0, 0.05);
           transform: translateY(-1px);
+        }
+
+        .stat-item {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          flex: 1;
+          min-width: 0;
         }
         
         .stat-icon {
@@ -1457,14 +1460,19 @@ export default function RafflePage() {
           }
           
           .stats-bar {
-            gap: 1rem;
-            flex-direction: column;
-            max-width: 400px;
+            max-width: 100%;
+            padding: 0 1rem;
           }
           
           .stat-card {
+            flex-direction: column;
+            gap: 1.5rem;
+            padding: 1.5rem;
+          }
+          
+          .stat-item {
+            justify-content: center;
             min-width: auto;
-            max-width: none;
             flex: none;
           }
           
@@ -1701,57 +1709,59 @@ export default function RafflePage() {
         {/* Stats Bar */}
         <div className="stats-bar">
           <div className="stat-card">
-            <div className="stat-icon">⚡</div>
-            <div className="stat-content">
-              <div className="stat-label">Lightning Balance</div>
-              <div className="stat-value">{balance.toLocaleString()} sats</div>
-            </div>
-            <button 
-              className="refresh-button"
-              onClick={refreshBalance}
-              disabled={refreshingBalance}
-              title="Refresh balance"
-            >
-              <div className={`refresh-icon ${refreshingBalance ? 'rotating' : ''}`}>
-                ↻
+            <div className="stat-item">
+              <div className="stat-icon">⚡</div>
+              <div className="stat-content">
+                <div className="stat-label">Lightning Balance</div>
+                <div className="stat-value">{balance.toLocaleString()} sats</div>
               </div>
-            </button>
-          </div>
+              <button 
+                className="refresh-button"
+                onClick={refreshBalance}
+                disabled={refreshingBalance}
+                title="Refresh balance"
+              >
+                <div className={`refresh-icon ${refreshingBalance ? 'rotating' : ''}`}>
+                  ↻
+                </div>
+              </button>
+            </div>
 
-          <div className="stat-card">
-            <div className="stat-icon">🐅</div>
-            <div className="stat-content">
-              <div className="stat-label">Tiger Points</div>
-              <div className="stat-value">{userPoints.toLocaleString()}</div>
-            </div>
-            <button 
-              className="refresh-button"
-              onClick={refreshPoints}
-              disabled={refreshingPoints}
-              title="Refresh points"
-            >
-              <div className={`refresh-icon ${refreshingPoints ? 'rotating' : ''}`}>
-                ↻
+            <div className="stat-item">
+              <div className="stat-icon">🐅</div>
+              <div className="stat-content">
+                <div className="stat-label">Tiger Points</div>
+                <div className="stat-value">{userPoints.toLocaleString()}</div>
               </div>
-            </button>
-          </div>
+              <button 
+                className="refresh-button"
+                onClick={refreshPoints}
+                disabled={refreshingPoints}
+                title="Refresh points"
+              >
+                <div className={`refresh-icon ${refreshingPoints ? 'rotating' : ''}`}>
+                  ↻
+                </div>
+              </button>
+            </div>
 
-          <div className="stat-card">
-            <div className="stat-icon">₿</div>
-            <div className="stat-content">
-              <div className="stat-label">BTC Price</div>
-              <div className="stat-value">${btcPrice.toLocaleString()}</div>
-            </div>
-            <button 
-              className="refresh-button"
-              onClick={refreshBtcPrice}
-              disabled={refreshingBtcPrice}
-              title="Refresh BTC price"
-            >
-              <div className={`refresh-icon ${refreshingBtcPrice ? 'rotating' : ''}`}>
-                ↻
+            <div className="stat-item">
+              <div className="stat-icon">₿</div>
+              <div className="stat-content">
+                <div className="stat-label">BTC Price</div>
+                <div className="stat-value">${btcPrice.toLocaleString()}</div>
               </div>
-            </button>
+              <button 
+                className="refresh-button"
+                onClick={refreshBtcPrice}
+                disabled={refreshingBtcPrice}
+                title="Refresh BTC price"
+              >
+                <div className={`refresh-icon ${refreshingBtcPrice ? 'rotating' : ''}`}>
+                  ↻
+                </div>
+              </button>
+            </div>
           </div>
         </div>
         
