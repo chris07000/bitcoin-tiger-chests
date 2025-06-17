@@ -1467,19 +1467,40 @@ export default function RafflePage() {
           
           .stats-bar {
             max-width: 100%;
-            padding: 0 1rem;
+            padding: 0 0.5rem;
           }
           
           .stat-card {
-            flex-direction: column;
-            gap: 1.5rem;
-            padding: 1.5rem;
+            padding: 1rem 1.5rem;
+            gap: 2rem;
           }
           
           .stat-item {
             justify-content: center;
             min-width: auto;
-            flex: none;
+            flex: 1;
+          }
+          
+          .stat-icon {
+            font-size: 1.25rem;
+          }
+          
+          .stat-content {
+            text-align: center;
+          }
+          
+          .stat-label {
+            font-size: 0.75rem;
+          }
+          
+          .stat-value {
+            font-size: 1rem;
+          }
+          
+          .refresh-button {
+            width: 28px;
+            height: 28px;
+            font-size: 0.9rem;
           }
           
           .section-header {
@@ -1969,8 +1990,8 @@ export default function RafflePage() {
                 <Image 
                   src="/tiger-logo.png" 
                   alt="Tiger" 
-                  width={48} 
-                  height={48} 
+                  width={56} 
+                  height={56} 
                   style={{ filter: 'drop-shadow(0 0 8px rgba(255, 107, 0, 0.3))' }}
                 />
               </div>
