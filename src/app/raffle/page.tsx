@@ -692,7 +692,7 @@ export default function RafflePage() {
           gap: 1.5rem;
           margin-bottom: 3rem;
           flex-wrap: wrap;
-          max-width: 600px;
+          max-width: 900px;
           margin-left: auto;
           margin-right: auto;
         }
@@ -706,6 +706,8 @@ export default function RafflePage() {
           align-items: center;
           gap: 1rem;
           min-width: 220px;
+          flex: 1;
+          max-width: 280px;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           backdrop-filter: blur(10px);
           position: relative;
@@ -1462,6 +1464,8 @@ export default function RafflePage() {
           
           .stat-card {
             min-width: auto;
+            max-width: none;
+            flex: none;
           }
           
           .section-header {
