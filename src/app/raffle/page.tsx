@@ -1775,8 +1775,8 @@ export default function RafflePage() {
                 <Image 
                   src="/tiger-logo.png" 
                   alt="Tiger" 
-                  width={32} 
-                  height={32} 
+                  width={48} 
+                  height={48} 
                   style={{ filter: 'drop-shadow(0 0 8px rgba(255, 107, 0, 0.3))' }}
                 />
               </div>
