@@ -1675,6 +1675,37 @@ export default function RafflePage() {
           color: #FFB800;
         }
 
+        .status-progress {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0.25rem;
+          min-width: 60px;
+        }
+
+        .progress-bar-small {
+          width: 50px;
+          height: 6px;
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 3px;
+          overflow: hidden;
+          position: relative;
+        }
+
+        .progress-fill-small {
+          height: 100%;
+          background: linear-gradient(90deg, #FF6B00 0%, #FFB800 100%);
+          border-radius: 3px;
+          transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 0 0 4px rgba(255, 107, 0, 0.3);
+        }
+
+        .progress-text-small {
+          font-size: 0.75rem;
+          font-weight: 600;
+          color: #FF6B00;
+        }
+
         /* Section Divider */
         .section-divider {
           max-width: 1400px;
@@ -1734,7 +1765,15 @@ export default function RafflePage() {
             </div>
 
             <div className="stat-item">
-              <div className="stat-icon">🐅</div>
+              <div className="stat-icon">
+                <Image 
+                  src="/tiger-logo.png" 
+                  alt="Tiger" 
+                  width={24} 
+                  height={24} 
+                  style={{ filter: 'drop-shadow(0 0 8px rgba(255, 107, 0, 0.3))' }}
+                />
+              </div>
               <div className="stat-content">
                 <div className="stat-label">Tiger Points</div>
                 <div className="stat-value">{userPoints.toLocaleString()}</div>
@@ -1860,14 +1899,16 @@ export default function RafflePage() {
                       </td>
                       
                       <td className="table-cell">
-                        <div className={`status-indicator ${isActive ? 'status-active' : 'status-ended'}`}>
-                          <div style={{ 
-                            width: '6px', 
-                            height: '6px', 
-                            borderRadius: '50%', 
-                            backgroundColor: isActive ? '#22C55E' : '#EF4444' 
-                          }}></div>
-                          {isActive ? 'LIVE' : 'ENDED'}
+                        <div className="status-progress">
+                          <div className="progress-bar-small">
+                            <div 
+                              className="progress-fill-small" 
+                              style={{ width: `${progressPercentage}%` }}
+                            ></div>
+                          </div>
+                          <div className="progress-text-small">
+                            {progressPercentage.toFixed(0)}%
+                          </div>
                         </div>
                       </td>
                       
