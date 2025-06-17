@@ -905,7 +905,7 @@ export default function RafflePage() {
 
         .raffles-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
           gap: 1.5rem;
           max-width: 1400px;
           margin: 0 auto;
@@ -938,11 +938,11 @@ export default function RafflePage() {
           border-color: rgba(255, 107, 0, 0.2);
           box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 107, 0, 0.1);
         }
-
+        
         .raffle-image-container {
           position: relative;
           width: 100%;
-          height: 220px;
+          height: 280px;
           background: linear-gradient(135deg, rgba(255, 107, 0, 0.03) 0%, rgba(255, 184, 0, 0.03) 100%);
           display: flex;
           align-items: center;
