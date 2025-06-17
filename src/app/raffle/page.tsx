@@ -1737,6 +1737,104 @@ export default function RafflePage() {
           color: #94A3B8;
           font-size: 1rem;
         }
+
+        /* Mobile HOT RAFFLES - Make table scrollable and adjust sizing */
+        .hot-raffles-section {
+          margin: 0 auto 2rem;
+        }
+        
+        .hot-raffles-header {
+          padding: 1rem;
+          flex-direction: column;
+          text-align: center;
+          gap: 0.5rem;
+        }
+        
+        .hot-raffles-title {
+          font-size: 1.25rem;
+        }
+        
+        .hot-raffles-tagline {
+          font-size: 0.8rem;
+        }
+        
+        .hot-raffles-table-container {
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          padding: 0 1rem;
+        }
+        
+        .hot-raffles-table {
+          min-width: 800px;
+          font-size: 0.75rem;
+        }
+        
+        .table-cell {
+          padding: 0.75rem 0.5rem;
+          font-size: 0.75rem;
+        }
+        
+        .table-header th {
+          padding: 0.75rem 0.5rem;
+          font-size: 0.7rem;
+        }
+        
+        .raffle-avatar {
+          width: 32px;
+          height: 32px;
+        }
+        
+        .raffle-info-cell {
+          gap: 0.5rem;
+          min-width: 120px;
+        }
+        
+        .raffle-info-cell > div {
+          min-width: 0;
+        }
+        
+        .raffle-info-cell > div > div:first-child {
+          font-size: 0.7rem !important;
+          line-height: 1.2;
+        }
+        
+        .raffle-info-cell > div > div:last-child {
+          font-size: 0.65rem !important;
+        }
+        
+        .progress-bar-small {
+          width: 40px;
+          height: 4px;
+        }
+        
+        .progress-text-small {
+          font-size: 0.65rem;
+        }
+        
+        .rank-cell {
+          min-width: 60px;
+        }
+        
+        .raffle-id {
+          font-size: 0.7rem;
+        }
+        
+        .tickets-sold {
+          font-size: 0.75rem;
+        }
+        
+        .price-cell {
+          min-width: 80px;
+        }
+        
+        .value-cell {
+          min-width: 60px;
+        }
+        
+        .countdown-cell {
+          min-width: 80px;
+          font-size: 0.7rem;
+        }
       `}</style>
 
       <div className="page-content">
