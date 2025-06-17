@@ -1761,6 +1761,56 @@ export default function RafflePage() {
 
         /* Mobile HOT RAFFLES - Make table scrollable and adjust sizing */
         @media (max-width: 768px) {
+          .title {
+            font-size: 2rem;
+          }
+          
+          .stats-bar {
+            max-width: 100%;
+            padding: 0 0.5rem;
+            margin-bottom: 2rem;
+          }
+          
+          .stat-card {
+            padding: 1rem;
+            gap: 1.5rem;
+            flex-direction: column;
+            align-items: stretch;
+          }
+          
+          .stat-item {
+            justify-content: space-between;
+            min-width: auto;
+            flex: 1;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+          }
+          
+          .stat-icon {
+            font-size: 1.5rem;
+          }
+          
+          .stat-content {
+            text-align: left;
+            flex: 1;
+          }
+          
+          .stat-label {
+            font-size: 0.8rem;
+          }
+          
+          .stat-value {
+            font-size: 1.1rem;
+          }
+          
+          .refresh-button {
+            width: 32px;
+            height: 32px;
+            font-size: 0.9rem;
+          }
+          
           .hot-raffles-section {
             margin: 0 auto 2rem;
           }
@@ -1780,95 +1830,196 @@ export default function RafflePage() {
             font-size: 0.8rem;
           }
           
+          /* Hide the table and show card layout instead */
           .hot-raffles-table-container {
-            padding: 0 1rem;
+            display: none;
           }
           
-          .hot-raffles-table {
-            width: 100%;
-            font-size: 0.75rem;
+          /* Mobile card layout for hot raffles */
+          .mobile-hot-raffles {
+            display: block;
+            padding: 1rem;
           }
           
-          .table-cell {
-            padding: 0.75rem 0.5rem;
-            font-size: 0.75rem;
+          .mobile-raffle-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
           }
           
-          .table-header th {
-            padding: 0.75rem 0.5rem;
-            font-size: 0.7rem;
+          .mobile-raffle-card:hover {
+            background: rgba(255, 107, 0, 0.02);
+            border-color: rgba(255, 107, 0, 0.15);
           }
           
-          /* Hide less important columns on mobile ONLY */
-          .table-header th:nth-child(3),
-          .table-row td:nth-child(3) {
-            display: none; /* Hide RAFFLE ID */
+          .mobile-raffle-card:last-child {
+            margin-bottom: 0;
           }
           
-          .table-header th:nth-child(5),
-          .table-row td:nth-child(5) {
-            display: none; /* Hide TICKETS SOLD */
+          .mobile-card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
           }
           
-          .table-header th:nth-child(7),
-          .table-row td:nth-child(7) {
-            display: none; /* Hide VALUE */
+          .mobile-card-rank {
+            background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+            color: #FFFFFF;
+            font-weight: 800;
+            font-size: 0.9rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            min-width: 2rem;
+            text-align: center;
           }
           
-          .raffle-avatar {
-            width: 32px;
-            height: 32px;
+          .mobile-card-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 107, 0, 0.2);
+            flex-shrink: 0;
           }
           
-          .raffle-info-cell {
-            gap: 0.5rem;
-          }
-          
-          .raffle-info-cell > div {
+          .mobile-card-info {
+            flex: 1;
             min-width: 0;
           }
           
-          .raffle-info-cell > div > div:first-child {
-            font-size: 0.7rem !important;
+          .mobile-card-name {
+            font-weight: 600;
+            color: #FFFFFF;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
             line-height: 1.2;
           }
           
-          .raffle-info-cell > div > div:last-child {
-            font-size: 0.65rem !important;
-          }
-          
-          .progress-bar-small {
-            width: 40px;
-            height: 4px;
-          }
-          
-          .progress-text-small {
-            font-size: 0.65rem;
-          }
-          
-          .rank-cell {
-            min-width: 60px;
-          }
-          
-          .raffle-id {
-            font-size: 0.7rem;
-          }
-          
-          .tickets-sold {
+          .mobile-card-id {
+            font-family: 'Courier New', monospace;
+            color: #94A3B8;
             font-size: 0.75rem;
           }
           
-          .price-cell {
-            min-width: 80px;
+          .mobile-card-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
           }
           
-          .value-cell {
-            min-width: 60px;
+          .mobile-stat-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 0.75rem;
+            text-align: center;
           }
           
-          .countdown-cell {
-            min-width: 80px;
+          .mobile-stat-label {
+            font-size: 0.65rem;
+            color: #94A3B8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+            font-weight: 600;
+          }
+          
+          .mobile-stat-value {
+            font-size: 0.8rem;
+            color: #FFFFFF;
+            font-weight: 600;
+          }
+          
+          .mobile-stat-value.price {
+            color: #FF6B00;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.25rem;
+          }
+          
+          .mobile-stat-value.sold {
+            color: #FF6B00;
+          }
+          
+          .mobile-stat-value.value {
+            color: #22C55E;
+          }
+          
+          .mobile-stat-value.countdown {
+            color: #FFB800;
+            font-family: 'Courier New', monospace;
+          }
+          
+          .mobile-progress-section {
+            margin: 0.75rem 0;
+          }
+          
+          .mobile-progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+          }
+          
+          .mobile-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FF6B00 0%, #FFB800 100%);
+            border-radius: 2px;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 4px rgba(255, 107, 0, 0.3);
+          }
+          
+          .mobile-progress-text {
+            text-align: center;
             font-size: 0.7rem;
+            color: #FF6B00;
+            font-weight: 600;
+          }
+          
+          .section-header {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 1rem;
+          }
+          
+          .filter-tabs {
+            justify-content: center;
+          }
+          
+          .raffles-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+          }
+          
+          .modal-actions {
+            flex-direction: column;
+          }
+          
+          .modal-header {
+            padding: 1.5rem 1.5rem 1rem;
+          }
+          
+          .modal-body {
+            padding: 1rem 1.5rem;
+          }
+          
+          .modal-actions {
+            padding: 0 1.5rem 1.5rem;
+          }
+        }
+        
+        /* Desktop: Show table, hide mobile cards */
+        @media (min-width: 769px) {
+          .mobile-hot-raffles {
+            display: none;
           }
         }
       `}</style>
@@ -2086,6 +2237,106 @@ export default function RafflePage() {
                   })}
                 </tbody>
               </table>
+            </div>
+            
+            {/* Mobile Card Layout */}
+            <div className="mobile-hot-raffles">
+              {filteredRaffles.slice(0, 5).map((raffle, index) => {
+                const isActive = new Date(raffle.endsAt) > new Date() && !raffle.winner
+                const progressPercentage = (raffle.soldTickets / raffle.totalTickets) * 100
+                
+                // Calculate realistic Tiger NFT value based on $300 floor price
+                const getTigerValue = () => {
+                  return "300"
+                }
+
+                // Convert sats to USD
+                const satsToDollars = (sats: number) => {
+                  const btcAmount = sats / 100000000
+                  const usdAmount = btcAmount * btcPrice
+                  return usdAmount.toFixed(2)
+                }
+                
+                return (
+                  <div key={raffle.id} className="mobile-raffle-card">
+                    <div className="mobile-card-header">
+                      <div className="mobile-card-rank">#{index + 1}</div>
+                      <div className="mobile-card-avatar">
+                        <Image 
+                          src={raffle.image} 
+                          alt={raffle.name} 
+                          width={40} 
+                          height={40} 
+                          style={{ borderRadius: '6px', objectFit: 'cover', width: '100%', height: '100%' }}
+                        />
+                      </div>
+                      <div className="mobile-card-info">
+                        <div className="mobile-card-name">
+                          {raffle.name.length > 25 ? `${raffle.name.slice(0, 25)}...` : raffle.name}
+                        </div>
+                        <div className="mobile-card-id">#{raffle.id}</div>
+                      </div>
+                    </div>
+                    
+                    <div className="mobile-progress-section">
+                      <div className="mobile-progress-bar">
+                        <div 
+                          className="mobile-progress-fill" 
+                          style={{ width: `${progressPercentage}%` }}
+                        ></div>
+                      </div>
+                      <div className="mobile-progress-text">
+                        {progressPercentage.toFixed(0)}% sold ({raffle.soldTickets} tickets)
+                      </div>
+                    </div>
+                    
+                    <div className="mobile-card-stats">
+                      <div className="mobile-stat-item">
+                        <div className="mobile-stat-label">Ticket Price</div>
+                        <div className="mobile-stat-value price">
+                          {raffle.isFree ? (
+                            <>
+                              <span>🐅</span>
+                              <span>{raffle.pointCost}</span>
+                            </>
+                          ) : (
+                            <>
+                              <span>⚡</span>
+                              <span>{raffle.ticketPrice.toLocaleString()}</span>
+                            </>
+                          )}
+                        </div>
+                        {!raffle.isFree && (
+                          <div style={{ fontSize: '0.65rem', color: '#94A3B8', marginTop: '0.25rem' }}>
+                            ${satsToDollars(raffle.ticketPrice)}
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div className="mobile-stat-item">
+                        <div className="mobile-stat-label">Value</div>
+                        <div className="mobile-stat-value value">
+                          ${getTigerValue()}
+                        </div>
+                      </div>
+                      
+                      <div className="mobile-stat-item">
+                        <div className="mobile-stat-label">Tickets Sold</div>
+                        <div className="mobile-stat-value sold">
+                          {raffle.soldTickets}
+                        </div>
+                      </div>
+                      
+                      <div className="mobile-stat-item">
+                        <div className="mobile-stat-label">Finishes In</div>
+                        <div className="mobile-stat-value countdown">
+                          {isActive ? formatTimeLeft(raffle.endsAt) : 'ENDED'}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
             </div>
           )}
         </div>
