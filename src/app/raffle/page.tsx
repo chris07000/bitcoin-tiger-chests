@@ -1609,13 +1609,19 @@ export default function RafflePage() {
           width: 32px;
           height: 32px;
           border-radius: 8px;
-          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 0.8rem;
-          font-weight: 700;
-          color: #FFFFFF;
+          overflow: hidden;
+          border: 1px solid rgba(255, 107, 0, 0.2);
+          flex-shrink: 0;
+        }
+
+        .raffle-avatar-image {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          border-radius: 8px;
         }
 
         .raffle-id {
@@ -1829,7 +1835,14 @@ export default function RafflePage() {
                       <td className="table-cell">
                         <div className="raffle-info-cell">
                           <div className="raffle-avatar">
-                            {raffle.name.charAt(0).toUpperCase()}
+                            <Image 
+                              src={raffle.image} 
+                              alt={raffle.name} 
+                              width={32} 
+                              height={32} 
+                              className="raffle-avatar-image"
+                              style={{ borderRadius: '8px', objectFit: 'cover' }}
+                            />
                           </div>
                           <div>
                             <div style={{ fontWeight: 600, marginBottom: '0.25rem' }}>
