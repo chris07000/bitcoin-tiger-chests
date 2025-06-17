@@ -161,34 +161,40 @@ export default function RafflePage() {
     }
   }, [raffles.length]) // Alleen uitvoeren wanneer de raffles zijn geladen
 
-  // Effect voor Bitcoin price updates van localStorage (gedeeld met homepage)
+  // Effect voor Bitcoin price updates - onafhankelijk systeem dat elke minuut de API raadpleegt
   useEffect(() => {
-    const fetchBtcPrice = () => {
-      // Probeer eerst localStorage
-      const storedPrice = localStorage.getItem('btcPrice')
-      if (storedPrice) {
-        const price = parseFloat(storedPrice)
+    const fetchBtcPrice = async () => {
+      try {
+        console.log('Raffle: Fetching fresh BTC price from API...');
+        const response = await fetch('https://api.coinbase.com/v2/prices/BTC-USD/spot');
+        const data = await response.json();
+        const price = parseFloat(data.data.amount);
+        
         if (!isNaN(price) && price > 0) {
-          setBtcPrice(price)
-          return
+          setBtcPrice(price);
+          localStorage.setItem('btcPrice', price.toString());
+          (window as any).currentBtcPrice = price;
+          console.log('Raffle: Updated BTC price to $' + price.toLocaleString());
+        }
+      } catch (error) {
+        console.error('Raffle: Error fetching BTC price:', error);
+        // Fallback to localStorage if API fails
+        const storedPrice = localStorage.getItem('btcPrice');
+        if (storedPrice) {
+          const price = parseFloat(storedPrice);
+          if (!isNaN(price) && price > 0) {
+            setBtcPrice(price);
+            console.log('Raffle: Using stored BTC price $' + price.toLocaleString());
+          }
         }
       }
-      
-      // Fallback naar global variable
-      if ((window as any).currentBtcPrice) {
-        setBtcPrice((window as any).currentBtcPrice)
-        return
-      }
-      
-      // Als laatste resort: haal direct op
-      refreshBtcPrice()
     }
 
-    // Haal BTC prijs op bij component mount
+    // Haal BTC prijs direct op bij component mount
     fetchBtcPrice()
 
-    // Check elke 5 seconden voor updates
-    const priceInterval = setInterval(fetchBtcPrice, 5000)
+    // Update elke minuut (60000ms) voor actuele prijs
+    const priceInterval = setInterval(fetchBtcPrice, 60000)
 
     return () => clearInterval(priceInterval)
   }, [])
