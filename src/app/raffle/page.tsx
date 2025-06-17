@@ -52,6 +52,7 @@ export default function RafflePage() {
 
   // BTC Price for USD conversion  
   const [btcPrice, setBtcPrice] = useState<number>(60000) // Default $60k, can be updated from API
+  const [refreshingBtcPrice, setRefreshingBtcPrice] = useState(false)
 
   useEffect(() => {
     // Use wallet address from LightningContext or localStorage as fallback
@@ -178,6 +179,9 @@ export default function RafflePage() {
         setBtcPrice((window as any).currentBtcPrice)
         return
       }
+      
+      // Als laatste resort: haal direct op
+      refreshBtcPrice()
     }
 
     // Haal BTC prijs op bij component mount
@@ -583,6 +587,30 @@ export default function RafflePage() {
       console.error('Error refreshing points:', error);
     } finally {
       setRefreshingPoints(false);
+    }
+  };
+
+  // Functie om BTC prijs handmatig te verversen
+  const refreshBtcPrice = async () => {
+    if (refreshingBtcPrice) return;
+    
+    setRefreshingBtcPrice(true);
+    try {
+      console.log('Raffle: Manually refreshing BTC price...');
+      const response = await fetch('https://api.coinbase.com/v2/prices/BTC-USD/spot');
+      const data = await response.json();
+      const price = parseFloat(data.data.amount);
+      
+      if (!isNaN(price) && price > 0) {
+        setBtcPrice(price);
+        localStorage.setItem('btcPrice', price.toString());
+        (window as any).currentBtcPrice = price;
+        console.log('Raffle: Updated BTC price to:', price);
+      }
+    } catch (error) {
+      console.error('Error refreshing BTC price:', error);
+    } finally {
+      setRefreshingBtcPrice(false);
     }
   };
 
@@ -1699,6 +1727,24 @@ export default function RafflePage() {
               title="Refresh points"
             >
               <div className={`refresh-icon ${refreshingPoints ? 'rotating' : ''}`}>
+                ↻
+              </div>
+            </button>
+          </div>
+
+          <div className="stat-card">
+            <div className="stat-icon">₿</div>
+            <div className="stat-content">
+              <div className="stat-label">BTC Price</div>
+              <div className="stat-value">${btcPrice.toLocaleString()}</div>
+            </div>
+            <button 
+              className="refresh-button"
+              onClick={refreshBtcPrice}
+              disabled={refreshingBtcPrice}
+              title="Refresh BTC price"
+            >
+              <div className={`refresh-icon ${refreshingBtcPrice ? 'rotating' : ''}`}>
                 ↻
               </div>
             </button>
