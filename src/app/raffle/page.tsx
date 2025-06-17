@@ -667,7 +667,7 @@ export default function RafflePage() {
         }
 
         .title {
-          font-size: clamp(2.5rem, 5vw, 4rem);
+          font-size: clamp(2rem, 4vw, 3rem);
           font-weight: 800;
           background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
           -webkit-background-clip: text;
@@ -1453,7 +1453,7 @@ export default function RafflePage() {
 
         @media (max-width: 768px) {
           .title {
-            font-size: 2.5rem;
+            font-size: 2rem;
           }
           
           .stats-bar {
