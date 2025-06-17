@@ -1769,8 +1769,8 @@ export default function RafflePage() {
                 <Image 
                   src="/tiger-logo.png" 
                   alt="Tiger" 
-                  width={24} 
-                  height={24} 
+                  width={32} 
+                  height={32} 
                   style={{ filter: 'drop-shadow(0 0 8px rgba(255, 107, 0, 0.3))' }}
                 />
               </div>
@@ -1778,16 +1778,6 @@ export default function RafflePage() {
                 <div className="stat-label">Tiger Points</div>
                 <div className="stat-value">{userPoints.toLocaleString()}</div>
               </div>
-              <button 
-                className="refresh-button"
-                onClick={refreshPoints}
-                disabled={refreshingPoints}
-                title="Refresh points"
-              >
-                <div className={`refresh-icon ${refreshingPoints ? 'rotating' : ''}`}>
-                  ↻
-                </div>
-              </button>
             </div>
 
             <div className="stat-item">
