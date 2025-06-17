@@ -1829,128 +1829,130 @@ export default function RafflePage() {
               </div>
             </div>
           ) : (
-            <table className="hot-raffles-table">
-              <thead className="table-header">
-                <tr>
-                  <th>RANK</th>
-                  <th>RAFFLE</th>
-                  <th>RAFFLE ID</th>
-                  <th>STATUS</th>
-                  <th>TICKETS SOLD</th>
-                  <th>TICKET PRICE</th>
-                  <th>VALUE</th>
-                  <th>FINISHES IN</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredRaffles.slice(0, 5).map((raffle, index) => {
-                  const isActive = new Date(raffle.endsAt) > new Date() && !raffle.winner
-                  const progressPercentage = (raffle.soldTickets / raffle.totalTickets) * 100
-                  const estimatedValue = raffle.ticketPrice * raffle.totalTickets
-                  
-                  // Calculate realistic Tiger NFT value based on $300 floor price
-                  const getTigerValue = () => {
-                    // Fixed floor price for all Tigers is $300
-                    return "300"
-                  }
+            <div className="hot-raffles-table-container">
+              <table className="hot-raffles-table">
+                <thead className="table-header">
+                  <tr>
+                    <th>RANK</th>
+                    <th>RAFFLE</th>
+                    <th>RAFFLE ID</th>
+                    <th>STATUS</th>
+                    <th>TICKETS SOLD</th>
+                    <th>TICKET PRICE</th>
+                    <th>VALUE</th>
+                    <th>FINISHES IN</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredRaffles.slice(0, 5).map((raffle, index) => {
+                    const isActive = new Date(raffle.endsAt) > new Date() && !raffle.winner
+                    const progressPercentage = (raffle.soldTickets / raffle.totalTickets) * 100
+                    const estimatedValue = raffle.ticketPrice * raffle.totalTickets
+                    
+                    // Calculate realistic Tiger NFT value based on $300 floor price
+                    const getTigerValue = () => {
+                      // Fixed floor price for all Tigers is $300
+                      return "300"
+                    }
 
-                  // Convert sats to USD
-                  const satsToDollars = (sats: number) => {
-                    const btcAmount = sats / 100000000 // Convert sats to BTC
-                    const usdAmount = btcAmount * btcPrice
-                    return usdAmount.toFixed(2)
-                  }
-                  
-                  return (
-                    <tr key={raffle.id} className="table-row">
-                      <td className="table-cell rank-cell">
-                        #{index + 1}
-                      </td>
-                      
-                      <td className="table-cell">
-                        <div className="raffle-info-cell">
-                          <div className="raffle-avatar">
-                            <Image 
-                              src={raffle.image} 
-                              alt={raffle.name} 
-                              width={48} 
-                              height={48} 
-                              className="raffle-avatar-image"
-                              style={{ borderRadius: '8px', objectFit: 'cover' }}
-                            />
-                          </div>
-                          <div>
-                            <div style={{ fontWeight: 600, marginBottom: '0.25rem' }}>
-                              {raffle.name.length > 20 ? `${raffle.name.slice(0, 20)}...` : raffle.name}
+                    // Convert sats to USD
+                    const satsToDollars = (sats: number) => {
+                      const btcAmount = sats / 100000000 // Convert sats to BTC
+                      const usdAmount = btcAmount * btcPrice
+                      return usdAmount.toFixed(2)
+                    }
+                    
+                    return (
+                      <tr key={raffle.id} className="table-row">
+                        <td className="table-cell rank-cell">
+                          #{index + 1}
+                        </td>
+                        
+                        <td className="table-cell">
+                          <div className="raffle-info-cell">
+                            <div className="raffle-avatar">
+                              <Image 
+                                src={raffle.image} 
+                                alt={raffle.name} 
+                                width={48} 
+                                height={48} 
+                                className="raffle-avatar-image"
+                                style={{ borderRadius: '8px', objectFit: 'cover' }}
+                              />
                             </div>
-                            <div style={{ fontSize: '0.8rem', color: '#94A3B8' }}>
-                              {progressPercentage.toFixed(0)}% sold
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      
-                      <td className="table-cell">
-                        <div className="raffle-id">#{raffle.id}</div>
-                      </td>
-                      
-                      <td className="table-cell">
-                        <div className="status-progress">
-                          <div className="progress-bar-small">
-                            <div 
-                              className="progress-fill-small" 
-                              style={{ width: `${progressPercentage}%` }}
-                            ></div>
-                          </div>
-                          <div className="progress-text-small">
-                            {progressPercentage.toFixed(0)}%
-                          </div>
-                        </div>
-                      </td>
-                      
-                      <td className="table-cell">
-                        <div className="tickets-sold">
-                          {raffle.soldTickets}
-                        </div>
-                      </td>
-                      
-                      <td className="table-cell">
-                        <div className="price-cell">
-                          {raffle.isFree ? (
-                            <>
-                              <span className="price-icon">🐅</span>
-                              <span>{raffle.pointCost}</span>
-                            </>
-                          ) : (
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '0.25rem' }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                <span className="price-icon">⚡</span>
-                                <span>{raffle.ticketPrice.toLocaleString()}</span>
+                            <div>
+                              <div style={{ fontWeight: 600, marginBottom: '0.25rem' }}>
+                                {raffle.name.length > 20 ? `${raffle.name.slice(0, 20)}...` : raffle.name}
                               </div>
-                              <div style={{ fontSize: '0.75rem', color: '#94A3B8', marginLeft: '1.25rem' }}>
-                                ${satsToDollars(raffle.ticketPrice)}
+                              <div style={{ fontSize: '0.8rem', color: '#94A3B8' }}>
+                                {progressPercentage.toFixed(0)}% sold
                               </div>
                             </div>
-                          )}
-                        </div>
-                      </td>
-                      
-                      <td className="table-cell">
-                        <div className="value-cell">
-                          ${raffle.isFree ? getTigerValue() : getTigerValue()}
-                        </div>
-                      </td>
-                      
-                      <td className="table-cell">
-                        <div className="countdown-cell">
-                          {isActive ? formatTimeLeft(raffle.endsAt) : 'ENDED'}
-                        </div>
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
+                          </div>
+                        </td>
+                        
+                        <td className="table-cell">
+                          <div className="raffle-id">#{raffle.id}</div>
+                        </td>
+                        
+                        <td className="table-cell">
+                          <div className="status-progress">
+                            <div className="progress-bar-small">
+                              <div 
+                                className="progress-fill-small" 
+                                style={{ width: `${progressPercentage}%` }}
+                              ></div>
+                            </div>
+                            <div className="progress-text-small">
+                              {progressPercentage.toFixed(0)}%
+                            </div>
+                          </div>
+                        </td>
+                        
+                        <td className="table-cell">
+                          <div className="tickets-sold">
+                            {raffle.soldTickets}
+                          </div>
+                        </td>
+                        
+                        <td className="table-cell">
+                          <div className="price-cell">
+                            {raffle.isFree ? (
+                              <>
+                                <span className="price-icon">🐅</span>
+                                <span>{raffle.pointCost}</span>
+                              </>
+                            ) : (
+                              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '0.25rem' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                  <span className="price-icon">⚡</span>
+                                  <span>{raffle.ticketPrice.toLocaleString()}</span>
+                                </div>
+                                <div style={{ fontSize: '0.75rem', color: '#94A3B8', marginLeft: '1.25rem' }}>
+                                  ${satsToDollars(raffle.ticketPrice)}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </td>
+                        
+                        <td className="table-cell">
+                          <div className="value-cell">
+                            ${raffle.isFree ? getTigerValue() : getTigerValue()}
+                          </div>
+                        </td>
+                        
+                        <td className="table-cell">
+                          <div className="countdown-cell">
+                            {isActive ? formatTimeLeft(raffle.endsAt) : 'ENDED'}
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
 
