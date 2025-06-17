@@ -1606,8 +1606,8 @@ export default function RafflePage() {
         }
 
         .raffle-avatar {
-          width: 32px;
-          height: 32px;
+          width: 48px;
+          height: 48px;
           border-radius: 8px;
           display: flex;
           align-items: center;
@@ -1877,8 +1877,8 @@ export default function RafflePage() {
                             <Image 
                               src={raffle.image} 
                               alt={raffle.name} 
-                              width={32} 
-                              height={32} 
+                              width={48} 
+                              height={48} 
                               className="raffle-avatar-image"
                               style={{ borderRadius: '8px', objectFit: 'cover' }}
                             />
