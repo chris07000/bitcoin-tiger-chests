@@ -2535,11 +2535,30 @@ export default function RafflePage() {
                           </div>
                         )}
                       </div>
-                      
-                      <div className="time-display">
-                        <span>⏱️</span>
-                        <span>{isEnded ? 'Ended' : formatTimeLeft(raffle.endsAt)}</span>
-                      </div>
+                    </div>
+                    
+                    {/* Timer Section */}
+                    <div style={{ 
+                      background: 'rgba(255, 255, 255, 0.02)', 
+                      border: '1px solid rgba(255, 255, 255, 0.05)', 
+                      borderRadius: '8px', 
+                      padding: '0.75rem', 
+                      marginBottom: '1rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.5rem'
+                    }}>
+                      <span style={{ fontSize: '0.9rem' }}>⏱️</span>
+                      <span style={{ 
+                        color: isEnded ? '#94A3B8' : '#FFB800',
+                        fontSize: '0.85rem',
+                        fontWeight: '600',
+                        fontFamily: 'Courier New, monospace',
+                        whiteSpace: 'nowrap'
+                      }}>
+                        {isEnded ? 'Ended' : formatTimeLeft(raffle.endsAt)}
+                      </span>
                     </div>
                     
                     {/* Progress */}
