@@ -979,7 +979,7 @@ export default function RafflePage() {
         }
         
         .raffle-name {
-          font-size: 1.125rem;
+          font-size: 1rem;
           font-weight: 700;
           color: #FFFFFF;
           margin-bottom: 0.5rem;
