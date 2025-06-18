@@ -22,7 +22,8 @@ export default function RafflePage() {
     winner: string | null,
     winnerPickedAt?: Date | null,
     isFree: boolean,
-    pointCost: number
+    pointCost: number,
+    floorPrice?: number
   }>>([])
   const [filteredRaffles, setFilteredRaffles] = useState<Array<any>>([])
   const [loading, setLoading] = useState<boolean>(true)
@@ -2141,10 +2142,10 @@ export default function RafflePage() {
                       const progressPercentage = (raffle.soldTickets / raffle.totalTickets) * 100
                       const estimatedValue = raffle.ticketPrice * raffle.totalTickets
                       
-                      // Calculate realistic Tiger NFT value based on $300 floor price
+                      // Calculate realistic Tiger NFT value based on raffle's floor price
                       const getTigerValue = () => {
-                        // Fixed floor price for all Tigers is $300
-                        return "300"
+                        // Use the raffle's floor price if available, otherwise fallback to $300
+                        return raffle.floorPrice ? raffle.floorPrice.toString() : "300"
                       }
 
                       // Convert sats to USD
@@ -2252,9 +2253,9 @@ export default function RafflePage() {
                   const isActive = new Date(raffle.endsAt) > new Date() && !raffle.winner
                   const progressPercentage = (raffle.soldTickets / raffle.totalTickets) * 100
                   
-                  // Calculate realistic Tiger NFT value based on $300 floor price
+                  // Calculate realistic Tiger NFT value based on raffle's floor price
                   const getTigerValue = () => {
-                    return "300"
+                    return raffle.floorPrice ? raffle.floorPrice.toString() : "300"
                   }
 
                   // Convert sats to USD

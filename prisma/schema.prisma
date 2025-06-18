@@ -62,6 +62,7 @@ model Raffle {
   winnerPickedAt DateTime?
   isFree         Boolean        @default(false)
   pointCost      Int?
+  floorPrice     Float?         @default(300.0)
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @default(now()) @updatedAt
   RaffleTicket   RaffleTicket[]

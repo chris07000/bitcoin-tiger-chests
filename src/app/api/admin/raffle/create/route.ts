@@ -41,7 +41,8 @@ export async function POST(request: NextRequest) {
       totalTickets,
       endsAt,
       isFree,
-      pointCost
+      pointCost,
+      floorPrice
     } = await request.json();
 
     // Validate required fields
@@ -97,7 +98,8 @@ export async function POST(request: NextRequest) {
         totalTickets: parseInt(totalTickets),
         endsAt: endDate,
         isFree: Boolean(isFree),
-        pointCost: isFree ? parseInt(pointCost) : null
+        pointCost: isFree ? parseInt(pointCost) : null,
+        floorPrice: floorPrice ? parseFloat(floorPrice) : 300.0
       }
     }).catch((error) => {
       console.error('Prisma raffle creation error:', error);

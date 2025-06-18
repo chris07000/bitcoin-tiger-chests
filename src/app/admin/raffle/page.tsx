@@ -42,7 +42,8 @@ export default function AdminRafflePage() {
     endDate: defaultEndDate(),
     endTime: defaultEndTime(),
     isFree: false,
-    pointCost: '100'
+    pointCost: '100',
+    floorPrice: '300'
   })
   
   const [isLoading, setIsLoading] = useState(false)
@@ -157,7 +158,8 @@ export default function AdminRafflePage() {
         totalTickets: formData.totalTickets,
         endsAt: endsAt.toISOString(),
         isFree: formData.isFree,
-        pointCost: formData.isFree ? parseInt(formData.pointCost) : null
+        pointCost: formData.isFree ? parseInt(formData.pointCost) : null,
+        floorPrice: parseFloat(formData.floorPrice) || 300
       };
       
       const response = await fetch('/api/admin/raffle/create', {
@@ -186,7 +188,8 @@ export default function AdminRafflePage() {
           endDate: defaultEndDate(),
           endTime: defaultEndTime(),
           isFree: false,
-          pointCost: '100'
+          pointCost: '100',
+          floorPrice: '300'
         })
         // Redirect naar de raffle pagina na 2 seconden
         setTimeout(() => {
@@ -710,6 +713,32 @@ export default function AdminRafflePage() {
                   placeholder="e.g. 100"
                 />
               </div>
+            </div>
+            
+            <div className="form-group">
+              <label className="form-label" htmlFor="floorPrice">
+                Floor Price (USD)
+              </label>
+              <input
+                type="number"
+                id="floorPrice"
+                name="floorPrice"
+                className="form-input"
+                value={formData.floorPrice}
+                onChange={handleChange}
+                required
+                min="1"
+                step="0.01"
+                placeholder="e.g. 300"
+                style={{ maxWidth: '200px' }}
+              />
+              <p style={{ 
+                marginTop: '0.5rem', 
+                fontSize: '0.8rem', 
+                color: '#aaa' 
+              }}>
+                Expected floor price of the NFT/prize in USD (default: $300)
+              </p>
             </div>
             
             <div className="form-group">
