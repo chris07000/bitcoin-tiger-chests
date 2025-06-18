@@ -1522,7 +1522,7 @@ export default function RafflePage() {
           
           .raffles-grid {
             grid-template-columns: repeat(2, minmax(150px, 1fr));
-            gap: 1rem;
+            gap: 1.25rem;
           }
           
           .modal-actions {
@@ -2003,7 +2003,7 @@ export default function RafflePage() {
           
           .raffles-grid {
             grid-template-columns: repeat(2, minmax(150px, 1fr));
-            gap: 1rem;
+            gap: 1.25rem;
           }
           
           .modal-actions {
