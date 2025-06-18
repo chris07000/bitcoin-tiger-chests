@@ -925,7 +925,6 @@ export default function RafflePage() {
           flex-direction: column;
           min-width: 200px;
           max-width: 280px;
-          margin: 0 auto;
         }
         
         .raffle-card::before {
