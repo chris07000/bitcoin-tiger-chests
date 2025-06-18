@@ -2043,6 +2043,60 @@ export default function RafflePage() {
             font-size: 0.75rem;
           }
           
+          /* Mobile-specific improvements for raffle cards */
+          .progress-section {
+            margin-bottom: 0.75rem;
+          }
+          
+          .progress-bar {
+            height: 6px;
+            margin-bottom: 0.5rem;
+          }
+          
+          .progress-text {
+            font-size: 0.65rem !important;
+            gap: 0.25rem;
+            flex-wrap: wrap;
+            justify-content: center;
+          }
+          
+          .progress-text span {
+            white-space: nowrap;
+            padding: 0.125rem 0.25rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            font-weight: 600;
+          }
+          
+          /* Mobile-specific raffle actions */
+          .raffle-actions {
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+          }
+          
+          .ticket-controls {
+            border-radius: 8px;
+          }
+          
+          .ticket-btn {
+            width: 28px;
+            height: 28px;
+            font-size: 0.9rem;
+          }
+          
+          .ticket-input {
+            width: 40px;
+            height: 28px;
+            font-size: 0.85rem;
+          }
+          
+          .enter-button {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            border-radius: 8px;
+            font-weight: 600;
+          }
+          
           .modal-actions {
             flex-direction: column;
           }
