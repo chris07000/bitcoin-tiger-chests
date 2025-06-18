@@ -949,12 +949,16 @@ export default function RafflePage() {
           background: linear-gradient(135deg, rgba(255, 107, 0, 0.03) 0%, rgba(255, 184, 0, 0.03) 100%);
           overflow: hidden;
           flex-shrink: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
         
         .raffle-image {
           width: 100%;
           height: 100%;
           object-fit: cover;
+          object-position: center;
           transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
           display: block;
         }
