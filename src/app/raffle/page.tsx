@@ -945,6 +945,7 @@ export default function RafflePage() {
           height: 280px;
           background: linear-gradient(135deg, rgba(255, 107, 0, 0.03) 0%, rgba(255, 184, 0, 0.03) 100%);
           overflow: hidden;
+          border-radius: 16px 16px 0 0;
         }
         
         .raffle-image {
@@ -953,6 +954,7 @@ export default function RafflePage() {
           object-fit: cover;
           transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
           display: block;
+          border-radius: 16px 16px 0 0;
         }
         
         .raffle-card:hover .raffle-image {
