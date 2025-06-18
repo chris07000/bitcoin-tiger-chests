@@ -2002,8 +2002,45 @@ export default function RafflePage() {
           }
           
           .raffles-grid {
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 0.75rem;
+          }
+          
+          /* Make mobile cards more compact */
+          .raffle-card {
+            min-width: 140px;
+            max-width: 200px;
+          }
+          
+          .raffle-image-container {
+            height: 120px;
+          }
+          
+          .raffle-content {
+            padding: 0.75rem;
+          }
+          
+          .raffle-name {
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+          }
+          
+          .raffle-description {
+            font-size: 0.8rem;
+            -webkit-line-clamp: 1;
+          }
+          
+          .raffle-stats {
+            padding: 0.5rem;
+            margin-bottom: 0.75rem;
+          }
+          
+          .price-display {
+            font-size: 0.8rem;
+          }
+          
+          .progress-text {
+            font-size: 0.75rem;
           }
           
           .modal-actions {
