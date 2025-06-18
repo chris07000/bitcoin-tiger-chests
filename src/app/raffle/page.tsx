@@ -910,7 +910,7 @@ export default function RafflePage() {
           gap: 1.5rem;
           max-width: 1400px;
           margin: 0 auto;
-          justify-content: center;
+          justify-content: start;
         }
         
         .raffle-card {
