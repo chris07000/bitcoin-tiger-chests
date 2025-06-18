@@ -906,10 +906,11 @@ export default function RafflePage() {
 
         .raffles-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+          grid-template-columns: repeat(auto-fit, minmax(250px, 280px));
           gap: 1.5rem;
           max-width: 1400px;
           margin: 0 auto;
+          justify-content: center;
         }
         
         .raffle-card {
