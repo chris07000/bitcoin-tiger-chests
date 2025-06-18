@@ -2548,16 +2548,20 @@ export default function RafflePage() {
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      gap: '0.5rem'
+                      textAlign: 'center',
+                      width: '100%'
                     }}>
-                      <span style={{ fontSize: '0.9rem' }}>⏱️</span>
                       <span style={{ 
                         color: isEnded ? '#94A3B8' : '#FFB800',
                         fontSize: '0.85rem',
                         fontWeight: '600',
                         fontFamily: 'Courier New, monospace',
-                        whiteSpace: 'nowrap'
+                        whiteSpace: 'nowrap',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.375rem'
                       }}>
+                        <span style={{ fontSize: '0.9rem' }}>⏱️</span>
                         {isEnded ? 'Ended' : formatTimeLeft(raffle.endsAt)}
                       </span>
                     </div>
