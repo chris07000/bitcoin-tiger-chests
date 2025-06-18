@@ -905,8 +905,8 @@ export default function RafflePage() {
 
         .raffles-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-          gap: 1.25rem;
+          grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+          gap: 1rem;
           max-width: 1400px;
           margin: 0 auto;
         }
@@ -921,6 +921,9 @@ export default function RafflePage() {
           backdrop-filter: blur(20px);
           display: flex;
           flex-direction: column;
+          min-width: 200px;
+          max-width: 280px;
+          margin: 0 auto;
         }
         
         .raffle-card::before {
@@ -934,7 +937,7 @@ export default function RafflePage() {
         }
         
         .raffle-card:hover {
-          transform: translateY(-4px);
+          transform: translateY(-2px) scale(1.01);
           border-color: rgba(255, 107, 0, 0.2);
           box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 107, 0, 0.1);
         }
@@ -942,7 +945,7 @@ export default function RafflePage() {
         .raffle-image-container {
           position: relative;
           width: 100%;
-          height: 200px;
+          height: 180px;
           background: linear-gradient(135deg, rgba(255, 107, 0, 0.03) 0%, rgba(255, 184, 0, 0.03) 100%);
           overflow: hidden;
           flex-shrink: 0;
@@ -957,33 +960,33 @@ export default function RafflePage() {
         }
         
         .raffle-card:hover .raffle-image {
-          transform: scale(1.02);
+          transform: scale(1.05);
         }
 
         .raffle-content {
-          padding: 1.25rem;
+          padding: 1rem;
           display: flex;
           flex-direction: column;
           flex: 1;
         }
         
         .raffle-header {
-          margin-bottom: 1.25rem;
+          margin-bottom: 1rem;
         }
         
         .raffle-name {
-          font-size: 1.25rem;
+          font-size: 1.125rem;
           font-weight: 700;
           color: #FFFFFF;
-          margin-bottom: 0.75rem;
+          margin-bottom: 0.5rem;
           line-height: 1.3;
           letter-spacing: -0.01em;
         }
         
         .raffle-description {
-          font-size: 0.95rem;
+          font-size: 0.875rem;
           color: #94A3B8;
-          line-height: 1.5;
+          line-height: 1.4;
           display: -webkit-box;
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
@@ -994,38 +997,38 @@ export default function RafflePage() {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 1.25rem;
-          padding: 1rem;
+          margin-bottom: 1rem;
+          padding: 0.75rem;
           background: rgba(255, 255, 255, 0.02);
-          border-radius: 12px;
+          border-radius: 8px;
           border: 1px solid rgba(255, 255, 255, 0.05);
         }
         
         .price-display {
           display: flex;
           align-items: center;
-          gap: 0.75rem;
+          gap: 0.5rem;
           color: #FF6B00;
           font-weight: 700;
-          font-size: 1rem;
+          font-size: 0.9rem;
         }
         
         .price-display .icon {
-          font-size: 1.25rem;
+          font-size: 1rem;
           filter: drop-shadow(0 0 6px rgba(255, 107, 0, 0.3));
         }
         
         .time-display {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
+          gap: 0.375rem;
           color: #94A3B8;
-          font-size: 0.875rem;
+          font-size: 0.8rem;
           font-weight: 500;
         }
 
         .progress-section {
-          margin-bottom: 1.5rem;
+          margin-bottom: 1rem;
         }
         
         .progress-bar {
