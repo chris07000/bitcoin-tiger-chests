@@ -907,7 +907,7 @@ export default function RafflePage() {
         .raffles-grid {
           display: grid;
           grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-          gap: 1rem;
+          gap: 1.5rem;
           max-width: 1400px;
           margin: 0 auto;
         }
@@ -2003,7 +2003,7 @@ export default function RafflePage() {
           
           .raffles-grid {
             grid-template-columns: 1fr;
-            gap: 1rem;
+            gap: 1.5rem;
           }
           
           .modal-actions {
