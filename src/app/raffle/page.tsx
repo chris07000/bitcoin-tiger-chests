@@ -1521,7 +1521,7 @@ export default function RafflePage() {
           }
           
           .raffles-grid {
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(2, minmax(150px, 1fr));
             gap: 1rem;
           }
           
@@ -2002,8 +2002,8 @@ export default function RafflePage() {
           }
           
           .raffles-grid {
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
+            grid-template-columns: repeat(2, minmax(150px, 1fr));
+            gap: 1rem;
           }
           
           .modal-actions {
