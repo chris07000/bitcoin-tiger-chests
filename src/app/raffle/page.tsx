@@ -2464,6 +2464,13 @@ export default function RafflePage() {
               const userIsWinner = raffle.winner === walletAddress
               const userHasTickets = userTickets[raffle.id] > 0
               
+              // Convert sats to USD
+              const satsToDollars = (sats: number) => {
+                const btcAmount = sats / 100000000
+                const usdAmount = btcAmount * btcPrice
+                return usdAmount.toFixed(2)
+              }
+              
               return (
                 <div key={raffle.id} className="raffle-card">
                   {/* Status Badges */}
@@ -2517,10 +2524,15 @@ export default function RafflePage() {
                             <span>{raffle.pointCost} points</span>
                           </>
                         ) : (
-                          <>
-                            <span>⚡</span>
-                            <span>{raffle.ticketPrice.toLocaleString()} sats</span>
-                          </>
+                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                              <span>⚡</span>
+                              <span>{raffle.ticketPrice.toLocaleString()} sats</span>
+                            </div>
+                            <div style={{ fontSize: '0.75rem', color: '#94A3B8', marginLeft: '1.25rem', marginTop: '0.125rem' }}>
+                              ${satsToDollars(raffle.ticketPrice)}
+                            </div>
+                          </div>
                         )}
                       </div>
                       
