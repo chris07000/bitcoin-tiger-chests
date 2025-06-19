@@ -2741,9 +2741,6 @@ export default function RafflePage() {
                                     <span>🚀</span>
                                     <span>100% FREE</span>
                                   </div>
-                                  <div style={{ fontSize: '0.75rem', color: '#00ff88', marginLeft: '1.25rem', marginTop: '0.125rem' }}>
-                                    Marketing Raffle
-                                  </div>
                                 </div>
                               ) : (
                                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
@@ -3068,9 +3065,6 @@ export default function RafflePage() {
                               <span>🚀</span>
                               <span>100% FREE</span>
                             </div>
-                            <div style={{ fontSize: '0.75rem', color: '#00ff88', marginLeft: '1.25rem', marginTop: '0.125rem' }}>
-                              Marketing Raffle
-                            </div>
                           </div>
                         ) : (
                           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
@@ -3281,7 +3275,7 @@ export default function RafflePage() {
                       {confirmModalData.ticketPrice === 0 
                         ? raffles.find(r => r.id === confirmModalData.raffleId)?.isFree
                           ? `${confirmModalData.totalCost / confirmModalData.ticketAmount} points`
-                          : 'FREE (Marketing Raffle)'
+                          : 'FREE'
                         : `${confirmModalData.ticketPrice.toLocaleString()} sats`
                       }
                     </span>

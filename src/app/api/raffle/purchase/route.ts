@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
       
       if (currentTicketCount + ticketAmount > maxAllowed) {
         return NextResponse.json(
-          { error: `Maximum ${maxAllowed} ticket(s) allowed per wallet for this marketing raffle. You currently have ${currentTicketCount} ticket(s).` },
+          { error: `Maximum ${maxAllowed} ticket(s) allowed per wallet for this free raffle. You currently have ${currentTicketCount} ticket(s).` },
           { status: 400 }
         )
       }

@@ -647,7 +647,7 @@ export default function AdminRafflePage() {
                     color: '#00ff88'
                   }}
                 >
-                  🚀 MARKETING RAFFLE (Completely FREE)
+                  🚀 COMPLETELY FREE RAFFLE
                 </label>
               </div>
               
@@ -680,7 +680,7 @@ export default function AdminRafflePage() {
                       fontSize: '0.8rem', 
                       color: '#00ff88' 
                     }}>
-                      Limit tickets per wallet to prevent abuse (recommended: 1 for marketing raffles)
+                      Limit tickets per wallet to prevent abuse (recommended: 1 for free raffles)
                     </p>
                   </div>
                   
@@ -692,7 +692,7 @@ export default function AdminRafflePage() {
                     color: '#aaa',
                     lineHeight: '1.4'
                   }}>
-                    <strong style={{ color: '#00ff88' }}>Marketing Raffle Benefits:</strong><br />
+                    <strong style={{ color: '#00ff88' }}>Free Raffle Benefits:</strong><br />
                     • 100% FREE entry (no sats, no Tiger Points needed)<br />
                     • Perfect for attracting new users to the platform<br />
                     • Limited tickets per wallet prevents abuse<br />
