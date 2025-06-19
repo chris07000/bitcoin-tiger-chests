@@ -1237,33 +1237,39 @@ export default function RafflePage() {
         }
 
         .winner-section {
-          padding: 1.25rem;
-          background: rgba(34, 197, 94, 0.05);
-          border: 1px solid rgba(34, 197, 94, 0.15);
-          border-radius: 12px;
-          margin-top: 1rem;
+          padding: 0.75rem;
+          background: rgba(34, 197, 94, 0.08);
+          border: 1px solid rgba(34, 197, 94, 0.2);
+          border-radius: 8px;
+          margin-top: 0.75rem;
           backdrop-filter: blur(10px);
+          width: 100%;
+          box-sizing: border-box;
         }
         
         .winner-section.user-won {
-          background: rgba(255, 107, 0, 0.05);
-          border-color: rgba(255, 107, 0, 0.15);
+          background: rgba(255, 107, 0, 0.08);
+          border-color: rgba(255, 107, 0, 0.2);
         }
         
         .winner-label {
-          font-size: 0.85rem;
+          font-size: 0.7rem;
           color: #94A3B8;
-          margin-bottom: 0.5rem;
+          margin-bottom: 0.4rem;
           font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 0.5px;
+          line-height: 1.2;
         }
         
         .winner-address {
-          font-weight: 700;
+          font-weight: 600;
           color: #22C55E;
-          margin-bottom: 0.75rem;
-          font-size: 1rem;
+          margin-bottom: 0.5rem;
+          font-size: 0.8rem;
+          line-height: 1.3;
+          word-break: break-all;
+          overflow-wrap: break-word;
         }
         
         .winner-address.user-won {
@@ -2154,6 +2160,38 @@ export default function RafflePage() {
           .hot-raffles-section {
             max-width: 100%;
             margin: 0 auto 2rem;
+          }
+          
+          /* Mobile winner section improvements */
+          .winner-section {
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+            border-radius: 6px;
+          }
+          
+          .winner-label {
+            font-size: 0.65rem;
+            margin-bottom: 0.3rem;
+          }
+          
+          .winner-address {
+            font-size: 0.75rem;
+            margin-bottom: 0.3rem;
+            line-height: 1.2;
+          }
+          
+          /* Improve raffle card sizing to accommodate winner section */
+          .raffle-card {
+            min-height: auto;
+            display: flex;
+            flex-direction: column;
+          }
+          
+          .raffle-content {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            justify-content: space-between;
           }
         }
         
