@@ -151,7 +151,7 @@ export default function RafflePage() {
   useEffect(() => {
     // Geen specifieke actie nodig, de currentTime update zal de herrendering triggeren
     // en alle tijden zullen worden bijgewerkt omdat ze opnieuw worden berekend
-    console.log("Updating raffle timers:", new Date().toLocaleTimeString());
+    // Removed excessive logging that triggered every second
   }, [currentTime])
 
   // Update filteredRaffles wanneer filters veranderen
@@ -2980,10 +2980,7 @@ export default function RafflePage() {
               const userHasTickets = userTickets[raffle.id] > 0
               const userTicketCount = userTickets[raffle.id] || 0
               
-              // Debug logging for tickets
-              if (userTicketCount > 0) {
-                console.log(`User has ${userTicketCount} tickets for raffle ${raffle.id}`);
-              }
+              // Removed excessive debug logging that triggered every second
               
               // Convert sats to USD
               const satsToDollars = (sats: number) => {
