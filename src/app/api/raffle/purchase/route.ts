@@ -22,26 +22,7 @@ export async function POST(request: NextRequest) {
     
     // Zoek naar de raffle
     const raffle = await prisma.raffle.findUnique({
-      where: { id: parseInt(raffleId.toString()) },
-      select: {
-        id: true,
-        name: true,
-        description: true,
-        image: true,
-        ticketPrice: true,
-        totalTickets: true,
-        soldTickets: true,
-        endsAt: true,
-        winner: true,
-        winnerPickedAt: true,
-        isFree: true,
-        pointCost: true,
-        floorPrice: true,
-        isCompletelyFree: true,
-        maxTicketsPerWallet: true,
-        createdAt: true,
-        updatedAt: true
-      }
+      where: { id: parseInt(raffleId.toString()) }
     })
     
     if (!raffle) {
@@ -49,6 +30,13 @@ export async function POST(request: NextRequest) {
         { error: 'Raffle not found' },
         { status: 404 }
       )
+    }
+
+    // Type assertions for new fields until Prisma types are updated
+    const raffleWithNewFields = raffle as typeof raffle & {
+      isCompletelyFree?: boolean;
+      maxTicketsPerWallet?: number | null;
+      floorPrice?: number | null;
     }
     
     // Controleer of de raffle nog actief is
@@ -69,7 +57,7 @@ export async function POST(request: NextRequest) {
     }
     
     // Voor volledig gratis raffles: controleer wallet ticket limiet
-    if (raffle.isCompletelyFree && raffle.maxTicketsPerWallet) {
+    if (raffleWithNewFields.isCompletelyFree && raffleWithNewFields.maxTicketsPerWallet) {
       const existingTickets = await prisma.raffleTicket.findFirst({
         where: {
           raffleId: parseInt(raffleId.toString()),
@@ -78,7 +66,7 @@ export async function POST(request: NextRequest) {
       })
       
       const currentTicketCount = existingTickets?.quantity || 0
-      const maxAllowed = raffle.maxTicketsPerWallet
+      const maxAllowed = raffleWithNewFields.maxTicketsPerWallet
       
       if (currentTicketCount + ticketAmount > maxAllowed) {
         return NextResponse.json(
@@ -106,7 +94,7 @@ export async function POST(request: NextRequest) {
     const pointCost = raffle.isFree ? (raffle.pointCost || 100) * ticketAmount : 0
 
     // Controleer of de gebruiker voldoende balans/points heeft
-    if ((raffle as any).isCompletelyFree) {
+    if (raffleWithNewFields.isCompletelyFree) {
       // Volledig gratis raffles: geen kosten, geen balance checks nodig
       console.log(`Completely free raffle entry for ${walletAddress}`)
     } else if (raffle.isFree) {
@@ -139,7 +127,11 @@ export async function POST(request: NextRequest) {
       // Gebruik een transactie om ervoor te zorgen dat alle updates slagen of allemaal falen
       await prisma.$transaction(async (tx) => {
         
-        if (raffle.isFree) {
+        if (raffleWithNewFields.isCompletelyFree) {
+          // COMPLETELY FREE RAFFLE: Geen kosten, geen punten, alleen ticket tracking
+          console.log(`Processing completely free raffle entry for ${walletAddress}`)
+          
+        } else if (raffle.isFree) {
           // FREE RAFFLE: Trek points af
           const existingPoints = await tx.userPoints.findUnique({
             where: { walletId: wallet.id }
