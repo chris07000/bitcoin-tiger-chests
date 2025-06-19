@@ -2091,10 +2091,14 @@ export default function RafflePage() {
           }
           
           .enter-button {
-            padding: 0.5rem 1rem;
-            font-size: 0.8rem;
+            padding: 0.75rem 1.25rem;
+            font-size: 0.95rem;
             border-radius: 8px;
-            font-weight: 600;
+            font-weight: 700;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
           }
           
           .modal-actions {
