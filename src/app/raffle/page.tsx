@@ -285,10 +285,17 @@ export default function RafflePage() {
     
     setTotalWinningsGiven(totalGiven)
     
-    // Log voor debugging
+    // Meer uitgebreide logging voor debugging
+    console.log(`=== WINNINGS CALCULATION ===`)
+    console.log(`Total raffles: ${raffleList.length}`)
+    console.log(`Completed raffles: ${completedRaffles.length}`)
+    console.log(`Total winnings given: $${totalGiven.toLocaleString()}`)
     if (completedRaffles.length > 0) {
-      console.log(`Total winnings calculated: $${totalGiven.toLocaleString()} from ${completedRaffles.length} completed raffles`)
+      completedRaffles.forEach(raffle => {
+        console.log(`- ${raffle.name}: $${raffle.floorPrice || 300} (Winner: ${raffle.winner?.slice(0, 8)}...)`)
+      })
     }
+    console.log(`=== END CALCULATION ===`)
   }
 
   const handleStatusFilterChange = (status: string) => {
@@ -784,6 +791,15 @@ export default function RafflePage() {
           white-space: nowrap;
           animation: scroll-left 120s linear infinite;
           gap: 2rem;
+        }
+        
+        @keyframes scroll-left {
+          0% {
+            transform: translateX(100%);
+          }
+          100% {
+            transform: translateX(-100%);
+          }
         }
         
         .ticker-item {
@@ -2420,7 +2436,7 @@ export default function RafflePage() {
         <div className="ticker-container">
           <div className="ticker-wrapper">
             <div className="ticker-content">
-              {/* Dynamic ticker content based on real raffle data */}
+              {/* Dynamic ticker content based on real raffle data - FIRST LOOP */}
               {hotRaffles.length > 0 && (
                 <>
                   <span className="ticker-item">
@@ -2445,9 +2461,12 @@ export default function RafflePage() {
               </span>
               <span className="ticker-separator">•</span>
               
-              {/* Show total winnings/staking given away */}
+              {/* Show total winnings/staking given away - with fallback */}
               <span className="ticker-item">
-                💰 Total winnings distributed: ${totalWinningsGiven.toLocaleString()} in Bitcoin Tigers staking rewards
+                💰 {totalWinningsGiven > 0 
+                  ? `Total winnings distributed: $${totalWinningsGiven.toLocaleString()} in Bitcoin Tigers staking rewards`
+                  : 'Building staking rewards pool - first raffle winner will receive $300+ Tiger!'
+                }
               </span>
               <span className="ticker-separator">•</span>
               
@@ -2468,6 +2487,62 @@ export default function RafflePage() {
               )}
               
               {/* Calculate total tickets sold */}
+              <span className="ticker-item">
+                🎯 {raffles.reduce((sum, raffle) => sum + raffle.soldTickets, 0).toLocaleString()} tickets sold across all raffles
+              </span>
+              <span className="ticker-separator">•</span>
+              
+              <span className="ticker-item">
+                ⏰ Fair & transparent: All drawings verified on Bitcoin blockchain
+              </span>
+              <span className="ticker-separator">•</span>
+
+              {/* DUPLICATE CONTENT FOR SEAMLESS LOOP */}
+              {hotRaffles.length > 0 && (
+                <>
+                  <span className="ticker-item">
+                    🔥 HOT: {hotRaffles[0]?.name} raffle ending {formatTimeLeft(hotRaffles[0]?.endsAt)}!
+                  </span>
+                  <span className="ticker-separator">•</span>
+                </>
+              )}
+              
+              {raffles.filter(r => r.winner).length > 0 && (
+                <>
+                  <span className="ticker-item">
+                    🎉 Latest winner: {raffles.filter(r => r.winner)[0]?.winner?.slice(0, 8)}...{raffles.filter(r => r.winner)[0]?.winner?.slice(-4)} won {raffles.filter(r => r.winner)[0]?.name}!
+                  </span>
+                  <span className="ticker-separator">•</span>
+                </>
+              )}
+              
+              <span className="ticker-item">
+                ⚡ Lightning fast: Instant ticket purchases with Bitcoin Lightning
+              </span>
+              <span className="ticker-separator">•</span>
+              
+              <span className="ticker-item">
+                💰 {totalWinningsGiven > 0 
+                  ? `Total winnings distributed: $${totalWinningsGiven.toLocaleString()} in Bitcoin Tigers staking rewards`
+                  : 'Building staking rewards pool - first raffle winner will receive $300+ Tiger!'
+                }
+              </span>
+              <span className="ticker-separator">•</span>
+              
+              <span className="ticker-item">
+                🎫 {Object.keys(userTickets).length > 0 ? `You're among ${Math.max(50, Object.keys(userTickets).length * 12)} participants` : 'Join hundreds of active participants'} in our raffle community
+              </span>
+              <span className="ticker-separator">•</span>
+              
+              {raffles.length > 0 && (
+                <>
+                  <span className="ticker-item">
+                    🚀 New raffle: {raffles[raffles.length - 1]?.name} now live!
+                  </span>
+                  <span className="ticker-separator">•</span>
+                </>
+              )}
+              
               <span className="ticker-item">
                 🎯 {raffles.reduce((sum, raffle) => sum + raffle.soldTickets, 0).toLocaleString()} tickets sold across all raffles
               </span>
