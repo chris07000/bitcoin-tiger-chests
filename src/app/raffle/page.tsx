@@ -656,6 +656,9 @@ export default function RafflePage() {
           background: #0A0A0B;
           color: #FFFFFF;
           font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+          overflow-x: hidden;
+          width: 100%;
+          max-width: 100%;
         }
         
         .page-content {
@@ -663,6 +666,10 @@ export default function RafflePage() {
           background: linear-gradient(135deg, #0A0A0B 0%, #1A1A1B 100%);
           color: #FFFFFF;
           padding: 2rem 1rem;
+          overflow-x: hidden;
+          width: 100%;
+          max-width: 100%;
+          box-sizing: border-box;
         }
 
         .hero-section {
@@ -814,8 +821,10 @@ export default function RafflePage() {
         }
 
         .controls-section {
-          max-width: 1400px;
+          max-width: 100%;
           margin: 0 auto 3rem;
+          padding: 0 1rem;
+          box-sizing: border-box;
         }
 
         .section-header {
@@ -908,9 +917,11 @@ export default function RafflePage() {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(250px, 280px));
           gap: 1.5rem;
-          max-width: 1400px;
+          max-width: 100%;
           margin: 0 auto;
           justify-content: start;
+          padding: 0 1rem;
+          box-sizing: border-box;
         }
         
         .raffle-card {
@@ -1544,13 +1555,15 @@ export default function RafflePage() {
 
         /* Hot Raffles Table Section */
         .hot-raffles-section {
-          max-width: 1400px;
+          max-width: 100%;
           margin: 0 auto 4rem;
           background: rgba(255, 255, 255, 0.02);
           border: 1px solid rgba(255, 255, 255, 0.06);
           border-radius: 20px;
           overflow: hidden;
           backdrop-filter: blur(20px);
+          padding: 0 1rem;
+          box-sizing: border-box;
         }
 
         .hot-raffles-header {
@@ -1742,15 +1755,18 @@ export default function RafflePage() {
 
         /* Section Divider */
         .section-divider {
-          max-width: 1400px;
+          max-width: 100%;
           margin: 4rem auto;
           text-align: center;
+          padding: 0 1rem;
+          box-sizing: border-box;
         }
 
         .divider-line {
           height: 1px;
           background: linear-gradient(90deg, transparent, rgba(255, 107, 0, 0.3), transparent);
           margin: 2rem 0;
+          width: 100%;
         }
 
         .ending-soon-title {
