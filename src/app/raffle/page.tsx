@@ -726,6 +726,105 @@ export default function RafflePage() {
           line-height: 1.6;
         }
 
+        /* Scrolling Ticker */
+        .ticker-container {
+          width: 100%;
+          overflow: hidden;
+          background: linear-gradient(135deg, rgba(255, 107, 0, 0.08) 0%, rgba(255, 184, 0, 0.04) 100%);
+          border: 1px solid rgba(255, 107, 0, 0.15);
+          border-radius: 12px;
+          margin-bottom: 3rem;
+          position: relative;
+          backdrop-filter: blur(10px);
+          box-shadow: 0 4px 20px rgba(255, 107, 0, 0.1);
+        }
+        
+        .ticker-container::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 1px;
+          background: linear-gradient(90deg, transparent, rgba(255, 107, 0, 0.4), transparent);
+        }
+        
+        .ticker-wrapper {
+          padding: 1rem 0;
+          position: relative;
+          overflow: hidden;
+        }
+        
+        .ticker-content {
+          display: flex;
+          align-items: center;
+          white-space: nowrap;
+          animation: scroll-left 120s linear infinite;
+          gap: 2rem;
+        }
+        
+        .ticker-item {
+          font-size: 0.95rem;
+          color: #FFFFFF;
+          font-weight: 600;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          background: rgba(255, 255, 255, 0.05);
+          padding: 0.5rem 1rem;
+          border-radius: 8px;
+          border: 1px solid rgba(255, 107, 0, 0.2);
+          backdrop-filter: blur(5px);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .ticker-item:hover {
+          background: rgba(255, 107, 0, 0.1);
+          border-color: rgba(255, 107, 0, 0.4);
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(255, 107, 0, 0.2);
+        }
+        
+        .ticker-separator {
+          color: rgba(255, 107, 0, 0.6);
+          font-size: 1.2rem;
+          font-weight: 800;
+          margin: 0 1rem;
+          text-shadow: 0 0 8px rgba(255, 107, 0, 0.4);
+        }
+        
+        @keyframes scroll-left {
+          0% {
+            transform: translateX(100%);
+          }
+          100% {
+            transform: translateX(-100%);
+          }
+        }
+        
+        /* Ticker fade effects */
+        .ticker-wrapper::before,
+        .ticker-wrapper::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          width: 80px;
+          pointer-events: none;
+          z-index: 2;
+        }
+        
+        .ticker-wrapper::before {
+          left: 0;
+          background: linear-gradient(90deg, rgba(10, 10, 11, 0.8) 0%, transparent 100%);
+        }
+        
+        .ticker-wrapper::after {
+          right: 0;
+          background: linear-gradient(270deg, rgba(10, 10, 11, 0.8) 0%, transparent 100%);
+        }
+
         .stats-bar {
           display: flex;
           justify-content: center;
@@ -2242,6 +2341,38 @@ export default function RafflePage() {
             top: 0.75rem;
             left: 0.75rem;
           }
+          
+          /* Mobile ticker responsive */
+          .ticker-container {
+            margin-bottom: 2rem;
+            border-radius: 8px;
+          }
+          
+          .ticker-wrapper {
+            padding: 0.75rem 0;
+          }
+          
+          .ticker-content {
+            animation: scroll-left 80s linear infinite;
+            gap: 1rem;
+          }
+          
+          .ticker-item {
+            font-size: 0.8rem;
+            padding: 0.4rem 0.75rem;
+            border-radius: 6px;
+            white-space: nowrap;
+          }
+          
+          .ticker-separator {
+            font-size: 1rem;
+            margin: 0 0.5rem;
+          }
+          
+          .ticker-wrapper::before,
+          .ticker-wrapper::after {
+            width: 40px;
+          }
         }
         
         /* Desktop: Show table, hide mobile cards */
@@ -2260,6 +2391,45 @@ export default function RafflePage() {
             Participate in exclusive raffles to win rare Bitcoin Tiger ordinals. 
             Use Lightning sats or earn entries with Tiger Points.
           </p>
+        </div>
+
+        {/* Scrolling Ticker */}
+        <div className="ticker-container">
+          <div className="ticker-wrapper">
+            <div className="ticker-content">
+              <span className="ticker-item">
+                🔥 HOT: Tiger #420 raffle ending in 2 hours!
+              </span>
+              <span className="ticker-separator">•</span>
+              <span className="ticker-item">
+                🎉 Congratulations to bc1q...x7k9 for winning Tiger #187!
+              </span>
+              <span className="ticker-separator">•</span>
+              <span className="ticker-item">
+                ⚡ Lightning fast: Average ticket purchase takes 2 seconds
+              </span>
+              <span className="ticker-separator">•</span>
+              <span className="ticker-item">
+                📈 Total prizes distributed: $45,230 in Bitcoin Tigers
+              </span>
+              <span className="ticker-separator">•</span>
+              <span className="ticker-item">
+                🎫 Join 2,847 active participants in our raffle community
+              </span>
+              <span className="ticker-separator">•</span>
+              <span className="ticker-item">
+                🚀 New raffle alert: Rare Bitcoin Tiger #501 now live!
+              </span>
+              <span className="ticker-separator">•</span>
+              <span className="ticker-item">
+                💎 This week's highlight: Golden Tiger edition with 10 BTC floor
+              </span>
+              <span className="ticker-separator">•</span>
+              <span className="ticker-item">
+                ⏰ Fair & transparent: All drawings verified on-chain
+              </span>
+            </div>
+          </div>
         </div>
 
         {/* Stats Bar */}
