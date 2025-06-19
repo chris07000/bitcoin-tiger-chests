@@ -2116,6 +2116,29 @@ export default function RafflePage() {
           .modal-actions {
             padding: 0 1.5rem 1.5rem;
           }
+          
+          /* Fix horizontal overflow on mobile - make containers responsive */
+          .controls-section {
+            max-width: 100%;
+            margin: 0 auto 2rem;
+            padding: 0 1rem;
+          }
+          
+          .raffles-grid {
+            max-width: 100%;
+            padding: 0 1rem;
+          }
+          
+          .section-divider {
+            max-width: 100%;
+            margin: 2rem auto;
+            padding: 0 1rem;
+          }
+          
+          .hot-raffles-section {
+            max-width: 100%;
+            margin: 0 auto 2rem;
+          }
         }
         
         /* Desktop: Show table, hide mobile cards */
