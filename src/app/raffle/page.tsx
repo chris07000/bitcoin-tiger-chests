@@ -1226,14 +1226,28 @@ export default function RafflePage() {
           position: absolute;
           top: 1rem;
           left: 1rem;
-          background: rgba(255, 107, 0, 0.9);
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
           color: #FFFFFF;
           padding: 0.5rem 0.75rem;
           border-radius: 12px;
           font-size: 0.75rem;
           font-weight: 700;
           backdrop-filter: blur(10px);
-          box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
+          box-shadow: 0 4px 12px rgba(255, 107, 0, 0.4);
+          border: 2px solid rgba(255, 255, 255, 0.2);
+          z-index: 10;
+          animation: pulse-badge 2s infinite;
+        }
+        
+        @keyframes pulse-badge {
+          0%, 100% { 
+            transform: scale(1);
+            box-shadow: 0 4px 12px rgba(255, 107, 0, 0.4);
+          }
+          50% { 
+            transform: scale(1.05);
+            box-shadow: 0 6px 16px rgba(255, 107, 0, 0.6);
+          }
         }
 
         .winner-section {
@@ -2193,6 +2207,15 @@ export default function RafflePage() {
             flex: 1;
             justify-content: space-between;
           }
+          
+          /* Mobile user tickets badge */
+          .user-tickets-badge {
+            font-size: 0.7rem;
+            padding: 0.4rem 0.6rem;
+            border-radius: 8px;
+            top: 0.75rem;
+            left: 0.75rem;
+          }
         }
         
         /* Desktop: Show table, hide mobile cards */
@@ -2636,6 +2659,12 @@ export default function RafflePage() {
               const isEnded = !isActive
               const userIsWinner = raffle.winner === walletAddress
               const userHasTickets = userTickets[raffle.id] > 0
+              const userTicketCount = userTickets[raffle.id] || 0
+              
+              // Debug logging for tickets
+              if (userTicketCount > 0) {
+                console.log(`User has ${userTicketCount} tickets for raffle ${raffle.id}`);
+              }
               
               // Convert sats to USD
               const satsToDollars = (sats: number) => {
@@ -2663,10 +2692,10 @@ export default function RafflePage() {
                     </div>
                   )}
 
-                  {/* User Tickets Badge */}
-                  {userHasTickets && (
+                  {/* User Tickets Badge - Improved visibility */}
+                  {userTicketCount > 0 && (
                     <div className="user-tickets-badge">
-                      {userTickets[raffle.id]} ticket{userTickets[raffle.id] > 1 ? 's' : ''}
+                      🎫 {userTicketCount} ticket{userTicketCount > 1 ? 's' : ''}
                     </div>
                   )}
                   
