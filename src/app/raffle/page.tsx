@@ -23,7 +23,8 @@ export default function RafflePage() {
     winnerPickedAt?: Date | null,
     isFree: boolean,
     pointCost: number,
-    floorPrice?: number
+    floorPrice?: number,
+    isCompletelyFree?: boolean
   }>>([])
   const [filteredRaffles, setFilteredRaffles] = useState<Array<any>>([])
   const [loading, setLoading] = useState<boolean>(true)
@@ -326,6 +327,9 @@ export default function RafflePage() {
         setMessage('Insufficient Tiger Points')
         return
       }
+    } else if (raffle.isCompletelyFree) {
+      // Completely free raffles: no balance or points check needed
+      console.log('Completely free raffle - no cost validation needed')
     } else {
       const totalCost = raffle.ticketPrice * defaultTicketAmount
       if (totalCost > balance) {
@@ -339,8 +343,10 @@ export default function RafflePage() {
       raffleId,
       raffleName: raffle.name,
       ticketAmount: defaultTicketAmount,
-      ticketPrice: raffle.isFree ? 0 : raffle.ticketPrice,
-      totalCost: raffle.isFree ? raffle.pointCost * defaultTicketAmount : raffle.ticketPrice * defaultTicketAmount
+      ticketPrice: raffle.isFree || raffle.isCompletelyFree ? 0 : raffle.ticketPrice,
+      totalCost: raffle.isFree ? raffle.pointCost * defaultTicketAmount : 
+                 raffle.isCompletelyFree ? 0 : 
+                 raffle.ticketPrice * defaultTicketAmount
     })
     setShowConfirmModal(true)
   }
@@ -2729,13 +2735,23 @@ export default function RafflePage() {
                                   <span className="price-icon">🐅</span>
                                   <span>{raffle.pointCost}</span>
                                 </>
-                              ) : (
-                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '0.25rem' }}>
-                                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                    <span className="price-icon">⚡</span>
-                                    <span>{raffle.ticketPrice.toLocaleString()}</span>
+                              ) : raffle.isCompletelyFree ? (
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#00ff88' }}>
+                                    <span>🚀</span>
+                                    <span>100% FREE</span>
                                   </div>
-                                  <div style={{ fontSize: '0.75rem', color: '#94A3B8', marginLeft: '1.25rem' }}>
+                                  <div style={{ fontSize: '0.75rem', color: '#00ff88', marginLeft: '1.25rem', marginTop: '0.125rem' }}>
+                                    Marketing Raffle
+                                  </div>
+                                </div>
+                              ) : (
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                    <span>⚡</span>
+                                    <span>{raffle.ticketPrice.toLocaleString()} sats</span>
+                                  </div>
+                                  <div style={{ fontSize: '0.75rem', color: '#94A3B8', marginLeft: '1.25rem', marginTop: '0.125rem' }}>
                                     ${satsToDollars(raffle.ticketPrice)}
                                   </div>
                                 </div>
@@ -2821,6 +2837,11 @@ export default function RafflePage() {
                                 <span>🐅</span>
                                 <span>{raffle.pointCost}</span>
                               </>
+                            ) : raffle.isCompletelyFree ? (
+                              <>
+                                <span>🚀</span>
+                                <span>100% FREE</span>
+                              </>
                             ) : (
                               <>
                                 <span>⚡</span>
@@ -2828,7 +2849,7 @@ export default function RafflePage() {
                               </>
                             )}
                           </div>
-                          {!raffle.isFree && (
+                          {!raffle.isFree && !raffle.isCompletelyFree && (
                             <div style={{ fontSize: '0.65rem', color: '#94A3B8', marginTop: '0.25rem' }}>
                               ${satsToDollars(raffle.ticketPrice)}
                             </div>
@@ -3041,6 +3062,16 @@ export default function RafflePage() {
                             <span>🐅</span>
                             <span>{raffle.pointCost} points</span>
                           </>
+                        ) : raffle.isCompletelyFree ? (
+                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#00ff88' }}>
+                              <span>🚀</span>
+                              <span>100% FREE</span>
+                            </div>
+                            <div style={{ fontSize: '0.75rem', color: '#00ff88', marginLeft: '1.25rem', marginTop: '0.125rem' }}>
+                              Marketing Raffle
+                            </div>
+                          </div>
                         ) : (
                           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -3248,7 +3279,9 @@ export default function RafflePage() {
                     <span>Price per ticket:</span>
                     <span>
                       {confirmModalData.ticketPrice === 0 
-                        ? `${confirmModalData.totalCost / confirmModalData.ticketAmount} points`
+                        ? raffles.find(r => r.id === confirmModalData.raffleId)?.isFree
+                          ? `${confirmModalData.totalCost / confirmModalData.ticketAmount} points`
+                          : 'FREE (Marketing Raffle)'
                         : `${confirmModalData.ticketPrice.toLocaleString()} sats`
                       }
                     </span>
@@ -3257,7 +3290,9 @@ export default function RafflePage() {
                     <span>Total cost:</span>
                     <span>
                       {confirmModalData.ticketPrice === 0 
-                        ? `${confirmModalData.totalCost} points`
+                        ? raffles.find(r => r.id === confirmModalData.raffleId)?.isFree
+                          ? `${confirmModalData.totalCost} points`
+                          : 'FREE ✨'
                         : `${confirmModalData.totalCost.toLocaleString()} sats`
                       }
                     </span>
@@ -3268,11 +3303,18 @@ export default function RafflePage() {
               <div className="balance-check">
                 <div className="detail-row">
                   <span>
-                    {confirmModalData.ticketPrice === 0 ? 'Current points:' : 'Current balance:'}
+                    {confirmModalData.ticketPrice === 0 
+                      ? raffles.find(r => r.id === confirmModalData.raffleId)?.isFree
+                        ? 'Current points:'
+                        : 'Cost:'
+                      : 'Current balance:'
+                    }
                   </span>
                   <span>
                     {confirmModalData.ticketPrice === 0 
-                      ? `${userPoints.toLocaleString()} points`
+                      ? raffles.find(r => r.id === confirmModalData.raffleId)?.isFree
+                        ? `${userPoints.toLocaleString()} points`
+                        : 'FREE Entry! 🎉'
                       : `${balance.toLocaleString()} sats`
                     }
                   </span>
@@ -3281,7 +3323,9 @@ export default function RafflePage() {
                   <span>After purchase:</span>
                   <span>
                     {confirmModalData.ticketPrice === 0 
-                      ? `${(userPoints - confirmModalData.totalCost).toLocaleString()} points`
+                      ? raffles.find(r => r.id === confirmModalData.raffleId)?.isFree
+                        ? `${(userPoints - confirmModalData.totalCost).toLocaleString()} points`
+                        : 'Still FREE! ✨'
                       : `${(balance - confirmModalData.totalCost).toLocaleString()} sats`
                     }
                   </span>

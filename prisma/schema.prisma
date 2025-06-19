@@ -50,23 +50,25 @@ model Jackpot {
 }
 
 model Raffle {
-  id             Int            @id @default(autoincrement())
-  name           String
-  description    String
-  image          String
-  ticketPrice    Float
-  totalTickets   Int
-  soldTickets    Int            @default(0)
-  endsAt         DateTime
-  winner         String?
-  winnerPickedAt DateTime?
-  isFree         Boolean        @default(false)
-  pointCost      Int?
-  floorPrice     Float?         @default(300.0)
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @default(now()) @updatedAt
-  RaffleTicket   RaffleTicket[]
-  PointTransaction PointTransaction[]
+  id                    Int            @id @default(autoincrement())
+  name                  String
+  description           String
+  image                 String
+  ticketPrice           Float
+  totalTickets          Int
+  soldTickets           Int            @default(0)
+  endsAt                DateTime
+  winner                String?
+  winnerPickedAt        DateTime?
+  isFree                Boolean        @default(false)
+  pointCost             Int?
+  floorPrice            Float?         @default(300.0)
+  isCompletelyFree      Boolean        @default(false)
+  maxTicketsPerWallet   Int?
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @default(now()) @updatedAt
+  RaffleTicket          RaffleTicket[]
+  PointTransaction      PointTransaction[]
 }
 
 model RaffleTicket {

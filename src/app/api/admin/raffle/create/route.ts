@@ -42,7 +42,9 @@ export async function POST(request: NextRequest) {
       endsAt,
       isFree,
       pointCost,
-      floorPrice
+      floorPrice,
+      isCompletelyFree,
+      maxTicketsPerWallet
     } = await request.json();
 
     // Validate required fields
@@ -53,15 +55,31 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Additional validation for free vs paid raffles
-    if (isFree) {
+    // Additional validation for different raffle types
+    if (isCompletelyFree) {
+      // Completely free marketing raffles
+      if (isFree) {
+        return NextResponse.json(
+          { error: 'Raffle cannot be both completely free and Tiger Points free' },
+          { status: 400 }
+        );
+      }
+      if (!maxTicketsPerWallet || maxTicketsPerWallet < 1) {
+        return NextResponse.json(
+          { error: 'Max tickets per wallet is required for completely free raffles and must be at least 1' },
+          { status: 400 }
+        );
+      }
+    } else if (isFree) {
+      // Tiger Points free raffles
       if (!pointCost || pointCost < 1) {
         return NextResponse.json(
-          { error: 'Point cost is required for free raffles and must be at least 1' },
+          { error: 'Point cost is required for Tiger Points raffles and must be at least 1' },
           { status: 400 }
         );
       }
     } else {
+      // Paid raffles
       if (!ticketPrice || ticketPrice < 1) {
         return NextResponse.json(
           { error: 'Ticket price is required for paid raffles and must be at least 1' },
@@ -99,7 +117,9 @@ export async function POST(request: NextRequest) {
         endsAt: endDate,
         isFree: Boolean(isFree),
         pointCost: isFree ? parseInt(pointCost) : null,
-        floorPrice: floorPrice ? parseFloat(floorPrice) : 300.0
+        floorPrice: floorPrice ? parseFloat(floorPrice) : 300.0,
+        isCompletelyFree: Boolean(isCompletelyFree),
+        maxTicketsPerWallet: isCompletelyFree ? parseInt(maxTicketsPerWallet) : null
       }
     }).catch((error) => {
       console.error('Prisma raffle creation error:', error);

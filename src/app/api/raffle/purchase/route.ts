@@ -22,7 +22,26 @@ export async function POST(request: NextRequest) {
     
     // Zoek naar de raffle
     const raffle = await prisma.raffle.findUnique({
-      where: { id: parseInt(raffleId.toString()) }
+      where: { id: parseInt(raffleId.toString()) },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        image: true,
+        ticketPrice: true,
+        totalTickets: true,
+        soldTickets: true,
+        endsAt: true,
+        winner: true,
+        winnerPickedAt: true,
+        isFree: true,
+        pointCost: true,
+        floorPrice: true,
+        isCompletelyFree: true,
+        maxTicketsPerWallet: true,
+        createdAt: true,
+        updatedAt: true
+      }
     })
     
     if (!raffle) {
@@ -49,6 +68,26 @@ export async function POST(request: NextRequest) {
       )
     }
     
+    // Voor volledig gratis raffles: controleer wallet ticket limiet
+    if (raffle.isCompletelyFree && raffle.maxTicketsPerWallet) {
+      const existingTickets = await prisma.raffleTicket.findFirst({
+        where: {
+          raffleId: parseInt(raffleId.toString()),
+          walletId: walletAddress
+        }
+      })
+      
+      const currentTicketCount = existingTickets?.quantity || 0
+      const maxAllowed = raffle.maxTicketsPerWallet
+      
+      if (currentTicketCount + ticketAmount > maxAllowed) {
+        return NextResponse.json(
+          { error: `Maximum ${maxAllowed} ticket(s) allowed per wallet for this marketing raffle. You currently have ${currentTicketCount} ticket(s).` },
+          { status: 400 }
+        )
+      }
+    }
+    
     // Zoek eerst de wallet op basis van het adres
     const wallet = await prisma.wallet.findUnique({
       where: { address: walletAddress }
@@ -67,7 +106,10 @@ export async function POST(request: NextRequest) {
     const pointCost = raffle.isFree ? (raffle.pointCost || 100) * ticketAmount : 0
 
     // Controleer of de gebruiker voldoende balans/points heeft
-    if (raffle.isFree) {
+    if ((raffle as any).isCompletelyFree) {
+      // Volledig gratis raffles: geen kosten, geen balance checks nodig
+      console.log(`Completely free raffle entry for ${walletAddress}`)
+    } else if (raffle.isFree) {
       // Voor free raffles: controleer points
       const userPoints = await prisma.userPoints.findUnique({
         where: { walletId: wallet.id }

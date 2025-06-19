@@ -43,7 +43,9 @@ export default function AdminRafflePage() {
     endTime: defaultEndTime(),
     isFree: false,
     pointCost: '100',
-    floorPrice: '300'
+    floorPrice: '300',
+    isCompletelyFree: false,
+    maxTicketsPerWallet: '1'
   })
   
   const [isLoading, setIsLoading] = useState(false)
@@ -154,12 +156,14 @@ export default function AdminRafflePage() {
         name: formData.name,
         description: formData.description,
         image: formData.image,
-        ticketPrice: formData.isFree ? 0 : formData.ticketPrice,
+        ticketPrice: formData.isFree || formData.isCompletelyFree ? 0 : formData.ticketPrice,
         totalTickets: formData.totalTickets,
         endsAt: endsAt.toISOString(),
         isFree: formData.isFree,
         pointCost: formData.isFree ? parseInt(formData.pointCost) : null,
-        floorPrice: parseFloat(formData.floorPrice) || 300
+        floorPrice: parseFloat(formData.floorPrice) || 300,
+        isCompletelyFree: formData.isCompletelyFree,
+        maxTicketsPerWallet: formData.isCompletelyFree ? parseInt(formData.maxTicketsPerWallet) : null
       };
       
       const response = await fetch('/api/admin/raffle/create', {
@@ -189,7 +193,9 @@ export default function AdminRafflePage() {
           endTime: defaultEndTime(),
           isFree: false,
           pointCost: '100',
-          floorPrice: '300'
+          floorPrice: '300',
+          isCompletelyFree: false,
+          maxTicketsPerWallet: '1'
         })
         // Redirect naar de raffle pagina na 2 seconden
         setTimeout(() => {
@@ -558,6 +564,7 @@ export default function AdminRafflePage() {
                   name="isFree"
                   checked={formData.isFree}
                   onChange={handleChange}
+                  disabled={formData.isCompletelyFree}
                   style={{
                     width: '18px',
                     height: '18px',
@@ -569,7 +576,8 @@ export default function AdminRafflePage() {
                   htmlFor="isFree"
                   style={{ 
                     margin: 0,
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    opacity: formData.isCompletelyFree ? 0.5 : 1
                   }}
                 >
                   This is a Free Raffle (Tiger Points)
@@ -599,6 +607,97 @@ export default function AdminRafflePage() {
                   }}>
                     Points required to enter this free raffle (default: 100)
                   </p>
+                </div>
+              )}
+            </div>
+
+            {/* Completely Free Marketing Raffle Option */}
+            <div className="form-group">
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '0.5rem',
+                marginBottom: '1rem'
+              }}>
+                <input
+                  type="checkbox"
+                  id="isCompletelyFree"
+                  name="isCompletelyFree"
+                  checked={formData.isCompletelyFree}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    setFormData(prev => ({ 
+                      ...prev, 
+                      isCompletelyFree: checked,
+                      isFree: false // Disable Tiger Points if completely free is enabled
+                    }))
+                  }}
+                  style={{
+                    width: '18px',
+                    height: '18px',
+                    accentColor: '#00ff00'
+                  }}
+                />
+                <label 
+                  className="form-label" 
+                  htmlFor="isCompletelyFree"
+                  style={{ 
+                    margin: 0,
+                    cursor: 'pointer',
+                    color: '#00ff88'
+                  }}
+                >
+                  🚀 MARKETING RAFFLE (Completely FREE)
+                </label>
+              </div>
+              
+              {formData.isCompletelyFree && (
+                <div style={{
+                  background: 'rgba(0, 255, 136, 0.1)',
+                  border: '1px solid rgba(0, 255, 136, 0.3)',
+                  borderRadius: '8px',
+                  padding: '1rem',
+                  marginTop: '1rem'
+                }}>
+                  <div style={{ marginBottom: '1rem' }}>
+                    <label className="form-label" htmlFor="maxTicketsPerWallet">
+                      Max Tickets Per Wallet
+                    </label>
+                    <input
+                      type="number"
+                      id="maxTicketsPerWallet"
+                      name="maxTicketsPerWallet"
+                      className="form-input"
+                      value={formData.maxTicketsPerWallet}
+                      onChange={handleChange}
+                      min="1"
+                      max="10"
+                      placeholder="1"
+                      style={{ maxWidth: '200px' }}
+                    />
+                    <p style={{ 
+                      marginTop: '0.5rem', 
+                      fontSize: '0.8rem', 
+                      color: '#00ff88' 
+                    }}>
+                      Limit tickets per wallet to prevent abuse (recommended: 1 for marketing raffles)
+                    </p>
+                  </div>
+                  
+                  <div style={{
+                    background: 'rgba(0, 255, 136, 0.05)',
+                    padding: '0.8rem',
+                    borderRadius: '6px',
+                    fontSize: '0.75rem',
+                    color: '#aaa',
+                    lineHeight: '1.4'
+                  }}>
+                    <strong style={{ color: '#00ff88' }}>Marketing Raffle Benefits:</strong><br />
+                    • 100% FREE entry (no sats, no Tiger Points needed)<br />
+                    • Perfect for attracting new users to the platform<br />
+                    • Limited tickets per wallet prevents abuse<br />
+                    • Great for building community engagement
+                  </div>
                 </div>
               )}
             </div>
@@ -677,22 +776,25 @@ export default function AdminRafflePage() {
             <div className="two-columns">
               <div className="form-group">
                 <label className="form-label" htmlFor="ticketPrice">
-                  {formData.isFree ? 'Ticket Price (disabled for free raffles)' : 'Ticket Price (sats)'}
+                  {formData.isFree || formData.isCompletelyFree 
+                    ? 'Ticket Price (disabled for free raffles)' 
+                    : 'Ticket Price (sats)'
+                  }
                 </label>
                 <input
                   type="number"
                   id="ticketPrice"
                   name="ticketPrice"
                   className="form-input"
-                  value={formData.isFree ? '0' : formData.ticketPrice}
+                  value={formData.isFree || formData.isCompletelyFree ? '0' : formData.ticketPrice}
                   onChange={handleChange}
-                  required={!formData.isFree}
-                  disabled={formData.isFree}
+                  required={!formData.isFree && !formData.isCompletelyFree}
+                  disabled={formData.isFree || formData.isCompletelyFree}
                   min="1"
                   placeholder="e.g. 5000"
                   style={{ 
-                    opacity: formData.isFree ? 0.5 : 1,
-                    cursor: formData.isFree ? 'not-allowed' : 'text'
+                    opacity: formData.isFree || formData.isCompletelyFree ? 0.5 : 1,
+                    cursor: formData.isFree || formData.isCompletelyFree ? 'not-allowed' : 'text'
                   }}
                 />
               </div>
