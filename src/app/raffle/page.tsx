@@ -55,6 +55,9 @@ export default function RafflePage() {
   const [btcPrice, setBtcPrice] = useState<number>(60000) // Default $60k, can be updated from API
   const [refreshingBtcPrice, setRefreshingBtcPrice] = useState(false)
 
+  // Hot Raffles - always show active raffles regardless of filter
+  const [hotRaffles, setHotRaffles] = useState<Array<any>>([])
+
   useEffect(() => {
     // Use wallet address from LightningContext or localStorage as fallback
     const storedWallet = contextWalletAddress || localStorage.getItem('walletAddress')
@@ -151,6 +154,8 @@ export default function RafflePage() {
   // Update filteredRaffles wanneer filters veranderen
   useEffect(() => {
     filterAndSortRaffles(raffles, statusFilter, categoryFilter, sortBy)
+    // Update hot raffles wanneer raffles data verandert (altijd actieve raffles)
+    updateHotRaffles(raffles)
   }, [raffles, statusFilter, categoryFilter, sortBy])
 
   // Zorg ervoor dat bij eerste load altijd de actieve raffles worden getoond
@@ -240,6 +245,27 @@ export default function RafflePage() {
     })
 
     setFilteredRaffles(filtered)
+  }
+
+  // Functie om hot raffles bij te werken - altijd alleen actieve raffles
+  const updateHotRaffles = (raffleList: Array<any>) => {
+    const now = new Date()
+    
+    // Filter alleen actieve raffles
+    const activeRaffles = raffleList.filter(raffle => {
+      const endDate = new Date(raffle.endsAt)
+      return endDate > now && !raffle.winner
+    })
+    
+    // Sorteer op populariteit (percentage sold) voor hot raffles
+    const sortedHotRaffles = [...activeRaffles].sort((a, b) => {
+      const aPercentage = (a.soldTickets / a.totalTickets) * 100
+      const bPercentage = (b.soldTickets / b.totalTickets) * 100
+      return bPercentage - aPercentage
+    })
+    
+    // Selecteer top 5 voor hot raffles
+    setHotRaffles(sortedHotRaffles.slice(0, 5))
   }
 
   const handleStatusFilterChange = (status: string) => {
@@ -2307,12 +2333,12 @@ export default function RafflePage() {
               <div className="loading-spinner"></div>
               <div>Loading hot raffles...</div>
             </div>
-          ) : filteredRaffles.length === 0 ? (
+          ) : hotRaffles.length === 0 ? (
             <div className="empty-state">
               <div className="empty-icon">🔥</div>
               <div className="empty-title">No hot raffles</div>
               <div className="empty-description">
-                Check back soon for exciting new raffles!
+                No active raffles available at the moment. Check back soon!
               </div>
             </div>
           ) : (
@@ -2332,7 +2358,7 @@ export default function RafflePage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredRaffles.slice(0, 5).map((raffle, index) => {
+                    {hotRaffles.map((raffle, index) => {
                       const isActive = new Date(raffle.endsAt) > new Date() && !raffle.winner
                       const progressPercentage = (raffle.soldTickets / raffle.totalTickets) * 100
                       const estimatedValue = raffle.ticketPrice * raffle.totalTickets
@@ -2444,7 +2470,7 @@ export default function RafflePage() {
               
               {/* Mobile Card Layout */}
               <div className="mobile-hot-raffles">
-                {filteredRaffles.slice(0, 5).map((raffle, index) => {
+                {hotRaffles.map((raffle, index) => {
                   const isActive = new Date(raffle.endsAt) > new Date() && !raffle.winner
                   const progressPercentage = (raffle.soldTickets / raffle.totalTickets) * 100
                   
