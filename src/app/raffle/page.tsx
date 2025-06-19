@@ -58,6 +58,9 @@ export default function RafflePage() {
   // Hot Raffles - always show active raffles regardless of filter
   const [hotRaffles, setHotRaffles] = useState<Array<any>>([])
 
+  // Total winnings/staking amount given away
+  const [totalWinningsGiven, setTotalWinningsGiven] = useState<number>(0)
+
   useEffect(() => {
     // Use wallet address from LightningContext or localStorage as fallback
     const storedWallet = contextWalletAddress || localStorage.getItem('walletAddress')
@@ -156,6 +159,8 @@ export default function RafflePage() {
     filterAndSortRaffles(raffles, statusFilter, categoryFilter, sortBy)
     // Update hot raffles wanneer raffles data verandert (altijd actieve raffles)
     updateHotRaffles(raffles)
+    // Bereken totaal bedrag weggegeven aan winnings/staking
+    calculateTotalWinningsGiven(raffles)
   }, [raffles, statusFilter, categoryFilter, sortBy])
 
   // Zorg ervoor dat bij eerste load altijd de actieve raffles worden getoond
@@ -266,6 +271,24 @@ export default function RafflePage() {
     
     // Selecteer top 5 voor hot raffles
     setHotRaffles(sortedHotRaffles.slice(0, 5))
+  }
+
+  // Functie om totaal bedrag weggegeven aan winnings/staking te berekenen
+  const calculateTotalWinningsGiven = (raffleList: Array<any>) => {
+    const completedRaffles = raffleList.filter(raffle => raffle.winner)
+    
+    const totalGiven = completedRaffles.reduce((sum, raffle) => {
+      // Gebruik floorPrice als het beschikbaar is, anders fallback naar 300
+      const raffleValue = raffle.floorPrice || 300
+      return sum + raffleValue
+    }, 0)
+    
+    setTotalWinningsGiven(totalGiven)
+    
+    // Log voor debugging
+    if (completedRaffles.length > 0) {
+      console.log(`Total winnings calculated: $${totalGiven.toLocaleString()} from ${completedRaffles.length} completed raffles`)
+    }
   }
 
   const handleStatusFilterChange = (status: string) => {
@@ -2422,9 +2445,9 @@ export default function RafflePage() {
               </span>
               <span className="ticker-separator">•</span>
               
-              {/* Calculate real total value */}
+              {/* Show total winnings/staking given away */}
               <span className="ticker-item">
-                📈 Total raffle value: ${raffles.reduce((sum, raffle) => sum + (raffle.floorPrice || 300), 0).toLocaleString()} in Bitcoin Tigers
+                💰 Total winnings distributed: ${totalWinningsGiven.toLocaleString()} in Bitcoin Tigers staking rewards
               </span>
               <span className="ticker-separator">•</span>
               
