@@ -1090,7 +1090,7 @@ export default function Navbar() {
         .games-dropdown {
           position: absolute;
           top: 100%;
-          right: 0;
+          left: 0;
           background: linear-gradient(135deg, #0A0A0B 0%, #1A1A1B 100%);
           border: 1px solid rgba(255, 107, 0, 0.3);
           border-radius: 6px;
@@ -1193,7 +1193,7 @@ export default function Navbar() {
         .collection-dropdown {
           position: absolute;
           top: 100%;
-          right: 0;
+          left: 0;
           background: linear-gradient(135deg, #0A0A0B 0%, #1A1A1B 100%);
           border: 1px solid rgba(255, 107, 0, 0.3);
           border-radius: 6px;
