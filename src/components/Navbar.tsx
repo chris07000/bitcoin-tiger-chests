@@ -646,7 +646,7 @@ export default function Navbar() {
         }
         
         .wallet-address {
-          font-size: 0.75rem;
+          font-size: 0.65rem;
           color: #ffd700;
           font-weight: 600;
           cursor: pointer;
@@ -711,7 +711,7 @@ export default function Navbar() {
           }
           
           .wallet-address {
-            font-size: 0.7rem;
+            font-size: 0.6rem;
           }
           
           .disconnect-btn {
