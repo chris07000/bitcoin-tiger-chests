@@ -259,11 +259,11 @@ export default function Navbar() {
   )
   
   return (
-    <nav className="nav-container">
-      <div className="nav-content" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-        {/* Left side - Social Icons + BTC Logo */}
-        <div className="nav-left">
-          <div className="social-links-left">
+    <nav className="navbar">
+      <div className="navbar-container">
+        {/* Left side - Social Icons */}
+        <div className="navbar-left">
+          <div className="social-icons">
             <a
               href="https://x.com/OrdinalTigerBTC"
               target="_blank"
@@ -285,157 +285,219 @@ export default function Navbar() {
               </svg>
             </a>
           </div>
-          <Link href="/" className="nav-link active btc-logo">BTC</Link>
         </div>
 
-        <div className="mobile-nav-row">
-          {/* Mobile Balance */}
-          <div className="mobile-balance" style={{ display: 'flex', alignItems: 'center' }}>
-            <span>{balance} sats</span>{rankBadge}
-            {refreshButton}
-            
-            {/* Mobile Wallet Button */}
-            {!walletAddress ? (
-              <div className="wallet-menu-container">
-                <button 
-                  className="wallet-connect-btn"
-                  onClick={() => setShowWalletMenu(!showWalletMenu)}
-                  title="Connect Wallet"
-                >
-                  🔗
-                </button>
-                {showWalletMenu && (
-                  <div className="wallet-dropdown">
-                    <button className="wallet-option xverse" onClick={() => { connectXverse(); setShowWalletMenu(false); }}>
-                      Xverse
-                    </button>
-                    <button className="wallet-option unisat" onClick={() => { connectUnisat(); setShowWalletMenu(false); }}>
-                      Unisat
-                    </button>
-                    <button className="wallet-option magiceden" onClick={() => { connectMagicEden(); setShowWalletMenu(false); }}>
-                      Magic Eden
-                    </button>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="wallet-info-compact">
-                <span className="wallet-address" title={walletAddress}>
-                  {connectedWallet === 'MagicEden' ? 'ME:' : connectedWallet === 'Unisat' ? 'UN:' : 'XV:'}
-                  {walletAddress?.slice(0, 4)}...{walletAddress?.slice(-3)}
-                </span>
-                <button 
-                  className="disconnect-btn"
-                  onClick={disconnectWallet}
-                  title="Disconnect Wallet"
-                >
-                  ×
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* Hamburger Menu Button rechts op dezelfde rij */}
-          <button 
-            className={`hamburger-menu ${isMenuOpen ? 'open' : ''}`}
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label="Toggle menu"
-          >
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
-        </div>
-
-        {/* Mobile Menu */}
-        <div className={`mobile-menu ${isMenuOpen ? 'open' : ''}`}>
+        {/* Center - Navigation Links (Desktop) */}
+        <div className="navbar-center">
           <div className="nav-links">
             <Link 
               href="/home" 
               className={`nav-link ${pathname === '/home' ? 'active' : ''}`}
-              onClick={() => setIsMenuOpen(false)}
             >
               Home
             </Link>
             <Link 
               href="/" 
               className={`nav-link ${pathname === '/' ? 'active' : ''}`}
-              onClick={() => setIsMenuOpen(false)}
             >
               Chests
             </Link>
             <Link 
               href="/jackpot" 
               className={`nav-link ${pathname === '/jackpot' ? 'active' : ''}`}
-              onClick={() => setIsMenuOpen(false)}
             >
               Coinflip
             </Link>
             <Link 
               href="/raffle" 
               className={`nav-link ${pathname === '/raffle' ? 'active' : ''}`}
-              onClick={() => setIsMenuOpen(false)}
             >
               Raffle
             </Link>
             <Link 
               href="/staking" 
               className={`nav-link ${pathname === '/staking' ? 'active' : ''}`}
-              onClick={() => setIsMenuOpen(false)}
             >
               Staking
             </Link>
             <Link 
               href="/mining" 
               className={`nav-link ${pathname === '/mining' ? 'active' : ''}`}
-              onClick={() => setIsMenuOpen(false)}
             >
               Mining
             </Link>
             <Link 
               href="/tigers" 
               className={`nav-link ${pathname === '/tigers' ? 'active' : ''}`}
-              onClick={() => setIsMenuOpen(false)}
             >
               Tigers
             </Link>
             <Link 
               href="/artifacts" 
               className={`nav-link ${pathname === '/artifacts' ? 'active' : ''}`}
-              onClick={() => setIsMenuOpen(false)}
             >
               Artifacts
             </Link>
             <Link 
               href="/how-to-play" 
               className={`nav-link ${pathname === '/how-to-play' ? 'active' : ''}`}
+            >
+              How to Play
+            </Link>
+          </div>
+        </div>
+
+        {/* Right side - Balance & Wallet */}
+        <div className="navbar-right">
+          <div className="balance-display">
+            <span className="balance-text">Balance: {balance} sats</span>
+            {rankBadge}
+            {refreshButton}
+          </div>
+          
+          {/* Wallet Connect */}
+          {!walletAddress ? (
+            <div className="wallet-menu-container">
+              <button 
+                className="wallet-connect-btn"
+                onClick={() => setShowWalletMenu(!showWalletMenu)}
+              >
+                Connect Wallet
+              </button>
+              {showWalletMenu && (
+                <div className="wallet-dropdown">
+                  <button className="wallet-option" onClick={() => { connectXverse(); setShowWalletMenu(false); }}>
+                    Xverse
+                  </button>
+                  <button className="wallet-option" onClick={() => { connectUnisat(); setShowWalletMenu(false); }}>
+                    Unisat
+                  </button>
+                  <button className="wallet-option" onClick={() => { connectMagicEden(); setShowWalletMenu(false); }}>
+                    Magic Eden
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="wallet-info">
+              <span className="wallet-address" title={walletAddress}>
+                {connectedWallet === 'MagicEden' ? 'ME:' : connectedWallet === 'Unisat' ? 'UN:' : 'XV:'}
+                {walletAddress?.slice(0, 6)}...{walletAddress?.slice(-4)}
+              </span>
+              <button 
+                className="disconnect-btn"
+                onClick={disconnectWallet}
+                title="Disconnect Wallet"
+              >
+                Disconnect
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Mobile Menu Button */}
+        <button 
+          className={`mobile-menu-btn ${isMenuOpen ? 'open' : ''}`}
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div className="mobile-menu">
+          <div className="mobile-nav-links">
+            <Link 
+              href="/home" 
+              className={`mobile-nav-link ${pathname === '/home' ? 'active' : ''}`}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Home
+            </Link>
+            <Link 
+              href="/" 
+              className={`mobile-nav-link ${pathname === '/' ? 'active' : ''}`}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Chests
+            </Link>
+            <Link 
+              href="/jackpot" 
+              className={`mobile-nav-link ${pathname === '/jackpot' ? 'active' : ''}`}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Coinflip
+            </Link>
+            <Link 
+              href="/raffle" 
+              className={`mobile-nav-link ${pathname === '/raffle' ? 'active' : ''}`}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Raffle
+            </Link>
+            <Link 
+              href="/staking" 
+              className={`mobile-nav-link ${pathname === '/staking' ? 'active' : ''}`}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Staking
+            </Link>
+            <Link 
+              href="/mining" 
+              className={`mobile-nav-link ${pathname === '/mining' ? 'active' : ''}`}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Mining
+            </Link>
+            <Link 
+              href="/tigers" 
+              className={`mobile-nav-link ${pathname === '/tigers' ? 'active' : ''}`}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Tigers
+            </Link>
+            <Link 
+              href="/artifacts" 
+              className={`mobile-nav-link ${pathname === '/artifacts' ? 'active' : ''}`}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Artifacts
+            </Link>
+            <Link 
+              href="/how-to-play" 
+              className={`mobile-nav-link ${pathname === '/how-to-play' ? 'active' : ''}`}
               onClick={() => setIsMenuOpen(false)}
             >
               How to Play
             </Link>
-            <div className="balance-info" style={{ display: 'flex', alignItems: 'center' }}>
-              <span className="balance-value">Balance: {balance} sats</span>{rankBadge}
-              {refreshButton}
+            
+            {/* Mobile Balance & Wallet */}
+            <div className="mobile-balance-section">
+              <div className="mobile-balance">
+                <span>Balance: {balance} sats</span>
+                {rankBadge}
+                {refreshButton}
+              </div>
               
-              {/* Mobile Menu Wallet Button */}
               {!walletAddress ? (
                 <button 
-                  className="wallet-connect-btn mobile-menu-wallet"
+                  className="mobile-wallet-btn"
                   onClick={() => setShowWalletMenu(!showWalletMenu)}
-                  title="Connect Wallet"
                 >
                   Connect Wallet
                 </button>
               ) : (
-                <div className="wallet-info-compact">
-                  <span className="wallet-address" title={walletAddress}>
+                <div className="mobile-wallet-info">
+                  <span className="mobile-wallet-address">
                     {connectedWallet === 'MagicEden' ? 'ME:' : connectedWallet === 'Unisat' ? 'UN:' : 'XV:'}
                     {walletAddress?.slice(0, 6)}...{walletAddress?.slice(-4)}
                   </span>
                   <button 
-                    className="disconnect-btn"
+                    className="mobile-disconnect-btn"
                     onClick={disconnectWallet}
-                    title="Disconnect Wallet"
                   >
                     Disconnect
                   </button>
@@ -444,132 +506,21 @@ export default function Navbar() {
             </div>
           </div>
         </div>
+      )}
 
-        {/* Desktop Menu */}
-        <div className="desktop-menu">
-          <div className="nav-links">
-            <Link 
-              href="/home" 
-              className={`nav-link ${pathname === '/home' ? 'active' : ''}`}
-            >
-              Home
-            </Link>
-            <Link 
-              href="/" 
-              className={`nav-link ${pathname === '/' ? 'active' : ''}`}
-            >
-              Chests
-            </Link>
-            <Link 
-              href="/jackpot" 
-              className={`nav-link ${pathname === '/jackpot' ? 'active' : ''}`}
-            >
-              Coinflip
-            </Link>
-            <Link 
-              href="/raffle" 
-              className={`nav-link ${pathname === '/raffle' ? 'active' : ''}`}
-            >
-              Raffle
-            </Link>
-            <Link 
-              href="/staking" 
-              className={`nav-link ${pathname === '/staking' ? 'active' : ''}`}
-            >
-              Staking
-            </Link>
-            <Link 
-              href="/mining" 
-              className={`nav-link ${pathname === '/mining' ? 'active' : ''}`}
-            >
-              Mining
-            </Link>
-            <Link 
-              href="/tigers" 
-              className={`nav-link ${pathname === '/tigers' ? 'active' : ''}`}
-            >
-              Tigers
-            </Link>
-            <Link 
-              href="/artifacts" 
-              className={`nav-link ${pathname === '/artifacts' ? 'active' : ''}`}
-            >
-              Artifacts
-            </Link>
-            <Link 
-              href="/how-to-play" 
-              className={`nav-link ${pathname === '/how-to-play' ? 'active' : ''}`}
-            >
-              How to Play
-            </Link>
-            <div className="balance-info" style={{ display: 'flex', alignItems: 'center' }}>
-              <span className="balance-value">Balance: {balance} sats</span>{rankBadge}
-              {refreshButton}
-              
-              {/* Desktop Wallet Button */}
-              {!walletAddress ? (
-                <div className="wallet-menu-container">
-                  <button 
-                    className="wallet-connect-btn"
-                    onClick={() => setShowWalletMenu(!showWalletMenu)}
-                    title="Connect Wallet"
-                  >
-                    Connect Wallet
-                  </button>
-                  {showWalletMenu && (
-                    <div className="wallet-dropdown">
-                      <button className="wallet-option xverse" onClick={() => { connectXverse(); setShowWalletMenu(false); }}>
-                        Xverse
-                      </button>
-                      <button className="wallet-option unisat" onClick={() => { connectUnisat(); setShowWalletMenu(false); }}>
-                        Unisat
-                      </button>
-                      <button className="wallet-option magiceden" onClick={() => { connectMagicEden(); setShowWalletMenu(false); }}>
-                        Magic Eden
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className="wallet-info-compact">
-                  <span className="wallet-address" title={walletAddress}>
-                    {connectedWallet === 'MagicEden' ? 'ME:' : connectedWallet === 'Unisat' ? 'UN:' : 'XV:'}
-                    {walletAddress?.slice(0, 6)}...{walletAddress?.slice(-4)}
-                  </span>
-                  <button 
-                    className="disconnect-btn"
-                    onClick={disconnectWallet}
-                    title="Disconnect Wallet"
-                  >
-                    Disconnect
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
       <style jsx>{`
-        /* Navbar Theme - matching raffle page */
-        .nav-container {
+        /* Navbar with exact raffle page theme */
+        .navbar {
           background: linear-gradient(135deg, #0A0A0B 0%, #1A1A1B 100%);
           border-bottom: 1px solid rgba(255, 107, 0, 0.15);
           backdrop-filter: blur(20px);
-          position: relative;
+          position: sticky;
+          top: 0;
+          z-index: 100;
           box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
         
-        .nav-content {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 0.75rem 1rem;
-          width: 100%;
-          max-width: 1200px;
-          margin: 0 auto;
-        }
-        
-        .nav-container::before {
+        .navbar::before {
           content: '';
           position: absolute;
           top: 0;
@@ -579,18 +530,25 @@ export default function Navbar() {
           background: linear-gradient(90deg, transparent, rgba(255, 107, 0, 0.4), transparent);
         }
         
-        /* Left side navigation */
-        .nav-left {
+        .navbar-container {
           display: flex;
           align-items: center;
-          gap: 1rem;
-          z-index: 10;
+          justify-content: space-between;
+          padding: 0.75rem 1.5rem;
+          max-width: 1400px;
+          margin: 0 auto;
+          min-height: 60px;
         }
         
-        .social-links-left {
+        /* Left side - Social Icons */
+        .navbar-left {
+          display: flex;
+          align-items: center;
+        }
+        
+        .social-icons {
           display: flex;
           gap: 0.75rem;
-          margin-right: 1rem;
         }
         
         .social-icon {
@@ -621,24 +579,17 @@ export default function Navbar() {
           height: 16px;
         }
         
-        /* BTC Logo styling */
-        .btc-logo {
-          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%) !important;
-          color: #000 !important;
-          font-weight: 800 !important;
-          padding: 0.5rem 1rem !important;
-          border-radius: 8px !important;
-          box-shadow: 0 4px 12px rgba(255, 107, 0, 0.25) !important;
-          border: none !important;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        /* Center - Navigation Links */
+        .navbar-center {
+          display: none;
         }
         
-        .btc-logo:hover {
-          transform: translateY(-1px) !important;
-          box-shadow: 0 6px 16px rgba(255, 107, 0, 0.35) !important;
+        .nav-links {
+          display: flex;
+          gap: 0.5rem;
+          align-items: center;
         }
         
-        /* Nav links styling */
         .nav-link {
           color: #94A3B8;
           background: rgba(255, 255, 255, 0.02);
@@ -647,6 +598,10 @@ export default function Navbar() {
           padding: 0.5rem 1rem;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           backdrop-filter: blur(10px);
+          text-decoration: none;
+          font-size: 0.9rem;
+          font-weight: 500;
+          white-space: nowrap;
         }
         
         .nav-link:hover:not(.active) {
@@ -656,90 +611,49 @@ export default function Navbar() {
           transform: translateY(-1px);
         }
         
-        .nav-link.active:not(.btc-logo) {
+        .nav-link.active {
           background: rgba(255, 107, 0, 0.1);
           border-color: rgba(255, 107, 0, 0.3);
           color: #FF6B00;
           box-shadow: 0 2px 8px rgba(255, 107, 0, 0.15);
         }
         
-        .mobile-balance, .balance-info {
+        /* Right side - Balance & Wallet */
+        .navbar-right {
           display: flex;
           align-items: center;
-          gap: 5px;
+          gap: 1rem;
+        }
+        
+        .balance-display {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
           background: rgba(255, 255, 255, 0.03);
           border: 1px solid rgba(255, 107, 0, 0.15);
           border-radius: 8px;
-          padding: 0.5rem;
+          padding: 0.5rem 0.75rem;
           backdrop-filter: blur(10px);
         }
         
-        .balance-info span, .mobile-balance span {
+        .balance-text {
           color: #FF6B00;
           font-weight: 600;
-        }
-        
-        .rank-badge {
-          display: inline-block;
-          margin-left: 3px;
-          filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.4));
-          vertical-align: middle;
-        }
-        
-        /* Hamburger menu theme */
-        .hamburger-menu {
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid rgba(255, 107, 0, 0.2);
-          border-radius: 6px;
-          padding: 0.25rem;
-        }
-        
-        .hamburger-menu span {
-          background: #FF6B00;
-        }
-        
-        .hamburger-menu:hover {
-          background: rgba(255, 107, 0, 0.1);
-          border-color: rgba(255, 107, 0, 0.4);
-        }
-        
-        /* Mobile menu theme */
-        .mobile-menu {
-          background: linear-gradient(135deg, #0A0A0B 0%, #1A1A1B 100%);
-          border: 1px solid rgba(255, 107, 0, 0.15);
-          border-radius: 12px;
-          backdrop-filter: blur(20px);
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        }
-        
-        /* Mobile nav row styling */
-        .mobile-nav-row {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-          justify-content: flex-end;
-        }
-        
-        /* Desktop nav links container */
-        .desktop-menu .nav-links {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
+          font-size: 0.9rem;
         }
         
         /* Wallet Connect Styling */
         .wallet-menu-container {
           position: relative;
-          margin-left: 8px;
         }
         
         .wallet-connect-btn {
           background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
-          color: #000;
+          color: #FFFFFF;
           border: none;
-          border-radius: 6px;
-          padding: 4px 8px;
-          font-size: 0.8rem;
+          border-radius: 8px;
+          padding: 0.5rem 1rem;
+          font-size: 0.9rem;
           font-weight: 600;
           cursor: pointer;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -759,7 +673,7 @@ export default function Navbar() {
           background: linear-gradient(135deg, #0A0A0B 0%, #1A1A1B 100%);
           border: 1px solid rgba(255, 107, 0, 0.3);
           border-radius: 8px;
-          min-width: 120px;
+          min-width: 140px;
           z-index: 1000;
           box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
           margin-top: 4px;
@@ -769,11 +683,11 @@ export default function Navbar() {
         .wallet-option {
           display: block;
           width: 100%;
-          padding: 8px 12px;
+          padding: 0.75rem 1rem;
           background: transparent;
           border: none;
           color: #94A3B8;
-          font-size: 0.85rem;
+          font-size: 0.9rem;
           font-weight: 500;
           cursor: pointer;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -790,22 +704,21 @@ export default function Navbar() {
           color: #FF6B00;
         }
         
-        .wallet-info-compact {
+        .wallet-info {
           display: flex;
           align-items: center;
-          gap: 6px;
-          margin-left: 8px;
-          padding: 2px 6px;
+          gap: 0.5rem;
           background: rgba(255, 107, 0, 0.1);
           border: 1px solid rgba(255, 107, 0, 0.3);
-          border-radius: 6px;
+          border-radius: 8px;
+          padding: 0.5rem 0.75rem;
           backdrop-filter: blur(10px);
         }
         
         .wallet-address {
-          font-size: 0.65rem;
           color: #FFB800;
           font-weight: 600;
+          font-size: 0.85rem;
           cursor: pointer;
         }
         
@@ -813,9 +726,9 @@ export default function Navbar() {
           background: rgba(255, 0, 0, 0.2);
           color: #ff6b6b;
           border: 1px solid rgba(255, 0, 0, 0.3);
-          border-radius: 4px;
-          padding: 2px 6px;
-          font-size: 0.7rem;
+          border-radius: 6px;
+          padding: 0.25rem 0.5rem;
+          font-size: 0.8rem;
           cursor: pointer;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           font-weight: 600;
@@ -827,39 +740,206 @@ export default function Navbar() {
           transform: scale(1.05);
         }
         
-        /* Mobile specific wallet button */
-        .mobile-menu-wallet {
-          margin-left: 10px;
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-around;
+          width: 24px;
+          height: 24px;
+          background: transparent;
+          border: none;
+          cursor: pointer;
+          padding: 0;
+          z-index: 10;
         }
         
-        /* Close dropdown when clicking outside */
-        .wallet-dropdown::before {
-          content: '';
-          position: fixed;
-          top: 0;
+        .mobile-menu-btn span {
+          width: 24px;
+          height: 2px;
+          background: #FF6B00;
+          border-radius: 2px;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          transform-origin: 1px;
+        }
+        
+        .mobile-menu-btn.open span:first-child {
+          transform: rotate(45deg);
+        }
+        
+        .mobile-menu-btn.open span:nth-child(2) {
+          opacity: 0;
+        }
+        
+        .mobile-menu-btn.open span:nth-child(3) {
+          transform: rotate(-45deg);
+        }
+        
+        /* Mobile Menu */
+        .mobile-menu {
+          position: absolute;
+          top: 100%;
           left: 0;
           right: 0;
-          bottom: 0;
-          z-index: -1;
+          background: linear-gradient(135deg, #0A0A0B 0%, #1A1A1B 100%);
+          border-bottom: 1px solid rgba(255, 107, 0, 0.15);
+          backdrop-filter: blur(20px);
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+          z-index: 90;
         }
         
-        /* Mobile responsive adjustments */
+        .mobile-nav-links {
+          padding: 1rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+        
+        .mobile-nav-link {
+          color: #94A3B8;
+          background: rgba(255, 255, 255, 0.02);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          border-radius: 8px;
+          padding: 0.75rem 1rem;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          backdrop-filter: blur(10px);
+          text-decoration: none;
+          font-size: 0.9rem;
+          font-weight: 500;
+        }
+        
+        .mobile-nav-link:hover:not(.active) {
+          color: #FFFFFF;
+          background: rgba(255, 107, 0, 0.05);
+          border-color: rgba(255, 107, 0, 0.2);
+        }
+        
+        .mobile-nav-link.active {
+          background: rgba(255, 107, 0, 0.1);
+          border-color: rgba(255, 107, 0, 0.3);
+          color: #FF6B00;
+          box-shadow: 0 2px 8px rgba(255, 107, 0, 0.15);
+        }
+        
+        .mobile-balance-section {
+          margin-top: 1rem;
+          padding-top: 1rem;
+          border-top: 1px solid rgba(255, 107, 0, 0.15);
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+        }
+        
+        .mobile-balance {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          background: rgba(255, 255, 255, 0.03);
+          border: 1px solid rgba(255, 107, 0, 0.15);
+          border-radius: 8px;
+          padding: 0.75rem;
+          backdrop-filter: blur(10px);
+          color: #FF6B00;
+          font-weight: 600;
+        }
+        
+        .mobile-wallet-btn {
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+          color: #FFFFFF;
+          border: none;
+          border-radius: 8px;
+          padding: 0.75rem 1rem;
+          font-size: 0.9rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 0 2px 8px rgba(255, 107, 0, 0.2);
+        }
+        
+        .mobile-wallet-info {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          background: rgba(255, 107, 0, 0.1);
+          border: 1px solid rgba(255, 107, 0, 0.3);
+          border-radius: 8px;
+          padding: 0.75rem;
+          backdrop-filter: blur(10px);
+        }
+        
+        .mobile-wallet-address {
+          color: #FFB800;
+          font-weight: 600;
+          font-size: 0.9rem;
+        }
+        
+        .mobile-disconnect-btn {
+          background: rgba(255, 0, 0, 0.2);
+          color: #ff6b6b;
+          border: 1px solid rgba(255, 0, 0, 0.3);
+          border-radius: 6px;
+          padding: 0.5rem 0.75rem;
+          font-size: 0.8rem;
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          font-weight: 600;
+        }
+        
+        /* Desktop responsive */
+        @media (min-width: 1024px) {
+          .navbar-center {
+            display: block;
+          }
+          
+          .mobile-menu-btn {
+            display: none;
+          }
+          
+          .navbar-left {
+            flex: 1;
+          }
+          
+          .navbar-center {
+            flex: 2;
+            display: flex;
+            justify-content: center;
+          }
+          
+          .navbar-right {
+            flex: 1;
+            justify-content: flex-end;
+          }
+        }
+        
+        /* Tablet responsive */
+        @media (max-width: 1023px) {
+          .navbar-left {
+            display: none;
+          }
+          
+          .navbar-center {
+            display: none;
+          }
+          
+          .balance-display {
+            display: none;
+          }
+          
+          .wallet-connect-btn,
+          .wallet-info {
+            font-size: 0.8rem;
+            padding: 0.4rem 0.6rem;
+          }
+        }
+        
+        /* Mobile responsive */
         @media (max-width: 768px) {
-          .nav-left {
-            display: none !important;
+          .navbar-container {
+            padding: 0.75rem 1rem;
           }
           
-          .mobile-nav-row {
-            display: flex !important;
-          }
-          
-          .desktop-menu {
-            display: none !important;
-          }
-          
-          .social-links-left {
+          .social-icons {
             gap: 0.5rem;
-            margin-right: 0.5rem;
           }
           
           .social-icon {
@@ -870,58 +950,6 @@ export default function Navbar() {
           .social-icon svg {
             width: 14px;
             height: 14px;
-          }
-          
-          .wallet-connect-btn {
-            font-size: 0.7rem;
-            padding: 3px 6px;
-          }
-          
-          .wallet-dropdown {
-            min-width: 100px;
-            right: -10px;
-          }
-          
-          .wallet-option {
-            padding: 6px 10px;
-            font-size: 0.8rem;
-          }
-          
-          .wallet-address {
-            font-size: 0.6rem;
-          }
-          
-          .disconnect-btn {
-            padding: 1px 4px;
-            font-size: 0.65rem;
-          }
-        }
-        
-        /* Desktop specific styles */
-        @media (min-width: 769px) {
-          .mobile-nav-row {
-            display: none !important;
-          }
-          
-          .mobile-menu {
-            display: none !important;
-          }
-          
-          .desktop-menu {
-            display: block !important;
-          }
-          
-          .nav-left {
-            display: flex !important;
-            order: 1;
-          }
-          
-          .social-links-left {
-            display: flex !important;
-          }
-          
-          .mobile-balance {
-            display: none !important;
           }
         }
       `}</style>
