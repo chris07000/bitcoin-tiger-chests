@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { useLightning } from '@/context/LightningContext'
+import { useWallet } from '@/context/WalletContext'
 
 export default function Navbar() {
   const pathname = usePathname()
@@ -12,7 +13,9 @@ export default function Navbar() {
   const [userRank, setUserRank] = useState('')
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [lastBalanceFetch, setLastBalanceFetch] = useState<number>(0)
+  const [showWalletMenu, setShowWalletMenu] = useState(false)
   const { fetchBalance, walletAddress } = useLightning()
+  const { connectedWallet, connectXverse, connectUnisat, connectMagicEden, disconnectWallet } = useWallet()
   
   // Functie om de actuele balans op te halen
   const fetchActualBalance = async () => {
@@ -123,6 +126,21 @@ export default function Navbar() {
       window.removeEventListener('balanceUpdated', handleBalanceUpdate as EventListener);
     };
   }, [walletAddress, balance, lastBalanceFetch, userRank, fetchBalance]);
+  
+  // Close wallet dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (showWalletMenu && !target.closest('.wallet-menu-container')) {
+        setShowWalletMenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showWalletMenu]);
   
   // Functie om handmatig de balans te verversen
   const refreshBalance = async () => {
@@ -239,6 +257,46 @@ export default function Navbar() {
           <div className="mobile-balance" style={{ display: 'flex', alignItems: 'center' }}>
             <span>{balance} sats</span>{rankBadge}
             {refreshButton}
+            
+            {/* Mobile Wallet Button */}
+            {!walletAddress ? (
+              <div className="wallet-menu-container">
+                <button 
+                  className="wallet-connect-btn"
+                  onClick={() => setShowWalletMenu(!showWalletMenu)}
+                  title="Connect Wallet"
+                >
+                  🔗
+                </button>
+                {showWalletMenu && (
+                  <div className="wallet-dropdown">
+                    <button className="wallet-option xverse" onClick={() => { connectXverse(); setShowWalletMenu(false); }}>
+                      Xverse
+                    </button>
+                    <button className="wallet-option unisat" onClick={() => { connectUnisat(); setShowWalletMenu(false); }}>
+                      Unisat
+                    </button>
+                    <button className="wallet-option magiceden" onClick={() => { connectMagicEden(); setShowWalletMenu(false); }}>
+                      Magic Eden
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="wallet-info-compact">
+                <span className="wallet-address" title={walletAddress}>
+                  {connectedWallet === 'MagicEden' ? 'ME:' : connectedWallet === 'Unisat' ? 'UN:' : 'XV:'}
+                  {walletAddress?.slice(0, 4)}...{walletAddress?.slice(-3)}
+                </span>
+                <button 
+                  className="disconnect-btn"
+                  onClick={disconnectWallet}
+                  title="Disconnect Wallet"
+                >
+                  ×
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Hamburger Menu Button rechts op dezelfde rij */}
@@ -322,6 +380,31 @@ export default function Navbar() {
             <div className="balance-info" style={{ display: 'flex', alignItems: 'center' }}>
               <span className="balance-value">Balance: {balance} sats</span>{rankBadge}
               {refreshButton}
+              
+              {/* Mobile Menu Wallet Button */}
+              {!walletAddress ? (
+                <button 
+                  className="wallet-connect-btn mobile-menu-wallet"
+                  onClick={() => setShowWalletMenu(!showWalletMenu)}
+                  title="Connect Wallet"
+                >
+                  Connect Wallet
+                </button>
+              ) : (
+                <div className="wallet-info-compact">
+                  <span className="wallet-address" title={walletAddress}>
+                    {connectedWallet === 'MagicEden' ? 'ME:' : connectedWallet === 'Unisat' ? 'UN:' : 'XV:'}
+                    {walletAddress?.slice(0, 6)}...{walletAddress?.slice(-4)}
+                  </span>
+                  <button 
+                    className="disconnect-btn"
+                    onClick={disconnectWallet}
+                    title="Disconnect Wallet"
+                  >
+                    Disconnect
+                  </button>
+                </div>
+              )}
             </div>
           </div>
           
@@ -409,6 +492,46 @@ export default function Navbar() {
             <div className="balance-info" style={{ display: 'flex', alignItems: 'center' }}>
               <span className="balance-value">Balance: {balance} sats</span>{rankBadge}
               {refreshButton}
+              
+              {/* Desktop Wallet Button */}
+              {!walletAddress ? (
+                <div className="wallet-menu-container">
+                  <button 
+                    className="wallet-connect-btn"
+                    onClick={() => setShowWalletMenu(!showWalletMenu)}
+                    title="Connect Wallet"
+                  >
+                    Connect Wallet
+                  </button>
+                  {showWalletMenu && (
+                    <div className="wallet-dropdown">
+                      <button className="wallet-option xverse" onClick={() => { connectXverse(); setShowWalletMenu(false); }}>
+                        Xverse
+                      </button>
+                      <button className="wallet-option unisat" onClick={() => { connectUnisat(); setShowWalletMenu(false); }}>
+                        Unisat
+                      </button>
+                      <button className="wallet-option magiceden" onClick={() => { connectMagicEden(); setShowWalletMenu(false); }}>
+                        Magic Eden
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="wallet-info-compact">
+                  <span className="wallet-address" title={walletAddress}>
+                    {connectedWallet === 'MagicEden' ? 'ME:' : connectedWallet === 'Unisat' ? 'UN:' : 'XV:'}
+                    {walletAddress?.slice(0, 6)}...{walletAddress?.slice(-4)}
+                  </span>
+                  <button 
+                    className="disconnect-btn"
+                    onClick={disconnectWallet}
+                    title="Disconnect Wallet"
+                  >
+                    Disconnect
+                  </button>
+                </div>
+              )}
             </div>
           </div>
           
@@ -450,10 +573,150 @@ export default function Navbar() {
           vertical-align: middle;
         }
         
+        /* Wallet Connect Styling */
+        .wallet-menu-container {
+          position: relative;
+          margin-left: 8px;
+        }
+        
+        .wallet-connect-btn {
+          background: #ffd700;
+          color: #000;
+          border: 1px solid #995c00;
+          border-radius: 4px;
+          padding: 4px 8px;
+          font-size: 0.8rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s;
+          white-space: nowrap;
+        }
+        
+        .wallet-connect-btn:hover {
+          background: #ffe970;
+          transform: translateY(-1px);
+        }
+        
+        .wallet-dropdown {
+          position: absolute;
+          top: 100%;
+          right: 0;
+          background: #1a1a1a;
+          border: 1px solid #ffd700;
+          border-radius: 4px;
+          min-width: 120px;
+          z-index: 1000;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+          margin-top: 4px;
+        }
+        
+        .wallet-option {
+          display: block;
+          width: 100%;
+          padding: 8px 12px;
+          background: transparent;
+          border: none;
+          color: #ffd700;
+          font-size: 0.85rem;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.2s;
+          text-align: left;
+          border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+        }
+        
+        .wallet-option:last-child {
+          border-bottom: none;
+        }
+        
+        .wallet-option:hover {
+          background: rgba(255, 215, 0, 0.1);
+          color: #fff;
+        }
+        
+        .wallet-info-compact {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          margin-left: 8px;
+          padding: 2px 6px;
+          background: rgba(255, 215, 0, 0.1);
+          border: 1px solid rgba(255, 215, 0, 0.3);
+          border-radius: 4px;
+        }
+        
+        .wallet-address {
+          font-size: 0.75rem;
+          color: #ffd700;
+          font-weight: 600;
+          cursor: pointer;
+        }
+        
+        .disconnect-btn {
+          background: rgba(255, 0, 0, 0.2);
+          color: #ff6b6b;
+          border: 1px solid rgba(255, 0, 0, 0.3);
+          border-radius: 3px;
+          padding: 2px 6px;
+          font-size: 0.7rem;
+          cursor: pointer;
+          transition: all 0.2s;
+          font-weight: 600;
+        }
+        
+        .disconnect-btn:hover {
+          background: rgba(255, 0, 0, 0.3);
+          color: #fff;
+          transform: scale(1.05);
+        }
+        
+        /* Mobile specific wallet button */
+        .mobile-menu-wallet {
+          margin-left: 10px;
+        }
+        
+        /* Close dropdown when clicking outside */
+        .wallet-dropdown::before {
+          content: '';
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          z-index: -1;
+        }
+        
         /* Verberg mobile-balance op desktop */
         @media (min-width: 769px) {
           .mobile-balance {
             display: none !important;
+          }
+        }
+        
+        /* Mobile responsive adjustments */
+        @media (max-width: 768px) {
+          .wallet-connect-btn {
+            font-size: 0.7rem;
+            padding: 3px 6px;
+          }
+          
+          .wallet-dropdown {
+            min-width: 100px;
+            right: -10px;
+          }
+          
+          .wallet-option {
+            padding: 6px 10px;
+            font-size: 0.8rem;
+          }
+          
+          .wallet-address {
+            font-size: 0.7rem;
+          }
+          
+          .disconnect-btn {
+            padding: 1px 4px;
+            font-size: 0.65rem;
           }
         }
       `}</style>
