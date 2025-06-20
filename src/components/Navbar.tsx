@@ -1095,14 +1095,14 @@ export default function Navbar() {
           padding: 0.6rem 0.75rem;
           background: transparent;
           border: none;
-          color: #94A3B8;
+          color: #94A3B8 !important;
           font-size: 0.8rem;
           font-weight: 500;
           cursor: pointer;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           text-align: left;
           border-bottom: 1px solid rgba(255, 107, 0, 0.1);
-          text-decoration: none;
+          text-decoration: none !important;
         }
         
         .games-option:last-child {
@@ -1111,7 +1111,15 @@ export default function Navbar() {
         
         .games-option:hover {
           background: rgba(255, 107, 0, 0.1);
-          color: #FF6B00;
+          color: #FF6B00 !important;
+        }
+        
+        .games-option:visited {
+          color: #94A3B8 !important;
+        }
+        
+        .games-option:visited:hover {
+          color: #FF6B00 !important;
         }
         
         /* Mobile Games Section */
@@ -1173,14 +1181,14 @@ export default function Navbar() {
           padding: 0.6rem 0.75rem;
           background: transparent;
           border: none;
-          color: #94A3B8;
+          color: #94A3B8 !important;
           font-size: 0.8rem;
           font-weight: 500;
           cursor: pointer;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           text-align: left;
           border-bottom: 1px solid rgba(255, 107, 0, 0.1);
-          text-decoration: none;
+          text-decoration: none !important;
         }
         
         .collection-option:last-child {
@@ -1189,7 +1197,15 @@ export default function Navbar() {
         
         .collection-option:hover {
           background: rgba(255, 107, 0, 0.1);
-          color: #FF6B00;
+          color: #FF6B00 !important;
+        }
+        
+        .collection-option:visited {
+          color: #94A3B8 !important;
+        }
+        
+        .collection-option:visited:hover {
+          color: #FF6B00 !important;
         }
         
         /* Mobile Collection Section */
