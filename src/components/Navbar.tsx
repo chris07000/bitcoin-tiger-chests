@@ -453,7 +453,11 @@ export default function Navbar() {
           className={`mobile-menu-btn ${isMenuOpen ? 'open' : ''}`}
           onClick={() => {
             console.log('Hamburger menu clicked, current state:', isMenuOpen);
+            console.log('Setting menu state to:', !isMenuOpen);
             setIsMenuOpen(!isMenuOpen);
+          }}
+          style={{
+            backgroundColor: isMenuOpen ? 'rgba(255, 107, 0, 0.3)' : 'rgba(255, 107, 0, 0.1)'
           }}
         >
           <span></span>
@@ -466,6 +470,20 @@ export default function Navbar() {
       {isMenuOpen && (
         <div className="mobile-menu">
           <div className="mobile-nav-links">
+            {/* Test indicator */}
+            <div style={{
+              color: '#FF6B00',
+              fontSize: '0.8rem',
+              fontWeight: 'bold',
+              padding: '0.5rem',
+              textAlign: 'center',
+              background: 'rgba(255, 107, 0, 0.1)',
+              borderRadius: '4px',
+              marginBottom: '0.5rem'
+            }}>
+              🍔 Mobile Menu is Open! 🍔
+            </div>
+            
             <Link 
               href="/home" 
               className={`mobile-nav-link ${pathname === '/home' ? 'active' : ''}`}
@@ -925,11 +943,12 @@ export default function Navbar() {
           top: 60px !important;
           left: 0;
           right: 0;
+          width: 100vw;
           background: linear-gradient(135deg, #0A0A0B 0%, #1A1A1B 100%);
           border-bottom: 1px solid rgba(255, 107, 0, 0.15);
           backdrop-filter: blur(20px);
           box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-          z-index: 90 !important;
+          z-index: 999 !important;
           max-height: calc(100vh - 60px);
           overflow-y: auto;
           display: block !important;
@@ -951,63 +970,76 @@ export default function Navbar() {
         
         .mobile-nav-links {
           padding: 1rem;
-          display: flex;
+          display: flex !important;
           flex-direction: column;
           gap: 0.5rem;
+          visibility: visible !important;
+          opacity: 1 !important;
         }
         
         .mobile-nav-link {
-          color: #94A3B8;
-          background: rgba(255, 255, 255, 0.02);
-          border: 1px solid rgba(255, 255, 255, 0.08);
+          color: #FFFFFF !important;
+          background: rgba(255, 107, 0, 0.08) !important;
+          border: 1px solid rgba(255, 107, 0, 0.2) !important;
           border-radius: 8px;
           padding: 0.75rem 1rem;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           backdrop-filter: blur(10px);
-          text-decoration: none;
+          text-decoration: none !important;
           font-size: 0.9rem;
           font-weight: 500;
+          display: block !important;
+          visibility: visible !important;
+          opacity: 1 !important;
         }
         
         .mobile-nav-link:hover:not(.active) {
-          color: #FFFFFF;
-          background: rgba(255, 107, 0, 0.05);
-          border-color: rgba(255, 107, 0, 0.2);
+          color: #FFFFFF !important;
+          background: rgba(255, 107, 0, 0.15) !important;
+          border-color: rgba(255, 107, 0, 0.4) !important;
+          transform: translateX(4px);
         }
         
         .mobile-nav-link.active {
-          background: rgba(255, 107, 0, 0.1);
-          border-color: rgba(255, 107, 0, 0.3);
-          color: #FF6B00;
-          box-shadow: 0 2px 8px rgba(255, 107, 0, 0.15);
+          background: rgba(255, 107, 0, 0.2) !important;
+          border-color: rgba(255, 107, 0, 0.5) !important;
+          color: #FF6B00 !important;
+          box-shadow: 0 2px 8px rgba(255, 107, 0, 0.25);
         }
         
         .mobile-balance-section {
-          margin-top: 0.75rem;
-          padding-top: 0.75rem;
-          border-top: 1px solid rgba(255, 107, 0, 0.15);
-          display: flex;
+          margin-top: 1rem;
+          padding-top: 1rem;
+          border-top: 2px solid rgba(255, 107, 0, 0.3);
+          display: flex !important;
           flex-direction: column;
-          gap: 0.5rem;
+          gap: 0.75rem;
+          visibility: visible !important;
+          opacity: 1 !important;
+          background: rgba(255, 107, 0, 0.05);
+          padding: 1rem;
+          border-radius: 8px;
         }
         
         .mobile-balance {
-          display: flex;
+          display: flex !important;
           align-items: center;
           gap: 0.25rem;
-          background: rgba(255, 255, 255, 0.03);
-          border: 1px solid rgba(255, 107, 0, 0.15);
+          background: rgba(255, 107, 0, 0.1) !important;
+          border: 1px solid rgba(255, 107, 0, 0.3);
           border-radius: 6px;
           padding: 0.6rem;
           backdrop-filter: blur(10px);
-          color: #FF6B00;
+          color: #FF6B00 !important;
           font-weight: 600;
           font-size: 0.8rem;
+          visibility: visible !important;
+          opacity: 1 !important;
         }
         
         .mobile-wallet-btn {
-          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
-          color: #FFFFFF;
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%) !important;
+          color: #FFFFFF !important;
           border: none;
           border-radius: 6px;
           padding: 0.6rem 0.75rem;
@@ -1016,28 +1048,36 @@ export default function Navbar() {
           cursor: pointer;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           box-shadow: 0 2px 8px rgba(255, 107, 0, 0.2);
+          display: block !important;
+          visibility: visible !important;
+          opacity: 1 !important;
         }
         
         .mobile-wallet-info {
-          display: flex;
+          display: flex !important;
           align-items: center;
           justify-content: space-between;
-          background: rgba(255, 107, 0, 0.1);
+          background: rgba(255, 107, 0, 0.1) !important;
           border: 1px solid rgba(255, 107, 0, 0.3);
           border-radius: 6px;
           padding: 0.6rem;
           backdrop-filter: blur(10px);
+          visibility: visible !important;
+          opacity: 1 !important;
         }
         
         .mobile-wallet-address {
-          color: #FFB800;
+          color: #FFB800 !important;
           font-weight: 600;
           font-size: 0.8rem;
+          display: block !important;
+          visibility: visible !important;
+          opacity: 1 !important;
         }
         
         .mobile-disconnect-btn {
-          background: rgba(255, 0, 0, 0.2);
-          color: #ff6b6b;
+          background: rgba(255, 0, 0, 0.2) !important;
+          color: #ff6b6b !important;
           border: 1px solid rgba(255, 0, 0, 0.3);
           border-radius: 4px;
           padding: 0.4rem 0.6rem;
@@ -1045,6 +1085,9 @@ export default function Navbar() {
           cursor: pointer;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           font-weight: 600;
+          display: block !important;
+          visibility: visible !important;
+          opacity: 1 !important;
         }
         
         /* Desktop responsive */
@@ -1290,15 +1333,18 @@ export default function Navbar() {
         /* Mobile Games Section */
         .mobile-games-section {
           margin: 0.5rem 0;
-          padding: 0.75rem 0;
-          border-top: 1px solid rgba(255, 107, 0, 0.1);
-          border-bottom: 1px solid rgba(255, 107, 0, 0.1);
+          padding: 0.75rem;
+          border-top: 1px solid rgba(255, 107, 0, 0.3);
+          border-bottom: 1px solid rgba(255, 107, 0, 0.3);
+          background: rgba(255, 107, 0, 0.05);
+          border-radius: 8px;
         }
         
         .mobile-games-section .mobile-nav-link {
           margin-left: 1rem;
-          border-left: 2px solid rgba(255, 107, 0, 0.2);
+          border-left: 3px solid rgba(255, 107, 0, 0.5);
           padding-left: 1rem;
+          background: rgba(255, 107, 0, 0.1) !important;
         }
         
         /* Collection Dropdown Styling */
@@ -1342,25 +1388,31 @@ export default function Navbar() {
         
         .mobile-collection-section {
           margin: 0.5rem 0;
-          padding: 0.75rem 0;
-          border-top: 1px solid rgba(255, 107, 0, 0.1);
-          border-bottom: 1px solid rgba(255, 107, 0, 0.1);
+          padding: 0.75rem;
+          border-top: 1px solid rgba(255, 107, 0, 0.3);
+          border-bottom: 1px solid rgba(255, 107, 0, 0.3);
+          background: rgba(255, 107, 0, 0.05);
+          border-radius: 8px;
         }
         
         .mobile-section-title {
-          color: #FF6B00;
-          font-size: 0.75rem;
-          font-weight: 600;
+          color: #FF6B00 !important;
+          font-size: 0.8rem !important;
+          font-weight: 700 !important;
           text-transform: uppercase;
           letter-spacing: 0.05em;
           margin-bottom: 0.5rem;
           padding: 0 0.25rem;
+          display: block !important;
+          visibility: visible !important;
+          opacity: 1 !important;
         }
         
         .mobile-collection-section .mobile-nav-link {
           margin-left: 1rem;
-          border-left: 2px solid rgba(255, 107, 0, 0.2);
+          border-left: 3px solid rgba(255, 107, 0, 0.5);
           padding-left: 1rem;
+          background: rgba(255, 107, 0, 0.1) !important;
         }
       `}</style>
     </nav>
