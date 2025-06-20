@@ -14,6 +14,7 @@ export default function Navbar() {
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [lastBalanceFetch, setLastBalanceFetch] = useState<number>(0)
   const [showWalletMenu, setShowWalletMenu] = useState(false)
+  const [showCollectionMenu, setShowCollectionMenu] = useState(false)
   const { fetchBalance, walletAddress } = useLightning()
   const { connectedWallet, connectXverse, connectUnisat, connectMagicEden, disconnectWallet } = useWallet()
   
@@ -134,13 +135,16 @@ export default function Navbar() {
       if (showWalletMenu && !target.closest('.wallet-menu-container')) {
         setShowWalletMenu(false);
       }
+      if (showCollectionMenu && !target.closest('.collection-menu-container')) {
+        setShowCollectionMenu(false);
+      }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [showWalletMenu]);
+  }, [showWalletMenu, showCollectionMenu]);
   
   // Functie om handmatig de balans te verversen
   const refreshBalance = async () => {
@@ -326,18 +330,32 @@ export default function Navbar() {
             >
               Mining
             </Link>
-            <Link 
-              href="/tigers" 
-              className={`nav-link ${pathname === '/tigers' ? 'active' : ''}`}
-            >
-              Tigers
-            </Link>
-            <Link 
-              href="/artifacts" 
-              className={`nav-link ${pathname === '/artifacts' ? 'active' : ''}`}
-            >
-              Artifacts
-            </Link>
+            <div className="collection-menu-container">
+              <button 
+                className={`nav-link collection-btn ${pathname === '/tigers' || pathname === '/artifacts' ? 'active' : ''}`}
+                onClick={() => setShowCollectionMenu(!showCollectionMenu)}
+              >
+                Collection <span className="dropdown-arrow">▼</span>
+              </button>
+              {showCollectionMenu && (
+                <div className="collection-dropdown">
+                  <Link 
+                    href="/tigers" 
+                    className="collection-option"
+                    onClick={() => setShowCollectionMenu(false)}
+                  >
+                    🐅 Tigers
+                  </Link>
+                  <Link 
+                    href="/artifacts" 
+                    className="collection-option"
+                    onClick={() => setShowCollectionMenu(false)}
+                  >
+                    🏺 Artifacts
+                  </Link>
+                </div>
+              )}
+            </div>
             <Link 
               href="/how-to-play" 
               className={`nav-link ${pathname === '/how-to-play' ? 'active' : ''}`}
@@ -452,20 +470,26 @@ export default function Navbar() {
             >
               Mining
             </Link>
-            <Link 
-              href="/tigers" 
-              className={`mobile-nav-link ${pathname === '/tigers' ? 'active' : ''}`}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Tigers
-            </Link>
-            <Link 
-              href="/artifacts" 
-              className={`mobile-nav-link ${pathname === '/artifacts' ? 'active' : ''}`}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Artifacts
-            </Link>
+            
+            {/* Collection Section */}
+            <div className="mobile-collection-section">
+              <div className="mobile-section-title">Collection</div>
+              <Link 
+                href="/tigers" 
+                className={`mobile-nav-link ${pathname === '/tigers' ? 'active' : ''}`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                🐅 Tigers
+              </Link>
+              <Link 
+                href="/artifacts" 
+                className={`mobile-nav-link ${pathname === '/artifacts' ? 'active' : ''}`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                🏺 Artifacts
+              </Link>
+            </div>
+            
             <Link 
               href="/how-to-play" 
               className={`mobile-nav-link ${pathname === '/how-to-play' ? 'active' : ''}`}
@@ -987,6 +1011,93 @@ export default function Navbar() {
             font-size: 0.7rem;
             min-width: 20px;
           }
+        }
+        
+        /* Collection Dropdown Styling */
+        .collection-menu-container {
+          position: relative;
+        }
+        
+        .collection-btn {
+          display: flex;
+          align-items: center;
+          gap: 0.25rem;
+          cursor: pointer;
+          background: none;
+          border: none;
+          font-family: inherit;
+        }
+        
+        .dropdown-arrow {
+          font-size: 0.7rem;
+          transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .collection-btn:hover .dropdown-arrow {
+          transform: translateY(-1px);
+        }
+        
+        .collection-dropdown {
+          position: absolute;
+          top: 100%;
+          left: 0;
+          background: linear-gradient(135deg, #0A0A0B 0%, #1A1A1B 100%);
+          border: 1px solid rgba(255, 107, 0, 0.3);
+          border-radius: 6px;
+          min-width: 140px;
+          z-index: 1000;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+          margin-top: 4px;
+          backdrop-filter: blur(20px);
+        }
+        
+        .collection-option {
+          display: block;
+          width: 100%;
+          padding: 0.6rem 0.75rem;
+          background: transparent;
+          border: none;
+          color: #94A3B8;
+          font-size: 0.8rem;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          text-align: left;
+          border-bottom: 1px solid rgba(255, 107, 0, 0.1);
+          text-decoration: none;
+        }
+        
+        .collection-option:last-child {
+          border-bottom: none;
+        }
+        
+        .collection-option:hover {
+          background: rgba(255, 107, 0, 0.1);
+          color: #FF6B00;
+        }
+        
+        /* Mobile Collection Section */
+        .mobile-collection-section {
+          margin: 0.5rem 0;
+          padding: 0.75rem 0;
+          border-top: 1px solid rgba(255, 107, 0, 0.1);
+          border-bottom: 1px solid rgba(255, 107, 0, 0.1);
+        }
+        
+        .mobile-section-title {
+          color: #FF6B00;
+          font-size: 0.75rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          margin-bottom: 0.5rem;
+          padding: 0 0.25rem;
+        }
+        
+        .mobile-collection-section .mobile-nav-link {
+          margin-left: 1rem;
+          border-left: 2px solid rgba(255, 107, 0, 0.2);
+          padding-left: 1rem;
         }
       `}</style>
     </nav>
