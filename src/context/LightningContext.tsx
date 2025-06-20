@@ -96,9 +96,9 @@ export const LightningProvider = ({ children }: { children: ReactNode }) => {
           return;
         }
         
-        // Voeg caching toe voor initialization om database load te verminderen
+        // Reduced caching time for faster response to new connections
         const now = Date.now();
-        const initCacheTime = 30000; // 30 seconden cache voor initialization
+        const initCacheTime = 10000; // Reduced from 30 seconds to 10 seconds
         
         if (lastInitialization && (now - lastInitialization < initCacheTime)) {
           console.log(`Lightning: Skipping initialization - last init was ${now - lastInitialization}ms ago`);
@@ -165,6 +165,34 @@ export const LightningProvider = ({ children }: { children: ReactNode }) => {
 
     initializeWallet();
   }, [walletAddress, isClient, walletIsLoading, walletIsInitialized]);
+
+  // Listen for custom wallet connection events for immediate response
+  useEffect(() => {
+    if (!isClient) return;
+
+    const handleWalletConnected = (event: CustomEvent) => {
+      console.log('Lightning: Received walletConnected event:', event.detail);
+      
+      // Force immediate re-initialization when wallet connects
+      const now = Date.now();
+      setLastInitialization(0); // Reset cache to force refresh
+      
+      // Trigger a quick initialization if we have the wallet address
+      if (event.detail.address && event.detail.address === walletAddress) {
+        console.log('Lightning: Force initializing after wallet connection event');
+        // Small delay to ensure WalletContext state is fully set
+        setTimeout(() => {
+          setIsInitialized(false); // This will trigger the useEffect above
+        }, 50);
+      }
+    };
+
+    window.addEventListener('walletConnected', handleWalletConnected as EventListener);
+    
+    return () => {
+      window.removeEventListener('walletConnected', handleWalletConnected as EventListener);
+    };
+  }, [isClient, walletAddress]);
 
   // Utility functie om balans en timestamp in één keer bij te werken
   const updateBalanceWithTimestamp = (newBalance: number) => {

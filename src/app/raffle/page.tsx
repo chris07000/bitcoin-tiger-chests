@@ -62,6 +62,9 @@ export default function RafflePage() {
   // Total winnings/staking amount given away
   const [totalWinningsGiven, setTotalWinningsGiven] = useState<number>(0)
 
+  // Wallet connection status for better UX
+  const [walletConnecting, setWalletConnecting] = useState<boolean>(false)
+
   useEffect(() => {
     // Use wallet address from LightningContext or localStorage as fallback
     const storedWallet = contextWalletAddress || localStorage.getItem('walletAddress')
@@ -147,6 +150,63 @@ export default function RafflePage() {
       }
     }
   }, [walletAddress])
+
+  // Listen for wallet connection events to immediately update UI
+  useEffect(() => {
+    const handleWalletConnected = (event: CustomEvent) => {
+      console.log('Raffle: Received walletConnected event:', event.detail);
+      
+      // Show wallet connecting indicator
+      setWalletConnecting(true);
+      
+      // Immediately update wallet address if it changed
+      if (event.detail.address && event.detail.address !== walletAddress) {
+        console.log('Raffle: Updating wallet address from event:', event.detail.address);
+        setWalletAddress(event.detail.address);
+        
+        // Force refresh user data for new wallet
+        setTimeout(async () => {
+          try {
+            // Fetch user tickets for new wallet
+            const ticketsResponse = await fetch(`/api/raffle/tickets?address=${event.detail.address}`);
+            if (ticketsResponse.ok) {
+              const ticketsData = await ticketsResponse.json();
+              setUserTickets(ticketsData.tickets || {});
+            }
+            
+            // Fetch user points for new wallet
+            const pointsResponse = await fetch(`/api/points/${event.detail.address}`);
+            if (pointsResponse.ok) {
+              const pointsData = await pointsResponse.json();
+              setUserPoints(pointsData.points || 0);
+            }
+            
+            console.log('Raffle: User data refreshed for newly connected wallet');
+          } catch (error) {
+            console.error('Raffle: Error refreshing user data after wallet connection:', error);
+          } finally {
+            // Clear connecting indicator after data is loaded
+            setWalletConnecting(false);
+            setMessage('Wallet connected successfully! 🎉');
+            
+            // Clear success message after 3 seconds
+            setTimeout(() => setMessage(''), 3000);
+          }
+        }, 100); // Small delay to ensure wallet context is fully updated
+      } else {
+        // Clear indicator even if address didn't change
+        setTimeout(() => setWalletConnecting(false), 500);
+      }
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('walletConnected', handleWalletConnected as EventListener);
+      
+      return () => {
+        window.removeEventListener('walletConnected', handleWalletConnected as EventListener);
+      };
+    }
+  }, [walletAddress]);
 
   // Effect voor het bijwerken van de timer
   useEffect(() => {

@@ -269,11 +269,13 @@ export function WalletProvider({ children }: { children: ReactNode }) {
             // Continue with wallet connection even if DB init fails
           }
           
-          // Set local state
+          // Set local state IMMEDIATELY - no delays
           setConnectedWallet('Xverse');
           setWalletAddress(ordinalsAddress.address);
           setPublicKey(ordinalsAddress.publicKey);
           setAddressType(ordinalsAddress.addressType);
+          setIsInitialized(true);
+          setIsLoading(false);
           
           // Sla wallet gegevens op in cookie (7 dagen geldig)
           const walletData = {
@@ -285,17 +287,13 @@ export function WalletProvider({ children }: { children: ReactNode }) {
           };
           
           Cookies.set('wallet_session', JSON.stringify(walletData), { 
-            expires: 7, // 7 dagen
-            sameSite: 'lax', // Changed from 'strict' to 'lax' for better compatibility
-            secure: false, // Allow cookies on localhost/http for development
-            path: '/' // Ensure cookie is available site-wide
+            expires: 7,
+            sameSite: 'lax',
+            secure: false,
+            path: '/'
           });
           
-          // Also save to localStorage as backup
           localStorage.setItem('wallet_session_backup', JSON.stringify(walletData));
-          
-          setIsInitialized(true);
-          setIsLoading(false);
           
           console.log('WalletContext: Connected to Xverse:', {
             address: ordinalsAddress.address,
@@ -303,8 +301,23 @@ export function WalletProvider({ children }: { children: ReactNode }) {
             addressType: ordinalsAddress.addressType
           });
           
-          // Refresh balance after connection
-          setTimeout(() => refreshBalance(), 100); // Reduced from 500ms to 100ms
+          // Force immediate UI update by triggering custom event
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('walletConnected', { 
+              detail: { 
+                wallet: 'Xverse', 
+                address: ordinalsAddress.address,
+                timestamp: Date.now()
+              } 
+            }));
+          }
+          
+          // Refresh balance IMMEDIATELY after state is set - no timeout
+          try {
+            await refreshBalance();
+          } catch (error) {
+            console.warn('Balance refresh failed after connection:', error);
+          }
         } else {
           throw new Error('No ordinals address found');
         }
@@ -346,9 +359,11 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         // Continue with wallet connection even if DB init fails
       }
       
-      // Set local state
+      // Set local state IMMEDIATELY - no delays
       setConnectedWallet('Unisat')
       setWalletAddress(accounts[0])
+      setIsInitialized(true);
+      setIsLoading(false);
       
       // Sla wallet gegevens op in cookie (7 dagen geldig)
       const walletData = {
@@ -360,22 +375,33 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       };
       
       Cookies.set('wallet_session', JSON.stringify(walletData), { 
-        expires: 7, // 7 dagen
-        sameSite: 'lax', // Changed from 'strict' to 'lax' for better compatibility
-        secure: false, // Allow cookies on localhost/http for development
-        path: '/' // Ensure cookie is available site-wide
+        expires: 7,
+        sameSite: 'lax',
+        secure: false,
+        path: '/'
       });
       
-      // Also save to localStorage as backup
       localStorage.setItem('wallet_session_backup', JSON.stringify(walletData));
-      
-      setIsInitialized(true);
-      setIsLoading(false);
       
       console.log('WalletContext: Connected to Unisat:', accounts)
       
-      // Refresh balance after connection
-      setTimeout(() => refreshBalance(), 100); // Reduced from 500ms to 100ms
+      // Force immediate UI update by triggering custom event
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('walletConnected', { 
+          detail: { 
+            wallet: 'Unisat', 
+            address: accounts[0],
+            timestamp: Date.now()
+          } 
+        }));
+      }
+      
+      // Refresh balance IMMEDIATELY after state is set - no timeout
+      try {
+        await refreshBalance();
+      } catch (error) {
+        console.warn('Balance refresh failed after connection:', error);
+      }
     } catch (error) {
       console.error('WalletContext: Failed to connect Unisat wallet:', error)
       setIsLoading(false);
@@ -439,11 +465,13 @@ export function WalletProvider({ children }: { children: ReactNode }) {
           // Continue with wallet connection even if DB init fails
         }
         
-        // Set local state
+        // Set local state IMMEDIATELY - no delays
         setConnectedWallet('MagicEden');
         setWalletAddress(ordinalsAddress.address);
         setPublicKey(ordinalsAddress.publicKey);
         setAddressType('p2tr');
+        setIsInitialized(true);
+        setIsLoading(false);
         
         // Sla wallet gegevens op in cookie (7 dagen geldig)
         const walletData = {
@@ -455,22 +483,33 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         };
         
         Cookies.set('wallet_session', JSON.stringify(walletData), { 
-          expires: 7, // 7 dagen
-          sameSite: 'lax', // Changed from 'strict' to 'lax' for better compatibility
-          secure: false, // Allow cookies on localhost/http for development
-          path: '/' // Ensure cookie is available site-wide
+          expires: 7,
+          sameSite: 'lax',
+          secure: false,
+          path: '/'
         });
         
-        // Also save to localStorage as backup
         localStorage.setItem('wallet_session_backup', JSON.stringify(walletData));
-        
-        setIsInitialized(true);
-        setIsLoading(false);
         
         console.log('WalletContext: Connected to Magic Eden:', ordinalsAddress.address);
         
-        // Refresh balance after connection
-        setTimeout(() => refreshBalance(), 100); // Reduced from 500ms to 100ms
+        // Force immediate UI update by triggering custom event
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('walletConnected', { 
+            detail: { 
+              wallet: 'MagicEden', 
+              address: ordinalsAddress.address,
+              timestamp: Date.now()
+            } 
+          }));
+        }
+        
+        // Refresh balance IMMEDIATELY after state is set - no timeout
+        try {
+          await refreshBalance();
+        } catch (error) {
+          console.warn('Balance refresh failed after connection:', error);
+        }
       } else {
         console.error('WalletContext: No ordinals address found in response');
         throw new Error('No ordinals address found');
