@@ -1089,29 +1089,38 @@ export default function Navbar() {
           backdrop-filter: blur(20px);
         }
         
-        .games-option {
-          display: block;
-          width: 100%;
-          padding: 0.6rem 0.75rem;
-          background: transparent;
-          border: none;
+        .games-option,
+        .games-option:link,
+        .games-option:visited,
+        .games-option:active,
+        .games-option:focus {
+          display: block !important;
+          width: 100% !important;
+          padding: 0.6rem 0.75rem !important;
+          background: transparent !important;
+          border: none !important;
           color: #94A3B8 !important;
-          font-size: 0.8rem;
-          font-weight: 500;
-          cursor: pointer;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          text-align: left;
-          border-bottom: 1px solid rgba(255, 107, 0, 0.1);
+          font-size: 0.8rem !important;
+          font-weight: 500 !important;
+          cursor: pointer !important;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+          text-align: left !important;
+          border-bottom: 1px solid rgba(255, 107, 0, 0.1) !important;
           text-decoration: none !important;
         }
         
         .games-option:last-child {
-          border-bottom: none;
+          border-bottom: none !important;
         }
         
-        .games-option:hover {
-          background: rgba(255, 107, 0, 0.1);
+        .games-option:hover,
+        .games-option:link:hover,
+        .games-option:visited:hover,
+        .games-option:active:hover,
+        .games-option:focus:hover {
+          background: rgba(255, 107, 0, 0.1) !important;
           color: #FF6B00 !important;
+          text-decoration: none !important;
         }
         
         .games-option:visited {
@@ -1175,29 +1184,38 @@ export default function Navbar() {
           backdrop-filter: blur(20px);
         }
         
-        .collection-option {
-          display: block;
-          width: 100%;
-          padding: 0.6rem 0.75rem;
-          background: transparent;
-          border: none;
+        .collection-option,
+        .collection-option:link,
+        .collection-option:visited,
+        .collection-option:active,
+        .collection-option:focus {
+          display: block !important;
+          width: 100% !important;
+          padding: 0.6rem 0.75rem !important;
+          background: transparent !important;
+          border: none !important;
           color: #94A3B8 !important;
-          font-size: 0.8rem;
-          font-weight: 500;
-          cursor: pointer;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          text-align: left;
-          border-bottom: 1px solid rgba(255, 107, 0, 0.1);
+          font-size: 0.8rem !important;
+          font-weight: 500 !important;
+          cursor: pointer !important;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+          text-align: left !important;
+          border-bottom: 1px solid rgba(255, 107, 0, 0.1) !important;
           text-decoration: none !important;
         }
         
         .collection-option:last-child {
-          border-bottom: none;
+          border-bottom: none !important;
         }
         
-        .collection-option:hover {
-          background: rgba(255, 107, 0, 0.1);
+        .collection-option:hover,
+        .collection-option:link:hover,
+        .collection-option:visited:hover,
+        .collection-option:active:hover,
+        .collection-option:focus:hover {
+          background: rgba(255, 107, 0, 0.1) !important;
           color: #FF6B00 !important;
+          text-decoration: none !important;
         }
         
         .collection-option:visited {
