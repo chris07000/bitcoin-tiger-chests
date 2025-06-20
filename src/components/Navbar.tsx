@@ -669,14 +669,14 @@ export default function Navbar() {
         }
         
         .nav-link {
-          color: #94A3B8;
+          color: #94A3B8 !important;
           background: rgba(255, 255, 255, 0.02);
           border: 1px solid rgba(255, 255, 255, 0.08);
           border-radius: 6px;
           padding: 0.4rem 0.75rem;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           backdrop-filter: blur(10px);
-          text-decoration: none;
+          text-decoration: none !important;
           font-size: 0.85rem;
           font-weight: 500;
           white-space: nowrap;
@@ -689,7 +689,7 @@ export default function Navbar() {
         }
         
         .nav-link:hover:not(.active) {
-          color: #FFFFFF;
+          color: #FFFFFF !important;
           background: rgba(255, 107, 0, 0.05);
           border-color: rgba(255, 107, 0, 0.2);
           transform: translateY(-1px);
@@ -698,8 +698,23 @@ export default function Navbar() {
         .nav-link.active {
           background: rgba(255, 107, 0, 0.1);
           border-color: rgba(255, 107, 0, 0.3);
-          color: #FF6B00;
+          color: #FF6B00 !important;
           box-shadow: 0 2px 8px rgba(255, 107, 0, 0.15);
+        }
+        
+        /* Specific overrides for regular nav links */
+        .nav-links > .nav-link:link,
+        .nav-links > .nav-link:visited,
+        .nav-links > .nav-link:focus {
+          color: #94A3B8 !important;
+        }
+        
+        .nav-links > .nav-link:hover:not(.active) {
+          color: #FFFFFF !important;
+        }
+        
+        .nav-links > .nav-link.active {
+          color: #FF6B00 !important;
         }
         
         /* Right side - Balance & Wallet */
