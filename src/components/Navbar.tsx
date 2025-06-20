@@ -321,7 +321,7 @@ export default function Navbar() {
                       setShowGamesMenu(false);
                     }}
                   >
-                    🎁 Chests
+                    Chests
                   </button>
                   <button
                     className="games-option"
@@ -330,7 +330,7 @@ export default function Navbar() {
                       setShowGamesMenu(false);
                     }}
                   >
-                    🪙 Coinflip
+                    Coinflip
                   </button>
                 </div>
               )}
@@ -369,7 +369,7 @@ export default function Navbar() {
                       setShowCollectionMenu(false);
                     }}
                   >
-                    🐅 Tigers
+                    Tigers
                   </button>
                   <button
                     className="collection-option"
@@ -378,7 +378,7 @@ export default function Navbar() {
                       setShowCollectionMenu(false);
                     }}
                   >
-                    🏺 Artifacts
+                    Artifacts
                   </button>
                 </div>
               )}
@@ -471,14 +471,14 @@ export default function Navbar() {
                 className={`mobile-nav-link ${pathname === '/' ? 'active' : ''}`}
                 onClick={() => setIsMenuOpen(false)}
               >
-                🎁 Chests
+                Chests
               </Link>
               <Link 
                 href="/jackpot" 
                 className={`mobile-nav-link ${pathname === '/jackpot' ? 'active' : ''}`}
                 onClick={() => setIsMenuOpen(false)}
               >
-                🪙 Coinflip
+                Coinflip
               </Link>
             </div>
             
@@ -512,14 +512,14 @@ export default function Navbar() {
                 className={`mobile-nav-link ${pathname === '/tigers' ? 'active' : ''}`}
                 onClick={() => setIsMenuOpen(false)}
               >
-                🐅 Tigers
+                Tigers
               </Link>
               <Link 
                 href="/artifacts" 
                 className={`mobile-nav-link ${pathname === '/artifacts' ? 'active' : ''}`}
                 onClick={() => setIsMenuOpen(false)}
               >
-                🏺 Artifacts
+                Artifacts
               </Link>
             </div>
             
