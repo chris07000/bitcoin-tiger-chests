@@ -350,7 +350,7 @@ export default function Navbar() {
         {/* Right side - Balance & Wallet */}
         <div className="navbar-right">
           <div className="balance-display">
-            <span className="balance-text">Balance: {balance} sats</span>
+            <span className="balance-text">{balance} sats</span>
             {rankBadge}
             {refreshButton}
           </div>
@@ -362,7 +362,7 @@ export default function Navbar() {
                 className="wallet-connect-btn"
                 onClick={() => setShowWalletMenu(!showWalletMenu)}
               >
-                Connect Wallet
+                Connect
               </button>
               {showWalletMenu && (
                 <div className="wallet-dropdown">
@@ -381,15 +381,15 @@ export default function Navbar() {
           ) : (
             <div className="wallet-info">
               <span className="wallet-address" title={walletAddress}>
-                {connectedWallet === 'MagicEden' ? 'ME:' : connectedWallet === 'Unisat' ? 'UN:' : 'XV:'}
-                {walletAddress?.slice(0, 6)}...{walletAddress?.slice(-4)}
+                {connectedWallet === 'MagicEden' ? 'ME' : connectedWallet === 'Unisat' ? 'UN' : 'XV'}
+                {walletAddress?.slice(0, 4)}...{walletAddress?.slice(-3)}
               </span>
               <button 
                 className="disconnect-btn"
                 onClick={disconnectWallet}
                 title="Disconnect Wallet"
               >
-                Disconnect
+                ×
               </button>
             </div>
           )}
@@ -477,7 +477,7 @@ export default function Navbar() {
             {/* Mobile Balance & Wallet */}
             <div className="mobile-balance-section">
               <div className="mobile-balance">
-                <span>Balance: {balance} sats</span>
+                <span>{balance} sats</span>
                 {rankBadge}
                 {refreshButton}
               </div>
@@ -487,19 +487,19 @@ export default function Navbar() {
                   className="mobile-wallet-btn"
                   onClick={() => setShowWalletMenu(!showWalletMenu)}
                 >
-                  Connect Wallet
+                  Connect
                 </button>
               ) : (
                 <div className="mobile-wallet-info">
                   <span className="mobile-wallet-address">
-                    {connectedWallet === 'MagicEden' ? 'ME:' : connectedWallet === 'Unisat' ? 'UN:' : 'XV:'}
-                    {walletAddress?.slice(0, 6)}...{walletAddress?.slice(-4)}
+                    {connectedWallet === 'MagicEden' ? 'ME' : connectedWallet === 'Unisat' ? 'UN' : 'XV'}
+                    {walletAddress?.slice(0, 4)}...{walletAddress?.slice(-3)}
                   </span>
                   <button 
                     className="mobile-disconnect-btn"
                     onClick={disconnectWallet}
                   >
-                    Disconnect
+                    ×
                   </button>
                 </div>
               )}
@@ -534,7 +534,7 @@ export default function Navbar() {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding: 0.75rem 1.5rem;
+          padding: 0.5rem 1rem;
           max-width: 1400px;
           margin: 0 auto;
           min-height: 60px;
@@ -544,20 +544,21 @@ export default function Navbar() {
         .navbar-left {
           display: flex;
           align-items: center;
+          flex: 0 0 auto;
         }
         
         .social-icons {
           display: flex;
-          gap: 0.75rem;
+          gap: 0.5rem;
         }
         
         .social-icon {
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 32px;
-          height: 32px;
-          border-radius: 8px;
+          width: 28px;
+          height: 28px;
+          border-radius: 6px;
           background: rgba(255, 255, 255, 0.05);
           border: 1px solid rgba(255, 107, 0, 0.2);
           color: #FF6B00;
@@ -575,31 +576,34 @@ export default function Navbar() {
         }
         
         .social-icon svg {
-          width: 16px;
-          height: 16px;
+          width: 14px;
+          height: 14px;
         }
         
         /* Center - Navigation Links */
         .navbar-center {
           display: none;
+          flex: 1 1 auto;
+          max-width: 800px;
         }
         
         .nav-links {
           display: flex;
-          gap: 0.5rem;
+          gap: 0.25rem;
           align-items: center;
+          justify-content: center;
         }
         
         .nav-link {
           color: #94A3B8;
           background: rgba(255, 255, 255, 0.02);
           border: 1px solid rgba(255, 255, 255, 0.08);
-          border-radius: 8px;
-          padding: 0.5rem 1rem;
+          border-radius: 6px;
+          padding: 0.4rem 0.75rem;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           backdrop-filter: blur(10px);
           text-decoration: none;
-          font-size: 0.9rem;
+          font-size: 0.85rem;
           font-weight: 500;
           white-space: nowrap;
         }
@@ -622,24 +626,25 @@ export default function Navbar() {
         .navbar-right {
           display: flex;
           align-items: center;
-          gap: 1rem;
+          gap: 0.5rem;
+          flex: 0 0 auto;
         }
         
         .balance-display {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
+          gap: 0.25rem;
           background: rgba(255, 255, 255, 0.03);
           border: 1px solid rgba(255, 107, 0, 0.15);
-          border-radius: 8px;
-          padding: 0.5rem 0.75rem;
+          border-radius: 6px;
+          padding: 0.4rem 0.6rem;
           backdrop-filter: blur(10px);
         }
         
         .balance-text {
           color: #FF6B00;
           font-weight: 600;
-          font-size: 0.9rem;
+          font-size: 0.8rem;
         }
         
         /* Wallet Connect Styling */
@@ -651,9 +656,9 @@ export default function Navbar() {
           background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
           color: #FFFFFF;
           border: none;
-          border-radius: 8px;
-          padding: 0.5rem 1rem;
-          font-size: 0.9rem;
+          border-radius: 6px;
+          padding: 0.4rem 0.75rem;
+          font-size: 0.8rem;
           font-weight: 600;
           cursor: pointer;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -672,8 +677,8 @@ export default function Navbar() {
           right: 0;
           background: linear-gradient(135deg, #0A0A0B 0%, #1A1A1B 100%);
           border: 1px solid rgba(255, 107, 0, 0.3);
-          border-radius: 8px;
-          min-width: 140px;
+          border-radius: 6px;
+          min-width: 120px;
           z-index: 1000;
           box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
           margin-top: 4px;
@@ -683,11 +688,11 @@ export default function Navbar() {
         .wallet-option {
           display: block;
           width: 100%;
-          padding: 0.75rem 1rem;
+          padding: 0.6rem 0.75rem;
           background: transparent;
           border: none;
           color: #94A3B8;
-          font-size: 0.9rem;
+          font-size: 0.8rem;
           font-weight: 500;
           cursor: pointer;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -707,18 +712,18 @@ export default function Navbar() {
         .wallet-info {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
+          gap: 0.4rem;
           background: rgba(255, 107, 0, 0.1);
           border: 1px solid rgba(255, 107, 0, 0.3);
-          border-radius: 8px;
-          padding: 0.5rem 0.75rem;
+          border-radius: 6px;
+          padding: 0.4rem 0.6rem;
           backdrop-filter: blur(10px);
         }
         
         .wallet-address {
           color: #FFB800;
           font-weight: 600;
-          font-size: 0.85rem;
+          font-size: 0.75rem;
           cursor: pointer;
         }
         
@@ -726,12 +731,16 @@ export default function Navbar() {
           background: rgba(255, 0, 0, 0.2);
           color: #ff6b6b;
           border: 1px solid rgba(255, 0, 0, 0.3);
-          border-radius: 6px;
-          padding: 0.25rem 0.5rem;
+          border-radius: 4px;
+          padding: 0.2rem 0.4rem;
           font-size: 0.8rem;
           cursor: pointer;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           font-weight: 600;
+          min-width: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
         
         .disconnect-btn:hover {
@@ -822,34 +831,35 @@ export default function Navbar() {
         }
         
         .mobile-balance-section {
-          margin-top: 1rem;
-          padding-top: 1rem;
+          margin-top: 0.75rem;
+          padding-top: 0.75rem;
           border-top: 1px solid rgba(255, 107, 0, 0.15);
           display: flex;
           flex-direction: column;
-          gap: 0.75rem;
+          gap: 0.5rem;
         }
         
         .mobile-balance {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
+          gap: 0.25rem;
           background: rgba(255, 255, 255, 0.03);
           border: 1px solid rgba(255, 107, 0, 0.15);
-          border-radius: 8px;
-          padding: 0.75rem;
+          border-radius: 6px;
+          padding: 0.6rem;
           backdrop-filter: blur(10px);
           color: #FF6B00;
           font-weight: 600;
+          font-size: 0.8rem;
         }
         
         .mobile-wallet-btn {
           background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
           color: #FFFFFF;
           border: none;
-          border-radius: 8px;
-          padding: 0.75rem 1rem;
-          font-size: 0.9rem;
+          border-radius: 6px;
+          padding: 0.6rem 0.75rem;
+          font-size: 0.8rem;
           font-weight: 600;
           cursor: pointer;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -862,24 +872,24 @@ export default function Navbar() {
           justify-content: space-between;
           background: rgba(255, 107, 0, 0.1);
           border: 1px solid rgba(255, 107, 0, 0.3);
-          border-radius: 8px;
-          padding: 0.75rem;
+          border-radius: 6px;
+          padding: 0.6rem;
           backdrop-filter: blur(10px);
         }
         
         .mobile-wallet-address {
           color: #FFB800;
           font-weight: 600;
-          font-size: 0.9rem;
+          font-size: 0.8rem;
         }
         
         .mobile-disconnect-btn {
           background: rgba(255, 0, 0, 0.2);
           color: #ff6b6b;
           border: 1px solid rgba(255, 0, 0, 0.3);
-          border-radius: 6px;
-          padding: 0.5rem 0.75rem;
-          font-size: 0.8rem;
+          border-radius: 4px;
+          padding: 0.4rem 0.6rem;
+          font-size: 0.75rem;
           cursor: pointer;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           font-weight: 600;
@@ -896,17 +906,17 @@ export default function Navbar() {
           }
           
           .navbar-left {
-            flex: 1;
+            flex: 0 0 auto;
           }
           
           .navbar-center {
-            flex: 2;
+            flex: 1 1 auto;
             display: flex;
             justify-content: center;
           }
           
           .navbar-right {
-            flex: 1;
+            flex: 0 0 auto;
             justify-content: flex-end;
           }
         }
@@ -927,29 +937,54 @@ export default function Navbar() {
           
           .wallet-connect-btn,
           .wallet-info {
-            font-size: 0.8rem;
-            padding: 0.4rem 0.6rem;
+            font-size: 0.75rem;
+            padding: 0.35rem 0.5rem;
+          }
+          
+          .wallet-address {
+            font-size: 0.7rem;
+          }
+          
+          .disconnect-btn {
+            padding: 0.15rem 0.3rem;
+            font-size: 0.75rem;
           }
         }
         
         /* Mobile responsive */
         @media (max-width: 768px) {
           .navbar-container {
-            padding: 0.75rem 1rem;
+            padding: 0.5rem 0.75rem;
           }
           
           .social-icons {
-            gap: 0.5rem;
+            gap: 0.4rem;
           }
           
           .social-icon {
-            width: 28px;
-            height: 28px;
+            width: 24px;
+            height: 24px;
           }
           
           .social-icon svg {
-            width: 14px;
-            height: 14px;
+            width: 12px;
+            height: 12px;
+          }
+          
+          .wallet-connect-btn,
+          .wallet-info {
+            font-size: 0.7rem;
+            padding: 0.3rem 0.4rem;
+          }
+          
+          .wallet-address {
+            font-size: 0.65rem;
+          }
+          
+          .disconnect-btn {
+            padding: 0.1rem 0.25rem;
+            font-size: 0.7rem;
+            min-width: 20px;
           }
         }
       `}</style>
