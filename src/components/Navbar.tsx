@@ -451,7 +451,10 @@ export default function Navbar() {
         {/* Mobile Menu Button */}
         <button 
           className={`mobile-menu-btn ${isMenuOpen ? 'open' : ''}`}
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          onClick={() => {
+            console.log('Hamburger menu clicked, current state:', isMenuOpen);
+            setIsMenuOpen(!isMenuOpen);
+          }}
         >
           <span></span>
           <span></span>
@@ -603,6 +606,7 @@ export default function Navbar() {
           max-width: 1400px;
           margin: 0 auto;
           min-height: 60px;
+          position: relative;
         }
         
         /* Left side - Social Icons */
@@ -862,39 +866,57 @@ export default function Navbar() {
         .mobile-menu-btn {
           display: none;
           flex-direction: column;
-          justify-content: space-around;
-          width: 32px;
-          height: 32px;
-          background: transparent;
-          border: none;
+          justify-content: center;
+          align-items: center;
+          width: 44px;
+          height: 44px;
+          background: rgba(255, 107, 0, 0.1);
+          border: 1px solid rgba(255, 107, 0, 0.3);
+          border-radius: 6px;
           cursor: pointer;
-          padding: 0;
-          z-index: 10;
+          padding: 8px;
+          z-index: 101;
           box-sizing: border-box;
-          position: relative !important;
-          visibility: visible !important;
+          position: absolute;
+          right: 0.75rem;
+          top: 50%;
+          transform: translateY(-50%);
+          gap: 4px;
+          backdrop-filter: blur(10px);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .mobile-menu-btn:hover {
+          background: rgba(255, 107, 0, 0.2);
+          border-color: rgba(255, 107, 0, 0.5);
+          transform: translateY(-50%) scale(1.05);
+        }
+        
+        .mobile-menu-btn:active {
+          transform: translateY(-50%) scale(0.95);
         }
         
         .mobile-menu-btn span {
           width: 20px;
-          height: 2px;
+          height: 3px;
           background: #FF6B00;
           border-radius: 2px;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          transform-origin: 1px;
-          margin: 0 auto;
+          transform-origin: center;
+          display: block;
         }
         
         .mobile-menu-btn.open span:first-child {
-          transform: rotate(45deg);
+          transform: rotate(45deg) translate(5px, 5px);
         }
         
         .mobile-menu-btn.open span:nth-child(2) {
           opacity: 0;
+          transform: scale(0);
         }
         
         .mobile-menu-btn.open span:nth-child(3) {
-          transform: rotate(-45deg);
+          transform: rotate(-45deg) translate(5px, -5px);
         }
         
         /* Mobile Menu */
@@ -912,6 +934,19 @@ export default function Navbar() {
           overflow-y: auto;
           display: block !important;
           visibility: visible !important;
+          opacity: 1 !important;
+          animation: slideDown 0.3s ease-out;
+        }
+        
+        @keyframes slideDown {
+          from {
+            opacity: 0;
+            transform: translateY(-20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
         }
         
         .mobile-nav-links {
@@ -1048,14 +1083,23 @@ export default function Navbar() {
           .navbar-container {
             display: flex !important;
             visibility: visible !important;
+            padding: 0.5rem 3rem 0.5rem 1rem;
+            position: relative;
           }
           
           .navbar-left {
             display: flex !important;
+            flex: 1;
           }
           
           .navbar-center {
             display: none !important;
+          }
+          
+          .navbar-right {
+            display: flex !important;
+            gap: 0.5rem;
+            margin-right: 3rem;
           }
           
           .balance-display {
@@ -1065,6 +1109,11 @@ export default function Navbar() {
           .mobile-menu-btn {
             display: flex !important;
             visibility: visible !important;
+            position: absolute !important;
+            right: 1rem !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            z-index: 101 !important;
           }
           
           .wallet-connect-btn,
@@ -1086,9 +1135,10 @@ export default function Navbar() {
         /* Mobile responsive */
         @media (max-width: 768px) {
           .navbar-container {
-            padding: 0.5rem 0.75rem;
+            padding: 0.5rem 3rem 0.5rem 0.75rem;
             display: flex !important;
             visibility: visible !important;
+            position: relative;
           }
           
           .navbar {
@@ -1101,10 +1151,17 @@ export default function Navbar() {
           
           .navbar-left {
             display: flex !important;
+            flex: 1;
           }
           
           .navbar-center {
             display: none !important;
+          }
+          
+          .navbar-right {
+            display: flex !important;
+            gap: 0.5rem;
+            margin-right: 3rem;
           }
           
           .balance-display {
@@ -1113,6 +1170,11 @@ export default function Navbar() {
           
           .mobile-menu-btn {
             display: flex !important;
+            position: absolute !important;
+            right: 0.75rem !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            z-index: 101 !important;
           }
           
           .social-icons {
