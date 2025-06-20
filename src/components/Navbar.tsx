@@ -1037,6 +1037,74 @@ export default function Navbar() {
           }
         }
         
+        /* Games Dropdown Styling */
+        .games-menu-container {
+          position: relative;
+        }
+        
+        .games-btn {
+          display: flex;
+          align-items: center;
+          gap: 0.25rem;
+          cursor: pointer;
+          background: none;
+          border: none;
+          font-family: inherit;
+        }
+        
+        .games-dropdown {
+          position: absolute;
+          top: 100%;
+          right: 0;
+          background: linear-gradient(135deg, #0A0A0B 0%, #1A1A1B 100%);
+          border: 1px solid rgba(255, 107, 0, 0.3);
+          border-radius: 6px;
+          min-width: 140px;
+          z-index: 1000;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+          margin-top: 4px;
+          backdrop-filter: blur(20px);
+        }
+        
+        .games-option {
+          display: block;
+          width: 100%;
+          padding: 0.6rem 0.75rem;
+          background: transparent;
+          border: none;
+          color: #94A3B8;
+          font-size: 0.8rem;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          text-align: left;
+          border-bottom: 1px solid rgba(255, 107, 0, 0.1);
+          text-decoration: none;
+        }
+        
+        .games-option:last-child {
+          border-bottom: none;
+        }
+        
+        .games-option:hover {
+          background: rgba(255, 107, 0, 0.1);
+          color: #FF6B00;
+        }
+        
+        /* Mobile Games Section */
+        .mobile-games-section {
+          margin: 0.5rem 0;
+          padding: 0.75rem 0;
+          border-top: 1px solid rgba(255, 107, 0, 0.1);
+          border-bottom: 1px solid rgba(255, 107, 0, 0.1);
+        }
+        
+        .mobile-games-section .mobile-nav-link {
+          margin-left: 1rem;
+          border-left: 2px solid rgba(255, 107, 0, 0.2);
+          padding-left: 1rem;
+        }
+        
         /* Collection Dropdown Styling */
         .collection-menu-container {
           position: relative;
@@ -1057,14 +1125,15 @@ export default function Navbar() {
           transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
-        .collection-btn:hover .dropdown-arrow {
+        .collection-btn:hover .dropdown-arrow,
+        .games-btn:hover .dropdown-arrow {
           transform: translateY(-1px);
         }
         
         .collection-dropdown {
           position: absolute;
           top: 100%;
-          left: 0;
+          right: 0;
           background: linear-gradient(135deg, #0A0A0B 0%, #1A1A1B 100%);
           border: 1px solid rgba(255, 107, 0, 0.3);
           border-radius: 6px;
@@ -1119,74 +1188,6 @@ export default function Navbar() {
         }
         
         .mobile-collection-section .mobile-nav-link {
-          margin-left: 1rem;
-          border-left: 2px solid rgba(255, 107, 0, 0.2);
-          padding-left: 1rem;
-        }
-        
-        /* Games Dropdown Styling */
-        .games-menu-container {
-          position: relative;
-        }
-        
-        .games-btn {
-          display: flex;
-          align-items: center;
-          gap: 0.25rem;
-          cursor: pointer;
-          background: none;
-          border: none;
-          font-family: inherit;
-        }
-        
-        .games-dropdown {
-          position: absolute;
-          top: 100%;
-          left: 0;
-          background: linear-gradient(135deg, #0A0A0B 0%, #1A1A1B 100%);
-          border: 1px solid rgba(255, 107, 0, 0.3);
-          border-radius: 6px;
-          min-width: 140px;
-          z-index: 1000;
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-          margin-top: 4px;
-          backdrop-filter: blur(20px);
-        }
-        
-        .games-option {
-          display: block;
-          width: 100%;
-          padding: 0.6rem 0.75rem;
-          background: transparent;
-          border: none;
-          color: #94A3B8;
-          font-size: 0.8rem;
-          font-weight: 500;
-          cursor: pointer;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          text-align: left;
-          border-bottom: 1px solid rgba(255, 107, 0, 0.1);
-          text-decoration: none;
-        }
-        
-        .games-option:last-child {
-          border-bottom: none;
-        }
-        
-        .games-option:hover {
-          background: rgba(255, 107, 0, 0.1);
-          color: #FF6B00;
-        }
-        
-        /* Mobile Games Section */
-        .mobile-games-section {
-          margin: 0.5rem 0;
-          padding: 0.75rem 0;
-          border-top: 1px solid rgba(255, 107, 0, 0.1);
-          border-bottom: 1px solid rgba(255, 107, 0, 0.1);
-        }
-        
-        .mobile-games-section .mobile-nav-link {
           margin-left: 1rem;
           border-left: 2px solid rgba(255, 107, 0, 0.2);
           padding-left: 1rem;
