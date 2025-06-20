@@ -2659,8 +2659,19 @@ body::after {
     font-size: 0.8rem;
   }
   
+  /* Ensure navbar is always visible on mobile */
   .nav-container {
+    display: block !important;
+    visibility: visible !important;
     padding: 0.75rem;
+  }
+  
+  /* Force mobile navbar visibility */
+  .navbar,
+  .navbar-container {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
   }
   
   .jackpot-banner {
@@ -2678,6 +2689,7 @@ body::after {
   
   .hamburger-menu {
     display: flex !important;
+    visibility: visible !important;
   }
   
   .desktop-menu {

@@ -860,7 +860,7 @@ export default function Navbar() {
         
         /* Mobile Menu Button */
         .mobile-menu-btn {
-          display: flex;
+          display: none;
           flex-direction: column;
           justify-content: space-around;
           width: 32px;
@@ -871,6 +871,8 @@ export default function Navbar() {
           padding: 0;
           z-index: 10;
           box-sizing: border-box;
+          position: relative !important;
+          visibility: visible !important;
         }
         
         .mobile-menu-btn span {
@@ -897,15 +899,19 @@ export default function Navbar() {
         
         /* Mobile Menu */
         .mobile-menu {
-          position: absolute;
-          top: 100%;
+          position: fixed !important;
+          top: 60px !important;
           left: 0;
           right: 0;
           background: linear-gradient(135deg, #0A0A0B 0%, #1A1A1B 100%);
           border-bottom: 1px solid rgba(255, 107, 0, 0.15);
           backdrop-filter: blur(20px);
           box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-          z-index: 90;
+          z-index: 90 !important;
+          max-height: calc(100vh - 60px);
+          overflow-y: auto;
+          display: block !important;
+          visibility: visible !important;
         }
         
         .mobile-nav-links {
@@ -1034,16 +1040,31 @@ export default function Navbar() {
         
         /* Tablet responsive */
         @media (max-width: 1023px) {
+          .navbar {
+            display: block !important;
+            visibility: visible !important;
+          }
+          
+          .navbar-container {
+            display: flex !important;
+            visibility: visible !important;
+          }
+          
           .navbar-left {
-            display: none;
+            display: flex !important;
           }
           
           .navbar-center {
-            display: none;
+            display: none !important;
           }
           
           .balance-display {
-            display: none;
+            display: none !important;
+          }
+          
+          .mobile-menu-btn {
+            display: flex !important;
+            visibility: visible !important;
           }
           
           .wallet-connect-btn,
@@ -1066,6 +1087,32 @@ export default function Navbar() {
         @media (max-width: 768px) {
           .navbar-container {
             padding: 0.5rem 0.75rem;
+            display: flex !important;
+            visibility: visible !important;
+          }
+          
+          .navbar {
+            display: block !important;
+            visibility: visible !important;
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 100 !important;
+          }
+          
+          .navbar-left {
+            display: flex !important;
+          }
+          
+          .navbar-center {
+            display: none !important;
+          }
+          
+          .balance-display {
+            display: none !important;
+          }
+          
+          .mobile-menu-btn {
+            display: flex !important;
           }
           
           .social-icons {
