@@ -466,7 +466,7 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu - Simplified since styles are in global CSS */}
       {isMenuOpen && (
         <div className="mobile-menu">
           <div className="mobile-nav-links">
@@ -481,7 +481,7 @@ export default function Navbar() {
               borderRadius: '4px',
               marginBottom: '0.5rem'
             }}>
-              🍔 Mobile Menu is Open! 🍔
+              🍔 Mobile Menu is Working! 🍔
             </div>
             
             <Link 
@@ -939,155 +939,28 @@ export default function Navbar() {
         
         /* Mobile Menu */
         .mobile-menu {
-          position: fixed !important;
-          top: 60px !important;
-          left: 0;
-          right: 0;
-          width: 100vw;
-          background: linear-gradient(135deg, #0A0A0B 0%, #1A1A1B 100%);
-          border-bottom: 1px solid rgba(255, 107, 0, 0.15);
-          backdrop-filter: blur(20px);
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-          z-index: 999 !important;
-          max-height: calc(100vh - 60px);
-          overflow-y: auto;
-          display: block !important;
-          visibility: visible !important;
-          opacity: 1 !important;
-          animation: slideDown 0.3s ease-out;
-        }
-        
-        @keyframes slideDown {
-          from {
-            opacity: 0;
-            transform: translateY(-20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+          /* Styles are overridden in global CSS for specificity */
         }
         
         .mobile-nav-links {
-          padding: 1rem;
-          display: flex !important;
-          flex-direction: column;
-          gap: 0.5rem;
-          visibility: visible !important;
-          opacity: 1 !important;
+          /* Styles are overridden in global CSS for specificity */
         }
         
         .mobile-nav-link {
-          color: #FFFFFF !important;
-          background: rgba(255, 107, 0, 0.08) !important;
-          border: 1px solid rgba(255, 107, 0, 0.2) !important;
-          border-radius: 8px;
-          padding: 0.75rem 1rem;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          backdrop-filter: blur(10px);
-          text-decoration: none !important;
-          font-size: 0.9rem;
-          font-weight: 500;
-          display: block !important;
-          visibility: visible !important;
-          opacity: 1 !important;
+          /* Styles are overridden in global CSS for specificity */
         }
         
-        .mobile-nav-link:hover:not(.active) {
-          color: #FFFFFF !important;
-          background: rgba(255, 107, 0, 0.15) !important;
-          border-color: rgba(255, 107, 0, 0.4) !important;
-          transform: translateX(4px);
+        .mobile-section-title {
+          /* Styles are overridden in global CSS for specificity */
         }
         
-        .mobile-nav-link.active {
-          background: rgba(255, 107, 0, 0.2) !important;
-          border-color: rgba(255, 107, 0, 0.5) !important;
-          color: #FF6B00 !important;
-          box-shadow: 0 2px 8px rgba(255, 107, 0, 0.25);
+        .mobile-games-section,
+        .mobile-collection-section {
+          /* Styles are overridden in global CSS for specificity */
         }
         
         .mobile-balance-section {
-          margin-top: 1rem;
-          padding-top: 1rem;
-          border-top: 2px solid rgba(255, 107, 0, 0.3);
-          display: flex !important;
-          flex-direction: column;
-          gap: 0.75rem;
-          visibility: visible !important;
-          opacity: 1 !important;
-          background: rgba(255, 107, 0, 0.05);
-          padding: 1rem;
-          border-radius: 8px;
-        }
-        
-        .mobile-balance {
-          display: flex !important;
-          align-items: center;
-          gap: 0.25rem;
-          background: rgba(255, 107, 0, 0.1) !important;
-          border: 1px solid rgba(255, 107, 0, 0.3);
-          border-radius: 6px;
-          padding: 0.6rem;
-          backdrop-filter: blur(10px);
-          color: #FF6B00 !important;
-          font-weight: 600;
-          font-size: 0.8rem;
-          visibility: visible !important;
-          opacity: 1 !important;
-        }
-        
-        .mobile-wallet-btn {
-          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%) !important;
-          color: #FFFFFF !important;
-          border: none;
-          border-radius: 6px;
-          padding: 0.6rem 0.75rem;
-          font-size: 0.8rem;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          box-shadow: 0 2px 8px rgba(255, 107, 0, 0.2);
-          display: block !important;
-          visibility: visible !important;
-          opacity: 1 !important;
-        }
-        
-        .mobile-wallet-info {
-          display: flex !important;
-          align-items: center;
-          justify-content: space-between;
-          background: rgba(255, 107, 0, 0.1) !important;
-          border: 1px solid rgba(255, 107, 0, 0.3);
-          border-radius: 6px;
-          padding: 0.6rem;
-          backdrop-filter: blur(10px);
-          visibility: visible !important;
-          opacity: 1 !important;
-        }
-        
-        .mobile-wallet-address {
-          color: #FFB800 !important;
-          font-weight: 600;
-          font-size: 0.8rem;
-          display: block !important;
-          visibility: visible !important;
-          opacity: 1 !important;
-        }
-        
-        .mobile-disconnect-btn {
-          background: rgba(255, 0, 0, 0.2) !important;
-          color: #ff6b6b !important;
-          border: 1px solid rgba(255, 0, 0, 0.3);
-          border-radius: 4px;
-          padding: 0.4rem 0.6rem;
-          font-size: 0.75rem;
-          cursor: pointer;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          font-weight: 600;
-          display: block !important;
-          visibility: visible !important;
-          opacity: 1 !important;
+          /* Styles are overridden in global CSS for specificity */
         }
         
         /* Desktop responsive */
