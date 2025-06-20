@@ -249,10 +249,34 @@ export default function Navbar() {
   return (
     <nav className="nav-container">
       <div className="nav-content" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-        <div className="mobile-nav-row">
-          {/* BTC logo links */}
+        {/* Left side - Social Icons + BTC Logo */}
+        <div className="nav-left">
+          <div className="social-links-left">
+            <a
+              href="https://x.com/OrdinalTigerBTC"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="social-icon"
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+              </svg>
+            </a>
+            <a
+              href="https://discord.com/invite/bitcointigercollective"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="social-icon"
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z" />
+              </svg>
+            </a>
+          </div>
           <Link href="/" className="nav-link active btc-logo">BTC</Link>
-          
+        </div>
+
+        <div className="mobile-nav-row">
           {/* Mobile Balance */}
           <div className="mobile-balance" style={{ display: 'flex', alignItems: 'center' }}>
             <span>{balance} sats</span>{rankBadge}
@@ -407,29 +431,6 @@ export default function Navbar() {
               )}
             </div>
           </div>
-          
-          <div className="social-links">
-            <a
-              href="https://x.com/OrdinalTigerBTC"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="social-icon"
-            >
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-              </svg>
-            </a>
-            <a
-              href="https://discord.com/invite/bitcointigercollective"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="social-icon"
-            >
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z" />
-              </svg>
-            </a>
-          </div>
         </div>
 
         {/* Desktop Menu */}
@@ -534,36 +535,124 @@ export default function Navbar() {
               )}
             </div>
           </div>
-          
-          <div className="social-links">
-            <a
-              href="https://x.com/OrdinalTigerBTC"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="social-icon"
-            >
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-              </svg>
-            </a>
-            <a
-              href="https://discord.com/invite/bitcointigercollective"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="social-icon"
-            >
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z" />
-              </svg>
-            </a>
-          </div>
         </div>
       </div>
       <style jsx>{`
+        /* Navbar Theme - matching raffle page */
+        .nav-container {
+          background: linear-gradient(135deg, #0A0A0B 0%, #1A1A1B 100%);
+          border-bottom: 1px solid rgba(255, 107, 0, 0.15);
+          backdrop-filter: blur(20px);
+          position: relative;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .nav-container::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 1px;
+          background: linear-gradient(90deg, transparent, rgba(255, 107, 0, 0.4), transparent);
+        }
+        
+        /* Left side navigation */
+        .nav-left {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+        }
+        
+        .social-links-left {
+          display: flex;
+          gap: 0.75rem;
+          margin-right: 1rem;
+        }
+        
+        .social-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 32px;
+          height: 32px;
+          border-radius: 8px;
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 107, 0, 0.2);
+          color: #FF6B00;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          backdrop-filter: blur(10px);
+        }
+        
+        .social-icon:hover {
+          background: rgba(255, 107, 0, 0.1);
+          border-color: rgba(255, 107, 0, 0.4);
+          color: #FFB800;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(255, 107, 0, 0.2);
+        }
+        
+        .social-icon svg {
+          width: 16px;
+          height: 16px;
+        }
+        
+        /* BTC Logo styling */
+        .btc-logo {
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%) !important;
+          color: #000 !important;
+          font-weight: 800 !important;
+          padding: 0.5rem 1rem !important;
+          border-radius: 8px !important;
+          box-shadow: 0 4px 12px rgba(255, 107, 0, 0.25) !important;
+          border: none !important;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+        
+        .btc-logo:hover {
+          transform: translateY(-1px) !important;
+          box-shadow: 0 6px 16px rgba(255, 107, 0, 0.35) !important;
+        }
+        
+        /* Nav links styling */
+        .nav-link {
+          color: #94A3B8;
+          background: rgba(255, 255, 255, 0.02);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          border-radius: 8px;
+          padding: 0.5rem 1rem;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          backdrop-filter: blur(10px);
+        }
+        
+        .nav-link:hover:not(.active) {
+          color: #FFFFFF;
+          background: rgba(255, 107, 0, 0.05);
+          border-color: rgba(255, 107, 0, 0.2);
+          transform: translateY(-1px);
+        }
+        
+        .nav-link.active:not(.btc-logo) {
+          background: rgba(255, 107, 0, 0.1);
+          border-color: rgba(255, 107, 0, 0.3);
+          color: #FF6B00;
+          box-shadow: 0 2px 8px rgba(255, 107, 0, 0.15);
+        }
+        
         .mobile-balance, .balance-info {
           display: flex;
           align-items: center;
           gap: 5px;
+          background: rgba(255, 255, 255, 0.03);
+          border: 1px solid rgba(255, 107, 0, 0.15);
+          border-radius: 8px;
+          padding: 0.5rem;
+          backdrop-filter: blur(10px);
+        }
+        
+        .balance-info span, .mobile-balance span {
+          color: #FF6B00;
+          font-weight: 600;
         }
         
         .rank-badge {
@@ -573,6 +662,32 @@ export default function Navbar() {
           vertical-align: middle;
         }
         
+        /* Hamburger menu theme */
+        .hamburger-menu {
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 107, 0, 0.2);
+          border-radius: 6px;
+          padding: 0.25rem;
+        }
+        
+        .hamburger-menu span {
+          background: #FF6B00;
+        }
+        
+        .hamburger-menu:hover {
+          background: rgba(255, 107, 0, 0.1);
+          border-color: rgba(255, 107, 0, 0.4);
+        }
+        
+        /* Mobile menu theme */
+        .mobile-menu {
+          background: linear-gradient(135deg, #0A0A0B 0%, #1A1A1B 100%);
+          border: 1px solid rgba(255, 107, 0, 0.15);
+          border-radius: 12px;
+          backdrop-filter: blur(20px);
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
         /* Wallet Connect Styling */
         .wallet-menu-container {
           position: relative;
@@ -580,34 +695,36 @@ export default function Navbar() {
         }
         
         .wallet-connect-btn {
-          background: #ffd700;
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
           color: #000;
-          border: 1px solid #995c00;
-          border-radius: 4px;
+          border: none;
+          border-radius: 6px;
           padding: 4px 8px;
           font-size: 0.8rem;
           font-weight: 600;
           cursor: pointer;
-          transition: all 0.2s;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           white-space: nowrap;
+          box-shadow: 0 2px 8px rgba(255, 107, 0, 0.2);
         }
         
         .wallet-connect-btn:hover {
-          background: #ffe970;
           transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
         }
         
         .wallet-dropdown {
           position: absolute;
           top: 100%;
           right: 0;
-          background: #1a1a1a;
-          border: 1px solid #ffd700;
-          border-radius: 4px;
+          background: linear-gradient(135deg, #0A0A0B 0%, #1A1A1B 100%);
+          border: 1px solid rgba(255, 107, 0, 0.3);
+          border-radius: 8px;
           min-width: 120px;
           z-index: 1000;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
           margin-top: 4px;
+          backdrop-filter: blur(20px);
         }
         
         .wallet-option {
@@ -616,13 +733,13 @@ export default function Navbar() {
           padding: 8px 12px;
           background: transparent;
           border: none;
-          color: #ffd700;
+          color: #94A3B8;
           font-size: 0.85rem;
           font-weight: 500;
           cursor: pointer;
-          transition: all 0.2s;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           text-align: left;
-          border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+          border-bottom: 1px solid rgba(255, 107, 0, 0.1);
         }
         
         .wallet-option:last-child {
@@ -630,8 +747,8 @@ export default function Navbar() {
         }
         
         .wallet-option:hover {
-          background: rgba(255, 215, 0, 0.1);
-          color: #fff;
+          background: rgba(255, 107, 0, 0.1);
+          color: #FF6B00;
         }
         
         .wallet-info-compact {
@@ -640,14 +757,15 @@ export default function Navbar() {
           gap: 6px;
           margin-left: 8px;
           padding: 2px 6px;
-          background: rgba(255, 215, 0, 0.1);
-          border: 1px solid rgba(255, 215, 0, 0.3);
-          border-radius: 4px;
+          background: rgba(255, 107, 0, 0.1);
+          border: 1px solid rgba(255, 107, 0, 0.3);
+          border-radius: 6px;
+          backdrop-filter: blur(10px);
         }
         
         .wallet-address {
           font-size: 0.65rem;
-          color: #ffd700;
+          color: #FFB800;
           font-weight: 600;
           cursor: pointer;
         }
@@ -656,11 +774,11 @@ export default function Navbar() {
           background: rgba(255, 0, 0, 0.2);
           color: #ff6b6b;
           border: 1px solid rgba(255, 0, 0, 0.3);
-          border-radius: 3px;
+          border-radius: 4px;
           padding: 2px 6px;
           font-size: 0.7rem;
           cursor: pointer;
-          transition: all 0.2s;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           font-weight: 600;
         }
         
@@ -695,6 +813,21 @@ export default function Navbar() {
         
         /* Mobile responsive adjustments */
         @media (max-width: 768px) {
+          .social-links-left {
+            gap: 0.5rem;
+            margin-right: 0.5rem;
+          }
+          
+          .social-icon {
+            width: 28px;
+            height: 28px;
+          }
+          
+          .social-icon svg {
+            width: 14px;
+            height: 14px;
+          }
+          
           .wallet-connect-btn {
             font-size: 0.7rem;
             padding: 3px 6px;
