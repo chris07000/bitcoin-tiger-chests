@@ -1,6 +1,6 @@
 'use client'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { useLightning } from '@/context/LightningContext'
@@ -8,6 +8,7 @@ import { useWallet } from '@/context/WalletContext'
 
 export default function Navbar() {
   const pathname = usePathname()
+  const router = useRouter()
   const [balance, setBalance] = useState<string>('0')
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [userRank, setUserRank] = useState('')
@@ -313,20 +314,24 @@ export default function Navbar() {
               </button>
               {showGamesMenu && (
                 <div className="games-dropdown">
-                  <Link 
-                    href="/" 
+                  <button
                     className="games-option"
-                    onClick={() => setShowGamesMenu(false)}
+                    onClick={() => {
+                      router.push('/');
+                      setShowGamesMenu(false);
+                    }}
                   >
                     🎁 Chests
-                  </Link>
-                  <Link 
-                    href="/jackpot" 
+                  </button>
+                  <button
                     className="games-option"
-                    onClick={() => setShowGamesMenu(false)}
+                    onClick={() => {
+                      router.push('/jackpot');
+                      setShowGamesMenu(false);
+                    }}
                   >
                     🪙 Coinflip
-                  </Link>
+                  </button>
                 </div>
               )}
             </div>
@@ -357,20 +362,24 @@ export default function Navbar() {
               </button>
               {showCollectionMenu && (
                 <div className="collection-dropdown">
-                  <Link 
-                    href="/tigers" 
+                  <button
                     className="collection-option"
-                    onClick={() => setShowCollectionMenu(false)}
+                    onClick={() => {
+                      router.push('/tigers');
+                      setShowCollectionMenu(false);
+                    }}
                   >
                     🐅 Tigers
-                  </Link>
-                  <Link 
-                    href="/artifacts" 
+                  </button>
+                  <button
                     className="collection-option"
-                    onClick={() => setShowCollectionMenu(false)}
+                    onClick={() => {
+                      router.push('/artifacts');
+                      setShowCollectionMenu(false);
+                    }}
                   >
                     🏺 Artifacts
-                  </Link>
+                  </button>
                 </div>
               )}
             </div>
@@ -1089,46 +1098,54 @@ export default function Navbar() {
           backdrop-filter: blur(20px);
         }
         
-        .games-option,
-        .games-option:link,
-        .games-option:visited,
-        .games-option:active,
-        .games-option:focus {
-          display: block !important;
-          width: 100% !important;
-          padding: 0.6rem 0.75rem !important;
-          background: transparent !important;
-          border: none !important;
-          color: #94A3B8 !important;
-          font-size: 0.8rem !important;
-          font-weight: 500 !important;
-          cursor: pointer !important;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-          text-align: left !important;
-          border-bottom: 1px solid rgba(255, 107, 0, 0.1) !important;
-          text-decoration: none !important;
+        .games-option {
+          display: block;
+          width: 100%;
+          padding: 0.6rem 0.75rem;
+          background: transparent;
+          border: none;
+          color: #94A3B8;
+          font-size: 0.8rem;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          text-align: left;
+          border-bottom: 1px solid rgba(255, 107, 0, 0.1);
+          font-family: inherit;
         }
         
         .games-option:last-child {
-          border-bottom: none !important;
+          border-bottom: none;
         }
         
-        .games-option:hover,
-        .games-option:link:hover,
-        .games-option:visited:hover,
-        .games-option:active:hover,
-        .games-option:focus:hover {
-          background: rgba(255, 107, 0, 0.1) !important;
-          color: #FF6B00 !important;
-          text-decoration: none !important;
+        .games-option:hover {
+          background: rgba(255, 107, 0, 0.1);
+          color: #FF6B00;
         }
         
-        .games-option:visited {
-          color: #94A3B8 !important;
+        .collection-option {
+          display: block;
+          width: 100%;
+          padding: 0.6rem 0.75rem;
+          background: transparent;
+          border: none;
+          color: #94A3B8;
+          font-size: 0.8rem;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          text-align: left;
+          border-bottom: 1px solid rgba(255, 107, 0, 0.1);
+          font-family: inherit;
         }
         
-        .games-option:visited:hover {
-          color: #FF6B00 !important;
+        .collection-option:last-child {
+          border-bottom: none;
+        }
+        
+        .collection-option:hover {
+          background: rgba(255, 107, 0, 0.1);
+          color: #FF6B00;
         }
         
         /* Mobile Games Section */
@@ -1184,49 +1201,6 @@ export default function Navbar() {
           backdrop-filter: blur(20px);
         }
         
-        .collection-option,
-        .collection-option:link,
-        .collection-option:visited,
-        .collection-option:active,
-        .collection-option:focus {
-          display: block !important;
-          width: 100% !important;
-          padding: 0.6rem 0.75rem !important;
-          background: transparent !important;
-          border: none !important;
-          color: #94A3B8 !important;
-          font-size: 0.8rem !important;
-          font-weight: 500 !important;
-          cursor: pointer !important;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-          text-align: left !important;
-          border-bottom: 1px solid rgba(255, 107, 0, 0.1) !important;
-          text-decoration: none !important;
-        }
-        
-        .collection-option:last-child {
-          border-bottom: none !important;
-        }
-        
-        .collection-option:hover,
-        .collection-option:link:hover,
-        .collection-option:visited:hover,
-        .collection-option:active:hover,
-        .collection-option:focus:hover {
-          background: rgba(255, 107, 0, 0.1) !important;
-          color: #FF6B00 !important;
-          text-decoration: none !important;
-        }
-        
-        .collection-option:visited {
-          color: #94A3B8 !important;
-        }
-        
-        .collection-option:visited:hover {
-          color: #FF6B00 !important;
-        }
-        
-        /* Mobile Collection Section */
         .mobile-collection-section {
           margin: 0.5rem 0;
           padding: 0.75rem 0;
