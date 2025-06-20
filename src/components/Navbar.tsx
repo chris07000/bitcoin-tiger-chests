@@ -534,7 +534,7 @@ export default function Navbar() {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding: 0.5rem 1rem;
+          padding: 0.5rem 0.5rem 0.5rem 1.5rem;
           max-width: 1400px;
           margin: 0 auto;
           min-height: 60px;
@@ -545,6 +545,7 @@ export default function Navbar() {
           display: flex;
           align-items: center;
           flex: 0 0 auto;
+          margin-right: 2rem;
         }
         
         .social-icons {
