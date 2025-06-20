@@ -224,9 +224,9 @@ export default function Navbar() {
   const refreshButton = (
     <button 
       style={{
-        background: '#ffd700',
+        background: 'linear-gradient(135deg, #FF6B00 0%, #FFB800 100%)',
         color: '#000',
-        border: '1px solid #995c00',
+        border: 'none',
         fontSize: '0.6rem',
         width: '14px',
         height: '14px',
@@ -236,11 +236,23 @@ export default function Navbar() {
         alignItems: 'center',
         justifyContent: 'center',
         cursor: 'pointer',
-        borderRadius: '0px'
+        borderRadius: '4px',
+        boxShadow: '0 2px 6px rgba(255, 107, 0, 0.2)',
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
       }}
       onClick={refreshBalance}
       disabled={isRefreshing}
       title="Refresh Balance"
+      onMouseEnter={(e) => {
+        if (!isRefreshing) {
+          e.currentTarget.style.transform = 'translateY(-1px)';
+          e.currentTarget.style.boxShadow = '0 4px 12px rgba(255, 107, 0, 0.3)';
+        }
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = 'translateY(0)';
+        e.currentTarget.style.boxShadow = '0 2px 6px rgba(255, 107, 0, 0.2)';
+      }}
     >
       {isRefreshing ? '•' : '↻'}
     </button>
@@ -547,6 +559,16 @@ export default function Navbar() {
           box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
         
+        .nav-content {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0.75rem 1rem;
+          width: 100%;
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+        
         .nav-container::before {
           content: '';
           position: absolute;
@@ -562,6 +584,7 @@ export default function Navbar() {
           display: flex;
           align-items: center;
           gap: 1rem;
+          z-index: 10;
         }
         
         .social-links-left {
@@ -582,6 +605,7 @@ export default function Navbar() {
           color: #FF6B00;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           backdrop-filter: blur(10px);
+          text-decoration: none;
         }
         
         .social-icon:hover {
@@ -686,6 +710,21 @@ export default function Navbar() {
           border-radius: 12px;
           backdrop-filter: blur(20px);
           box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Mobile nav row styling */
+        .mobile-nav-row {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          justify-content: flex-end;
+        }
+        
+        /* Desktop nav links container */
+        .desktop-menu .nav-links {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
         }
         
         /* Wallet Connect Styling */
@@ -804,15 +843,20 @@ export default function Navbar() {
           z-index: -1;
         }
         
-        /* Verberg mobile-balance op desktop */
-        @media (min-width: 769px) {
-          .mobile-balance {
-            display: none !important;
-          }
-        }
-        
         /* Mobile responsive adjustments */
         @media (max-width: 768px) {
+          .nav-left {
+            display: none !important;
+          }
+          
+          .mobile-nav-row {
+            display: flex !important;
+          }
+          
+          .desktop-menu {
+            display: none !important;
+          }
+          
           .social-links-left {
             gap: 0.5rem;
             margin-right: 0.5rem;
@@ -850,6 +894,34 @@ export default function Navbar() {
           .disconnect-btn {
             padding: 1px 4px;
             font-size: 0.65rem;
+          }
+        }
+        
+        /* Desktop specific styles */
+        @media (min-width: 769px) {
+          .mobile-nav-row {
+            display: none !important;
+          }
+          
+          .mobile-menu {
+            display: none !important;
+          }
+          
+          .desktop-menu {
+            display: block !important;
+          }
+          
+          .nav-left {
+            display: flex !important;
+            order: 1;
+          }
+          
+          .social-links-left {
+            display: flex !important;
+          }
+          
+          .mobile-balance {
+            display: none !important;
           }
         }
       `}</style>
