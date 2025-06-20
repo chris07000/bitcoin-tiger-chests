@@ -2057,8 +2057,8 @@ body::after {
 
 .nav-link {
   font-family: 'Press Start 2P', monospace;
-  color: var(--gold);
-  text-decoration: none;
+  color: #94A3B8 !important;
+  text-decoration: none !important;
   padding: 0.5rem 1rem;
   font-size: 0.8rem;
   transition: all 0.3s ease;
@@ -2066,12 +2066,13 @@ body::after {
   border: 2px solid transparent;
 }
 .nav-link:hover {
-  color: #000;
-  background-color: var(--gold);
+  color: #FFFFFF !important;
+  background-color: rgba(255, 107, 0, 0.05) !important;
 }
 
 .nav-link.active {
-  border: 2px solid var(--gold);
+  border: 2px solid rgba(255, 107, 0, 0.3) !important;
+  color: #FF6B00 !important;
 }
 
 .nav-link::before,
