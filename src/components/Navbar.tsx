@@ -305,36 +305,80 @@ export default function Navbar() {
             >
               Home
             </Link>
-            <div className="games-menu-container">
-              <button 
-                className={`nav-link games-btn ${pathname === '/' || pathname === '/jackpot' ? 'active' : ''}`}
-                onClick={() => setShowGamesMenu(!showGamesMenu)}
-              >
-                Games <span className="dropdown-arrow">▼</span>
-              </button>
-              {showGamesMenu && (
-                <div className="games-dropdown">
-                  <button
-                    className="games-option"
-                    onClick={() => {
-                      router.push('/');
-                      setShowGamesMenu(false);
-                    }}
-                  >
-                    Chests
-                  </button>
-                  <button
-                    className="games-option"
-                    onClick={() => {
-                      router.push('/jackpot');
-                      setShowGamesMenu(false);
-                    }}
-                  >
-                    Coinflip
-                  </button>
-                </div>
-              )}
+            
+            {/* Games & Collection Group */}
+            <div className="dropdown-group">
+              <div className="games-menu-container">
+                <button 
+                  className={`nav-link games-btn ${pathname === '/' || pathname === '/jackpot' ? 'active' : ''}`}
+                  onClick={() => setShowGamesMenu(!showGamesMenu)}
+                >
+                  Games <span className="dropdown-arrow">▼</span>
+                </button>
+                {showGamesMenu && (
+                  <div className="games-dropdown">
+                    <button
+                      className="games-option"
+                      onClick={() => {
+                        router.push('/');
+                        setShowGamesMenu(false);
+                      }}
+                    >
+                      Chests
+                    </button>
+                    <button
+                      className="games-option"
+                      onClick={() => {
+                        router.push('/jackpot');
+                        setShowGamesMenu(false);
+                      }}
+                    >
+                      Coinflip
+                    </button>
+                  </div>
+                )}
+              </div>
+              <div className="collection-menu-container">
+                <button 
+                  className={`nav-link collection-btn ${pathname === '/tigers' || pathname === '/artifacts' || pathname === '/staking' ? 'active' : ''}`}
+                  onClick={() => setShowCollectionMenu(!showCollectionMenu)}
+                >
+                  Collection <span className="dropdown-arrow">▼</span>
+                </button>
+                {showCollectionMenu && (
+                  <div className="collection-dropdown">
+                    <button
+                      className="collection-option"
+                      onClick={() => {
+                        router.push('/tigers');
+                        setShowCollectionMenu(false);
+                      }}
+                    >
+                      Tigers
+                    </button>
+                    <button
+                      className="collection-option"
+                      onClick={() => {
+                        router.push('/artifacts');
+                        setShowCollectionMenu(false);
+                      }}
+                    >
+                      Artifacts
+                    </button>
+                    <button
+                      className="collection-option"
+                      onClick={() => {
+                        router.push('/staking');
+                        setShowCollectionMenu(false);
+                      }}
+                    >
+                      Staking
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
+            
             <Link 
               href="/raffle" 
               className={`nav-link ${pathname === '/raffle' ? 'active' : ''}`}
@@ -347,45 +391,6 @@ export default function Navbar() {
             >
               Mining
             </Link>
-            <div className="collection-menu-container">
-              <button 
-                className={`nav-link collection-btn ${pathname === '/tigers' || pathname === '/artifacts' || pathname === '/staking' ? 'active' : ''}`}
-                onClick={() => setShowCollectionMenu(!showCollectionMenu)}
-              >
-                Collection <span className="dropdown-arrow">▼</span>
-              </button>
-              {showCollectionMenu && (
-                <div className="collection-dropdown">
-                  <button
-                    className="collection-option"
-                    onClick={() => {
-                      router.push('/tigers');
-                      setShowCollectionMenu(false);
-                    }}
-                  >
-                    Tigers
-                  </button>
-                  <button
-                    className="collection-option"
-                    onClick={() => {
-                      router.push('/artifacts');
-                      setShowCollectionMenu(false);
-                    }}
-                  >
-                    Artifacts
-                  </button>
-                  <button
-                    className="collection-option"
-                    onClick={() => {
-                      router.push('/staking');
-                      setShowCollectionMenu(false);
-                    }}
-                  >
-                    Staking
-                  </button>
-                </div>
-              )}
-            </div>
             <Link 
               href="/how-to-play" 
               className={`nav-link ${pathname === '/how-to-play' ? 'active' : ''}`}
@@ -654,6 +659,13 @@ export default function Navbar() {
           gap: 0.25rem;
           align-items: center;
           justify-content: center;
+        }
+        
+        /* Dropdown Group - Games & Collection together */
+        .dropdown-group {
+          display: flex;
+          gap: 0.125rem;
+          align-items: center;
         }
         
         .nav-link {
