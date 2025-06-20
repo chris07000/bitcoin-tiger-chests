@@ -15,6 +15,7 @@ export default function Navbar() {
   const [lastBalanceFetch, setLastBalanceFetch] = useState<number>(0)
   const [showWalletMenu, setShowWalletMenu] = useState(false)
   const [showCollectionMenu, setShowCollectionMenu] = useState(false)
+  const [showGamesMenu, setShowGamesMenu] = useState(false)
   const { fetchBalance, walletAddress } = useLightning()
   const { connectedWallet, connectXverse, connectUnisat, connectMagicEden, disconnectWallet } = useWallet()
   
@@ -138,13 +139,16 @@ export default function Navbar() {
       if (showCollectionMenu && !target.closest('.collection-menu-container')) {
         setShowCollectionMenu(false);
       }
+      if (showGamesMenu && !target.closest('.games-menu-container')) {
+        setShowGamesMenu(false);
+      }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [showWalletMenu, showCollectionMenu]);
+  }, [showWalletMenu, showCollectionMenu, showGamesMenu]);
   
   // Functie om handmatig de balans te verversen
   const refreshBalance = async () => {
@@ -300,18 +304,32 @@ export default function Navbar() {
             >
               Home
             </Link>
-            <Link 
-              href="/" 
-              className={`nav-link ${pathname === '/' ? 'active' : ''}`}
-            >
-              Chests
-            </Link>
-            <Link 
-              href="/jackpot" 
-              className={`nav-link ${pathname === '/jackpot' ? 'active' : ''}`}
-            >
-              Coinflip
-            </Link>
+            <div className="games-menu-container">
+              <button 
+                className={`nav-link games-btn ${pathname === '/' || pathname === '/jackpot' ? 'active' : ''}`}
+                onClick={() => setShowGamesMenu(!showGamesMenu)}
+              >
+                Games <span className="dropdown-arrow">▼</span>
+              </button>
+              {showGamesMenu && (
+                <div className="games-dropdown">
+                  <Link 
+                    href="/" 
+                    className="games-option"
+                    onClick={() => setShowGamesMenu(false)}
+                  >
+                    🎁 Chests
+                  </Link>
+                  <Link 
+                    href="/jackpot" 
+                    className="games-option"
+                    onClick={() => setShowGamesMenu(false)}
+                  >
+                    🪙 Coinflip
+                  </Link>
+                </div>
+              )}
+            </div>
             <Link 
               href="/raffle" 
               className={`nav-link ${pathname === '/raffle' ? 'active' : ''}`}
@@ -435,20 +453,26 @@ export default function Navbar() {
             >
               Home
             </Link>
-            <Link 
-              href="/" 
-              className={`mobile-nav-link ${pathname === '/' ? 'active' : ''}`}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Chests
-            </Link>
-            <Link 
-              href="/jackpot" 
-              className={`mobile-nav-link ${pathname === '/jackpot' ? 'active' : ''}`}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Coinflip
-            </Link>
+            
+            {/* Games Section */}
+            <div className="mobile-games-section">
+              <div className="mobile-section-title">Games</div>
+              <Link 
+                href="/" 
+                className={`mobile-nav-link ${pathname === '/' ? 'active' : ''}`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                🎁 Chests
+              </Link>
+              <Link 
+                href="/jackpot" 
+                className={`mobile-nav-link ${pathname === '/jackpot' ? 'active' : ''}`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                🪙 Coinflip
+              </Link>
+            </div>
+            
             <Link 
               href="/raffle" 
               className={`mobile-nav-link ${pathname === '/raffle' ? 'active' : ''}`}
@@ -1095,6 +1119,74 @@ export default function Navbar() {
         }
         
         .mobile-collection-section .mobile-nav-link {
+          margin-left: 1rem;
+          border-left: 2px solid rgba(255, 107, 0, 0.2);
+          padding-left: 1rem;
+        }
+        
+        /* Games Dropdown Styling */
+        .games-menu-container {
+          position: relative;
+        }
+        
+        .games-btn {
+          display: flex;
+          align-items: center;
+          gap: 0.25rem;
+          cursor: pointer;
+          background: none;
+          border: none;
+          font-family: inherit;
+        }
+        
+        .games-dropdown {
+          position: absolute;
+          top: 100%;
+          left: 0;
+          background: linear-gradient(135deg, #0A0A0B 0%, #1A1A1B 100%);
+          border: 1px solid rgba(255, 107, 0, 0.3);
+          border-radius: 6px;
+          min-width: 140px;
+          z-index: 1000;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+          margin-top: 4px;
+          backdrop-filter: blur(20px);
+        }
+        
+        .games-option {
+          display: block;
+          width: 100%;
+          padding: 0.6rem 0.75rem;
+          background: transparent;
+          border: none;
+          color: #94A3B8;
+          font-size: 0.8rem;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          text-align: left;
+          border-bottom: 1px solid rgba(255, 107, 0, 0.1);
+          text-decoration: none;
+        }
+        
+        .games-option:last-child {
+          border-bottom: none;
+        }
+        
+        .games-option:hover {
+          background: rgba(255, 107, 0, 0.1);
+          color: #FF6B00;
+        }
+        
+        /* Mobile Games Section */
+        .mobile-games-section {
+          margin: 0.5rem 0;
+          padding: 0.75rem 0;
+          border-top: 1px solid rgba(255, 107, 0, 0.1);
+          border-bottom: 1px solid rgba(255, 107, 0, 0.1);
+        }
+        
+        .mobile-games-section .mobile-nav-link {
           margin-left: 1rem;
           border-left: 2px solid rgba(255, 107, 0, 0.2);
           padding-left: 1rem;
