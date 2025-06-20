@@ -342,12 +342,6 @@ export default function Navbar() {
               Raffle
             </Link>
             <Link 
-              href="/staking" 
-              className={`nav-link ${pathname === '/staking' ? 'active' : ''}`}
-            >
-              Staking
-            </Link>
-            <Link 
               href="/mining" 
               className={`nav-link ${pathname === '/mining' ? 'active' : ''}`}
             >
@@ -355,7 +349,7 @@ export default function Navbar() {
             </Link>
             <div className="collection-menu-container">
               <button 
-                className={`nav-link collection-btn ${pathname === '/tigers' || pathname === '/artifacts' ? 'active' : ''}`}
+                className={`nav-link collection-btn ${pathname === '/tigers' || pathname === '/artifacts' || pathname === '/staking' ? 'active' : ''}`}
                 onClick={() => setShowCollectionMenu(!showCollectionMenu)}
               >
                 Collection <span className="dropdown-arrow">▼</span>
@@ -379,6 +373,15 @@ export default function Navbar() {
                     }}
                   >
                     Artifacts
+                  </button>
+                  <button
+                    className="collection-option"
+                    onClick={() => {
+                      router.push('/staking');
+                      setShowCollectionMenu(false);
+                    }}
+                  >
+                    Staking
                   </button>
                 </div>
               )}
@@ -490,13 +493,6 @@ export default function Navbar() {
               Raffle
             </Link>
             <Link 
-              href="/staking" 
-              className={`mobile-nav-link ${pathname === '/staking' ? 'active' : ''}`}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Staking
-            </Link>
-            <Link 
               href="/mining" 
               className={`mobile-nav-link ${pathname === '/mining' ? 'active' : ''}`}
               onClick={() => setIsMenuOpen(false)}
@@ -520,6 +516,13 @@ export default function Navbar() {
                 onClick={() => setIsMenuOpen(false)}
               >
                 Artifacts
+              </Link>
+              <Link 
+                href="/staking" 
+                className={`mobile-nav-link ${pathname === '/staking' ? 'active' : ''}`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Staking
               </Link>
             </div>
             
