@@ -3672,6 +3672,32 @@ body::after {
   box-shadow: 0 2px 8px rgba(255, 107, 0, 0.25);
 }
 
+.navbar .mobile-balance {
+  display: flex !important;
+  align-items: center;
+  justify-content: center !important;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, rgba(255, 107, 0, 0.15), rgba(255, 184, 0, 0.1)) !important;
+  border: 2px solid rgba(255, 107, 0, 0.4) !important;
+  border-radius: 8px;
+  padding: 1rem !important;
+  backdrop-filter: blur(10px);
+  color: #FF6B00 !important;
+  font-weight: 700 !important;
+  font-size: 1rem !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(255, 107, 0, 0.2) !important;
+}
+
+.navbar .mobile-balance span {
+  color: #FFB800 !important;
+  font-weight: 800 !important;
+  font-size: 1.1rem !important;
+  text-shadow: 0 0 8px rgba(255, 107, 0, 0.3) !important;
+}
+
 
 
 

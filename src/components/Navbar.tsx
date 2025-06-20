@@ -470,20 +470,6 @@ export default function Navbar() {
       {isMenuOpen && (
         <div className="mobile-menu">
           <div className="mobile-nav-links">
-            {/* Test indicator */}
-            <div style={{
-              color: '#FF6B00',
-              fontSize: '0.8rem',
-              fontWeight: 'bold',
-              padding: '0.5rem',
-              textAlign: 'center',
-              background: 'rgba(255, 107, 0, 0.1)',
-              borderRadius: '4px',
-              marginBottom: '0.5rem'
-            }}>
-              🍔 Mobile Menu is Working! 🍔
-            </div>
-            
             <Link 
               href="/home" 
               className={`mobile-nav-link ${pathname === '/home' ? 'active' : ''}`}
