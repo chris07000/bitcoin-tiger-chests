@@ -344,34 +344,33 @@ function HomeContent() {
 
       <style jsx>{`
         .casino-home {
-          background: #0d1320;
+          background: linear-gradient(135deg, #0A0A0B 0%, #1A1A1B 100%);
           color: #fff;
           min-height: 100vh;
           padding-bottom: 3rem;
           padding-top: 60px;
-          background-image: 
-            url('/noise.png'),
-            radial-gradient(circle at 10% 10%, rgba(255, 215, 0, 0.03) 0%, transparent 40%),
-            radial-gradient(circle at 90% 90%, rgba(255, 215, 0, 0.03) 0%, transparent 40%);
-          font-family: "Roboto", sans-serif;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
         
-        /* Pixel Text Style */
+        /* Modern Text Style */
         .pixel-text {
-          font-family: 'Press Start 2P', monospace;
-          letter-spacing: 1px;
-          text-transform: uppercase;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          font-weight: 700;
+          letter-spacing: 0.5px;
         }
         
         /* Hero Section */
         .hero-section {
-          background: linear-gradient(135deg, rgba(13, 19, 32, 0.9) 0%, rgba(22, 28, 48, 0.9) 100%);
-          padding: 4rem 1rem 3rem;
+          background: rgba(26, 26, 27, 0.6);
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(255, 107, 0, 0.3);
+          border-radius: 24px;
+          padding: 4rem 2rem 3rem;
           text-align: center;
           position: relative;
           overflow: hidden;
-          border-bottom: 1px solid rgba(255, 215, 0, 0.3);
-          margin-top: 20px;
+          margin: 2rem 1rem 3rem;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
         
         .hero-section::before {
@@ -381,105 +380,17 @@ function HomeContent() {
           left: 0;
           width: 100%;
           height: 100%;
-          background: 
-            radial-gradient(circle at 20% 30%, rgba(255, 215, 0, 0.15) 0%, transparent 50%),
-            radial-gradient(circle at 80% 70%, rgba(255, 215, 0, 0.1) 0%, transparent 50%);
+          background: linear-gradient(45deg, transparent, rgba(255, 107, 0, 0.1), transparent);
           pointer-events: none;
+          opacity: 0.5;
         }
         
         .casino-chips {
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          top: 0;
-          left: 0;
-          overflow: hidden;
-          pointer-events: none;
-        }
-        
-        .casino-chip {
-          position: absolute;
-          width: 50px;
-          height: 50px;
-          border-radius: 50%;
-          box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-          animation: floatChip 15s infinite linear;
-          opacity: 0.5;
-        }
-        
-        .chip-gold {
-          background: radial-gradient(circle at center, #ffd700, #b8860b);
-          top: 20%;
-          left: 5%;
-          animation-delay: 0s;
-          animation-duration: 20s;
-        }
-        
-        .chip-silver {
-          background: radial-gradient(circle at center, #c0c0c0, #a9a9a9);
-          bottom: 10%;
-          right: 10%;
-          animation-delay: 5s;
-          animation-duration: 25s;
-        }
-        
-        .chip-bronze {
-          background: radial-gradient(circle at center, #cd7f32, #8b4513);
-          top: 70%;
-          left: 15%;
-          animation-delay: 10s;
-          animation-duration: 18s;
-        }
-        
-        @keyframes floatChip {
-          0% {
-            transform: translate(0, 0) rotate(0deg);
-          }
-          25% {
-            transform: translate(100px, 50px) rotate(90deg);
-          }
-          50% {
-            transform: translate(200px, 0) rotate(180deg);
-          }
-          75% {
-            transform: translate(100px, -50px) rotate(270deg);
-          }
-          100% {
-            transform: translate(0, 0) rotate(360deg);
-          }
+          display: none;
         }
         
         .falling-bitcoins {
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          top: 0;
-          left: 0;
-          pointer-events: none;
-          overflow: hidden;
-        }
-        
-        .falling-bitcoin {
-          position: absolute;
-          color: #ffd700;
-          top: -20px;
-          font-size: 20px;
-          opacity: 0.5;
-          animation: fallingBitcoin 20s linear infinite;
-        }
-        
-        @keyframes fallingBitcoin {
-          0% {
-            transform: translateY(-20px) rotate(0deg);
-            opacity: 0;
-          }
-          10% {
-            opacity: 0.5;
-          }
-          100% {
-            transform: translateY(calc(100vh + 20px)) rotate(360deg);
-            opacity: 0;
-          }
+          display: none;
         }
         
         .hero-content {
@@ -499,156 +410,100 @@ function HomeContent() {
           display: flex;
           justify-content: center;
           margin-bottom: 2rem;
-          position: relative;
         }
         
         .sparkle-wrapper {
           position: relative;
-          width: 180px;
-          height: 180px;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-        
-        .hero-logo-image {
-          z-index: 2;
-          filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.6));
-          animation: logoFloat 3s ease-in-out infinite;
-        }
-        
-        @keyframes logoFloat {
-          0%, 100% {
-            transform: translateY(0);
-          }
-          50% {
-            transform: translateY(-10px);
-          }
+          display: inline-block;
         }
         
         .sparkle {
           position: absolute;
-          background: rgba(255, 215, 0, 0.6);
+          width: 4px;
+          height: 4px;
+          background: #FF6B00;
           border-radius: 50%;
-          z-index: 1;
+          opacity: 0;
+          animation: sparkle 2s infinite;
         }
         
-        .sparkle-1 {
-          width: 20px;
-          height: 20px;
-          top: 20%;
-          left: 10%;
-          animation: sparkleFloat 4s ease-in-out infinite;
+        .sparkle-1 { top: 10px; left: 10px; animation-delay: 0s; }
+        .sparkle-2 { top: 10px; right: 10px; animation-delay: 0.5s; }
+        .sparkle-3 { bottom: 10px; left: 10px; animation-delay: 1s; }
+        .sparkle-4 { bottom: 10px; right: 10px; animation-delay: 1.5s; }
+        
+        @keyframes sparkle {
+          0%, 100% { opacity: 0; transform: scale(0); }
+          50% { opacity: 1; transform: scale(1); }
         }
         
-        .sparkle-2 {
-          width: 15px;
-          height: 15px;
-          top: 10%;
-          right: 15%;
-          animation: sparkleFloat 3.5s ease-in-out infinite 0.5s;
-        }
-        
-        .sparkle-3 {
-          width: 25px;
-          height: 25px;
-          bottom: 20%;
-          right: 10%;
-          animation: sparkleFloat 4.5s ease-in-out infinite 1s;
-        }
-        
-        .sparkle-4 {
-          width: 18px;
-          height: 18px;
-          bottom: 15%;
-          left: 15%;
-          animation: sparkleFloat 5s ease-in-out infinite 1.5s;
-        }
-        
-        @keyframes sparkleFloat {
-          0%, 100% {
-            transform: translateY(0) scale(1);
-            opacity: 0.6;
-          }
-          50% {
-            transform: translateY(-15px) scale(1.3);
-            opacity: 1;
-          }
+        .hero-logo-image {
+          border-radius: 16px;
+          box-shadow: 0 8px 32px rgba(255, 107, 0, 0.3);
         }
         
         .hero-title {
-          font-size: 2.8rem;
-          color: #fff;
+          font-size: 2.5rem;
           margin-bottom: 1rem;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 0.3rem;
+          font-weight: 700;
         }
         
         .title-gradient {
-          background: linear-gradient(90deg, #ffd700, #ff9500);
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
-          text-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+          background-clip: text;
         }
         
         .title-normal {
-          color: #fff;
-          font-size: 2rem;
-          opacity: 0.9;
+          color: rgba(255, 255, 255, 0.9);
+          margin-left: 0.5rem;
         }
         
         .hero-subtitle {
           font-size: 1.2rem;
-          max-width: 600px;
-          margin: 0 auto 1rem;
-          opacity: 0.9;
+          color: rgba(255, 255, 255, 0.8);
+          margin-bottom: 2rem;
+          font-weight: 500;
         }
         
         .jackpot-ticker {
-          display: flex;
-          align-items: center;
-          background: rgba(0, 0, 0, 0.3);
-          border-radius: 30px;
-          padding: 0.5rem 1rem;
-          margin: 0 auto 1.5rem;
-          max-width: 80%;
+          background: rgba(26, 26, 27, 0.6);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 107, 0, 0.3);
+          border-radius: 12px;
+          padding: 1rem;
+          margin-bottom: 2rem;
           overflow: hidden;
-          border: 1px solid rgba(255, 215, 0, 0.2);
         }
         
         .ticker-label {
-          color: #ffd700;
-          font-weight: bold;
-          margin-right: 0.5rem;
-          white-space: nowrap;
+          color: #FF6B00;
+          font-weight: 600;
+          margin-bottom: 0.5rem;
+          font-size: 0.9rem;
         }
         
         .ticker-content {
-          flex: 1;
           overflow: hidden;
-          position: relative;
+          height: 1.5rem;
         }
         
         .ticker-items {
           display: flex;
-          animation: tickerScroll 25s linear infinite;
-          padding-right: 50px;
+          animation: scroll 20s linear infinite;
+          white-space: nowrap;
         }
         
         .ticker-items span {
-          white-space: nowrap;
-          margin-right: 30px;
+          margin-right: 3rem;
+          color: rgba(255, 255, 255, 0.8);
+          font-size: 0.9rem;
         }
         
-        @keyframes tickerScroll {
-          0% {
-            transform: translateX(100%);
-          }
-          100% {
-            transform: translateX(-100%);
-          }
+        @keyframes scroll {
+          0% { transform: translateX(100%); }
+          100% { transform: translateX(-100%); }
         }
         
         .hero-features {
@@ -663,1158 +518,495 @@ function HomeContent() {
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          background: rgba(0, 0, 0, 0.3);
-          padding: 0.5rem 1rem;
-          border-radius: 30px;
-          transition: all 0.3s ease;
-          border: 1px solid rgba(255, 215, 0, 0.1);
-        }
-        
-        .feature:hover {
-          transform: translateY(-2px);
-          border-color: rgba(255, 215, 0, 0.3);
+          color: rgba(255, 255, 255, 0.8);
+          font-weight: 500;
         }
         
         .feature-icon {
-          font-size: 1.5rem;
+          font-size: 1.2rem;
+          color: #FF6B00;
         }
         
         .cta-buttons {
           display: flex;
-          justify-content: center;
           gap: 1rem;
-          margin-bottom: 2rem;
+          justify-content: center;
+          margin-bottom: 3rem;
+          flex-wrap: wrap;
         }
         
         .cta-button {
-          padding: 0.8rem 1.8rem;
-          font-weight: bold;
-          border-radius: 4px;
-          text-transform: uppercase;
-          letter-spacing: 1px;
-          transition: all 0.3s ease;
+          padding: 1rem 2rem;
+          border-radius: 12px;
           text-decoration: none;
+          font-weight: 600;
+          transition: all 0.3s ease;
           position: relative;
           overflow: hidden;
+          display: inline-block;
         }
         
-        .cta-button.large {
-          padding: 1rem 2rem;
-          font-size: 1.1rem;
+        .cta-button.primary {
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+          color: white;
+          box-shadow: 0 4px 15px rgba(255, 107, 0, 0.3);
+        }
+        
+        .cta-button.primary:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 25px rgba(255, 107, 0, 0.4);
+        }
+        
+        .cta-button.secondary {
+          background: rgba(26, 26, 27, 0.6);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 107, 0, 0.3);
+          color: #FF6B00;
+        }
+        
+        .cta-button.secondary:hover {
+          border-color: rgba(255, 107, 0, 0.6);
+          transform: translateY(-2px);
         }
         
         .button-glow {
           position: absolute;
-          top: -50%;
-          left: -50%;
-          width: 200%;
-          height: 200%;
-          background: radial-gradient(circle at center, rgba(255, 215, 0, 0.3), transparent 70%);
-          transform: scale(0);
-          border-radius: 50%;
-          animation: buttonPulse 2s infinite;
-          z-index: 0;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+          transition: left 0.5s;
         }
         
-        @keyframes buttonPulse {
-          0% {
-            transform: scale(0);
-            opacity: 0.8;
-          }
-          100% {
-            transform: scale(1);
-            opacity: 0;
-          }
+        .cta-button:hover .button-glow {
+          left: 100%;
         }
         
-        .cta-button::after {
-          content: '';
-          position: absolute;
-          top: -50%;
-          left: -50%;
-          width: 200%;
-          height: 200%;
-          background: rgba(255, 255, 255, 0.2);
-          transform: rotate(45deg);
-          z-index: 1;
-          transition: all 0.3s ease;
-          opacity: 0;
-        }
-        
-        .cta-button:hover::after {
-          opacity: 1;
-          animation: shine 1.5s infinite;
-        }
-        
-        .cta-button.primary {
-          background: linear-gradient(135deg, #ffd700, #ff9900);
-          color: #0d1320;
-          border: none;
-          box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
-        }
-        
-        .cta-button.secondary {
-          background: transparent;
-          color: #fff;
-          border: 2px solid #ffd700;
-          text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-        }
-        
-        .cta-button:hover {
-          transform: translateY(-3px);
-          box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
-        }
-        
-        .jackpot-display {
-          margin: 0 auto;
-          max-width: 800px;
-          position: relative;
-        }
-        
-        .golden-frame {
-          position: absolute;
-          top: -5px;
-          left: -5px;
-          right: -5px;
-          bottom: -5px;
-          border: 2px solid transparent;
-          border-image: linear-gradient(45deg, #ffd700, transparent, #ffd700, transparent, #ffd700);
-          border-image-slice: 1;
-          z-index: 1;
-          pointer-events: none;
-          animation: borderGlow 4s infinite linear;
-        }
-        
-        @keyframes borderGlow {
-          0% {
-            border-image: linear-gradient(0deg, #ffd700, transparent, #ffd700, transparent, #ffd700);
-            border-image-slice: 1;
-          }
-          25% {
-            border-image: linear-gradient(90deg, #ffd700, transparent, #ffd700, transparent, #ffd700);
-            border-image-slice: 1;
-          }
-          50% {
-            border-image: linear-gradient(180deg, #ffd700, transparent, #ffd700, transparent, #ffd700);
-            border-image-slice: 1;
-          }
-          75% {
-            border-image: linear-gradient(270deg, #ffd700, transparent, #ffd700, transparent, #ffd700);
-            border-image-slice: 1;
-          }
-          100% {
-            border-image: linear-gradient(360deg, #ffd700, transparent, #ffd700, transparent, #ffd700);
-            border-image-slice: 1;
-          }
-        }
-        
-        /* Games Section */
-        .games-section {
-          padding: 2rem 1rem;
-          max-width: 1200px;
-          margin: 0 auto;
-        }
-        
-        .section-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
+        .hero-games-header {
           margin-bottom: 2rem;
-          border-bottom: 2px solid rgba(255, 215, 0, 0.3);
-          padding-bottom: 1rem;
-        }
-        
-        .section-header.centered {
-          justify-content: center;
-          text-align: center;
         }
         
         .section-title {
           display: flex;
           align-items: center;
-          gap: 1rem;
-        }
-        
-        .title-icon {
-          font-size: 2rem;
-          color: #ffd700;
-          text-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+          justify-content: center;
+          gap: 0.5rem;
+          margin-bottom: 1rem;
         }
         
         .section-title h2 {
-          margin: 0;
           font-size: 1.8rem;
-          color: #ffd700;
-          text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.5);
-        }
-        
-        .view-all {
-          color: #8a2be2;
-          text-decoration: none;
-          background: linear-gradient(90deg, #8a2be2, #4b0082);
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
-          font-size: 0.8rem;
-          position: relative;
-          padding-bottom: 0.2rem;
+          background-clip: text;
+          margin: 0;
         }
         
-        .view-all::after {
-          content: '';
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          width: 100%;
-          height: 2px;
-          background: linear-gradient(90deg, #8a2be2, #4b0082);
+        .title-icon {
+          font-size: 1.5rem;
+          color: #FF6B00;
         }
         
         .games-grid {
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 1.5rem;
-        }
-        
-        @media (max-width: 900px) {
-          .games-grid {
-            grid-template-columns: repeat(2, 1fr);
-          }
-        }
-        
-        @media (max-width: 600px) {
-          .games-grid {
-            grid-template-columns: 1fr;
-          }
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 2rem;
+          margin-bottom: 3rem;
+          padding: 0 1rem;
         }
         
         .game-card {
-          background: rgba(0, 0, 0, 0.3);
-          border-radius: 10px;
-          overflow: hidden;
-          transition: all 0.3s ease;
-          border: 3px solid rgba(255, 255, 255, 0.1);
-          color: #fff;
+          background: rgba(26, 26, 27, 0.6);
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(255, 107, 0, 0.3);
+          border-radius: 16px;
+          padding: 1.5rem;
           text-decoration: none;
-          display: flex;
-          flex-direction: column;
+          color: inherit;
+          transition: all 0.3s ease;
           position: relative;
-          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-          transform-style: preserve-3d;
-          perspective: 1000px;
-          height: 380px;
-          width: 100%;
+          overflow: hidden;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
         
         .game-card:hover {
-          transform: translateY(-10px) rotateX(5deg);
-          box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
-          border-color: rgba(255, 215, 0, 0.5);
-          z-index: 1;
-        }
-        
-        .game-card::after {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, transparent 100%);
-          pointer-events: none;
-        }
-        
-        .game-card.chest-game {
-          border-color: rgba(255, 165, 0, 0.3);
-        }
-        
-        .game-card.coinflip-game {
-          border-color: rgba(173, 216, 230, 0.3);
-        }
-        
-        .game-card.raffle-game {
-          border-color: rgba(138, 43, 226, 0.3);
-        }
-        
-        .game-image {
-          height: 200px;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          position: relative;
-          overflow: hidden;
+          transform: translateY(-8px);
+          border-color: rgba(255, 107, 0, 0.6);
+          box-shadow: 0 12px 40px rgba(255, 107, 0, 0.2);
         }
         
         .hot-badge {
           position: absolute;
-          top: 10px;
-          right: -25px;
-          background: linear-gradient(135deg, #ff4500, #ff7800);
+          top: 1rem;
+          right: 1rem;
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
           color: white;
-          font-size: 0.7rem;
-          font-weight: bold;
-          padding: 0.3rem 0.6rem;
-          border-radius: 3px;
-          z-index: 5;
-          box-shadow: 0 0 10px rgba(255, 69, 0, 0.7);
-          transform: rotate(35deg);
-          font-family: 'Press Start 2P', monospace;
-          font-size: 0.6rem;
+          padding: 0.25rem 0.75rem;
+          border-radius: 20px;
+          font-size: 0.75rem;
+          font-weight: 700;
+          z-index: 3;
         }
         
-        .pulse-overlay {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: radial-gradient(circle at center, transparent 30%, rgba(255, 215, 0, 0.1) 70%);
-          opacity: 0;
-          animation: pulsateOverlay 2s infinite;
-        }
-        
-        @keyframes pulsateOverlay {
-          0%, 100% {
-            opacity: 0;
-            transform: scale(0.8);
-          }
-          50% {
-            opacity: 0.5;
-            transform: scale(1.1);
-          }
-        }
-        
-        .chest-image {
-          background: linear-gradient(135deg, #0d0a2c 0%, #0c1836 100%);
-          background-image: url('/starry-bg.png');
-          background-size: cover;
-          background-position: center;
-          position: relative;
+        .game-image {
+          height: 200px;
+          margin-bottom: 1rem;
+          border-radius: 12px;
           overflow: hidden;
-          width: 100%;
-        }
-        
-        .chest-container {
           position: relative;
-          width: 100%;
-          height: 100%;
+          background: rgba(0, 0, 0, 0.2);
           display: flex;
-          justify-content: center;
           align-items: center;
-        }
-        
-        .chest-img {
-          filter: drop-shadow(0 0 15px rgba(255, 165, 0, 0.5));
-          width: 300px;
-          height: 300px;
-          object-fit: contain;
-        }
-        
-        .game-card:hover .chest-container {
-          animation: floatChest 3s infinite ease-in-out;
-        }
-        
-        @keyframes floatChest {
-          0%, 100% {
-            transform: translateY(0) scale(1);
-          }
-          50% {
-            transform: translateY(-10px) scale(1.05);
-          }
-        }
-        
-        .coinflip-image {
-          background: #fd6f17;
-          position: relative;
-          overflow: hidden;
-        }
-        
-        .coinflip-container {
-          position: relative;
-          transition: transform 0.5s ease;
-          width: 100%;
-          height: 100%;
-          display: flex;
           justify-content: center;
-          align-items: center;
-        }
-        
-        .coinflip-img {
-          filter: drop-shadow(0 0 15px rgba(255, 255, 0, 0.5));
-          width: 160px;
-          height: 160px;
-          object-fit: contain;
-          animation: spin 8s infinite linear;
-        }
-        
-        @keyframes spin {
-          0% {
-            transform: rotateY(0deg);
-          }
-          100% {
-            transform: rotateY(360deg);
-          }
-        }
-        
-        .raffle-image {
-          background: linear-gradient(135deg, #4a2445 0%, #2a142d 100%);
-          position: relative;
-          overflow: hidden;
-        }
-        
-        .raffle-image::before {
-          content: '';
-          position: absolute;
-          width: 200%;
-          height: 200%;
-          top: -50%;
-          left: -50%;
-          background: radial-gradient(circle at center, rgba(138, 43, 226, 0.1) 0%, transparent 70%);
-          animation: rotateBg 20s infinite linear;
-        }
-        
-        .raffle-container {
-          position: relative;
-          width: 100%;
-          height: 100%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          z-index: 2;
-        }
-        
-        .raffle-img {
-          filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.6));
-          animation: floatRaffle 3s infinite ease-in-out;
-        }
-        
-        @keyframes floatRaffle {
-          0%, 100% {
-            transform: translateY(0) scale(1);
-          }
-          50% {
-            transform: translateY(-10px) scale(1.05);
-          }
         }
         
         .shine-effect {
           position: absolute;
           top: 0;
-          left: 0;
+          left: -100%;
           width: 100%;
           height: 100%;
-          background: linear-gradient(135deg, 
-            rgba(255, 255, 255, 0) 0%,
-            rgba(255, 255, 255, 0.05) 50%,
-            rgba(255, 255, 255, 0) 100%);
-          transform: translateX(-100%);
-          transition: transform 0.6s;
-          z-index: 3;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+          animation: shine 3s infinite;
         }
         
-        .game-card:hover .shine-effect {
-          transform: translateX(100%);
+        @keyframes shine {
+          0% { left: -100%; }
+          100% { left: 100%; }
         }
         
-        .game-info {
-          padding: 1.5rem;
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          border-top: 2px solid rgba(255, 215, 0, 0.2);
-          background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.4));
-          position: relative;
-          z-index: 2;
-        }
-        
-        .game-info::after {
-          content: '';
+        .pulse-overlay {
           position: absolute;
-          bottom: 0;
-          left: 10%;
-          width: 80%;
-          height: 2px;
-          background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.3), transparent);
+          inset: 0;
+          background: rgba(255, 107, 0, 0.1);
+          opacity: 0;
+          animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+          0%, 100% { opacity: 0; }
+          50% { opacity: 0.3; }
         }
         
         .game-info h3 {
-          margin: 0 0 0.5rem;
           font-size: 1.3rem;
-          color: #ffd700;
-          text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.8);
-          text-align: center;
-          text-transform: uppercase;
-          font-family: 'Press Start 2P', monospace;
-          letter-spacing: 1px;
-          padding-bottom: 0.5rem;
-          border-bottom: 2px solid rgba(138, 43, 226, 0.3);
+          margin-bottom: 0.5rem;
+          color: #FF6B00;
         }
         
         .game-description {
-          margin: 0.5rem 0 1rem;
-          opacity: 0.8;
+          color: rgba(255, 255, 255, 0.8);
+          margin-bottom: 1rem;
           font-size: 0.9rem;
-          flex-grow: 1;
-          color: #a58fff;
-          text-align: center;
-        }
-        
-        .chest-game .game-description {
-          color: #ffa500;
-        }
-        
-        .coinflip-game .game-description {
-          color: #add8e6;
-        }
-        
-        .raffle-game .game-description {
-          color: #ba55d3;
+          line-height: 1.4;
         }
         
         .play-now {
-          align-self: center;
-          background: rgba(0, 0, 0, 0.5);
-          color: #ffd700;
-          padding: 0.7rem 1.4rem;
-          border-radius: 4px;
-          font-size: 0.8rem;
-          font-weight: bold;
-          transition: all 0.3s ease;
+          color: #FF6B00;
+          font-weight: 700;
+          font-size: 0.9rem;
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          border: 2px solid rgba(255, 215, 0, 0.3);
-          box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
-          text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.8);
-          cursor: pointer;
         }
         
         .play-arrow {
           transition: transform 0.3s ease;
         }
         
-        .game-card:hover .play-now {
-          background: rgba(255, 215, 0, 0.2);
-          transform: scale(1.05);
-          box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
-        }
-        
         .game-card:hover .play-arrow {
-          transform: translateX(5px);
+          transform: translateX(4px);
         }
         
-        .chest-game:hover .play-now {
-          border-color: rgba(255, 165, 0, 0.5);
+        .jackpot-display {
+          margin: 3rem 1rem;
+          position: relative;
         }
         
-        .coinflip-game:hover .play-now {
-          border-color: rgba(173, 216, 230, 0.5);
+        .golden-frame {
+          position: absolute;
+          inset: -10px;
+          background: linear-gradient(45deg, #FF6B00, #FFB800, #FF6B00);
+          border-radius: 20px;
+          opacity: 0.3;
+          animation: rotate 10s linear infinite;
         }
         
-        .raffle-game:hover .play-now {
-          border-color: rgba(138, 43, 226, 0.5);
+        @keyframes rotate {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
         }
         
-        /* Winners and Bitcoin Section */
         .winners-and-bitcoin {
-          margin-top: 2rem;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 2rem;
+          margin: 3rem 1rem;
+        }
+        
+        .recent-winners,
+        .bitcoin-price-section {
+          background: rgba(26, 26, 27, 0.6);
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(255, 107, 0, 0.3);
+          border-radius: 16px;
+          padding: 2rem;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .section-header {
+          margin-bottom: 1.5rem;
+        }
+        
+        .section-header.centered {
+          text-align: center;
         }
         
         .winners-feed {
-          background: rgba(0, 0, 0, 0.2);
-          border-radius: 10px;
-          overflow: hidden;
-          border: 1px solid rgba(255, 215, 0, 0.1);
-          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+          max-height: 300px;
+          overflow-y: auto;
         }
         
         .winner-entry {
           display: grid;
-          grid-template-columns: 1fr 1fr 1fr;
-          padding: 0.8rem 1rem;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-          transition: all 0.3s ease;
-          animation: fadeIn 0.5s;
-        }
-        
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(-10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .winner-entry:hover {
-          background: rgba(255, 215, 0, 0.05);
-          transform: translateX(5px);
+          grid-template-columns: 1fr 2fr 1fr;
+          gap: 1rem;
+          padding: 0.75rem;
+          border-bottom: 1px solid rgba(255, 107, 0, 0.1);
+          font-size: 0.9rem;
         }
         
         .winner-game {
-          font-weight: bold;
-          color: #ffd700;
-          text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+          color: #FF6B00;
+          font-weight: 600;
         }
         
         .winner-address {
-          opacity: 0.8;
+          color: rgba(255, 255, 255, 0.8);
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
         
         .winner-amount {
+          color: #FFB800;
+          font-weight: 600;
           text-align: right;
-          font-weight: bold;
-          background: linear-gradient(90deg, #ffd700, #ff9900);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
         }
         
-        .bitcoin-price-container {
-          background: rgba(0, 0, 0, 0.2);
-          border-radius: 10px;
-          padding: 1.5rem;
-          border: 1px solid rgba(255, 215, 0, 0.1);
-          height: 100%;
-          min-height: 180px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-        
-        /* Benefits Section */
         .benefits-section {
-          padding: 3rem 1rem;
-          max-width: 1200px;
-          margin: 0 auto;
+          margin: 4rem 1rem;
         }
         
         .benefits-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-          gap: 1.5rem;
-          margin-top: 1rem;
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          gap: 2rem;
+          margin-top: 2rem;
         }
         
         .benefit-card {
-          background: rgba(0, 0, 0, 0.2);
-          border-radius: 10px;
-          padding: 1.5rem;
+          background: rgba(26, 26, 27, 0.6);
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(255, 107, 0, 0.3);
+          border-radius: 16px;
+          padding: 2rem;
           text-align: center;
           transition: all 0.3s ease;
-          border: 1px solid rgba(255, 215, 0, 0.1);
-          height: 100%;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-          position: relative;
-          overflow: hidden;
-        }
-        
-        .benefit-card::before {
-          content: '';
-          position: absolute;
-          top: -50%;
-          left: -50%;
-          width: 200%;
-          height: 200%;
-          background: radial-gradient(circle at center, rgba(255, 215, 0, 0.1), transparent 70%);
-          transform: scale(0);
-          border-radius: 50%;
-          z-index: 0;
-          opacity: 0;
-          transition: opacity 0.5s ease;
-        }
-        
-        .benefit-card:hover::before {
-          transform: scale(1);
-          opacity: 1;
-          animation: none;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
         
         .benefit-card:hover {
-          transform: translateY(-5px);
-          border-color: rgba(255, 215, 0, 0.3);
+          transform: translateY(-4px);
+          border-color: rgba(255, 107, 0, 0.6);
+          box-shadow: 0 12px 40px rgba(255, 107, 0, 0.1);
         }
         
         .benefit-icon {
-          font-size: 2.5rem;
+          font-size: 3rem;
           margin-bottom: 1rem;
-          position: relative;
-          z-index: 1;
+          color: #FF6B00;
         }
         
         .benefit-card h3 {
-          margin: 0 0 0.8rem;
-          color: #ffd700;
-          position: relative;
-          z-index: 1;
-          text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+          color: #FFB800;
+          margin-bottom: 1rem;
+          font-size: 1.2rem;
         }
         
         .benefit-card p {
-          margin: 0;
-          font-size: 0.9rem;
-          opacity: 0.8;
-          position: relative;
-          z-index: 1;
+          color: rgba(255, 255, 255, 0.8);
+          line-height: 1.6;
         }
         
-        /* CTA Section */
         .cta-section {
-          background: linear-gradient(135deg, rgba(13, 19, 32, 0.9) 0%, rgba(22, 28, 48, 0.9) 100%);
-          padding: 3rem 1rem;
-          margin-top: 3rem;
+          background: rgba(26, 26, 27, 0.8);
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(255, 107, 0, 0.3);
+          border-radius: 24px;
+          margin: 4rem 1rem;
+          padding: 4rem 2rem;
           text-align: center;
           position: relative;
           overflow: hidden;
-          border-top: 1px solid rgba(255, 215, 0, 0.3);
-        }
-        
-        .cta-section::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: radial-gradient(circle at center, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
-          pointer-events: none;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
         
         .slot-symbols {
-          display: flex;
-          justify-content: center;
-          gap: 1rem;
-          margin-bottom: 2rem;
-        }
-        
-        .slot-reel {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          background: rgba(0, 0, 0, 0.5);
-          border: 2px solid rgba(255, 215, 0, 0.5);
-          border-radius: 8px;
-          padding: 0.5rem;
-          width: 60px;
-          height: 80px;
-          overflow: hidden;
-          position: relative;
-          box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
-        }
-        
-        .slot-symbol {
-          font-size: 2rem;
-          line-height: 1;
-          animation: slotSpin 4s infinite;
-        }
-        
-        .delayed-1 .slot-symbol {
-          animation-delay: 0.2s;
-        }
-        
-        .delayed-2 .slot-symbol {
-          animation-delay: 0.4s;
-        }
-        
-        @keyframes slotSpin {
-          0%, 10% {
-            transform: translateY(0);
-          }
-          90%, 100% {
-            transform: translateY(-400%);
-          }
-        }
-        
-        .cta-ribbon {
-          background: linear-gradient(135deg, #ff4500, #ff7800);
-          color: white;
-          font-weight: bold;
-          padding: 0.5rem 1.5rem;
-          position: relative;
-          margin: 0 auto 1.5rem;
-          display: inline-block;
-          box-shadow: 0 0 10px rgba(255, 69, 0, 0.5);
-          clip-path: polygon(0% 0%, 100% 0%, 95% 50%, 100% 100%, 0% 100%, 5% 50%);
-          animation: pulse 2s infinite alternate;
+          display: none;
         }
         
         .cta-content {
-          max-width: 600px;
-          margin: 0 auto;
           position: relative;
           z-index: 2;
         }
         
-        .glow-text {
-          font-size: 2rem;
-          margin-bottom: 1rem;
-          color: #ffd700;
-          text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-          position: relative;
-          animation: textShadowPulse 2s infinite alternate;
+        .cta-ribbon {
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+          color: white;
+          padding: 0.5rem 2rem;
+          border-radius: 20px;
+          display: inline-block;
+          margin-bottom: 1.5rem;
+          font-weight: 700;
+          font-size: 0.8rem;
+          letter-spacing: 1px;
         }
         
-        @keyframes textShadowPulse {
-          0% {
-            text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
-          }
-          100% {
-            text-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 0 0 30px rgba(255, 215, 0, 0.6);
-          }
+        .glow-text {
+          font-size: 2.5rem;
+          margin-bottom: 1rem;
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          text-shadow: 0 0 30px rgba(255, 107, 0, 0.5);
         }
         
         .jackpot-win-animation {
-          position: relative;
           margin-bottom: 2rem;
+        }
+        
+        .jackpot-win-animation p {
+          color: rgba(255, 255, 255, 0.8);
+          font-size: 1.1rem;
+          margin-top: 1rem;
         }
         
         .coins {
-          position: absolute;
-          color: #ffd700;
-          font-size: 1.5rem;
-          animation: coinsUp 3s infinite;
-          opacity: 0;
+          display: inline-block;
+          font-size: 2rem;
+          color: #FFB800;
+          margin: 0 0.5rem;
+          animation: bounce 2s infinite;
         }
         
-        .coin-1 {
-          left: 20%;
-          animation-delay: 0s;
-        }
+        .coin-1 { animation-delay: 0s; }
+        .coin-2 { animation-delay: 0.2s; }
+        .coin-3 { animation-delay: 0.4s; }
         
-        .coin-2 {
-          left: 50%;
-          transform: translateX(-50%);
-          animation-delay: 0.5s;
-        }
-        
-        .coin-3 {
-          right: 20%;
-          animation-delay: 1s;
-        }
-        
-        @keyframes coinsUp {
-          0% {
-            transform: translateY(20px);
-            opacity: 0;
-          }
-          20% {
-            opacity: 1;
-          }
-          80% {
-            opacity: 1;
-          }
-          100% {
-            transform: translateY(-40px);
-            opacity: 0;
-          }
-        }
-        
-        .cta-content p {
-          font-size: 1.1rem;
-          margin-bottom: 2rem;
-          opacity: 0.9;
-          position: relative;
+        @keyframes bounce {
+          0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+          40% { transform: translateY(-20px); }
+          60% { transform: translateY(-10px); }
         }
         
         .pulse-button {
-          position: relative;
-          animation: buttonScale 2s infinite alternate;
-          box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+          animation: buttonPulse 2s infinite;
+        }
+        
+        @keyframes buttonPulse {
+          0% { transform: scale(1); }
+          50% { transform: scale(1.05); }
+          100% { transform: scale(1); }
+        }
+        
+        .cta-button.large {
+          padding: 1.5rem 3rem;
+          font-size: 1.1rem;
         }
         
         .shine {
           position: absolute;
           top: 0;
-          left: 0;
+          left: -100%;
           width: 100%;
           height: 100%;
-          background: linear-gradient(
-            90deg,
-            rgba(255, 255, 255, 0) 0%,
-            rgba(255, 255, 255, 0.4) 50%,
-            rgba(255, 255, 255, 0) 100%
-          );
-          transform: translateX(-100%);
-          animation: shineEffect 3s infinite;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+          animation: shineEffect 2s infinite;
         }
         
         @keyframes shineEffect {
-          0% {
-            transform: translateX(-100%);
-          }
-          20%, 100% {
-            transform: translateX(100%);
-          }
+          0% { left: -100%; }
+          100% { left: 100%; }
         }
         
-        @keyframes buttonScale {
-          0%, 100% {
-            transform: scale(1);
-          }
-          50% {
-            transform: scale(1.05);
-          }
-        }
-        
-        /* Animations */
-        @keyframes pulse {
-          0% { transform: scale(1); }
-          100% { transform: scale(1.05); }
-        }
-        
-        @keyframes glow {
-          0% { text-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
-          50% { text-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 0 0 30px rgba(255, 215, 0, 0.6); }
-          100% { text-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
-        }
-        
-        @keyframes shine {
-          0% { transform: rotate(45deg) translateX(-120%); }
-          100% { transform: rotate(45deg) translateX(120%); }
-        }
-        
-        /* Responsive Adjustments */
+        /* Mobile Responsiveness */
         @media (max-width: 768px) {
-          .casino-home {
-            padding-top: 50px;
-          }
-          
           .hero-section {
-            padding: 3rem 0.75rem 2rem;
-            margin-top: 10px;
-          }
-          
-          .hero-logo-container {
-            margin-bottom: 1.5rem;
-          }
-          
-          .sparkle-wrapper {
-            width: 120px;
-            height: 120px;
+            padding: 3rem 1rem 2rem;
+            margin: 1rem 0.5rem 2rem;
           }
           
           .hero-title {
-            font-size: 1.8rem;
-          }
-          
-          .title-normal {
-            font-size: 1.4rem;
+            font-size: 2rem;
           }
           
           .hero-subtitle {
             font-size: 1rem;
           }
           
-          .hero-features {
-            flex-direction: column;
-            gap: 1rem;
-            align-items: center;
-          }
-          
-          .cta-buttons {
-            flex-direction: column;
-            gap: 1rem;
-          }
-          
-          .cta-button {
-            width: 100%;
-            text-align: center;
+          .games-grid {
+            grid-template-columns: 1fr;
+            padding: 0 0.5rem;
           }
           
           .winners-and-bitcoin {
             grid-template-columns: 1fr;
-          }
-          
-          .games-grid {
-            grid-template-columns: 1fr;
-          }
-          
-          .game-card {
-            height: 350px;
-          }
-          
-          .game-image {
-            height: 180px;
-          }
-          
-          .chest-img, .coinflip-img {
-            width: 130px;
-            height: 130px;
-          }
-          
-          .raffle-artifact {
-            width: 50px;
-            height: 50px;
-            gap: 0.8rem;
+            margin: 2rem 0.5rem;
           }
           
           .benefits-grid {
             grid-template-columns: 1fr;
           }
           
-          .cta-content h2 {
-            font-size: 1.5rem;
+          .cta-section {
+            margin: 3rem 0.5rem;
+            padding: 3rem 1rem;
+          }
+          
+          .glow-text {
+            font-size: 2rem;
+          }
+          
+          .cta-buttons {
+            flex-direction: column;
+            align-items: center;
+          }
+          
+          .hero-features {
+            flex-direction: column;
+            gap: 1rem;
           }
         }
         
         @media (max-width: 480px) {
-          .casino-home {
-            padding-top: 40px;
-          }
-          
-          .hero-section {
-            padding: 2rem 0.5rem 1.5rem;
-            margin-top: 5px;
-          }
-          
-          .hero-logo-container {
-            margin-bottom: 1rem;
-          }
-          
-          .sparkle-wrapper {
-            width: 100px;
-            height: 100px;
-          }
-          
-          .sparkle-1, .sparkle-3 {
-            width: 15px;
-            height: 15px;
-          }
-          
-          .sparkle-2, .sparkle-4 {
-            width: 10px;
-            height: 10px;
-          }
-          
-          .hero-logo-image {
-            width: 80px;
-            height: 80px;
-          }
-          
           .hero-title {
             font-size: 1.5rem;
           }
           
           .title-normal {
-            font-size: 1.2rem;
+            display: block;
+            margin-left: 0;
+            margin-top: 0.5rem;
           }
           
-          .jackpot-ticker {
-            font-size: 0.7rem;
-            padding: 0.3rem 0.6rem;
+          .cta-button.large {
+            padding: 1rem 2rem;
+            font-size: 1rem;
           }
-          
-          .ticker-label {
-            font-size: 0.7rem;
-          }
-          
-          .ticker-items span {
-            font-size: 0.7rem;
-            margin-right: 20px;
-          }
-          
-          .feature {
-            padding: 0.3rem 0.6rem;
-            font-size: 0.8rem;
-          }
-          
-          .feature-icon {
-            font-size: 1.2rem;
-          }
-          
-          .game-card {
-            margin-bottom: 1rem;
-          }
-        }
-        
-        /* Adjust games grid in hero section */
-        .hero-games {
-          display: flex;
-          justify-content: center;
-          gap: 1.5rem;
-          margin-top: 2rem;
-          margin-bottom: 2rem;
-          flex-wrap: wrap;
-          z-index: 5;
-          position: relative;
-        }
-        
-        .hero-games .game-card {
-          background-color: #000000;
-          background-image: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.8) 100%);
-          border-radius: 10px;
-          overflow: hidden;
-          transition: all 0.3s ease;
-          width: calc(33.333% - 1rem);
-          max-width: 310px;
-          min-width: 280px;
-          border: 2px solid rgba(255, 215, 0, 0.2);
-          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-          display: flex;
-          flex-direction: column;
-          position: relative;
-          z-index: 3;
-          height: 380px;
-        }
-        
-        .hero-games .game-card.chest-game {
-          border-color: rgba(255, 165, 0, 0.5);
-        }
-        
-        .hero-games .game-card.coinflip-game {
-          border-color: rgba(173, 216, 230, 0.5);
-        }
-        
-        .hero-games .game-card.raffle-game {
-          border-color: rgba(138, 43, 226, 0.5);
-        }
-        
-        .hero-games .game-card:hover {
-          transform: translateY(-10px);
-          box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
-          border-color: rgba(255, 215, 0, 0.5);
-        }
-        
-        .hero-games .game-card.chest-game:hover {
-          border-color: rgba(255, 165, 0, 0.8);
-        }
-        
-        .hero-games .game-card.coinflip-game:hover {
-          border-color: rgba(173, 216, 230, 0.8);
-        }
-        
-        .hero-games .game-card.raffle-game:hover {
-          border-color: rgba(138, 43, 226, 0.8);
-        }
-        
-        /* Hero Games Header */
-        .hero-games-header {
-          text-align: center;
-          margin-top: 3rem;
-          margin-bottom: 1rem;
-          position: relative;
-          z-index: 5;
-        }
-        
-        .hero-games-header .section-title {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 0.5rem;
-        }
-        
-        .hero-games-header .title-icon {
-          font-size: 1.5rem;
-          background: linear-gradient(135deg, #ffd700, #ff9500);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-        }
-        
-        .hero-games-header h2 {
-          font-size: 1.8rem;
-          margin: 0;
-          color: #ffd700;
-          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
         }
       `}</style>
     </main>
