@@ -265,8 +265,10 @@ export default function Navbar() {
         cursor: 'pointer',
         borderRadius: '4px',
         boxShadow: '0 2px 6px rgba(255, 107, 0, 0.2)',
-        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        flexShrink: 0
       }}
+      className="refresh-btn"
       onClick={refreshBalance}
       disabled={isRefreshing}
       title="Refresh Balance"
@@ -563,37 +565,6 @@ export default function Navbar() {
             >
               How to Play
             </Link>
-            
-            {/* Mobile Balance & Wallet */}
-            <div className="mobile-balance-section">
-              <div className="mobile-balance">
-                <span>{balance} sats</span>
-                {rankBadge}
-                {refreshButton}
-              </div>
-              
-              {!walletAddress ? (
-                <button 
-                  className="mobile-wallet-btn"
-                  onClick={() => setShowWalletMenu(!showWalletMenu)}
-                >
-                  Connect
-                </button>
-              ) : (
-                <div className="mobile-wallet-info">
-                  <span className="mobile-wallet-address">
-                    {connectedWallet === 'MagicEden' ? 'ME' : connectedWallet === 'Unisat' ? 'UN' : 'XV'}
-                    {walletAddress?.slice(0, 4)}...{walletAddress?.slice(-3)}
-                  </span>
-                  <button 
-                    className="mobile-disconnect-btn"
-                    onClick={disconnectWallet}
-                  >
-                    ×
-                  </button>
-                </div>
-              )}
-            </div>
           </div>
         </div>
       )}
@@ -641,15 +612,15 @@ export default function Navbar() {
         
         .social-icons {
           display: flex;
-          gap: 0.5rem;
+          gap: 0.4rem;
         }
         
         .social-icon {
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 32px;
-          height: 32px;
+          width: 24px;
+          height: 24px;
           border-radius: 6px;
           background: rgba(255, 255, 255, 0.05);
           border: 1px solid rgba(255, 107, 0, 0.2);
@@ -669,8 +640,8 @@ export default function Navbar() {
         }
         
         .social-icon svg {
-          width: 14px;
-          height: 14px;
+          width: 12px;
+          height: 12px;
         }
         
         /* Center - Navigation Links */
@@ -1023,7 +994,14 @@ export default function Navbar() {
           }
           
           .balance-display {
-            display: none !important;
+            display: flex !important;
+            font-size: 0.7rem;
+            padding: 0.3rem 0.5rem;
+            gap: 0.2rem;
+          }
+          
+          .balance-text {
+            font-size: 0.7rem;
           }
           
           .mobile-menu-btn {
@@ -1049,6 +1027,13 @@ export default function Navbar() {
           .disconnect-btn {
             padding: 0.15rem 0.3rem;
             font-size: 0.75rem;
+          }
+          
+          .refresh-btn {
+            width: 13px !important;
+            height: 13px !important;
+            font-size: 0.55rem !important;
+            margin: 0 0 0 2px !important;
           }
         }
         
@@ -1080,12 +1065,22 @@ export default function Navbar() {
           
           .navbar-right {
             display: flex !important;
-            gap: 0.5rem;
+            gap: 0.4rem;
             margin-right: 3rem;
           }
           
           .balance-display {
-            display: none !important;
+            display: flex !important;
+            font-size: 0.65rem;
+            padding: 0.25rem 0.4rem;
+            gap: 0.15rem;
+            min-width: fit-content;
+            white-space: nowrap;
+          }
+          
+          .balance-text {
+            font-size: 0.65rem;
+            font-weight: 700;
           }
           
           .mobile-menu-btn {
@@ -1113,18 +1108,27 @@ export default function Navbar() {
           
           .wallet-connect-btn,
           .wallet-info {
-            font-size: 0.7rem;
-            padding: 0.3rem 0.4rem;
+            font-size: 0.65rem;
+            padding: 0.25rem 0.35rem;
+            height: 28px;
           }
           
           .wallet-address {
-            font-size: 0.65rem;
+            font-size: 0.6rem;
           }
           
           .disconnect-btn {
             padding: 0.1rem 0.25rem;
-            font-size: 0.7rem;
-            min-width: 20px;
+            font-size: 0.65rem;
+            min-width: 18px;
+            height: 18px;
+          }
+          
+          .refresh-btn {
+            width: 13px !important;
+            height: 13px !important;
+            font-size: 0.55rem !important;
+            margin: 0 0 0 2px !important;
           }
         }
         
