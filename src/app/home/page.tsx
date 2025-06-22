@@ -59,17 +59,13 @@ function HomeContent() {
             <Image 
               src="/tigerbanner.png" 
               alt="Bitcoin Tiger Collective" 
-              width={600} 
-              height={200} 
+              width={800} 
+              height={300} 
               className="banner-image"
               priority
             />
           </div>
           
-          <h1 className="hero-title pixel-text">
-            <span className="title-gradient">Bitcoin Tiger</span>
-            <span className="title-normal">Collective</span>
-          </h1>
           <p className="hero-subtitle">
             Win instant Bitcoin with lightning-fast games!
           </p>
