@@ -24,17 +24,17 @@ export default function ArtifactsPage() {
             </div>
           </div>
           <div className="stat-item">
-            <div className="stat-icon">💰</div>
+            <div className="stat-icon">⚡</div>
             <div className="stat-content">
-              <div className="stat-label">Total Profit Shared</div>
-              <div className="stat-value">$25,000+</div>
+              <div className="stat-label">Active Holders</div>
+              <div className="stat-value">35+</div>
             </div>
           </div>
           <div className="stat-item">
-            <div className="stat-icon">📈</div>
+            <div className="stat-icon">🎯</div>
             <div className="stat-content">
-              <div className="stat-label">Daily Revenue</div>
-              <div className="stat-value">$500+</div>
+              <div className="stat-label">Profit Share Rate</div>
+              <div className="stat-value">80%</div>
             </div>
           </div>
         </div>
@@ -52,7 +52,7 @@ export default function ArtifactsPage() {
             <div className="artifact-image-container">
               <Image 
                 src="/artifacts/gold.png"
-                alt="Legendary Philosopher's Stone"
+                alt="Golden Tiger Artifact"
                 width={120}
                 height={120}
                 className="artifact-image"
@@ -62,7 +62,7 @@ export default function ArtifactsPage() {
             </div>
             <div className="artifact-content">
               <div className="artifact-header">
-                <h3 className="artifact-name">Legendary Philosopher's Stone</h3>
+                <h3 className="artifact-name">Golden Tiger Artifact</h3>
                 <div className="artifact-rarity legendary-rarity">Legendary</div>
               </div>
               <div className="artifact-benefits">
@@ -78,10 +78,6 @@ export default function ArtifactsPage() {
                   <span className="benefit-icon">👑</span>
                   <span className="benefit-text">Supreme Power</span>
                 </div>
-                <div className="benefit-item">
-                  <span className="benefit-icon">✨</span>
-                  <span className="benefit-text">Daily Payouts</span>
-                </div>
               </div>
               <button className="marketplace-button">
                 <span>View in Marketplace</span>
@@ -94,7 +90,7 @@ export default function ArtifactsPage() {
             <div className="artifact-image-container">
               <Image 
                 src="/artifacts/silver.png"
-                alt="Rare Crystal of Power"
+                alt="Silver Tiger Artifact"
                 width={120}
                 height={120}
                 className="artifact-image"
@@ -104,7 +100,7 @@ export default function ArtifactsPage() {
             </div>
             <div className="artifact-content">
               <div className="artifact-header">
-                <h3 className="artifact-name">Rare Crystal of Power</h3>
+                <h3 className="artifact-name">Silver Tiger Artifact</h3>
                 <div className="artifact-rarity rare-rarity">Rare</div>
               </div>
               <div className="artifact-benefits">
@@ -120,10 +116,6 @@ export default function ArtifactsPage() {
                   <span className="benefit-icon">🌙</span>
                   <span className="benefit-text">Medium Power</span>
                 </div>
-                <div className="benefit-item">
-                  <span className="benefit-icon">✨</span>
-                  <span className="benefit-text">Daily Payouts</span>
-                </div>
               </div>
               <button className="marketplace-button">
                 <span>View in Marketplace</span>
@@ -136,7 +128,7 @@ export default function ArtifactsPage() {
             <div className="artifact-image-container">
               <Image 
                 src="/artifacts/bronze.png"
-                alt="Mystic Moonstone Shard"
+                alt="Bronze Tiger Artifact"
                 width={120}
                 height={120}
                 className="artifact-image"
@@ -146,7 +138,7 @@ export default function ArtifactsPage() {
             </div>
             <div className="artifact-content">
               <div className="artifact-header">
-                <h3 className="artifact-name">Mystic Moonstone Shard</h3>
+                <h3 className="artifact-name">Bronze Tiger Artifact</h3>
                 <div className="artifact-rarity common-rarity">Common</div>
               </div>
               <div className="artifact-benefits">
@@ -161,10 +153,6 @@ export default function ArtifactsPage() {
                 <div className="benefit-item">
                   <span className="benefit-icon">🌙</span>
                   <span className="benefit-text">Basic Power</span>
-                </div>
-                <div className="benefit-item">
-                  <span className="benefit-icon">✨</span>
-                  <span className="benefit-text">Daily Payouts</span>
                 </div>
               </div>
               <button className="marketplace-button">
@@ -196,19 +184,19 @@ export default function ArtifactsPage() {
             </div>
             <div className="payout-grid">
               <div className="payout-card legendary">
-                <div className="payout-header">Philosopher's Stone</div>
+                <div className="payout-header">Golden Tiger Artifact</div>
                 <div className="payout-percentage">5.0% each</div>
-                <div className="payout-amount">800,000 Sats per Stone</div>
+                <div className="payout-amount">800,000 Sats per Artifact</div>
               </div>
               <div className="payout-card rare">
-                <div className="payout-header">Crystal of Power</div>
+                <div className="payout-header">Silver Tiger Artifact</div>
                 <div className="payout-percentage">2.5% each</div>
-                <div className="payout-amount">400,000 Sats per Crystal</div>
+                <div className="payout-amount">400,000 Sats per Artifact</div>
               </div>
               <div className="payout-card common">
-                <div className="payout-header">Moonstone Shard</div>
+                <div className="payout-header">Bronze Tiger Artifact</div>
                 <div className="payout-percentage">1.26% each</div>
-                <div className="payout-amount">201,600 Sats per Shard</div>
+                <div className="payout-amount">201,600 Sats per Artifact</div>
               </div>
             </div>
           </div>
