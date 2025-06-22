@@ -23,8 +23,17 @@ export default function Navbar() {
   // Page load effect to force balance refresh
   useEffect(() => {
     if (walletAddress) {
-      console.log('Navbar: Page loaded, forcing balance refresh for:', walletAddress);
-      // Force refresh balance on page load
+      console.log('Navbar: Page loaded, checking if balance refresh needed for:', walletAddress);
+      
+      // Check if we recently refreshed (within last 30 seconds)
+      const lastFetch = localStorage.getItem('lastBalanceFetch');
+      const now = Date.now();
+      if (lastFetch && (now - parseInt(lastFetch)) < 30000) {
+        console.log('Navbar: Skipping page load refresh - recent fetch detected');
+        return;
+      }
+      
+      // Force refresh balance on page load only if really needed
       setTimeout(() => {
         forceRefreshBalance().then(newBalance => {
           if (newBalance > 0 || newBalance === 0) {
@@ -34,7 +43,7 @@ export default function Navbar() {
         }).catch(error => {
           console.error('Navbar: Failed to refresh balance on page load:', error);
         });
-      }, 100);
+      }, 1000); // Increased delay to 1 second
     }
   }, [walletAddress, forceRefreshBalance]);
   
@@ -88,12 +97,12 @@ export default function Navbar() {
     const updateBalance = async () => {
       if (walletAddress) {
         console.log('Navbar: Attempting balance update...')
-        
-        // Debounce: Check for recent updates
+      
+        // AGGRESSIVE Debounce: Check for recent updates (increased to 10 seconds)
         const lastFetch = localStorage.getItem('lastBalanceFetch');
         const now = Date.now();
-        if (lastFetch && (now - parseInt(lastFetch)) < 3000) {
-          console.log('Navbar: Skipping balance fetch - recent update detected');
+        if (lastFetch && (now - parseInt(lastFetch)) < 10000) {
+          console.log('Navbar: Skipping balance fetch - recent update detected (10s debounce)');
           return;
         }
         
@@ -128,8 +137,8 @@ export default function Navbar() {
       // Initial balance fetch
       updateBalance()
       
-      // Set up periodic balance updates (reduced frequency from 5s to 15s)
-      balanceInterval = setInterval(updateBalance, 15000)
+      // DRASTICALLY reduced polling: only every 60 seconds instead of 15
+      balanceInterval = setInterval(updateBalance, 60000)
       
       // Listen for balance update events from other components
       window.addEventListener('balanceUpdate', handleBalanceUpdate as EventListener)
