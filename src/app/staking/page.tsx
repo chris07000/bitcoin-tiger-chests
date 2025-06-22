@@ -1906,24 +1906,25 @@ export default function StakingPage() {
           flex-direction: column;
           align-items: center;
           padding: 2rem 1rem;
-          background: #0d1320;
+          background: linear-gradient(135deg, #0A0A0B 0%, #1A1A1B 100%);
           color: #fff;
         }
         
         .page-title {
-          font-size: 1.5rem;
-          font-family: 'Press Start 2P', monospace;
-          color: #ffd700;
+          font-size: 2.5rem;
+          font-weight: 700;
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
           margin-bottom: 1rem;
           text-align: center;
-          text-shadow: 2px 2px #000;
         }
         
         .page-subtitle {
-          font-size: 0.7rem;
-          font-family: 'Press Start 2P', monospace;
-          color: #ccc;
-          margin-bottom: 1.5rem;
+          font-size: 1.1rem;
+          color: rgba(255, 255, 255, 0.7);
+          margin-bottom: 2rem;
           text-align: center;
           max-width: 700px;
           line-height: 1.6;
@@ -1943,13 +1944,14 @@ export default function StakingPage() {
         }
         
         .staking-card {
-          background: #0d1320;
-          border: 2px solid #ffd700;
-          padding: 1rem;
+          background: rgba(26, 26, 27, 0.6);
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(255, 107, 0, 0.2);
+          border-radius: 16px;
+          padding: 2rem;
           display: flex;
           flex-direction: column;
-          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-          border-radius: 4px;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
           position: relative;
           overflow: hidden;
         }
@@ -1977,8 +1979,8 @@ export default function StakingPage() {
           top: 0;
           left: 0;
           right: 0;
-          height: 2px;
-          background: linear-gradient(90deg, transparent, #ffd700, transparent);
+          height: 1px;
+          background: linear-gradient(90deg, transparent, rgba(255, 107, 0, 0.5), transparent);
           z-index: 1;
         }
         
@@ -2019,10 +2021,13 @@ export default function StakingPage() {
         }
         
         .card-title {
-          font-family: 'Press Start 2P', monospace;
-          font-size: 0.8rem;
-          color: #ffd700;
-          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+          font-size: 1.5rem;
+          font-weight: 600;
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          margin-bottom: 1.5rem;
         }
         
         /* Verbeterde grid voor artifacts dat beter past op het scherm */
@@ -2038,12 +2043,13 @@ export default function StakingPage() {
           display: flex;
           flex-direction: column;
           align-items: center;
-          background: rgba(0, 0, 0, 0.3);
-          border: 2px solid #ffd700;
-          padding: 0.4rem;
+          background: rgba(26, 26, 27, 0.6);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 107, 0, 0.2);
+          border-radius: 12px;
+          padding: 1rem;
           cursor: pointer;
-          transition: all 0.2s;
-          border-radius: 4px;
+          transition: all 0.3s ease;
           overflow: hidden;
         }
         
@@ -2060,9 +2066,10 @@ export default function StakingPage() {
         }
         
         .ordinal-item:hover {
-          background: rgba(255, 215, 0, 0.1);
-          transform: translateY(-3px);
-          box-shadow: 0 5px 15px rgba(255, 215, 0, 0.2);
+          background: rgba(255, 107, 0, 0.1);
+          border-color: rgba(255, 107, 0, 0.4);
+          transform: translateY(-4px);
+          box-shadow: 0 12px 40px rgba(255, 107, 0, 0.2);
         }
         
         .ordinal-item:hover::after {
@@ -2070,14 +2077,14 @@ export default function StakingPage() {
         }
         
         .ordinal-item.selected {
-          border-color: #4afc4a;
-          background: rgba(74, 252, 74, 0.1);
-          transform: translateY(-3px);
-          box-shadow: 0 5px 15px rgba(74, 252, 74, 0.3);
+          border-color: #FF6B00;
+          background: rgba(255, 107, 0, 0.15);
+          transform: translateY(-4px);
+          box-shadow: 0 12px 40px rgba(255, 107, 0, 0.3);
         }
         
         .ordinal-item.selected::after {
-          background: linear-gradient(to right, #4afc4a, transparent);
+          background: linear-gradient(to right, #FF6B00, transparent);
           transform: translateY(0);
         }
         
@@ -2163,15 +2170,16 @@ export default function StakingPage() {
         }
         
         .rewards-value {
-          font-size: 2rem;
-          font-weight: bold;
-          color: #4afc4a;
-          margin: 0.5rem 0;
+          font-size: 2.5rem;
+          font-weight: 700;
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          margin: 1rem 0;
           display: flex;
           align-items: center;
           justify-content: center;
-          font-family: 'Press Start 2P', monospace;
-          text-shadow: 0 0 5px rgba(74, 252, 74, 0.5);
           position: relative;
         }
         
@@ -2195,41 +2203,23 @@ export default function StakingPage() {
         }
         
         .claim-button {
-          background: linear-gradient(to bottom, #34a853, #2d9249);
-          color: #000;
-          width: 100%;
-          padding: 0.8rem;
-          font-family: 'Press Start 2P', monospace;
-          font-size: 0.7rem;
-          cursor: pointer;
-          transition: all 0.2s;
-          margin-top: 0.8rem;
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+          color: white;
           border: none;
-          text-transform: uppercase;
-          border-radius: 4px;
+          border-radius: 12px;
+          padding: 1rem 2rem;
+          font-size: 1rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          margin-top: 1.5rem;
           position: relative;
           overflow: hidden;
         }
         
-        .claim-button::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: -100%;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-          transition: 0.5s;
-        }
-        
-        .claim-button:hover:not(:disabled)::before {
-          left: 100%;
-        }
-        
         .claim-button:hover:not(:disabled) {
-          background: linear-gradient(to bottom, #4afc4a, #34a853);
           transform: translateY(-2px);
-          box-shadow: 0 4px 8px rgba(74, 252, 74, 0.3);
+          box-shadow: 0 8px 25px rgba(255, 107, 0, 0.3);
         }
         
         .claim-button:disabled {
@@ -2247,11 +2237,12 @@ export default function StakingPage() {
         .stat-item {
           flex: 1;
           min-width: 120px;
-          background: rgba(0, 0, 0, 0.2);
-          padding: 0.7rem;
+          background: rgba(26, 26, 27, 0.6);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 107, 0, 0.2);
+          border-radius: 12px;
+          padding: 1rem;
           text-align: center;
-          border-radius: 4px;
-          border: 1px solid rgba(255, 215, 0, 0.3);
           position: relative;
           overflow: hidden;
         }
@@ -2274,11 +2265,12 @@ export default function StakingPage() {
         }
         
         .stat-value {
-          font-size: 0.8rem;
-          color: #ffd700;
-          font-weight: bold;
-          font-family: 'Press Start 2P', monospace;
-          text-shadow: 0 0 3px rgba(255, 215, 0, 0.3);
+          font-size: 1.2rem;
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          font-weight: 600;
         }
         
         .rewards-info {
@@ -2306,41 +2298,23 @@ export default function StakingPage() {
         }
         
         .action-button {
-          width: 100%;
-          padding: 0.8rem;
-          background: linear-gradient(to bottom, #ffd700, #e6c300);
-          color: #000;
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+          color: white;
           border: none;
-          font-family: 'Press Start 2P', monospace;
-          font-size: 0.7rem;
+          border-radius: 12px;
+          padding: 1rem 2rem;
+          font-size: 1rem;
+          font-weight: 600;
           cursor: pointer;
-          text-transform: uppercase;
-          transition: all 0.2s;
+          transition: all 0.3s ease;
           margin-top: auto;
-          border-radius: 4px;
           position: relative;
           overflow: hidden;
         }
         
-        .action-button::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: -100%;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-          transition: 0.5s;
-        }
-        
-        .action-button:hover:not(:disabled)::before {
-          left: 100%;
-        }
-        
         .action-button:hover:not(:disabled) {
-          background: linear-gradient(to bottom, #ffde4d, #ffd700);
           transform: translateY(-2px);
-          box-shadow: 0 4px 8px rgba(255, 215, 0, 0.3);
+          box-shadow: 0 8px 25px rgba(255, 107, 0, 0.3);
         }
         
         .action-button:disabled {
@@ -2351,14 +2325,14 @@ export default function StakingPage() {
         .wallet-info {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
-          background: rgba(0, 0, 0, 0.2);
-          padding: 0.5rem 0.8rem;
-          border-radius: 4px;
-          margin-bottom: 1.5rem;
-          font-family: 'Press Start 2P', monospace;
-          font-size: 0.6rem;
-          border: 1px solid rgba(255, 215, 0, 0.3);
+          gap: 1rem;
+          background: rgba(26, 26, 27, 0.6);
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(255, 107, 0, 0.2);
+          border-radius: 12px;
+          padding: 1rem 1.5rem;
+          margin-bottom: 2rem;
+          font-size: 0.9rem;
           position: relative;
           overflow: hidden;
           width: 100%;
@@ -2376,44 +2350,21 @@ export default function StakingPage() {
         }
         
         .refresh-button {
-          background: linear-gradient(to bottom, #ffd700, #e6c300);
-          color: #000;
-          padding: 0.2rem 0.5rem;
-          font-size: 0.5rem;
-          font-family: 'Press Start 2P', monospace;
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+          color: white;
           border: none;
-          margin-left: auto;
+          border-radius: 8px;
+          padding: 0.5rem 1rem;
+          font-size: 0.8rem;
+          font-weight: 600;
           cursor: pointer;
-          border-radius: 3px;
-          transition: all 0.2s;
-          position: relative;
-          overflow: hidden;
-        }
-        
-        .refresh-button::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: -100%;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-          transition: 0.5s;
-        }
-        
-        .refresh-button:hover:not(:disabled)::before {
-          left: 100%;
+          transition: all 0.3s ease;
+          margin-left: auto;
         }
         
         .refresh-button:hover:not(:disabled) {
-          background: linear-gradient(to bottom, #ffde4d, #ffd700);
           transform: translateY(-1px);
-          box-shadow: 0 2px 4px rgba(255, 215, 0, 0.3);
-        }
-        
-        .refresh-button:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
+          box-shadow: 0 4px 15px rgba(255, 107, 0, 0.3);
         }
         
         .wallet-address {
@@ -2683,14 +2634,16 @@ export default function StakingPage() {
         
         .staking-toggle {
           display: flex;
-          margin-bottom: 1.5rem;
+          margin-bottom: 2rem;
           width: 100%;
           max-width: 800px;
-          background: rgba(0, 0, 0, 0.8);
-          border-radius: 8px;
+          background: rgba(26, 26, 27, 0.6);
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(255, 107, 0, 0.2);
+          border-radius: 16px;
           overflow: hidden;
-          border: 2px solid #ffd700;
-          flex-wrap: wrap; /* Laat tabs wrappen op kleine schermen */
+          padding: 0.5rem;
+          flex-wrap: wrap;
         }
         
         @media (max-width: 768px) {
@@ -2778,8 +2731,9 @@ export default function StakingPage() {
         }
         
         .toggle-button.active {
-          background: rgba(255, 215, 0, 0.2);
-          color: #ffd700;
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+          color: white;
+          border-radius: 12px;
         }
         
         .toggle-button.active::after {
@@ -3161,19 +3115,6 @@ export default function StakingPage() {
           </button>
         </div>
         
-        {/* Progress bar - alleen desktop - toont hoeveel tigers al verkocht zijn */}
-        <div className="tiger-progress-container">
-          <div className="tiger-progress-info">
-            <span className="tiger-progress-label">Tigers Sold:</span>
-            <span className="tiger-progress-value">223 / 999</span>
-            <span className="tiger-progress-percent">22.3%</span>
-          </div>
-          <div className="tiger-progress-bar">
-            <div className="tiger-progress-fill" style={{ width: '22.3%' }}></div>
-          </div>
-          <div className="tiger-progress-subtitle">776 Tigers Remaining (77.7%)</div>
-        </div>
-
         <h1 className="page-title">Bitcoin Tiger Soft Staking</h1>
         <p className="page-subtitle">Stake your Bitcoin Tigers or Tiger Artifacts to earn rewards</p>
         
