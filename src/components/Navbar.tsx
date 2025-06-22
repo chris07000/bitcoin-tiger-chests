@@ -83,137 +83,67 @@ export default function Navbar() {
   };
   
   useEffect(() => {
-    // Functie om balance te updaten
+    let balanceInterval: NodeJS.Timeout
+    
     const updateBalance = async () => {
-      if (!walletAddress) return;
-      
-      try {
+      if (walletAddress) {
+        console.log('Navbar: Attempting balance update...')
+        
+        // Debounce: Check for recent updates
+        const lastFetch = localStorage.getItem('lastBalanceFetch');
         const now = Date.now();
-        // Throttling: alleen API calls uitvoeren als het nodig is
-        // Haal de tijd sinds de laatste update op van de state
-        const timeSinceLastFetch = now - lastBalanceFetch;
-        
-        // Alleen nieuwe balans ophalen als het lang genoeg geleden is
-        // OF als er nog nooit een fetch is gedaan
-        if (lastBalanceFetch === 0 || timeSinceLastFetch > 30000) { // 30 seconden interval (was 2000)
-          console.log(`Navbar: Time since last balance fetch: ${timeSinceLastFetch}ms, fetching new balance`);
-          
-          // Gebruik fetchBalance om de balans op te halen
-          const currentBalance = await fetchBalance();
-        
-        // Alleen de balans bijwerken als we een geldige waarde hebben
-        if (currentBalance > 0 || (currentBalance === 0 && balance === '0')) {
-            setBalance(currentBalance.toLocaleString());
-            setLastBalanceFetch(now);
-            console.log('Navbar: Balance updated to', currentBalance);
-          }
-        } else {
-          console.log(`Navbar: Skipping balance fetch, last fetch was ${timeSinceLastFetch}ms ago`);
+        if (lastFetch && (now - parseInt(lastFetch)) < 3000) {
+          console.log('Navbar: Skipping balance fetch - recent update detected');
+          return;
         }
         
-        // Haal user rank op als we dat nog niet hebben
-        if (!userRank) {
-          fetchUserRank();
-        }
-      } catch (error) {
-        console.error('Error updating balance:', error);
-      }
-    };
-
-    // Update direct bij laden
-    updateBalance();
-
-    // Update elke 30 seconden in plaats van elke seconde (was 1000)
-    const interval = setInterval(updateBalance, 30000);
-    
-    // Luister naar custom balance update events
-    const handleBalanceUpdate = (event: CustomEvent<{ balance: number, wallet: string }>) => {
-      console.log('Navbar: Received balance update event', event.detail);
-      
-      // Alleen updaten als het voor onze huidige wallet is
-      if (event.detail.wallet === walletAddress) {
-        setBalance(event.detail.balance.toLocaleString());
-        setLastBalanceFetch(Date.now());
-        console.log('Navbar: Balance updated from event to', event.detail.balance);
-      }
-    };
-    
-    // Event listener toevoegen voor balance updates
-    window.addEventListener('balanceUpdated', handleBalanceUpdate as EventListener);
-
-    // Cleanup interval en event listener
-    return () => {
-      clearInterval(interval);
-      window.removeEventListener('balanceUpdated', handleBalanceUpdate as EventListener);
-    };
-  }, [walletAddress, balance, lastBalanceFetch, userRank, fetchBalance]);
-  
-  // Close wallet dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Element;
-      if (showWalletMenu && !target.closest('.wallet-menu-container')) {
-        setShowWalletMenu(false);
-      }
-      if (showCollectionMenu && !target.closest('.collection-menu-container')) {
-        setShowCollectionMenu(false);
-      }
-      if (showGamesMenu && !target.closest('.games-menu-container')) {
-        setShowGamesMenu(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [showWalletMenu, showCollectionMenu, showGamesMenu]);
-  
-  // Functie om handmatig de balans te verversen
-  const refreshBalance = async () => {
-    if (walletAddress) {
-      setIsRefreshing(true);
-      
-      try {
-        // Forceer volledige balans refresh via API, negeer caching
-        const forceRefreshOptions = {
-          method: 'GET',
-          headers: {
-            'Cache-Control': 'no-cache, no-store, must-revalidate',
-            'Pragma': 'no-cache',
-            'Expires': '0'
-          }
-        };
-        
-        // Voer een directe API call uit voor de meest actuele balans
-        const baseUrl = window.location.origin;
-        const response = await fetch(`${baseUrl}/api/wallet/${walletAddress}`, forceRefreshOptions);
-        
-        if (response.ok) {
-          const data = await response.json();
-          console.log('Fresh balance data from API:', data);
-          
-          // Update de balans state
-          setBalance(data.balance.toLocaleString());
-          
-          console.log(`Manually refreshed balance: ${data.balance} sats`);
-          
-          // Indien beschikbaar, gebruik ook de fetchBalance functie voor volledige synchronisatie
-          setTimeout(() => {
-            fetchBalance();
-          }, 100);
-        } else {
-          console.error('Failed to manually refresh balance');
-          await fetchActualBalance();
-        }
-      } catch (error) {
-        console.error('Error in refreshBalance:', error);
-        await fetchActualBalance();
-      } finally {
-        setIsRefreshing(false);
+        await fetchActualBalance()
       }
     }
-  }
+
+    const handleBalanceUpdate = (event: CustomEvent<{ balance: number, wallet: string }>) => {
+      console.log('Navbar: Received balance update event');
+      
+      if (event.detail.wallet === walletAddress) {
+        console.log(`Balance updated from event to ${event.detail.balance}`);
+        setBalance(event.detail.balance.toLocaleString());
+        
+        // Update local storage to sync across components
+        const balances = JSON.parse(localStorage.getItem('lightningBalances') || '{}');
+        balances[event.detail.wallet] = event.detail.balance;
+        localStorage.setItem('lightningBalances', JSON.stringify(balances));
+      }
+    }
+
+    const handleClickOutside = (event: MouseEvent) => {
+      // Close dropdowns when clicking outside
+      if (!showGamesMenu && !showCollectionMenu && !showWalletMenu) return
+      
+      setShowGamesMenu(false)
+      setShowCollectionMenu(false)
+      setShowWalletMenu(false)
+    }
+
+    if (walletAddress) {
+      // Initial balance fetch
+      updateBalance()
+      
+      // Set up periodic balance updates (reduced frequency from 5s to 15s)
+      balanceInterval = setInterval(updateBalance, 15000)
+      
+      // Listen for balance update events from other components
+      window.addEventListener('balanceUpdate', handleBalanceUpdate as EventListener)
+    }
+
+    // Add click outside listener
+    document.addEventListener('mousedown', handleClickOutside)
+
+    return () => {
+      if (balanceInterval) clearInterval(balanceInterval)
+      window.removeEventListener('balanceUpdate', handleBalanceUpdate as EventListener)
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [walletAddress, connectedWallet]) // Simplified dependencies
   
   // Bepaal rank badge path
   const getRankBadgePath = () => {
@@ -269,7 +199,7 @@ export default function Navbar() {
         flexShrink: 0
       }}
       className="refresh-btn"
-      onClick={refreshBalance}
+      onClick={fetchActualBalance}
       disabled={isRefreshing}
       title="Refresh Balance"
       onMouseEnter={(e) => {

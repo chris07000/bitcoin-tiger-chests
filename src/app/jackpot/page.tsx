@@ -34,13 +34,22 @@ export default function JackpotPage() {
       setAudio(new Audio('/coin-flip.mp3'))
       setWinAudio(new Audio('/win.mp3'))
       
-      // Voeg event listener toe voor wanneer de tab weer actief wordt
+      // Voeg event listener toe voor wanneer de tab weer actief wordt (met debounce)
       const handleVisibilityChange = () => {
         if (document.visibilityState === 'visible') {
-          console.log('Tab weer actief, balans verversen...');
-          const currentWallet = localStorage.getItem('walletAddress');
-          if (currentWallet) {
-            fetchCurrentBalance(currentWallet);
+          // Debounce: alleen refresh als tab lang inactief was (minimaal 30 seconden)
+          const lastFetch = localStorage.getItem('lastBalanceFetch');
+          const now = Date.now();
+          const timeSinceLastFetch = lastFetch ? now - parseInt(lastFetch) : 0;
+          
+          if (timeSinceLastFetch > 30000) { // 30 seconden
+            console.log('Tab weer actief na lange tijd, balans verversen...');
+            const currentWallet = localStorage.getItem('walletAddress');
+            if (currentWallet) {
+              fetchCurrentBalance(currentWallet);
+            }
+          } else {
+            console.log('Tab actief maar recente balance update, geen refresh nodig');
           }
         }
       };
@@ -75,9 +84,17 @@ export default function JackpotPage() {
     return () => interval && clearInterval(interval)
   }, [])
 
-  // Functie om actuele balans op te halen uit database
+  // Functie om actuele balans op te halen uit database (met debounce)
   const fetchCurrentBalance = async (walletAddr: string) => {
     try {
+      // Debounce: alleen uitvoeren als er geen recente fetch was
+      const lastFetch = localStorage.getItem('lastBalanceFetch');
+      const now = Date.now();
+      if (lastFetch && (now - parseInt(lastFetch)) < 2000) {
+        console.log('Balance fetch debounced - recent fetch detected');
+        return;
+      }
+
       console.log(`Ophalen actuele balans voor wallet: ${walletAddr}...`);
       const response = await fetch(`/api/wallet/${walletAddr}`);
       
@@ -96,7 +113,7 @@ export default function JackpotPage() {
     }
   }
 
-  // Update de balans in localStorage na een succesvolle inzet
+  // Update de balans in localStorage na een succesvolle inzet (met debounce)
   const updateBalanceInStorage = (walletAddr: string, newBalance: number) => {
     try {
       // Update balans in lightningBalances
@@ -104,10 +121,24 @@ export default function JackpotPage() {
       balances[walletAddr] = newBalance;
       localStorage.setItem('lightningBalances', JSON.stringify(balances));
       
-      // Update lastFetch timestamp om te voorkomen dat Navbar onnodig opnieuw ophaalt
+      // Update lastFetch timestamp om andere systemen te debounce
       localStorage.setItem('lastBalanceFetch', Date.now().toString());
       
       console.log(`Balans bijgewerkt naar ${newBalance} voor wallet ${walletAddr}`);
+      
+      // Stuur een gedebounce balance update event (max 1x per 1.5 seconden)
+      const lastEventTime = localStorage.getItem('lastBalanceEvent');
+      const now = Date.now();
+      if (!lastEventTime || (now - parseInt(lastEventTime)) > 1500) {
+        localStorage.setItem('lastBalanceEvent', now.toString());
+        
+        // Stuur het balance update event naar andere componenten
+        const event = new CustomEvent('balanceUpdate', {
+          detail: { balance: newBalance, wallet: walletAddr }
+        });
+        window.dispatchEvent(event);
+        console.log('Balance update event dispatched');
+      }
     } catch (err) {
       console.error('Fout bij bijwerken balans in localStorage:', err);
     }
