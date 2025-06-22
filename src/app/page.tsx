@@ -24,29 +24,32 @@ function HomeContent() {
     <main className="pixel-container">
       <style jsx>{`
         .pixel-container {
-          background: #0d1320;
+          background: linear-gradient(135deg, #0A0A0B 0%, #1A1A1B 100%);
           color: #fff;
           min-height: 100vh;
         }
         
         .pixel-header {
-          padding: 3rem 1rem;
+          padding: 4rem 1rem;
           text-align: center;
         }
         
         .pixel-title {
-          font-family: 'Press Start 2P', monospace;
-          font-size: 2rem;
-          color: #ffd700;
-          margin-bottom: 1rem;
-          text-shadow: 2px 2px #000;
+          font-size: 3rem;
+          font-weight: 700;
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          margin-bottom: 1.5rem;
         }
         
         .pixel-subtitle {
-          font-size: 1.1rem;
-          color: #aaa;
+          font-size: 1.2rem;
+          color: rgba(255, 255, 255, 0.7);
           max-width: 800px;
           margin: 0 auto;
+          line-height: 1.6;
         }
         
         .chest-section {
@@ -55,61 +58,90 @@ function HomeContent() {
         
         .pixel-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-          gap: 1rem;
-          max-width: 850px;
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          gap: 2rem;
+          max-width: 1200px;
           margin: 0 auto;
-          padding: 0 0.8rem;
+          padding: 0 1rem;
         }
         
         .progress-section {
           width: 100%;
-          max-width: 800px;
+          max-width: 1000px;
           margin: 0 auto;
           padding: 0 1rem;
-          margin-top: 2rem;
+          margin-top: 3rem;
         }
         
         .pixel-main {
           display: flex;
           flex-direction: column;
-          gap: 0.8rem;
+          gap: 1.5rem;
           width: 100%;
-          max-width: 900px;
+          max-width: 1200px;
           margin: 0 auto;
-          padding: 1.2rem;
+          padding: 2rem 1rem;
         }
         
         .pixel-footer {
           text-align: center;
-          padding: 2rem 1rem;
+          padding: 3rem 1rem;
           margin-top: 4rem;
-          border-top: 1px solid rgba(255, 215, 0, 0.1);
+          border-top: 1px solid rgba(255, 107, 0, 0.2);
+          background: rgba(26, 26, 27, 0.3);
+          backdrop-filter: blur(10px);
         }
         
         .pixel-footer-text {
-          color: #ffd700;
-          font-family: 'Press Start 2P', monospace;
-          font-size: 0.9rem;
-          margin-bottom: 0.5rem;
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          font-size: 1.1rem;
+          font-weight: 600;
+          margin-bottom: 0.8rem;
         }
         
         .pixel-footer-subtext {
-          color: #aaa;
-          font-size: 0.8rem;
+          color: rgba(255, 255, 255, 0.6);
+          font-size: 0.9rem;
         }
         
         @media (max-width: 768px) {
           .pixel-title {
-            font-size: 1.5rem;
+            font-size: 2rem;
+          }
+          
+          .pixel-subtitle {
+            font-size: 1rem;
+          }
+          
+          .pixel-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            padding: 0 0.5rem;
+          }
+          
+          .pixel-header {
+            padding: 3rem 1rem;
+          }
+          
+          .pixel-main {
+            padding: 1.5rem 0.5rem;
+          }
+        }
+        
+        @media (max-width: 480px) {
+          .pixel-title {
+            font-size: 1.6rem;
           }
           
           .pixel-subtitle {
             font-size: 0.9rem;
           }
           
-          .pixel-grid {
-            gap: 1.5rem;
+          .pixel-header {
+            padding: 2rem 0.5rem;
           }
         }
         
@@ -118,16 +150,16 @@ function HomeContent() {
           top: 0;
           left: 0;
           right: 0;
-          background: linear-gradient(135deg, #ffd700, #ff9500);
-          color: #000;
-          padding: 0.5rem;
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+          color: white;
+          padding: 0.8rem;
           font-size: 1rem;
-          font-weight: bold;
+          font-weight: 700;
           text-align: center;
           z-index: 3;
-          font-family: 'Press Start 2P', monospace;
-          box-shadow: 0 3px 10px rgba(255, 215, 0, 0.5);
+          box-shadow: 0 4px 20px rgba(255, 107, 0, 0.5);
           animation: pulse 2s infinite;
+          border-radius: 12px 12px 0 0;
         }
         
         .user-won-ribbon {
@@ -136,9 +168,9 @@ function HomeContent() {
           left: 0;
           width: 100%;
           height: 100%;
-          border: 3px solid #ffd700;
+          border: 2px solid #FF6B00;
           box-sizing: border-box;
-          border-radius: 8px;
+          border-radius: 16px;
           pointer-events: none;
           z-index: 1;
           animation: glow 1.5s infinite alternate;
@@ -151,8 +183,8 @@ function HomeContent() {
         }
         
         @keyframes glow {
-          from { box-shadow: 0 0 5px #ffd700; }
-          to { box-shadow: 0 0 20px #ffd700; }
+          from { box-shadow: 0 0 10px rgba(255, 107, 0, 0.5); }
+          to { box-shadow: 0 0 30px rgba(255, 107, 0, 0.8); }
         }
       `}</style>
       <header className="pixel-header">

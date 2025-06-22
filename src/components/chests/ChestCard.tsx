@@ -319,31 +319,36 @@ export default function ChestCard({
 
         <style jsx>{`
           .chest-card {
-            background: #0d1320;
-            border: 1px solid #ffd700;
-            border-radius: 5px;
-            padding: 0.7rem;
+            background: rgba(26, 26, 27, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 107, 0, 0.3);
+            border-radius: 16px;
+            padding: 1.5rem;
             display: flex;
             flex-direction: column;
             align-items: center;
             position: relative;
             overflow: hidden;
-            transition: transform 0.3s, box-shadow 0.3s;
-            min-height: 360px;
+            transition: all 0.3s ease;
+            min-height: 420px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
           }
           
           .chest-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            transform: translateY(-8px);
+            border-color: rgba(255, 107, 0, 0.6);
+            box-shadow: 0 12px 40px rgba(255, 107, 0, 0.2);
           }
           
           .chest-title {
-            font-family: 'Press Start 2P', monospace;
-            font-size: 0.9rem;
-            color: #ffd700;
-            margin-bottom: 0.7rem;
+            font-size: 1.4rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1.2rem;
             text-align: center;
-            text-shadow: 1px 1px #000;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -351,14 +356,14 @@ export default function ChestCard({
           
           .title-line {
             display: block;
-            line-height: 1.5;
+            line-height: 1.4;
           }
           
           .chest-image-container {
             position: relative;
-            width: 85px;
-            height: 85px;
-            margin-bottom: 0.8rem;
+            width: 100px;
+            height: 100px;
+            margin-bottom: 1.2rem;
           }
           
           .chest-glow {
@@ -368,23 +373,23 @@ export default function ChestCard({
             border-radius: 50%;
             background: radial-gradient(
               circle,
-              rgba(255, 215, 0, 0.5) 0%,
-              rgba(255, 215, 0, 0.2) 50%,
-              rgba(255, 215, 0, 0) 70%
+              rgba(255, 107, 0, 0.4) 0%,
+              rgba(255, 184, 0, 0.2) 50%,
+              rgba(255, 107, 0, 0) 70%
             );
-            filter: blur(10px);
+            filter: blur(15px);
             z-index: 0;
             animation: pulse 3s infinite alternate;
           }
           
           @keyframes pulse {
             0% {
-              opacity: 0.5;
-              transform: scale(0.8);
+              opacity: 0.6;
+              transform: scale(0.9);
             }
             100% {
-              opacity: 0.8;
-              transform: scale(1.1);
+              opacity: 1;
+              transform: scale(1.2);
             }
           }
           
@@ -399,45 +404,65 @@ export default function ChestCard({
           
           .chest-price {
             width: 100%;
-            margin-bottom: 1rem;
+            margin-bottom: 1.2rem;
             display: flex;
             flex-direction: column;
             align-items: center;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 1rem;
+            border: 1px solid rgba(255, 107, 0, 0.2);
           }
           
           .base-price {
-            font-size: 1rem;
-            font-weight: bold;
-            color: #ffd700;
-            margin-bottom: 0.2rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.3rem;
           }
           
           .jackpot-fee {
-            font-size: 0.7rem;
-            color: #aaa;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
           }
           
           .total-price {
-            font-size: 0.9rem;
+            font-size: 1rem;
             color: #ffffff;
-            margin-top: 0.2rem;
-            font-weight: bold;
+            margin-top: 0.3rem;
+            font-weight: 600;
           }
           
           .chest-features {
             list-style: none;
             padding: 0;
-            margin: 0 0 1rem 0;
+            margin: 0 0 1.2rem 0;
             width: 100%;
             text-align: center;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 1rem;
+            border: 1px solid rgba(255, 107, 0, 0.2);
           }
           
           .chest-features li {
             color: #ffffff;
-            font-size: 0.75rem;
-            margin-bottom: 0.2rem;
+            font-size: 0.85rem;
+            margin-bottom: 0.4rem;
             position: relative;
-            padding-left: 0.3rem;
+            padding-left: 1rem;
+            line-height: 1.4;
+          }
+          
+          .chest-features li:before {
+            content: "•";
+            color: #FF6B00;
+            position: absolute;
+            left: 0;
+            font-weight: bold;
           }
           
           .jackpot-section {
@@ -446,6 +471,10 @@ export default function ChestCard({
             flex-direction: column;
             align-items: center;
             width: 100%;
+            background: rgba(255, 107, 0, 0.1);
+            border-radius: 12px;
+            padding: 1rem;
+            border: 1px solid rgba(255, 107, 0, 0.3);
           }
           
           .jackpot-toggle {
@@ -453,46 +482,53 @@ export default function ChestCard({
             display: flex;
             align-items: center;
             user-select: none;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.6rem;
           }
           
           .jackpot-toggle input {
-            margin-right: 0.5rem;
+            margin-right: 0.8rem;
+            accent-color: #FF6B00;
           }
           
           .toggle-text {
-            color: #ffd700;
-            font-size: 0.8rem;
+            background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 0.9rem;
+            font-weight: 600;
           }
           
           .jackpot-info {
             display: flex;
             flex-direction: column;
             align-items: center;
-            font-size: 0.7rem;
-            color: #aaa;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
           }
           
           .jackpot-chance, .jackpot-contribution {
-            margin-bottom: 0.2rem;
+            margin-bottom: 0.3rem;
           }
           
           .open-chest-button {
             width: 100%;
-            background: #ffd700;
-            color: #0d1320;
+            background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+            color: white;
             border: none;
-            padding: 0.5rem 0.8rem;
-            font-size: 0.8rem;
-            font-family: 'Press Start 2P', monospace;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: background 0.3s, transform 0.2s;
-            margin-bottom: 0.3rem;
+            transition: all 0.3s ease;
+            margin-bottom: 0.8rem;
+            box-shadow: 0 4px 20px rgba(255, 107, 0, 0.3);
           }
           
           .open-chest-button:hover:not(:disabled) {
-            background: #ffe970;
             transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255, 107, 0, 0.4);
           }
           
           .open-chest-button:disabled {
@@ -501,47 +537,62 @@ export default function ChestCard({
           }
           
           .open-multi-button {
-            background: #9333ea;
-            color: white;
+            background: linear-gradient(135deg, #9333ea 0%, #a855f7 100%);
+            box-shadow: 0 4px 20px rgba(147, 51, 234, 0.3);
           }
           
           .open-multi-button:hover:not(:disabled) {
-            background: #a855f7;
+            box-shadow: 0 8px 30px rgba(147, 51, 234, 0.4);
           }
           
           /* Custom styling per chest type */
           .chest-card[data-type="bronze"] .chest-glow {
             background: radial-gradient(
               circle,
-              rgba(205, 127, 50, 0.5) 0%,
+              rgba(205, 127, 50, 0.4) 0%,
               rgba(205, 127, 50, 0.2) 50%,
               rgba(205, 127, 50, 0) 70%
             );
           }
           
+          .chest-card[data-type="bronze"]:hover {
+            border-color: rgba(205, 127, 50, 0.6);
+            box-shadow: 0 12px 40px rgba(205, 127, 50, 0.2);
+          }
+          
           .chest-card[data-type="silver"] .chest-glow {
             background: radial-gradient(
               circle,
-              rgba(192, 192, 192, 0.5) 0%,
+              rgba(192, 192, 192, 0.4) 0%,
               rgba(192, 192, 192, 0.2) 50%,
               rgba(192, 192, 192, 0) 70%
             );
           }
           
+          .chest-card[data-type="silver"]:hover {
+            border-color: rgba(192, 192, 192, 0.6);
+            box-shadow: 0 12px 40px rgba(192, 192, 192, 0.2);
+          }
+          
           .chest-card[data-type="gold"] .chest-glow {
             background: radial-gradient(
               circle,
-              rgba(255, 215, 0, 0.5) 0%,
+              rgba(255, 215, 0, 0.4) 0%,
               rgba(255, 215, 0, 0.2) 50%,
               rgba(255, 215, 0, 0) 70%
             );
           }
           
+          .chest-card[data-type="gold"]:hover {
+            border-color: rgba(255, 215, 0, 0.6);
+            box-shadow: 0 12px 40px rgba(255, 215, 0, 0.2);
+          }
+          
           /* Responsive adjustments */
           @media (max-width: 768px) {
             .chest-card {
-              padding: 1rem;
-              min-height: 450px;
+              padding: 1.2rem;
+              min-height: 400px;
             }
             
             .chest-title {
@@ -550,18 +601,46 @@ export default function ChestCard({
             }
             
             .chest-image-container {
-              width: 120px;
-              height: 120px;
+              width: 90px;
+              height: 90px;
               margin-bottom: 1rem;
             }
             
             .base-price {
-              font-size: 1rem;
+              font-size: 1.1rem;
             }
             
             .open-chest-button {
-              padding: 0.7rem 1rem;
+              padding: 0.8rem 1.2rem;
               font-size: 0.9rem;
+            }
+          }
+          
+          @media (max-width: 480px) {
+            .chest-card {
+              padding: 1rem;
+              min-height: 380px;
+            }
+            
+            .chest-title {
+              font-size: 1rem;
+            }
+            
+            .chest-image-container {
+              width: 80px;
+              height: 80px;
+            }
+            
+            .chest-features {
+              padding: 0.8rem;
+            }
+            
+            .chest-features li {
+              font-size: 0.8rem;
+            }
+            
+            .jackpot-section {
+              padding: 0.8rem;
             }
           }
         `}</style>
