@@ -309,26 +309,43 @@ const ChestProgress: React.FC = () => {
 
         <style jsx>{`
           .progress-container {
-            background: #000;
-            border: 2px solid #f8d74a;
-            padding: 1rem;
+            background: rgba(26, 26, 27, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 107, 0, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
             width: 100%;
-            max-width: 600px;
+            max-width: 800px;
             margin: 2rem auto;
-            image-rendering: pixelated;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
           }
 
           .progress-title {
-            font-family: 'Press Start 2P', monospace;
-            color: #f8d74a;
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 2rem;
+            text-align: center;
+            text-transform: none;
+            letter-spacing: normal;
           }
 
           .progress-item {
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 107, 0, 0.2);
+            transition: all 0.3s ease;
+          }
+
+          .progress-item:hover {
+            border-color: rgba(255, 107, 0, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(255, 107, 0, 0.1);
           }
 
           .progress-item:last-child {
@@ -336,58 +353,149 @@ const ChestProgress: React.FC = () => {
           }
 
           .progress-header {
-            font-family: 'Press Start 2P', monospace;
             color: #fff;
-            font-size: 0.875rem;
-            margin-bottom: 0.5rem;
-            text-transform: lowercase;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-transform: capitalize;
             display: flex;
             justify-content: space-between;
             align-items: center;
           }
 
           .chest-type {
-            color: #f8d74a;
+            color: #FF6B00;
+            font-weight: 700;
+            font-size: 1.1rem;
           }
 
           .opened-count {
-            color: #fff;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
           }
 
           .progress-bar-container {
-            background: #333;
-            height: 20px;
-            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            height: 12px;
+            border-radius: 6px;
             overflow: hidden;
-            margin-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(255, 107, 0, 0.2);
           }
 
           .progress-bar-fill {
             height: 100%;
-            transition: width 0.3s ease;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+          }
+
+          .progress-bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: shimmer 2s infinite;
+          }
+
+          @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
           }
 
           .progress-bar-fill.bronze {
-            background: linear-gradient(to right, #cd7f32, #b87333);
+            background: linear-gradient(135deg, #cd7f32 0%, #b87333 100%);
           }
 
           .progress-bar-fill.silver {
-            background: linear-gradient(to right, #c0c0c0, #a9a9a9);
+            background: linear-gradient(135deg, #c0c0c0 0%, #a9a9a9 100%);
           }
 
           .progress-bar-fill.gold {
-            background: linear-gradient(to right, #ffd700, #daa520);
+            background: linear-gradient(135deg, #ffd700 0%, #daa520 100%);
           }
 
           .progress-status {
-            font-family: 'Press Start 2P', monospace;
-            color: #fff;
-            font-size: 0.75rem;
-            text-align: right;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-align: center;
           }
 
           .free-chest-available {
-            color: #4caf50;
+            color: #22c55e;
+            font-weight: 700;
+            font-size: 1rem;
+            text-align: center;
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            margin-top: 0.5rem;
+            animation: pulse-glow 2s infinite;
+          }
+
+          @keyframes pulse-glow {
+            0%, 100% { 
+              box-shadow: 0 0 5px rgba(34, 197, 94, 0.3);
+              transform: scale(1);
+            }
+            50% { 
+              box-shadow: 0 0 20px rgba(34, 197, 94, 0.5);
+              transform: scale(1.02);
+            }
+          }
+
+          @media (max-width: 768px) {
+            .progress-container {
+              padding: 1.5rem;
+              margin: 1.5rem auto;
+            }
+
+            .progress-title {
+              font-size: 1.5rem;
+              margin-bottom: 1.5rem;
+            }
+
+            .progress-item {
+              padding: 1.2rem;
+              margin-bottom: 1.2rem;
+            }
+
+            .progress-header {
+              font-size: 0.9rem;
+            }
+
+            .chest-type {
+              font-size: 1rem;
+            }
+
+            .opened-count {
+              font-size: 0.8rem;
+            }
+          }
+
+          @media (max-width: 480px) {
+            .progress-container {
+              padding: 1rem;
+              margin: 1rem auto;
+            }
+
+            .progress-title {
+              font-size: 1.3rem;
+            }
+
+            .progress-item {
+              padding: 1rem;
+            }
+
+            .progress-header {
+              flex-direction: column;
+              gap: 0.5rem;
+              text-align: center;
+            }
           }
         `}</style>
       </div>

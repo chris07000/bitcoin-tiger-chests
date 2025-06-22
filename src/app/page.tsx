@@ -9,7 +9,6 @@ import JackpotBanner from '../components/jackpot/JackpotBanner'
 import BitcoinPrice from '../components/bitcoin/BitcoinPrice'
 import { ChestProgressProvider } from '../context/ChestProgressContext'
 import ChestProgress from '../components/chests/ChestProgress'
-import RaffleWinners from '../components/raffle/RaffleWinners'
 import { WalletProvider, useWallet } from '../context/WalletContext'
 
 function HomeContent() {
@@ -230,8 +229,6 @@ function HomeContent() {
         <div className="progress-section">
           <ChestProgress />
         </div>
-
-        <RaffleWinners />
       </div>
 
       <footer className="pixel-footer">
