@@ -228,7 +228,7 @@ export default function JackpotPage() {
         body {
           margin: 0;
           padding: 0;
-          background: #0d1320;
+          background: linear-gradient(135deg, #0A0A0B 0%, #1A1A1B 100%);
         }
         
         .page-content {
@@ -240,7 +240,7 @@ export default function JackpotPage() {
           width: 100%;
           padding: 5rem 0 2rem 0;
           color: #fff;
-          background: #0d1320;
+          background: linear-gradient(135deg, #0A0A0B 0%, #1A1A1B 100%);
         }
 
         .ordinal-left, .ordinal-right {
@@ -248,12 +248,14 @@ export default function JackpotPage() {
         }
 
         .title {
-          font-size: 1.6rem;
-          font-family: 'Press Start 2P', monospace;
-          color: #ffd700;
-          margin-bottom: 1.5rem;
+          font-size: 2.5rem;
+          font-weight: 700;
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          margin-bottom: 2rem;
           text-align: center;
-          text-shadow: 2px 2px #000;
         }
         
         @media (min-width: 769px) {
@@ -265,20 +267,24 @@ export default function JackpotPage() {
         .balance-container {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
-          margin-bottom: 1.5rem;
+          gap: 1rem;
+          margin-bottom: 2rem;
         }
         
         .balance-display {
-          font-size: 1.1rem;
-          color: #ffd700;
-          margin: 0 0 1.5rem 0;
-          padding: 0.5rem 1rem;
-          background: rgba(0, 0, 0, 0.3);
-          border: 2px solid #ffd700;
-          display: inline-block;
-          border-radius: 4px;
+          font-size: 1.2rem;
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          margin: 0;
+          padding: 1rem 1.5rem;
+          background: rgba(26, 26, 27, 0.6);
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(255, 107, 0, 0.3);
+          border-radius: 12px;
           text-align: center;
+          font-weight: 600;
         }
 
         .coin {
@@ -305,7 +311,6 @@ export default function JackpotPage() {
           align-items: center;
           justify-content: center;
           font-size: 2.5rem;
-          font-family: 'Press Start 2P', monospace;
           backface-visibility: hidden;
           -webkit-backface-visibility: hidden;
           overflow: hidden;
@@ -319,20 +324,22 @@ export default function JackpotPage() {
         }
 
         .heads {
-          background: #FFB800;
-          border: 6px solid #000;
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+          border: 6px solid rgba(255, 107, 0, 0.4);
           box-shadow: 
-            inset -4px -4px 0 #995C00,
-            inset 4px 4px 0 #FFD700;
+            inset -4px -4px 0 rgba(0, 0, 0, 0.3),
+            inset 4px 4px 0 rgba(255, 255, 255, 0.3),
+            0 8px 32px rgba(255, 107, 0, 0.3);
           transform: rotateY(0deg);
         }
 
         .tails {
-          background: #FFB800;
-          border: 6px solid #000;
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+          border: 6px solid rgba(255, 107, 0, 0.4);
           box-shadow: 
-            inset -4px -4px 0 #995C00,
-            inset 4px 4px 0 #FFD700;
+            inset -4px -4px 0 rgba(0, 0, 0, 0.3),
+            inset 4px 4px 0 rgba(255, 255, 255, 0.3),
+            0 8px 32px rgba(255, 107, 0, 0.3);
           transform: rotateY(180deg);
         }
 
@@ -361,26 +368,29 @@ export default function JackpotPage() {
         }
 
         .side-button {
-          padding: 0.7rem 1.5rem;
+          padding: 1rem 2rem;
           font-size: 1.1rem;
-          font-family: 'Press Start 2P', monospace;
-          background: #1a2942;
-          border: 3px solid #ffd700;
-          color: #ffd700;
+          font-weight: 600;
+          background: rgba(26, 26, 27, 0.6);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 107, 0, 0.3);
+          border-radius: 12px;
+          color: white;
           cursor: pointer;
-          transition: all 0.2s;
-          text-shadow: 1px 1px #000;
+          transition: all 0.3s ease;
         }
 
         .side-button:hover:not(:disabled) {
           transform: translateY(-2px);
-          background: #263c5f;
+          border-color: rgba(255, 107, 0, 0.6);
+          box-shadow: 0 8px 25px rgba(255, 107, 0, 0.2);
         }
 
         .side-button.selected {
-          background: #ffd700;
-          color: #000;
-          text-shadow: none;
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+          border-color: #FF6B00;
+          color: white;
+          box-shadow: 0 8px 25px rgba(255, 107, 0, 0.3);
         }
 
         .side-button:disabled {
@@ -391,33 +401,36 @@ export default function JackpotPage() {
         .bet-input {
           margin: 0.75rem 0 1.5rem;
           display: flex;
-          gap: 0.5rem;
+          gap: 0.8rem;
           justify-content: center;
           flex-wrap: wrap;
           max-width: 500px;
         }
 
         .bet-amount-button {
-          padding: 0.5rem 0.8rem;
+          padding: 0.8rem 1.2rem;
           font-size: 0.9rem;
-          font-family: 'Press Start 2P', monospace;
-          background: #1a2942;
-          border: 2px solid #ffd700;
-          color: #ffd700;
+          font-weight: 600;
+          background: rgba(26, 26, 27, 0.6);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 107, 0, 0.3);
+          border-radius: 8px;
+          color: white;
           cursor: pointer;
-          transition: all 0.2s;
-          text-shadow: 1px 1px #000;
+          transition: all 0.3s ease;
         }
 
         .bet-amount-button:hover:not(:disabled) {
           transform: translateY(-2px);
-          background: #263c5f;
+          border-color: rgba(255, 107, 0, 0.6);
+          box-shadow: 0 4px 15px rgba(255, 107, 0, 0.2);
         }
 
         .bet-amount-button.selected {
-          background: #ffd700;
-          color: #000;
-          text-shadow: none;
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+          border-color: #FF6B00;
+          color: white;
+          box-shadow: 0 4px 15px rgba(255, 107, 0, 0.3);
         }
 
         .bet-amount-button:disabled {
@@ -426,26 +439,28 @@ export default function JackpotPage() {
         }
 
         .flip-button {
-          padding: 0.9rem 2.5rem;
+          padding: 1.2rem 3rem;
           font-size: 1.3rem;
-          font-family: 'Press Start 2P', monospace;
-          background: #ffd700;
+          font-weight: 700;
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
           border: none;
-          color: #000;
+          border-radius: 16px;
+          color: white;
           cursor: pointer;
-          transition: all 0.2s;
+          transition: all 0.3s ease;
           margin: 0.5rem 0 2rem;
           display: block;
           min-width: 300px;
+          box-shadow: 0 8px 32px rgba(255, 107, 0, 0.3);
         }
 
         .flip-button:hover:not(:disabled) {
-          transform: translateY(-2px);
-          background: #ffe970;
+          transform: translateY(-3px);
+          box-shadow: 0 12px 40px rgba(255, 107, 0, 0.4);
         }
 
         .flip-button:active:not(:disabled) {
-          transform: translateY(2px);
+          transform: translateY(-1px);
         }
 
         .flip-button:disabled {
@@ -455,66 +470,83 @@ export default function JackpotPage() {
 
         .message {
           font-size: 1rem;
-          font-family: 'Press Start 2P', monospace;
-          padding: 0.5rem 1rem;
+          font-weight: 600;
+          padding: 1rem 1.5rem;
           margin: 0.5rem auto;
           display: inline-block;
-          text-shadow: 1px 1px #000;
+          border-radius: 12px;
+          backdrop-filter: blur(10px);
         }
 
         .message.won {
-          color: #4afc4a;
+          background: rgba(34, 197, 94, 0.2);
+          border: 1px solid rgba(34, 197, 94, 0.5);
+          color: #22c55e;
         }
 
         .message.lost {
-          color: #fc4a4a;
+          background: rgba(239, 68, 68, 0.2);
+          border: 1px solid rgba(239, 68, 68, 0.5);
+          color: #ef4444;
         }
 
         .live-wins {
           width: 100%;
           max-width: 800px;
           margin: 1rem 0;
-          padding: 1rem 0;
-          background: rgba(0, 0, 0, 0.3);
+          padding: 2rem;
+          background: rgba(26, 26, 27, 0.6);
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(255, 107, 0, 0.2);
+          border-radius: 16px;
         }
 
         .live-wins h2 {
-          font-size: 1.2rem;
-          color: #ffd700;
-          margin-bottom: 1rem;
+          font-size: 1.5rem;
+          font-weight: 700;
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          margin-bottom: 1.5rem;
           text-align: center;
-          font-family: 'Press Start 2P', monospace;
-          text-shadow: 1px 1px #000;
         }
 
         .win-list {
           max-width: 800px;
           margin: 0 auto;
-          padding: 0 1rem;
+          padding: 0;
         }
 
         .win-item {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding: 0.7rem;
-          border-bottom: 1px solid #263c5f;
-          font-size: 0.8rem;
+          padding: 1rem;
+          border-bottom: 1px solid rgba(255, 107, 0, 0.1);
+          font-size: 0.9rem;
           background: rgba(0, 0, 0, 0.2);
+          border-radius: 8px;
+          margin-bottom: 0.5rem;
         }
 
         .win-item:last-child {
           border-bottom: none;
+          margin-bottom: 0;
         }
 
         .win-info {
           display: flex;
           align-items: center;
-          gap: 0.7rem;
+          gap: 1rem;
         }
 
         .win-address {
-          color: #ffd700;
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          font-weight: 600;
           text-overflow: ellipsis;
           overflow: hidden;
           white-space: nowrap;
@@ -523,42 +555,42 @@ export default function JackpotPage() {
 
         .win-side {
           color: #fff;
-          font-weight: bold;
+          font-weight: 600;
           text-transform: uppercase;
-          font-size: 0.7rem;
-          padding: 0.2rem 0.4rem;
-          border-radius: 4px;
-          background: rgba(255, 255, 255, 0.1);
+          font-size: 0.8rem;
+          padding: 0.3rem 0.6rem;
+          border-radius: 6px;
+          background: rgba(255, 107, 0, 0.2);
+          border: 1px solid rgba(255, 107, 0, 0.3);
         }
 
         .win-amount {
-          color: #44ff44;
-          font-weight: bold;
-          font-size: 0.9rem;
+          color: #22c55e;
+          font-weight: 700;
+          font-size: 1rem;
         }
 
         .win-time {
-          color: #aaa;
-          font-size: 0.7rem;
+          color: rgba(255, 255, 255, 0.6);
+          font-size: 0.8rem;
         }
 
         .win-icon {
-          margin-right: 0.2rem;
-          color: #ffd700;
+          margin-right: 0.3rem;
+          color: #FFB800;
         }
 
         .footer {
           text-align: center;
           margin-top: 2rem;
-          padding: 0.75rem;
-          color: #aaa;
-          font-family: 'Press Start 2P', monospace;
-          font-size: 0.7rem;
-          line-height: 1.5;
+          padding: 1.5rem;
+          color: rgba(255, 255, 255, 0.6);
+          font-size: 0.9rem;
+          line-height: 1.6;
         }
 
         .footer p {
-          margin: 0.4rem 0;
+          margin: 0.5rem 0;
         }
 
         @media (min-width: 769px) {
@@ -574,26 +606,26 @@ export default function JackpotPage() {
 
         @media (max-width: 768px) {
           .title {
-            font-size: 1.3rem;
+            font-size: 1.8rem;
             margin-top: 4rem;
           }
           
           .balance-display {
-            font-size: 0.9rem;
+            font-size: 1rem;
           }
           
           .side-button {
-            padding: 0.6rem 1.2rem;
-            font-size: 0.9rem;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
           }
           
           .bet-amount-button {
-            padding: 0.4rem 0.6rem;
+            padding: 0.6rem 1rem;
             font-size: 0.8rem;
           }
           
           .flip-button {
-            padding: 0.7rem 1.8rem;
+            padding: 1rem 2rem;
             font-size: 1.1rem;
             min-width: 250px;
           }
@@ -601,7 +633,7 @@ export default function JackpotPage() {
 
         @media (max-width: 480px) {
           .title {
-            font-size: 1rem;
+            font-size: 1.4rem;
             margin-top: 2rem;
           }
           
@@ -611,45 +643,46 @@ export default function JackpotPage() {
           }
           
           .balance-display {
-            font-size: 0.8rem;
-            padding: 0.4rem 0.8rem;
+            font-size: 0.9rem;
+            padding: 0.8rem 1.2rem;
           }
           
           .side-selection {
-            gap: 0.7rem;
+            gap: 1rem;
           }
           
           .side-button {
-            padding: 0.5rem 1rem;
-            font-size: 0.8rem;
+            padding: 0.7rem 1.2rem;
+            font-size: 0.9rem;
           }
           
           .bet-input {
-            gap: 0.3rem;
+            gap: 0.5rem;
           }
           
           .bet-amount-button {
-            padding: 0.3rem 0.5rem;
+            padding: 0.5rem 0.8rem;
             font-size: 0.7rem;
           }
           
           .flip-button {
-            padding: 0.6rem 1.5rem;
-            font-size: 0.9rem;
+            padding: 0.8rem 1.8rem;
+            font-size: 1rem;
             min-width: 200px;
           }
           
           .message {
-            font-size: 0.7rem;
+            font-size: 0.8rem;
+            padding: 0.8rem 1.2rem;
           }
           
           .live-wins h2 {
-            font-size: 0.9rem;
+            font-size: 1.2rem;
           }
           
           .win-item {
-            padding: 0.5rem;
-            font-size: 0.7rem;
+            padding: 0.8rem;
+            font-size: 0.8rem;
           }
         }
 
@@ -686,7 +719,6 @@ export default function JackpotPage() {
         
         .coin-text {
           font-size: 7rem;
-          font-family: 'Press Start 2P', monospace;
           color: #000;
           font-weight: bold;
           position: relative;
@@ -720,14 +752,15 @@ export default function JackpotPage() {
         }
         
         .rank-up-container {
-          background: rgba(26, 41, 66, 0.95);
-          border: 3px solid #ffd700;
+          background: rgba(26, 26, 27, 0.95);
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(255, 107, 0, 0.5);
+          border-radius: 16px;
           padding: 2rem;
-          border-radius: 10px;
           text-align: center;
           max-width: 90%;
           width: 400px;
-          box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+          box-shadow: 0 8px 32px rgba(255, 107, 0, 0.3);
           position: relative;
           animation: scale-in 0.5s;
         }
@@ -738,67 +771,77 @@ export default function JackpotPage() {
         }
         
         .rank-up-title {
-          font-family: 'Press Start 2P', monospace;
-          color: #ffd700;
-          margin-bottom: 1rem;
           font-size: 1.4rem;
-          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+          font-weight: 700;
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          margin-bottom: 1rem;
         }
         
         .rank-level {
-          font-family: 'Press Start 2P', monospace;
-          background: linear-gradient(to right, #ffd700, #ffaa00);
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
+          background-clip: text;
           font-size: 2rem;
+          font-weight: 700;
           margin: 1rem 0;
-          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
         
         .rank-up-message {
           margin-bottom: 1.5rem;
-          line-height: 1.5;
-          color: #fff;
+          line-height: 1.6;
+          color: rgba(255, 255, 255, 0.8);
         }
         
         .rank-up-button {
-          padding: 0.8rem 1.5rem;
-          background: #ffd700;
+          padding: 1rem 2rem;
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
           border: none;
-          font-family: 'Press Start 2P', monospace;
-          color: #000;
+          border-radius: 12px;
+          color: white;
           cursor: pointer;
           font-size: 0.9rem;
-          transition: all 0.2s;
+          font-weight: 600;
+          transition: all 0.3s ease;
         }
         
         .rank-up-button:hover {
-          transform: translateY(-3px);
-          box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+          transform: translateY(-2px);
+          box-shadow: 0 8px 25px rgba(255, 107, 0, 0.3);
         }
         
         .rank-details-link {
           display: block;
           margin-top: 1rem;
-          color: #4afc4a;
+          color: #22c55e;
           text-decoration: underline;
           cursor: pointer;
+          transition: color 0.2s;
+        }
+
+        .rank-details-link:hover {
+          color: #16a34a;
         }
 
         .refresh-button {
-          background: #1a2942;
-          border: 2px solid #ffd700;
-          color: #ffd700;
-          border-radius: 4px;
-          padding: 0.5rem;
+          background: rgba(26, 26, 27, 0.6);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 107, 0, 0.3);
+          border-radius: 8px;
+          color: white;
+          padding: 0.8rem;
           cursor: pointer;
-          transition: all 0.2s;
+          transition: all 0.3s ease;
           font-size: 0.9rem;
         }
         
         .refresh-button:hover {
-          background: #263c5f;
+          border-color: rgba(255, 107, 0, 0.6);
           transform: translateY(-2px);
+          box-shadow: 0 4px 15px rgba(255, 107, 0, 0.2);
         }
       `}</style>
 
