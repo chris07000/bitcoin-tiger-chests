@@ -86,7 +86,7 @@ export default function BitcoinPrice() {
       // Alleen updaten als het voor onze huidige wallet is
       if (event.detail.wallet === walletAddress) {
         setBalance(event.detail.balance);
-        console.log('BitcoinPrice: Balance updated from event to', event.detail.balance);
+        // console.log('BitcoinPrice: Balance updated from event to', event.detail.balance);
       }
     };
     

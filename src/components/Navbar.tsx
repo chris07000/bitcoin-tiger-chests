@@ -114,7 +114,7 @@ export default function Navbar() {
       console.log('Navbar: Received balance update event');
       
       if (event.detail.wallet === walletAddress) {
-        console.log(`Balance updated from event to ${event.detail.balance}`);
+        // console.log(`Balance updated from event to ${event.detail.balance}`);
         setBalance(event.detail.balance.toLocaleString());
         
         // Update local storage to sync across components

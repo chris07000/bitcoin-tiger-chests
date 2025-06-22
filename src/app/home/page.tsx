@@ -660,31 +660,11 @@ function HomeContent() {
         }
         
         .shine-effect {
-          position: absolute;
-          top: 0;
-          left: -100%;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-          animation: shine 3s infinite;
-        }
-        
-        @keyframes shine {
-          0% { left: -100%; }
-          100% { left: 100%; }
+          display: none !important;
         }
         
         .pulse-overlay {
-          position: absolute;
-          inset: 0;
-          background: rgba(255, 107, 0, 0.1);
-          opacity: 0;
-          animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-          0%, 100% { opacity: 0; }
-          50% { opacity: 0.3; }
+          display: none !important;
         }
         
         .game-info {

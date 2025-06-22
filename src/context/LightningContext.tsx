@@ -286,8 +286,6 @@ export const LightningProvider = ({ children }: { children: ReactNode }) => {
       });
       window.dispatchEvent(event);
     }
-    
-    console.log(`Balance updated to ${newBalance} for wallet ${walletAddress}`);
   };
 
   const setBalance = (newBalance: number) => {

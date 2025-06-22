@@ -619,7 +619,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || window.location.origin;
         // Optioneel: stuur een notificatie naar de server dat de balans is bijgewerkt
         // Dit is niet strikt noodzakelijk omdat de chest API dit normaal al doet
-        console.log('Balance updated in DB via chest API:', newBalance);
+        // console.log('Balance updated in DB via chest API:', newBalance);
       } catch (error) {
         console.error('Error confirming balance update:', error);
       }
