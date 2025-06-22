@@ -501,10 +501,7 @@ export default function JackpotPage() {
         .live-wins h2 {
           font-size: 1.5rem;
           font-weight: 700;
-          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
+          color: #FF6B00;
           margin-bottom: 1.5rem;
           text-align: center;
         }
@@ -539,10 +536,7 @@ export default function JackpotPage() {
         }
 
         .win-address {
-          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
+          color: #FF6B00;
           font-weight: 600;
           text-overflow: ellipsis;
           overflow: hidden;
