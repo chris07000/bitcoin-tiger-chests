@@ -634,14 +634,16 @@ function HomeContent() {
         .game-image {
           height: 200px;
           margin-bottom: 1rem;
-          border-radius: 12px;
-          overflow: hidden;
+          border-radius: 0;
+          overflow: visible;
           position: relative;
-          background: transparent;
+          background: none;
           display: flex;
           align-items: center;
           justify-content: center;
           flex-shrink: 0;
+          border: none;
+          box-shadow: none;
         }
         
         .chest-img,
@@ -650,7 +652,10 @@ function HomeContent() {
           width: 100%;
           height: 100%;
           object-fit: contain;
-          border-radius: 12px;
+          border-radius: 0;
+          background: none;
+          box-shadow: none;
+          border: none;
         }
         
         .shine-effect {
