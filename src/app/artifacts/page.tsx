@@ -17,21 +17,18 @@ export default function ArtifactsPage() {
       <div className="stats-section">
         <div className="stat-card">
           <div className="stat-item">
-            <div className="stat-icon">🏆</div>
             <div className="stat-content">
               <div className="stat-label">Total Artifacts</div>
               <div className="stat-value">50</div>
             </div>
           </div>
           <div className="stat-item">
-            <div className="stat-icon">⚡</div>
             <div className="stat-content">
               <div className="stat-label">Active Holders</div>
               <div className="stat-value">35+</div>
             </div>
           </div>
           <div className="stat-item">
-            <div className="stat-icon">🎯</div>
             <div className="stat-content">
               <div className="stat-label">Profit Share Rate</div>
               <div className="stat-value">80%</div>
@@ -67,15 +64,12 @@ export default function ArtifactsPage() {
               </div>
               <div className="artifact-benefits">
                 <div className="benefit-item">
-                  <span className="benefit-icon">⚡</span>
                   <span className="benefit-text">5.0% Profit Share</span>
                 </div>
                 <div className="benefit-item">
-                  <span className="benefit-icon">🔥</span>
                   <span className="benefit-text">Only 5 Exist</span>
                 </div>
                 <div className="benefit-item">
-                  <span className="benefit-icon">👑</span>
                   <span className="benefit-text">Supreme Power</span>
                 </div>
               </div>
@@ -105,15 +99,12 @@ export default function ArtifactsPage() {
               </div>
               <div className="artifact-benefits">
                 <div className="benefit-item">
-                  <span className="benefit-icon">⚡</span>
                   <span className="benefit-text">2.5% Profit Share</span>
                 </div>
                 <div className="benefit-item">
-                  <span className="benefit-icon">🔥</span>
                   <span className="benefit-text">Only 15 Exist</span>
                 </div>
                 <div className="benefit-item">
-                  <span className="benefit-icon">🌙</span>
                   <span className="benefit-text">Medium Power</span>
                 </div>
               </div>
@@ -143,15 +134,12 @@ export default function ArtifactsPage() {
               </div>
               <div className="artifact-benefits">
                 <div className="benefit-item">
-                  <span className="benefit-icon">⚡</span>
                   <span className="benefit-text">1.26% Profit Share</span>
                 </div>
                 <div className="benefit-item">
-                  <span className="benefit-icon">🔥</span>
                   <span className="benefit-text">Only 30 Exist</span>
                 </div>
                 <div className="benefit-item">
-                  <span className="benefit-icon">🌙</span>
                   <span className="benefit-text">Basic Power</span>
                 </div>
               </div>
@@ -174,11 +162,9 @@ export default function ArtifactsPage() {
             <p className="info-description">When the platform generates revenue (e.g. 20M sats daily):</p>
             <div className="distribution-items">
               <div className="distribution-item">
-                <span className="distribution-icon">💰</span>
                 <span className="distribution-text">20% flows to development fund (4M sats)</span>
               </div>
               <div className="distribution-item">
-                <span className="distribution-icon">🎁</span>
                 <span className="distribution-text">80% distributed to artifact holders (16M sats)</span>
               </div>
             </div>
@@ -215,10 +201,10 @@ export default function ArtifactsPage() {
                 <h3 className="method-title">Past Opportunities</h3>
                 <p className="method-description">Artifacts were previously distributed through:</p>
                 <div className="method-list">
-                  <div className="method-item">🌟 Exclusive Airdrops</div>
-                  <div className="method-item">⚔️ Special Achievements</div>
-                  <div className="method-item">🎲 Limited Lotteries</div>
-                  <div className="method-item">🏛️ Auction Events</div>
+                  <div className="method-item">Exclusive Airdrops</div>
+                  <div className="method-item">Special Achievements</div>
+                  <div className="method-item">Limited Lotteries</div>
+                  <div className="method-item">Auction Events</div>
                 </div>
               </div>
               <div className="method-card">
@@ -318,20 +304,16 @@ export default function ArtifactsPage() {
         .stat-item {
           display: flex;
           align-items: center;
-          gap: 1rem;
           flex: 1;
           min-width: 0;
-        }
-        
-        .stat-icon {
-          font-size: 1.75rem;
-          filter: drop-shadow(0 0 8px rgba(255, 107, 0, 0.3));
+          justify-content: center;
         }
         
         .stat-content {
           display: flex;
           flex-direction: column;
           flex: 1;
+          text-align: center;
         }
         
         .stat-label {
@@ -477,23 +459,27 @@ export default function ArtifactsPage() {
         .benefit-item {
           display: flex;
           align-items: center;
-          gap: 0.75rem;
           padding: 0.75rem 0;
           border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+          position: relative;
+        }
+
+        .benefit-item::before {
+          content: '•';
+          color: #FF6B00;
+          font-weight: bold;
+          font-size: 1.2rem;
+          margin-right: 0.75rem;
+          line-height: 1;
         }
 
         .benefit-item:last-child {
           border-bottom: none;
         }
 
-        .benefit-icon {
-          font-size: 1.1rem;
-          filter: drop-shadow(0 0 8px rgba(255, 107, 0, 0.3));
-        }
-
         .benefit-text {
           font-size: 0.9rem;
-          color: #94A3B8;
+          color: #FFFFFF;
           font-weight: 500;
         }
 
@@ -573,17 +559,21 @@ export default function ArtifactsPage() {
         .distribution-item {
           display: flex;
           align-items: center;
-          gap: 1rem;
           padding: 1rem;
           background: rgba(255, 255, 255, 0.02);
           border-radius: 8px;
           margin-bottom: 0.75rem;
           border: 1px solid rgba(255, 107, 0, 0.1);
+          position: relative;
         }
 
-        .distribution-icon {
+        .distribution-item::before {
+          content: '•';
+          color: #FF6B00;
+          font-weight: bold;
           font-size: 1.2rem;
-          filter: drop-shadow(0 0 8px rgba(255, 107, 0, 0.3));
+          margin-right: 1rem;
+          line-height: 1;
         }
 
         .distribution-text {
@@ -696,6 +686,18 @@ export default function ArtifactsPage() {
           color: #FFFFFF;
           border-left: 3px solid rgba(255, 107, 0, 0.3);
           font-size: 0.9rem;
+          position: relative;
+          padding-left: 1.5rem;
+        }
+
+        .method-item::before {
+          content: '•';
+          color: #FF6B00;
+          font-weight: bold;
+          font-size: 1.1rem;
+          position: absolute;
+          left: 0.75rem;
+          line-height: 1;
         }
 
         .notification-signup {
@@ -727,6 +729,11 @@ export default function ArtifactsPage() {
             padding: 1rem;
           }
 
+          .stat-item {
+            justify-content: center;
+            text-align: center;
+          }
+
           .artifacts-grid {
             grid-template-columns: 1fr;
             gap: 1.5rem;
@@ -742,6 +749,35 @@ export default function ArtifactsPage() {
 
           .info-card, .acquisition-card {
             padding: 1.5rem;
+          }
+
+          .distribution-item {
+            padding: 0.75rem;
+            font-size: 0.9rem;
+          }
+
+          .distribution-item::before {
+            font-size: 1rem;
+            margin-right: 0.75rem;
+          }
+
+          .benefit-item {
+            padding: 0.5rem 0;
+          }
+
+          .benefit-text {
+            font-size: 0.85rem;
+          }
+
+          .method-item {
+            padding: 0.5rem;
+            padding-left: 1.25rem;
+            font-size: 0.85rem;
+          }
+
+          .method-item::before {
+            font-size: 1rem;
+            left: 0.5rem;
           }
         }
       `}</style>
