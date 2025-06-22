@@ -343,10 +343,7 @@ export default function ChestCard({
           .chest-title {
             font-size: 1.4rem;
             font-weight: 700;
-            background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: #FF6B00;
             margin-bottom: 1.2rem;
             text-align: center;
             display: flex;
@@ -417,10 +414,7 @@ export default function ChestCard({
           .base-price {
             font-size: 1.2rem;
             font-weight: 700;
-            background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: #FF6B00;
             margin-bottom: 0.3rem;
           }
           
@@ -491,10 +485,7 @@ export default function ChestCard({
           }
           
           .toggle-text {
-            background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: #FF6B00;
             font-size: 0.9rem;
             font-weight: 600;
           }

@@ -37,10 +37,7 @@ function HomeContent() {
         .pixel-title {
           font-size: 3rem;
           font-weight: 700;
-          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
+          color: #FF6B00;
           margin-bottom: 1.5rem;
         }
         
@@ -93,10 +90,7 @@ function HomeContent() {
         }
         
         .pixel-footer-text {
-          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
+          color: #FF6B00;
           font-size: 1.1rem;
           font-weight: 600;
           margin-bottom: 0.8rem;
