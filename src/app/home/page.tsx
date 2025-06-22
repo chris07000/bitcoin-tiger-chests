@@ -596,17 +596,17 @@ function HomeContent() {
         }
         
         .game-card {
-          background: rgba(26, 26, 27, 0.6);
-          backdrop-filter: blur(20px);
-          border: 1px solid rgba(255, 107, 0, 0.3);
-          border-radius: 16px;
+          background: transparent;
+          backdrop-filter: none;
+          border: none;
+          border-radius: 0;
           padding: 1.5rem;
           text-decoration: none;
           color: inherit;
           transition: all 0.3s ease;
           position: relative;
-          overflow: hidden;
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+          overflow: visible;
+          box-shadow: none;
           height: 400px;
           display: flex;
           flex-direction: column;
@@ -614,8 +614,8 @@ function HomeContent() {
         
         .game-card:hover {
           transform: translateY(-8px);
-          border-color: rgba(255, 107, 0, 0.6);
-          box-shadow: 0 12px 40px rgba(255, 107, 0, 0.2);
+          border-color: transparent;
+          box-shadow: none;
         }
         
         .hot-badge {
