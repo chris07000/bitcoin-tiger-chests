@@ -1065,21 +1065,22 @@ export default function Navbar() {
           
           .navbar-right {
             display: flex !important;
-            gap: 0.4rem;
+            gap: 0.25rem;
             margin-right: 3rem;
+            align-items: center;
           }
           
           .balance-display {
             display: flex !important;
-            font-size: 0.65rem;
-            padding: 0.25rem 0.4rem;
-            gap: 0.15rem;
+            font-size: 0.5rem;
+            padding: 0.2rem 0.3rem;
+            gap: 0.1rem;
             min-width: fit-content;
             white-space: nowrap;
           }
           
           .balance-text {
-            font-size: 0.65rem;
+            font-size: 0.5rem;
             font-weight: 700;
           }
           
@@ -1093,42 +1094,42 @@ export default function Navbar() {
           }
           
           .social-icons {
-            gap: 0.4rem;
+            gap: 0.3rem;
           }
           
           .social-icon {
-            width: 24px;
-            height: 24px;
+            width: 20px;
+            height: 20px;
           }
           
           .social-icon svg {
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
           }
           
           .wallet-connect-btn,
           .wallet-info {
-            font-size: 0.65rem;
-            padding: 0.25rem 0.35rem;
-            height: 28px;
+            font-size: 0.5rem;
+            padding: 0.2rem 0.25rem;
+            height: 24px;
           }
           
           .wallet-address {
-            font-size: 0.6rem;
+            font-size: 0.45rem;
           }
           
           .disconnect-btn {
-            padding: 0.1rem 0.25rem;
-            font-size: 0.65rem;
-            min-width: 18px;
-            height: 18px;
+            padding: 0.1rem 0.2rem;
+            font-size: 0.5rem;
+            min-width: 16px;
+            height: 16px;
           }
           
           .refresh-btn {
-            width: 13px !important;
-            height: 13px !important;
-            font-size: 0.55rem !important;
-            margin: 0 0 0 2px !important;
+            width: 10px !important;
+            height: 10px !important;
+            font-size: 0.45rem !important;
+            margin: 0 0 0 1px !important;
           }
         }
         
