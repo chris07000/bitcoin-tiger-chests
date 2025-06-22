@@ -273,10 +273,6 @@ export default function JackpotPage() {
         
         .balance-display {
           font-size: 1.2rem;
-          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
           margin: 0;
           padding: 1rem 1.5rem;
           background: rgba(26, 26, 27, 0.6);
@@ -285,6 +281,7 @@ export default function JackpotPage() {
           border-radius: 12px;
           text-align: center;
           font-weight: 600;
+          color: #ffffff;
         }
 
         .coin {
