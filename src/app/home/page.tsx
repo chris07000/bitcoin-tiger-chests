@@ -596,26 +596,29 @@ function HomeContent() {
         }
         
         .game-card {
-          background: transparent;
-          backdrop-filter: none;
-          border: none;
-          border-radius: 0;
+          background: transparent !important;
+          backdrop-filter: none !important;
+          border: none !important;
+          border-radius: 0 !important;
           padding: 1.5rem;
           text-decoration: none;
           color: inherit;
           transition: all 0.3s ease;
           position: relative;
           overflow: visible;
-          box-shadow: none;
+          box-shadow: none !important;
           height: 400px;
           display: flex;
           flex-direction: column;
+          align-items: center;
+          text-align: center;
         }
         
         .game-card:hover {
           transform: translateY(-8px);
-          border-color: transparent;
-          box-shadow: none;
+          border-color: transparent !important;
+          box-shadow: none !important;
+          background: transparent !important;
         }
         
         .hot-badge {
@@ -637,28 +640,31 @@ function HomeContent() {
           border-radius: 0;
           overflow: visible;
           position: relative;
-          background: none;
+          background: none !important;
           display: flex;
           align-items: center;
           justify-content: center;
           flex-shrink: 0;
-          border: none;
-          box-shadow: none;
+          border: none !important;
+          box-shadow: none !important;
+          width: 100%;
         }
         
         .chest-img,
         .coinflip-img,
         .raffle-img {
-          max-width: 100%;
-          max-height: 100%;
+          max-width: 280px;
+          max-height: 280px;
           width: auto;
           height: auto;
           object-fit: contain;
-          object-position: center;
+          object-position: center center;
           border-radius: 0;
-          background: none;
-          box-shadow: none;
-          border: none;
+          background: none !important;
+          box-shadow: none !important;
+          border: none !important;
+          display: block;
+          margin: 0 auto;
         }
         
         .shine-effect {
