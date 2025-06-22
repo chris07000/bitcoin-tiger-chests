@@ -136,16 +136,14 @@ function HomeContent() {
             <div className="game-image chest-image">
               <div className="shine-effect"></div>
               <div className="pulse-overlay"></div>
-              <div className="chest-container">
-                <Image 
-                  src="/chests.png" 
-                  alt="Mystery Chests" 
-                  width={240}
-                  height={240}
-                  className="chest-img"
-                  priority
-                />
-              </div>
+              <Image 
+                src="/chests.png" 
+                alt="Mystery Chests" 
+                width={240}
+                height={240}
+                className="chest-img"
+                priority
+              />
             </div>
             <div className="game-info">
               <h3 className="pixel-text">Mystery Chests</h3>
@@ -158,15 +156,13 @@ function HomeContent() {
             <div className="game-image coinflip-image">
               <div className="shine-effect"></div>
               <div className="pulse-overlay"></div>
-              <div className="coinflip-container">
-                <Image 
-                  src="/tigercoin.gif" 
-                  alt="Coinflip" 
-                  width={150} 
-                  height={150}
-                  className="coinflip-img"
-                />
-              </div>
+              <Image 
+                src="/tigercoin.gif" 
+                alt="Coinflip" 
+                width={150} 
+                height={150}
+                className="coinflip-img"
+              />
             </div>
             <div className="game-info">
               <h3 className="pixel-text">Coinflip</h3>
@@ -179,16 +175,14 @@ function HomeContent() {
             <div className="game-image raffle-image">
               <div className="shine-effect"></div>
               <div className="pulse-overlay"></div>
-              <div className="raffle-container">
-                <Image 
-                  src="/raffle.png" 
-                  alt="Bitcoin Raffle" 
-                  width={230}
-                  height={230}
-                  className="raffle-img"
-                  priority
-                />
-              </div>
+              <Image 
+                src="/raffle.png" 
+                alt="Bitcoin Raffle" 
+                width={230}
+                height={230}
+                className="raffle-img"
+                priority
+              />
             </div>
             <div className="game-info">
               <h3 className="pixel-text">Bitcoin Raffle</h3>
@@ -650,22 +644,13 @@ function HomeContent() {
           flex-shrink: 0;
         }
         
-        .chest-container,
-        .coinflip-container,
-        .raffle-container {
-          width: 100%;
-          height: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        
         .chest-img,
         .coinflip-img,
         .raffle-img {
-          max-width: 90%;
-          max-height: 90%;
+          width: 100%;
+          height: 100%;
           object-fit: contain;
+          border-radius: 12px;
         }
         
         .shine-effect {
