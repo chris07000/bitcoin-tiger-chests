@@ -29,7 +29,7 @@ function HomeContent() {
         }
         
         .pixel-header {
-          padding: 4rem 1rem;
+          padding: 2rem 1rem;
           text-align: center;
           background: rgba(26, 26, 27, 0.3);
           backdrop-filter: blur(20px);
@@ -37,15 +37,17 @@ function HomeContent() {
           margin-bottom: 2rem;
         }
         
-        .pixel-title {
-          font-size: 3rem;
-          font-weight: 700;
-          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
+        .banner-container {
+          display: flex;
+          justify-content: center;
           margin-bottom: 1.5rem;
-          text-shadow: 0 0 30px rgba(255, 107, 0, 0.3);
+        }
+        
+        .banner-image {
+          max-width: 100%;
+          height: auto;
+          border-radius: 12px;
+          box-shadow: 0 8px 32px rgba(255, 107, 0, 0.3);
         }
         
         .pixel-subtitle {
@@ -166,8 +168,8 @@ function HomeContent() {
         }
         
         @media (max-width: 768px) {
-          .pixel-title {
-            font-size: 2.2rem;
+          .banner-image {
+            max-width: 95%;
           }
           
           .pixel-subtitle {
@@ -184,7 +186,7 @@ function HomeContent() {
           }
           
           .pixel-header {
-            padding: 3rem 1rem;
+            padding: 2rem 1rem;
           }
           
           .pixel-main {
@@ -205,8 +207,8 @@ function HomeContent() {
         }
         
         @media (max-width: 480px) {
-          .pixel-title {
-            font-size: 1.8rem;
+          .banner-image {
+            max-width: 90%;
           }
           
           .pixel-subtitle {
@@ -218,7 +220,7 @@ function HomeContent() {
           }
           
           .pixel-header {
-            padding: 2rem 0.5rem;
+            padding: 1.5rem 0.5rem;
           }
           
           .pixel-grid {
@@ -288,7 +290,16 @@ function HomeContent() {
       `}</style>
       
       <header className="pixel-header">
-        <h1 className="pixel-title">Bitcoin Tiger Chests</h1>
+        <div className="banner-container">
+          <Image 
+            src="/tigerbanner.png" 
+            alt="Bitcoin Tiger Collective" 
+            width={600} 
+            height={200} 
+            className="banner-image"
+            priority
+          />
+        </div>
         <p className="pixel-subtitle">
           Unlock the power of blockchain rewards with our mystery chests and experience the future of Bitcoin gaming
         </p>
@@ -357,7 +368,7 @@ function HomeContent() {
           Powered by Bitcoin Lightning Network
         </p>
         <p className="pixel-footer-subtext">
-          Bitcoin Tiger Collective - The Future of Bitcoin Gaming
+          The Future of Bitcoin Gaming
         </p>
       </footer>
     </main>

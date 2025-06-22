@@ -55,20 +55,15 @@ function HomeContent() {
         </div>
         
         <div className={`hero-content ${isVisible ? 'visible' : ''}`}>
-          <div className="hero-logo-container">
-            <div className="sparkle-wrapper">
-              <div className="sparkle sparkle-1"></div>
-              <div className="sparkle sparkle-2"></div>
-              <div className="sparkle sparkle-3"></div>
-              <div className="sparkle sparkle-4"></div>
-              <Image 
-                src="/tiger-logo.png" 
-                alt="Bitcoin Tiger" 
-                width={150} 
-                height={150} 
-                className="hero-logo-image"
-              />
-            </div>
+          <div className="banner-container">
+            <Image 
+              src="/tigerbanner.png" 
+              alt="Bitcoin Tiger Collective" 
+              width={600} 
+              height={200} 
+              className="banner-image"
+              priority
+            />
           </div>
           
           <h1 className="hero-title pixel-text">
@@ -382,52 +377,27 @@ function HomeContent() {
           margin-bottom: 2rem;
         }
         
+        .banner-container {
+          display: flex;
+          justify-content: center;
+          margin-bottom: 2rem;
+        }
+        
+        .banner-image {
+          max-width: 100%;
+          height: auto;
+          border-radius: 12px;
+          box-shadow: 0 8px 32px rgba(255, 107, 0, 0.3);
+        }
+        
         .sparkle-wrapper {
           position: relative;
           display: inline-block;
         }
         
-        .sparkle {
-          position: absolute;
-          width: 4px;
-          height: 4px;
-          background: #FF6B00;
-          border-radius: 50%;
-          opacity: 0;
-          animation: sparkle 2s infinite;
-        }
-        
-        .sparkle-1 { top: 10px; left: 10px; animation-delay: 0s; }
-        .sparkle-2 { top: 10px; right: 10px; animation-delay: 0.5s; }
-        .sparkle-3 { bottom: 10px; left: 10px; animation-delay: 1s; }
-        .sparkle-4 { bottom: 10px; right: 10px; animation-delay: 1.5s; }
-        
-        @keyframes sparkle {
-          0%, 100% { opacity: 0; transform: scale(0); }
-          50% { opacity: 1; transform: scale(1); }
-        }
-        
         .hero-logo-image {
           border-radius: 16px;
           box-shadow: 0 8px 32px rgba(255, 107, 0, 0.3);
-        }
-        
-        .hero-title {
-          font-size: 2.5rem;
-          margin-bottom: 1rem;
-          font-weight: 700;
-        }
-        
-        .title-gradient {
-          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-        }
-        
-        .title-normal {
-          color: rgba(255, 255, 255, 0.9);
-          margin-left: 0.5rem;
         }
         
         .hero-subtitle {
@@ -945,8 +915,8 @@ function HomeContent() {
             margin: 1rem 0.5rem 2rem;
           }
           
-          .hero-title {
-            font-size: 2rem;
+          .banner-image {
+            max-width: 95%;
           }
           
           .hero-subtitle {
@@ -988,14 +958,8 @@ function HomeContent() {
         }
         
         @media (max-width: 480px) {
-          .hero-title {
-            font-size: 1.5rem;
-          }
-          
-          .title-normal {
-            display: block;
-            margin-left: 0;
-            margin-top: 0.5rem;
+          .banner-image {
+            max-width: 90%;
           }
           
           .cta-button.large {
