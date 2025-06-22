@@ -69,184 +69,374 @@ export default function TigersPage() {
   }
 
   return (
-    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-      <h1 style={{ textAlign: 'center', color: '#ffd700', marginBottom: '20px' }}>
-        Bitcoin Tigers Collection
-      </h1>
-      
-      {/* Series tabs */}
-      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px', flexWrap: 'wrap' }}>
-        {TIGER_SERIES.map(series => (
-          <button 
-            key={series.id}
-            onClick={() => {
-              setSelectedSeries(series.id);
-              setCurrentPage(0); // Reset to first page when changing series
-            }}
-            style={{
-              padding: '8px 16px',
-              margin: '4px',
-              background: selectedSeries === series.id ? '#ffd700' : '#333',
-              color: selectedSeries === series.id ? '#000' : '#fff',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
-          >
-            {series.name}
-          </button>
-        ))}
-      </div>
-      
-      {/* Page navigation */}
-      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
-        <button 
-          onClick={() => setCurrentPage(prev => Math.max(0, prev - 1))}
-          disabled={currentPage === 0}
-          style={{
-            padding: '8px 16px',
-            margin: '0 4px',
-            background: '#333',
-            color: currentPage === 0 ? '#666' : '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: currentPage === 0 ? 'default' : 'pointer'
-          }}
-        >
-          ← Previous
-        </button>
+    <>
+      <style jsx>{`
+        .tigers-container {
+          min-height: 100vh;
+          background: linear-gradient(135deg, #0A0A0B 0%, #1A1A1B 100%);
+          color: #fff;
+          padding: 4rem 1rem 2rem;
+        }
         
-        <div style={{ padding: '8px 16px', color: '#ccc' }}>
-          Page {currentPage + 1} of {totalPages}
-        </div>
+        .content-wrapper {
+          max-width: 1200px;
+          margin: 0 auto;
+        }
         
-        <button 
-          onClick={() => setCurrentPage(prev => Math.min(totalPages - 1, prev + 1))}
-          disabled={currentPage === totalPages - 1}
-          style={{
-            padding: '8px 16px',
-            margin: '0 4px',
-            background: '#333',
-            color: currentPage === totalPages - 1 ? '#666' : '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: currentPage === totalPages - 1 ? 'default' : 'pointer'
-          }}
-        >
-          Next →
-        </button>
-      </div>
+        .tigers-header {
+          text-align: center;
+          margin-bottom: 3rem;
+        }
+        
+        .tigers-title {
+          font-size: 2.5rem;
+          font-weight: 700;
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          margin-bottom: 1rem;
+        }
+        
+        .tigers-subtitle {
+          font-size: 1.1rem;
+          color: rgba(255, 255, 255, 0.7);
+          margin-bottom: 2rem;
+        }
+        
+        .series-tabs {
+          display: flex;
+          justify-content: center;
+          margin-bottom: 2rem;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+        }
+        
+        .series-tab {
+          padding: 0.8rem 1.5rem;
+          background: rgba(26, 26, 27, 0.6);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 107, 0, 0.3);
+          border-radius: 8px;
+          color: white;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          font-weight: 500;
+          font-size: 0.9rem;
+        }
+        
+        .series-tab:hover {
+          transform: translateY(-2px);
+          border-color: rgba(255, 107, 0, 0.6);
+          box-shadow: 0 4px 15px rgba(255, 107, 0, 0.2);
+        }
+        
+        .series-tab.active {
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+          border-color: #FF6B00;
+          color: white;
+          box-shadow: 0 4px 15px rgba(255, 107, 0, 0.3);
+        }
+        
+        .pagination {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          margin-bottom: 2rem;
+          gap: 1rem;
+        }
+        
+        .pagination-button {
+          padding: 0.8rem 1.2rem;
+          background: rgba(26, 26, 27, 0.6);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 107, 0, 0.3);
+          border-radius: 8px;
+          color: white;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          font-weight: 500;
+        }
+        
+        .pagination-button:hover:not(:disabled) {
+          transform: translateY(-2px);
+          border-color: rgba(255, 107, 0, 0.6);
+          box-shadow: 0 4px 15px rgba(255, 107, 0, 0.2);
+        }
+        
+        .pagination-button:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+          border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .pagination-info {
+          padding: 0.8rem 1.2rem;
+          background: rgba(26, 26, 27, 0.6);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 107, 0, 0.2);
+          border-radius: 8px;
+          color: rgba(255, 255, 255, 0.8);
+          font-weight: 500;
+        }
+        
+        .tigers-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+          gap: 1.5rem;
+          margin-bottom: 3rem;
+        }
+        
+        .tiger-card {
+          background: rgba(26, 26, 27, 0.6);
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(255, 107, 0, 0.3);
+          border-radius: 16px;
+          overflow: hidden;
+          transition: all 0.3s ease;
+          cursor: pointer;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+          position: relative;
+        }
+        
+        .tiger-card:hover {
+          transform: translateY(-8px);
+          border-color: rgba(255, 107, 0, 0.6);
+          box-shadow: 0 12px 40px rgba(255, 107, 0, 0.2);
+        }
+        
+        .series-badge {
+          position: absolute;
+          top: 12px;
+          right: 12px;
+          background: rgba(26, 26, 27, 0.9);
+          backdrop-filter: blur(10px);
+          padding: 0.4rem 0.8rem;
+          border-radius: 6px;
+          font-size: 0.75rem;
+          font-weight: 600;
+          color: #FF6B00;
+          z-index: 10;
+          border: 1px solid rgba(255, 107, 0, 0.3);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+        
+        .tiger-image-container {
+          width: 100%;
+          position: relative;
+          aspect-ratio: 1/1;
+          overflow: hidden;
+        }
+        
+        .tiger-content {
+          padding: 1.5rem;
+        }
+        
+        .tiger-info {
+          margin-bottom: 1rem;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+        }
+        
+        .tiger-name {
+          margin: 0;
+          color: #FF6B00;
+          font-size: 1.2rem;
+          font-weight: 700;
+          margin-bottom: 0.5rem;
+        }
+        
+        .tiger-type {
+          color: rgba(255, 255, 255, 0.8);
+          font-size: 0.9rem;
+          font-weight: 500;
+        }
+        
+        .tiger-link {
+          display: inline-block;
+          font-size: 0.8rem;
+          color: #FF6B00;
+          text-decoration: none;
+          padding: 0.5rem 1rem;
+          background: rgba(255, 107, 0, 0.1);
+          border: 1px solid rgba(255, 107, 0, 0.3);
+          border-radius: 6px;
+          transition: all 0.3s ease;
+          font-weight: 500;
+        }
+        
+        .tiger-link:hover {
+          background: rgba(255, 107, 0, 0.2);
+          border-color: rgba(255, 107, 0, 0.5);
+          transform: translateY(-1px);
+        }
+        
+        .pagination-footer {
+          text-align: center;
+          color: rgba(255, 255, 255, 0.6);
+          font-size: 0.9rem;
+          margin-top: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+          .tigers-container {
+            padding: 3rem 0.5rem 1.5rem;
+          }
+          
+          .tigers-title {
+            font-size: 2rem;
+          }
+          
+          .tigers-subtitle {
+            font-size: 1rem;
+          }
+          
+          .series-tabs {
+            gap: 0.25rem;
+          }
+          
+          .series-tab {
+            padding: 0.6rem 1rem;
+            font-size: 0.8rem;
+          }
+          
+          .tigers-grid {
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+          }
+          
+          .pagination {
+            flex-direction: column;
+            gap: 0.5rem;
+          }
+          
+          .pagination-button,
+          .pagination-info {
+            padding: 0.6rem 1rem;
+            font-size: 0.8rem;
+          }
+        }
+        
+        @media (max-width: 480px) {
+          .tigers-title {
+            font-size: 1.6rem;
+          }
+          
+          .tigers-grid {
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+          }
+          
+          .tiger-content {
+            padding: 1rem;
+          }
+          
+          .tiger-name {
+            font-size: 1rem;
+          }
+        }
+      `}</style>
       
-      {/* Tigers grid with actual images */}
-      <div style={{ 
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-        gap: '20px'
-      }}>
-        {currentTigers.map((tiger, index) => (
-          <div key={tiger.id} style={{ 
-            background: '#1a1a2e',
-            borderRadius: '8px',
-            overflow: 'hidden',
-            border: '1px solid #333',
-            transition: 'transform 0.3s ease',
-            cursor: 'pointer',
-            boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
-            position: 'relative'
-          }}
-          onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
-          onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-          >
-            {/* Series badge in top-right corner */}
-            <div style={{
-              position: 'absolute',
-              top: '8px',
-              right: '8px',
-              background: 'rgba(26, 26, 46, 0.85)',
-              padding: '4px 8px',
-              borderRadius: '4px',
-              fontSize: '10px',
-              fontWeight: '600',
-              color: '#ffd700',
-              zIndex: 10,
-              border: '1px solid rgba(255, 215, 0, 0.3)',
-              boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
-              backdropFilter: 'blur(2px)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.5px'
-            }}>
-              {tiger.seriesName.replace('Bitcoin Tigers ', '')}
+      <div className="tigers-container">
+        <div className="content-wrapper">
+          <div className="tigers-header">
+            <h1 className="tigers-title">Bitcoin Tigers Collection</h1>
+            <p className="tigers-subtitle">
+              Explore our complete collection of Bitcoin Tigers across all series
+            </p>
+          </div>
+          
+          {/* Series tabs */}
+          <div className="series-tabs">
+            {TIGER_SERIES.map(series => (
+              <button 
+                key={series.id}
+                onClick={() => {
+                  setSelectedSeries(series.id);
+                  setCurrentPage(0);
+                }}
+                className={`series-tab ${selectedSeries === series.id ? 'active' : ''}`}
+              >
+                {series.name}
+              </button>
+            ))}
+          </div>
+          
+          {/* Page navigation */}
+          <div className="pagination">
+            <button 
+              onClick={() => setCurrentPage(prev => Math.max(0, prev - 1))}
+              disabled={currentPage === 0}
+              className="pagination-button"
+            >
+              ← Previous
+            </button>
+            
+            <div className="pagination-info">
+              Page {currentPage + 1} of {totalPages}
             </div>
             
-            <div style={{ width: '100%', position: 'relative', aspectRatio: '1/1' }}>
-              <Image 
-                src={tiger.imageUrl}
-                alt={`${tiger.seriesName} ${tiger.name}`}
-                fill
-                style={{ objectFit: 'cover' }}
-                priority={index < 4} // Priority loading for the first 4 images
-              />
-            </div>
-            <div style={{ padding: '15px' }}>
-              <div style={{ 
-                marginBottom: '12px',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                textAlign: 'center'
-              }}>
-                <h3 style={{ 
-                  margin: '0', 
-                  color: '#ffd700', 
-                  fontSize: '18px', 
-                  fontWeight: '700',
-                  marginBottom: '4px'
-                }}>
-                  {tiger.name}
-                </h3>
-                <div style={{ 
-                  color: 'white',
-                  fontSize: '13px',
-                  fontWeight: '500'
-                }}>
-                  Bitcoin Tiger
+            <button 
+              onClick={() => setCurrentPage(prev => Math.min(totalPages - 1, prev + 1))}
+              disabled={currentPage === totalPages - 1}
+              className="pagination-button"
+            >
+              Next →
+            </button>
+          </div>
+          
+          {/* Tigers grid */}
+          <div className="tigers-grid">
+            {currentTigers.map((tiger, index) => (
+              <div key={tiger.id} className="tiger-card">
+                <div className="series-badge">
+                  {tiger.seriesName.replace('Bitcoin Tigers ', '')}
+                </div>
+                
+                <div className="tiger-image-container">
+                  <Image 
+                    src={tiger.imageUrl}
+                    alt={`${tiger.seriesName} ${tiger.name}`}
+                    fill
+                    style={{ objectFit: 'cover' }}
+                    priority={index < 4}
+                  />
+                </div>
+                
+                <div className="tiger-content">
+                  <div className="tiger-info">
+                    <h3 className="tiger-name">
+                      {tiger.name}
+                    </h3>
+                    <div className="tiger-type">
+                      Bitcoin Tiger
+                    </div>
+                  </div>
+                  
+                  <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <a 
+                      href={tiger.ordinalLink} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="tiger-link"
+                    >
+                      View on Ordinals Explorer
+                    </a>
+                  </div>
                 </div>
               </div>
-              
-              <div style={{ 
-                display: 'flex',
-                justifyContent: 'center',
-                marginTop: '5px'
-              }}>
-                <a 
-                  href={tiger.ordinalLink} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  style={{ 
-                    fontSize: '12px',
-                    color: '#ffd700',
-                    textDecoration: 'none',
-                    display: 'inline-block',
-                    padding: '5px 10px',
-                    background: 'rgba(255, 215, 0, 0.1)',
-                    borderRadius: '4px',
-                    transition: 'background 0.2s ease'
-                  }}
-                  onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255, 215, 0, 0.2)'}
-                  onMouseOut={(e) => e.currentTarget.style.background = 'rgba(255, 215, 0, 0.1)'}
-                >
-                  View on Ordinals Explorer
-                </a>
-              </div>
-            </div>
+            ))}
           </div>
-        ))}
+          
+          {/* Pagination info */}
+          <div className="pagination-footer">
+            Viewing all {currentSeries.count} tigers from {currentSeries.name}. Navigate through pages to see more.
+          </div>
+        </div>
       </div>
-      
-      {/* Pagination info */}
-      <div style={{ marginTop: '30px', textAlign: 'center', color: '#666', fontSize: '12px' }}>
-        * Viewing all {currentSeries.count} tigers from {currentSeries.name}. Navigate through pages to see more.
-      </div>
-    </div>
+    </>
   );
 } 
