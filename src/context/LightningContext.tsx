@@ -35,6 +35,7 @@ interface LightningContextType {
   walletAddress: string | null;
   setWalletAddress: (address: string | null) => void;
   fetchBalance: () => Promise<number>;
+  forceRefreshBalance: () => Promise<number>;
   updateBalanceWithTimestamp: (newBalance: number) => void;
 }
 
@@ -166,6 +167,46 @@ export const LightningProvider = ({ children }: { children: ReactNode }) => {
     initializeWallet();
   }, [walletAddress, isClient, walletIsLoading, walletIsInitialized]);
 
+  // NIEUWE FUNCTIE: Force refresh balance (ignoreert cache timing)
+  const forceRefreshBalance = async () => {
+    if (!isClient || !walletAddress) return balance;
+    
+    try {
+      console.log('FORCE REFRESH: Fetching current balance from server for:', walletAddress);
+      
+      // Force refresh ignoreert de time throttling
+      const forceRefreshOptions = {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        }
+      };
+      
+      const baseUrl = typeof window !== 'undefined' ? 
+        (process.env.NEXT_PUBLIC_API_BASE_URL || window.location.origin) : '';
+      
+      const response = await fetch(`${baseUrl}/api/wallet/${walletAddress}`, forceRefreshOptions);
+      if (!response.ok) {
+        console.error('FORCE REFRESH: Failed to fetch wallet data:', response.statusText);
+        return balance;
+      }
+
+      const data = await response.json();
+      console.log('FORCE REFRESH: Fetched wallet data, setting balance:', data.balance);
+      
+      // Update state en verspreid de update via het custom event
+      updateBalanceWithTimestamp(data.balance);
+      
+      return data.balance;
+    } catch (error) {
+      console.error('FORCE REFRESH: Error fetching balance:', error);
+      return balance;
+    }
+  };
+
   // Listen for custom wallet connection events for immediate response
   useEffect(() => {
     if (!isClient) return;
@@ -187,12 +228,47 @@ export const LightningProvider = ({ children }: { children: ReactNode }) => {
       }
     };
 
+    // Listen for page navigation to force balance refresh
+    const handlePageNavigation = () => {
+      console.log('Lightning: Page navigation detected, forcing balance refresh');
+      if (walletAddress) {
+        // Force refresh balance on page navigation after a short delay
+        setTimeout(() => {
+          forceRefreshBalance().then(newBalance => {
+            console.log('Lightning: Balance refreshed after page navigation:', newBalance);
+          }).catch(error => {
+            console.error('Lightning: Failed to refresh balance after page navigation:', error);
+          });
+        }, 500);
+      }
+    };
+
+    // Listen for custom page navigation events from ClientLayout
+    const handlePageNavigated = (event: CustomEvent) => {
+      console.log('Lightning: Received pageNavigated event:', event.detail);
+      if (walletAddress) {
+        // Force refresh balance when navigating to new page
+        setTimeout(() => {
+          forceRefreshBalance().then(newBalance => {
+            console.log('Lightning: Balance refreshed after page navigation to:', event.detail.pathname, 'New balance:', newBalance);
+          }).catch(error => {
+            console.error('Lightning: Failed to refresh balance after page navigation:', error);
+          });
+        }, 300);
+      }
+    };
+
+    // Listen for browser navigation events
+    window.addEventListener('popstate', handlePageNavigation);
+    window.addEventListener('pageNavigated', handlePageNavigated as EventListener);
     window.addEventListener('walletConnected', handleWalletConnected as EventListener);
     
     return () => {
+      window.removeEventListener('popstate', handlePageNavigation);
+      window.removeEventListener('pageNavigated', handlePageNavigated as EventListener);
       window.removeEventListener('walletConnected', handleWalletConnected as EventListener);
     };
-  }, [isClient, walletAddress]);
+  }, [isClient, walletAddress, forceRefreshBalance]);
 
   // Utility functie om balans en timestamp in één keer bij te werken
   const updateBalanceWithTimestamp = (newBalance: number) => {
@@ -233,9 +309,9 @@ export const LightningProvider = ({ children }: { children: ReactNode }) => {
     try {
       console.log('Fetching current balance from server for:', walletAddress);
       
-      // Verhoog de minimum tijd tussen fetches van 500ms naar 5 seconden
+      // Verhoog de minimum tijd tussen fetches van 500ms naar 2 seconden voor normale fetches
       const now = Date.now();
-      const minTimeBetweenFetches = 5000; // minimaal 5 seconden tussen API calls
+      const minTimeBetweenFetches = 2000; // minimaal 2 seconden tussen API calls
       
       if (lastBalanceFetch && (now - lastBalanceFetch < minTimeBetweenFetches)) {
         console.log(`Skipping balance fetch - last fetch was ${now - lastBalanceFetch}ms ago (min: ${minTimeBetweenFetches}ms)`);
@@ -479,6 +555,7 @@ export const LightningProvider = ({ children }: { children: ReactNode }) => {
         walletAddress,
         setWalletAddress,
         fetchBalance,
+        forceRefreshBalance,
         updateBalanceWithTimestamp
       }}
     >

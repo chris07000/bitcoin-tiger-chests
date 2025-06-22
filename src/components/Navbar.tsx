@@ -17,8 +17,26 @@ export default function Navbar() {
   const [showWalletMenu, setShowWalletMenu] = useState(false)
   const [showCollectionMenu, setShowCollectionMenu] = useState(false)
   const [showGamesMenu, setShowGamesMenu] = useState(false)
-  const { fetchBalance, walletAddress } = useLightning()
+  const { fetchBalance, forceRefreshBalance, walletAddress } = useLightning()
   const { connectedWallet, connectXverse, connectUnisat, connectMagicEden, disconnectWallet } = useWallet()
+  
+  // Page load effect to force balance refresh
+  useEffect(() => {
+    if (walletAddress) {
+      console.log('Navbar: Page loaded, forcing balance refresh for:', walletAddress);
+      // Force refresh balance on page load
+      setTimeout(() => {
+        forceRefreshBalance().then(newBalance => {
+          if (newBalance > 0 || newBalance === 0) {
+            setBalance(newBalance.toLocaleString());
+            console.log('Navbar: Balance refreshed on page load:', newBalance);
+          }
+        }).catch(error => {
+          console.error('Navbar: Failed to refresh balance on page load:', error);
+        });
+      }, 100);
+    }
+  }, [walletAddress, forceRefreshBalance]);
   
   // Functie om de actuele balans op te halen
   const fetchActualBalance = async () => {
