@@ -31,88 +31,154 @@ function HomeContent() {
         .pixel-header {
           padding: 4rem 1rem;
           text-align: center;
+          background: rgba(26, 26, 27, 0.3);
+          backdrop-filter: blur(20px);
+          border-bottom: 1px solid rgba(255, 107, 0, 0.2);
+          margin-bottom: 2rem;
         }
         
         .pixel-title {
           font-size: 3rem;
           font-weight: 700;
-          color: #FF6B00;
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
           margin-bottom: 1.5rem;
+          text-shadow: 0 0 30px rgba(255, 107, 0, 0.3);
         }
         
         .pixel-subtitle {
           font-size: 1.2rem;
-          color: rgba(255, 255, 255, 0.7);
+          color: rgba(255, 255, 255, 0.8);
           max-width: 800px;
           margin: 0 auto;
           line-height: 1.6;
+          font-weight: 500;
+        }
+        
+        .content-wrapper {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 0 1rem;
         }
         
         .chest-section {
-          margin-bottom: 0;
+          margin-bottom: 4rem;
+        }
+        
+        .section-header {
+          text-align: center;
+          margin-bottom: 3rem;
+        }
+        
+        .section-title {
+          font-size: 2rem;
+          font-weight: 700;
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          margin-bottom: 0.5rem;
+        }
+        
+        .section-subtitle {
+          font-size: 1rem;
+          color: rgba(255, 255, 255, 0.7);
+          font-weight: 500;
         }
         
         .pixel-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
           gap: 2rem;
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 0 1rem;
+          margin-bottom: 2rem;
         }
         
         .progress-section {
           width: 100%;
-          max-width: 1000px;
-          margin: 0 auto;
-          padding: 0 1rem;
-          margin-top: 3rem;
+          margin-top: 4rem;
         }
         
         .pixel-main {
-          display: flex;
-          flex-direction: column;
-          gap: 1.5rem;
-          width: 100%;
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 2rem 1rem;
+          padding: 2rem 0;
         }
         
         .pixel-footer {
           text-align: center;
-          padding: 3rem 1rem;
-          margin-top: 4rem;
-          border-top: 1px solid rgba(255, 107, 0, 0.2);
-          background: rgba(26, 26, 27, 0.3);
-          backdrop-filter: blur(10px);
+          padding: 4rem 1rem;
+          margin-top: 5rem;
+          border-top: 1px solid rgba(255, 107, 0, 0.3);
+          background: rgba(26, 26, 27, 0.6);
+          backdrop-filter: blur(20px);
+          position: relative;
+        }
+        
+        .pixel-footer::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 1px;
+          background: linear-gradient(90deg, transparent, #FF6B00, transparent);
         }
         
         .pixel-footer-text {
-          color: #FF6B00;
-          font-size: 1.1rem;
-          font-weight: 600;
-          margin-bottom: 0.8rem;
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          font-size: 1.2rem;
+          font-weight: 700;
+          margin-bottom: 1rem;
         }
         
         .pixel-footer-subtext {
-          color: rgba(255, 255, 255, 0.6);
-          font-size: 0.9rem;
+          color: rgba(255, 255, 255, 0.7);
+          font-size: 1rem;
+          font-weight: 500;
+        }
+        
+        .components-section {
+          display: flex;
+          flex-direction: column;
+          gap: 2rem;
+          margin-bottom: 3rem;
+        }
+        
+        .component-wrapper {
+          background: rgba(26, 26, 27, 0.4);
+          backdrop-filter: blur(15px);
+          border: 1px solid rgba(255, 107, 0, 0.2);
+          border-radius: 16px;
+          padding: 1rem;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+          transition: all 0.3s ease;
+        }
+        
+        .component-wrapper:hover {
+          border-color: rgba(255, 107, 0, 0.4);
+          transform: translateY(-2px);
+          box-shadow: 0 12px 40px rgba(255, 107, 0, 0.1);
         }
         
         @media (max-width: 768px) {
           .pixel-title {
-            font-size: 2rem;
+            font-size: 2.2rem;
           }
           
           .pixel-subtitle {
             font-size: 1rem;
           }
           
+          .section-title {
+            font-size: 1.6rem;
+          }
+          
           .pixel-grid {
             grid-template-columns: 1fr;
             gap: 1.5rem;
-            padding: 0 0.5rem;
           }
           
           .pixel-header {
@@ -120,21 +186,38 @@ function HomeContent() {
           }
           
           .pixel-main {
-            padding: 1.5rem 0.5rem;
+            padding: 1.5rem 0;
+          }
+          
+          .content-wrapper {
+            padding: 0 0.5rem;
+          }
+          
+          .pixel-footer {
+            padding: 3rem 1rem;
           }
         }
         
         @media (max-width: 480px) {
           .pixel-title {
-            font-size: 1.6rem;
+            font-size: 1.8rem;
           }
           
           .pixel-subtitle {
             font-size: 0.9rem;
           }
           
+          .section-title {
+            font-size: 1.4rem;
+          }
+          
           .pixel-header {
             padding: 2rem 0.5rem;
+          }
+          
+          .pixel-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
           }
         }
         
@@ -179,64 +262,95 @@ function HomeContent() {
           from { box-shadow: 0 0 10px rgba(255, 107, 0, 0.5); }
           to { box-shadow: 0 0 30px rgba(255, 107, 0, 0.8); }
         }
+        
+        @keyframes shimmer {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
+        }
+        
+        .shimmer-effect::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+          animation: shimmer 3s infinite;
+          pointer-events: none;
+        }
       `}</style>
       <header className="pixel-header">
         <h1 className="pixel-title">Bitcoin Tiger Chests</h1>
         <p className="pixel-subtitle">
-          Unlock the power of blockchain rewards with our mystery chests!
+          Unlock the power of blockchain rewards with our mystery chests and experience the future of Bitcoin gaming
         </p>
       </header>
 
-      <BitcoinPrice />
-      <JackpotBanner />
+      <div className="components-section">
+        <div className="component-wrapper">
+          <BitcoinPrice />
+        </div>
+        <div className="component-wrapper">
+          <JackpotBanner />
+        </div>
+      </div>
 
       <div className="pixel-main">
-        <div className="chest-section">
-          <div className="pixel-grid">
-            <ChestCard
-              type="bronze"
-              price={5000}
-              maxWin={15000}
-              minWin={2000}
-              jackpotFee={1000}
-              jackpotChance={0.01}
-              walletAddress={walletAddress || ''}
-              onOpenAction={handleChestOpen}
-            />
-            <ChestCard
-              type="silver"
-              price={20000}
-              maxWin={60000}
-              minWin={12000}
-              jackpotFee={2500}
-              jackpotChance={0.02}
-              walletAddress={walletAddress || ''}
-              onOpenAction={handleChestOpen}
-            />
-            <ChestCard
-              type="gold"
-              price={50000}
-              maxWin={150000}
-              minWin={30000}
-              jackpotFee={5000}
-              jackpotChance={0.02}
-              walletAddress={walletAddress || ''}
-              onOpenAction={handleChestOpen}
-            />
+        <div className="content-wrapper">
+          <div className="chest-section">
+            <div className="section-header">
+              <h2 className="section-title">Mystery Chests</h2>
+              <p className="section-subtitle">
+                Choose your adventure and discover incredible Bitcoin rewards
+              </p>
+            </div>
+            <div className="pixel-grid">
+              <ChestCard
+                type="bronze"
+                price={5000}
+                maxWin={15000}
+                minWin={2000}
+                jackpotFee={1000}
+                jackpotChance={0.01}
+                walletAddress={walletAddress || ''}
+                onOpenAction={handleChestOpen}
+              />
+              <ChestCard
+                type="silver"
+                price={20000}
+                maxWin={60000}
+                minWin={12000}
+                jackpotFee={2500}
+                jackpotChance={0.02}
+                walletAddress={walletAddress || ''}
+                onOpenAction={handleChestOpen}
+              />
+              <ChestCard
+                type="gold"
+                price={50000}
+                maxWin={150000}
+                minWin={30000}
+                jackpotFee={5000}
+                jackpotChance={0.02}
+                walletAddress={walletAddress || ''}
+                onOpenAction={handleChestOpen}
+              />
+            </div>
           </div>
-        </div>
 
-        <div className="progress-section">
-          <ChestProgress />
+          <div className="progress-section">
+            <ChestProgress />
+          </div>
         </div>
       </div>
 
       <footer className="pixel-footer">
         <p className="pixel-footer-text">
-          ⚡ Powered by Bitcoin Lightning Network ⚡
+          Powered by Bitcoin Lightning Network
         </p>
         <p className="pixel-footer-subtext">
-          Bitcoin Tiger Collective
+          Bitcoin Tiger Collective - The Future of Bitcoin Gaming
         </p>
       </footer>
     </main>
