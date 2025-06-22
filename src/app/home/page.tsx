@@ -339,28 +339,20 @@ function HomeContent() {
         
         /* Hero Section */
         .hero-section {
-          background: rgba(26, 26, 27, 0.6);
-          backdrop-filter: blur(20px);
-          border: 1px solid rgba(255, 107, 0, 0.3);
-          border-radius: 24px;
+          background: transparent !important;
+          backdrop-filter: none !important;
+          border: none !important;
+          border-radius: 0 !important;
           padding: 4rem 2rem 3rem;
           text-align: center;
           position: relative;
           overflow: hidden;
           margin: 2rem 1rem 3rem;
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+          box-shadow: none !important;
         }
         
         .hero-section::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(45deg, transparent, rgba(255, 107, 0, 0.1), transparent);
-          pointer-events: none;
-          opacity: 0.5;
+          display: none !important;
         }
         
         .casino-chips {
@@ -446,10 +438,10 @@ function HomeContent() {
         }
         
         .jackpot-ticker {
-          background: rgba(26, 26, 27, 0.6);
-          backdrop-filter: blur(10px);
-          border: 1px solid rgba(255, 107, 0, 0.3);
-          border-radius: 12px;
+          background: transparent !important;
+          backdrop-filter: none !important;
+          border: none !important;
+          border-radius: 0 !important;
           padding: 1rem;
           margin-bottom: 2rem;
           overflow: hidden;
@@ -699,13 +691,16 @@ function HomeContent() {
           flex: 1;
           display: flex;
           flex-direction: column;
-          justify-content: space-between;
+          justify-content: flex-start;
+          align-items: center;
+          text-align: center;
         }
         
         .game-info h3 {
           font-size: 1.3rem;
           margin-bottom: 0.5rem;
           color: #FF6B00;
+          text-align: center;
         }
         
         .game-description {
@@ -714,6 +709,7 @@ function HomeContent() {
           font-size: 0.9rem;
           line-height: 1.4;
           flex: 1;
+          text-align: center;
         }
         
         .play-now {
@@ -722,6 +718,7 @@ function HomeContent() {
           font-size: 0.9rem;
           display: flex;
           align-items: center;
+          justify-content: center;
           gap: 0.5rem;
         }
         
