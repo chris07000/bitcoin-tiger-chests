@@ -643,7 +643,7 @@ function HomeContent() {
           border-radius: 12px;
           overflow: hidden;
           position: relative;
-          background: rgba(0, 0, 0, 0.2);
+          background: transparent;
           display: flex;
           align-items: center;
           justify-content: center;
