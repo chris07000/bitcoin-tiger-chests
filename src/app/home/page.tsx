@@ -157,7 +157,7 @@ function HomeContent() {
               <div className="shine-effect"></div>
               <div className="pulse-overlay"></div>
               <Image 
-                src="/tigercoin.gif" 
+                src="/tigercoin.png" 
                 alt="Coinflip" 
                 width={250} 
                 height={250}
