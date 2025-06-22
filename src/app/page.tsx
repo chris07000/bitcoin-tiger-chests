@@ -141,10 +141,12 @@ function HomeContent() {
         }
         
         .components-section {
+          padding: 0 1rem;
+          max-width: 1200px;
+          margin: 0 auto 3rem auto;
           display: flex;
           flex-direction: column;
           gap: 2rem;
-          margin-bottom: 3rem;
         }
         
         .component-wrapper {
@@ -190,6 +192,10 @@ function HomeContent() {
           }
           
           .content-wrapper {
+            padding: 0 0.5rem;
+          }
+          
+          .components-section {
             padding: 0 0.5rem;
           }
           
@@ -280,6 +286,7 @@ function HomeContent() {
           pointer-events: none;
         }
       `}</style>
+      
       <header className="pixel-header">
         <h1 className="pixel-title">Bitcoin Tiger Chests</h1>
         <p className="pixel-subtitle">
