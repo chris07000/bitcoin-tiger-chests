@@ -1072,15 +1072,15 @@ export default function Navbar() {
           
           .balance-display {
             display: flex !important;
-            font-size: 0.5rem;
-            padding: 0.2rem 0.3rem;
-            gap: 0.1rem;
+            font-size: 0.4rem;
+            padding: 0.15rem 0.25rem;
+            gap: 0.05rem;
             min-width: fit-content;
             white-space: nowrap;
           }
           
           .balance-text {
-            font-size: 0.5rem;
+            font-size: 0.4rem;
             font-weight: 700;
           }
           
@@ -1109,26 +1109,26 @@ export default function Navbar() {
           
           .wallet-connect-btn,
           .wallet-info {
-            font-size: 0.5rem;
-            padding: 0.2rem 0.25rem;
-            height: 24px;
+            font-size: 0.4rem;
+            padding: 0.15rem 0.2rem;
+            height: 20px;
           }
           
           .wallet-address {
-            font-size: 0.45rem;
+            font-size: 0.35rem;
           }
           
           .disconnect-btn {
-            padding: 0.1rem 0.2rem;
-            font-size: 0.5rem;
-            min-width: 16px;
-            height: 16px;
+            padding: 0.05rem 0.15rem;
+            font-size: 0.4rem;
+            min-width: 14px;
+            height: 14px;
           }
           
           .refresh-btn {
-            width: 10px !important;
-            height: 10px !important;
-            font-size: 0.45rem !important;
+            width: 8px !important;
+            height: 8px !important;
+            font-size: 0.35rem !important;
             margin: 0 0 0 1px !important;
           }
         }
