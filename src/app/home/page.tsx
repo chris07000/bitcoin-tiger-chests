@@ -629,6 +629,9 @@ function HomeContent() {
           position: relative;
           overflow: hidden;
           box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+          height: 400px;
+          display: flex;
+          flex-direction: column;
         }
         
         .game-card:hover {
@@ -660,6 +663,25 @@ function HomeContent() {
           display: flex;
           align-items: center;
           justify-content: center;
+          flex-shrink: 0;
+        }
+        
+        .chest-container,
+        .coinflip-container,
+        .raffle-container {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        
+        .chest-img,
+        .coinflip-img,
+        .raffle-img {
+          max-width: 90%;
+          max-height: 90%;
+          object-fit: contain;
         }
         
         .shine-effect {
@@ -690,6 +712,13 @@ function HomeContent() {
           50% { opacity: 0.3; }
         }
         
+        .game-info {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+        }
+        
         .game-info h3 {
           font-size: 1.3rem;
           margin-bottom: 0.5rem;
@@ -701,6 +730,7 @@ function HomeContent() {
           margin-bottom: 1rem;
           font-size: 0.9rem;
           line-height: 1.4;
+          flex: 1;
         }
         
         .play-now {
@@ -726,17 +756,7 @@ function HomeContent() {
         }
         
         .golden-frame {
-          position: absolute;
-          inset: -10px;
-          background: linear-gradient(45deg, #FF6B00, #FFB800, #FF6B00);
-          border-radius: 20px;
-          opacity: 0.3;
-          animation: rotate 10s linear infinite;
-        }
-        
-        @keyframes rotate {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
+          display: none;
         }
         
         .winners-and-bitcoin {
