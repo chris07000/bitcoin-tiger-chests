@@ -728,12 +728,12 @@ function HomeContent() {
         
         .recent-winners,
         .bitcoin-price-section {
-          background: transparent;
-          backdrop-filter: none;
-          border: none;
-          border-radius: 0;
+          background: rgba(26, 26, 27, 0.6);
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(255, 107, 0, 0.3);
+          border-radius: 16px;
           padding: 2rem;
-          box-shadow: none;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
         
         .section-header {
@@ -754,8 +754,17 @@ function HomeContent() {
           grid-template-columns: 1fr 2fr 1fr;
           gap: 1rem;
           padding: 0.75rem;
-          border-bottom: 1px solid rgba(255, 107, 0, 0.1);
+          border-bottom: none;
           font-size: 0.9rem;
+          background: rgba(255, 107, 0, 0.05);
+          border-radius: 8px;
+          margin-bottom: 0.5rem;
+          transition: all 0.3s ease;
+        }
+        
+        .winner-entry:hover {
+          background: rgba(255, 107, 0, 0.1);
+          transform: translateX(4px);
         }
         
         .winner-game {
@@ -778,6 +787,12 @@ function HomeContent() {
         
         .benefits-section {
           margin: 4rem 1rem;
+          background: rgba(26, 26, 27, 0.6);
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(255, 107, 0, 0.3);
+          border-radius: 16px;
+          padding: 3rem 2rem;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
         
         .benefits-grid {
@@ -788,20 +803,20 @@ function HomeContent() {
         }
         
         .benefit-card {
-          background: transparent;
-          backdrop-filter: none;
-          border: none;
-          border-radius: 0;
+          background: rgba(26, 26, 27, 0.4);
+          backdrop-filter: blur(15px);
+          border: 1px solid rgba(255, 107, 0, 0.2);
+          border-radius: 12px;
           padding: 2rem;
           text-align: center;
           transition: all 0.3s ease;
-          box-shadow: none;
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
         }
         
         .benefit-card:hover {
           transform: translateY(-4px);
-          border-color: transparent;
-          box-shadow: none;
+          border-color: rgba(255, 107, 0, 0.4);
+          box-shadow: 0 8px 24px rgba(255, 107, 0, 0.15);
         }
         
         .benefit-icon {
@@ -822,16 +837,16 @@ function HomeContent() {
         }
         
         .cta-section {
-          background: transparent;
-          backdrop-filter: none;
-          border: none;
-          border-radius: 0;
+          background: rgba(26, 26, 27, 0.8);
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(255, 107, 0, 0.3);
+          border-radius: 24px;
           margin: 4rem 1rem;
           padding: 4rem 2rem;
           text-align: center;
           position: relative;
           overflow: hidden;
-          box-shadow: none;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
         
         .slot-symbols {
