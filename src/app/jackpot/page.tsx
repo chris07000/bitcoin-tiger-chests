@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
 import { useLightning } from '@/context/LightningContext'
 import Link from 'next/link'
@@ -12,69 +12,36 @@ export default function JackpotPage() {
   const [result, setResult] = useState<'heads' | 'tails' | null>(null)
   const [message, setMessage] = useState<string>('')
   const [walletAddress, setWalletAddress] = useState<string>('')
-  const { balance: contextBalance, setBalance: setLightningBalance, fetchBalance, forceRefreshBalance, updateBalanceWithTimestamp, walletAddress: contextWalletAddress } = useLightning()
+  const { balance: contextBalance, setBalance: setLightningBalance, updateBalanceWithTimestamp, walletAddress: contextWalletAddress } = useLightning()
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
   const [winAudio, setWinAudio] = useState<HTMLAudioElement | null>(null)
   const [showRankUpModal, setShowRankUpModal] = useState(false)
   const [rankUpLevel, setRankUpLevel] = useState('')
 
+  // Initialize wallet address and audio - run once on mount
   useEffect(() => {
-    // Use wallet address from LightningContext or localStorage as fallback
     const storedWallet = contextWalletAddress || localStorage.getItem('walletAddress')
-    if (storedWallet) {
+    if (storedWallet && storedWallet !== walletAddress) {
       setWalletAddress(storedWallet)
-      
-      // No need to fetch balance here since LightningContext handles it
-      // console.log('Coinflip: Using wallet from context:', storedWallet, 'Balance:', balance)
     }
 
     // Initialize audio on client side only
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && !audio) {
       setAudio(new Audio('/coin-flip.mp3'))
       setWinAudio(new Audio('/win.mp3'))
-      
-      // Voeg useEffect toe voor balans ophalen met optimized caching
-      useEffect(() => {
-        if (walletAddress) {
-          // console.log('Coinflip: Using wallet from context:', storedWallet, 'Balance:', balance)
-          
-          // Voeg visibility change listener toe voor balans verversing
-          const handleVisibilityChange = async () => {
-            if (!document.hidden && walletAddress) {
-              const now = Date.now();
-              const lastUpdate = localStorage.getItem('lastBalanceUpdate');
-              
-              // Als we binnen 30 seconden al een update hadden, sla dan over
-              if (lastUpdate && (now - parseInt(lastUpdate)) < 30000) {
-                // console.log('Tab actief maar recente balance update, geen refresh nodig');
-                return;
-              }
-              
-              await fetchCurrentBalance();
-            }
-          };
-          
-          document.addEventListener('visibilitychange', handleVisibilityChange);
-          
-          return () => {
-            document.removeEventListener('visibilitychange', handleVisibilityChange);
-          };
-        }
-      }, [walletAddress, storedWallet, contextBalance]);
     }
-  }, [])
+  }, [contextWalletAddress, walletAddress, audio])
 
-  // Functie om huidige balans op te halen met debouncing
-  const fetchCurrentBalance = async () => {
+  // Memoized balance fetch function to prevent recreating
+  const fetchCurrentBalance = useCallback(async () => {
     if (!walletAddress) return;
     
     try {
       const now = Date.now();
       const lastFetch = localStorage.getItem('lastBalanceFetch');
       
-      // Debounce van 5 seconden voor balance fetches
-      if (lastFetch && (now - parseInt(lastFetch)) < 5000) {
-        // console.log('Balance fetch debounced - recent fetch detected (5s)');
+      // Debounce van 10 seconden voor balance fetches
+      if (lastFetch && (now - parseInt(lastFetch)) < 10000) {
         return;
       }
       
@@ -84,40 +51,18 @@ export default function JackpotPage() {
       if (response.ok) {
         const data = await response.json();
         setLightningBalance(data.balance);
-        // console.log(`Actuele balans opgehaald: ${data.balance}`);
-        
-        // Update Lightning context
         updateBalanceWithTimestamp(data.balance);
       }
     } catch (error) {
-      console.error('Fout bij ophalen actuele balans:', error);
+      console.error('Error fetching balance:', error);
     }
-  };
-  
-  // Functie om balans bij te werken en event te dispatchen met debouncing
-  const updateBalanceAndDispatch = async (newBalance: number, walletAddr: string) => {
-    try {
-      setLightningBalance(newBalance);
-      // console.log(`Balans bijgewerkt naar ${newBalance} voor wallet ${walletAddr}`);
-      
-      // Update Lightning context
-      updateBalanceWithTimestamp(newBalance);
-      
-      // Dispatch balance update event met debouncing
-      const now = Date.now();
-      const lastEvent = localStorage.getItem('lastBalanceEvent');
-      
-      if (!lastEvent || (now - parseInt(lastEvent)) > 3000) { // Max 1 event per 3 seconden
-        localStorage.setItem('lastBalanceEvent', now.toString());
-        
-        // console.log('Balance update event dispatched (3s debounce)');
-      } else {
-        // console.log('Balance event skipped - too frequent');
-      }
-    } catch (error) {
-      console.error('Fout bij updaten balans:', error);
-    }
-  };
+  }, [walletAddress, setLightningBalance, updateBalanceWithTimestamp]);
+
+  // Memoized balance update function
+  const updateBalance = useCallback((newBalance: number) => {
+    setLightningBalance(newBalance);
+    updateBalanceWithTimestamp(newBalance);
+  }, [setLightningBalance, updateBalanceWithTimestamp]);
 
   const handleBet = async () => {
     if (!selectedSide || betAmount <= 0 || !walletAddress) {
@@ -137,19 +82,18 @@ export default function JackpotPage() {
     const randomStart = Math.random() > 0.5 ? 'heads' : 'tails'
     setResult(randomStart)
     
-    // Direct het inzetbedrag aftrekken
+    // Direct het inzetbedrag aftrekken voor immediate UI feedback
     const newBalance = contextBalance - betAmount
-    setLightningBalance(newBalance)
-    updateBalanceAndDispatch(newBalance, walletAddress)
+    updateBalance(newBalance)
 
     try {
       // Speel het coin flip geluid af
       if (audio) {
         audio.currentTime = 0
-        audio.play()
+        audio.play().catch(() => {}) // Ignore audio errors
       }
       
-      // Doe eerst de API call
+      // Doe de API call
       const response = await fetch('/api/coinflip/bet', {
         method: 'POST',
         headers: {
@@ -165,8 +109,7 @@ export default function JackpotPage() {
       if (!response.ok) {
         const error = await response.json()
         // Bij error het bedrag teruggeven
-        setLightningBalance(contextBalance)
-        updateBalanceAndDispatch(contextBalance, walletAddress)
+        updateBalance(contextBalance)
         throw new Error(error.error || 'Failed to place bet')
       }
 
@@ -196,17 +139,15 @@ export default function JackpotPage() {
         // Zet het resultaat
         setResult(data.result)
         
-        // Update balance bij winst of verlies met het juiste bedrag uit de API
-        const finalBalance = data.balance
-        setLightningBalance(finalBalance)
-        updateBalanceAndDispatch(finalBalance, walletAddress)
+        // Update balance met het exacte bedrag uit de API
+        updateBalance(data.balance)
         
         if (data.won) {
           setMessage(`You won ${data.reward.toLocaleString()} sats!`)
           // Speel win geluid af
           if (winAudio) {
             winAudio.currentTime = 0
-            winAudio.play()
+            winAudio.play().catch(() => {}) // Ignore audio errors
           }
         } else {
           setMessage(`You lost ${betAmount.toLocaleString()} sats!`)
