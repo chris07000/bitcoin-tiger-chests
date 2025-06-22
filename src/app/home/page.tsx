@@ -143,14 +143,6 @@ function HomeContent() {
                   width={240}
                   height={240}
                   className="chest-img"
-                  style={{ 
-                    objectFit: "contain", 
-                    width: "auto", 
-                    height: "auto", 
-                    maxWidth: "90%",
-                    maxHeight: "90%",
-                    margin: "auto"
-                  }}
                   priority
                 />
               </div>
@@ -194,14 +186,6 @@ function HomeContent() {
                   width={230}
                   height={230}
                   className="raffle-img"
-                  style={{ 
-                    objectFit: "contain", 
-                    width: "auto", 
-                    height: "auto", 
-                    maxWidth: "90%",
-                    maxHeight: "90%",
-                    margin: "auto"
-                  }}
                   priority
                 />
               </div>
