@@ -139,8 +139,8 @@ function HomeContent() {
               <Image 
                 src="/chests.png" 
                 alt="Mystery Chests" 
-                width={240}
-                height={240}
+                width={320}
+                height={320}
                 className="chest-img"
                 priority
               />
@@ -159,8 +159,8 @@ function HomeContent() {
               <Image 
                 src="/tigercoin.gif" 
                 alt="Coinflip" 
-                width={150} 
-                height={150}
+                width={250} 
+                height={250}
                 className="coinflip-img"
               />
             </div>
@@ -178,8 +178,8 @@ function HomeContent() {
               <Image 
                 src="/raffle.png" 
                 alt="Bitcoin Raffle" 
-                width={230}
-                height={230}
+                width={320}
+                height={320}
                 className="raffle-img"
                 priority
               />
@@ -632,7 +632,7 @@ function HomeContent() {
         }
         
         .game-image {
-          height: 200px;
+          height: 280px;
           margin-bottom: 1rem;
           border-radius: 0;
           overflow: visible;
