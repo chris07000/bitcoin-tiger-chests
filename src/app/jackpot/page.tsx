@@ -12,7 +12,6 @@ export default function JackpotPage() {
   const [result, setResult] = useState<'heads' | 'tails' | null>(null)
   const [message, setMessage] = useState<string>('')
   const [walletAddress, setWalletAddress] = useState<string>('')
-  const [liveWins, setLiveWins] = useState<Array<{address: string, amount: number, timestamp: Date, side: string}>>([])
   const { balance, setBalance, walletAddress: contextWalletAddress } = useLightning()
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
   const [winAudio, setWinAudio] = useState<HTMLAudioElement | null>(null)
@@ -61,27 +60,6 @@ export default function JackpotPage() {
         document.removeEventListener('visibilitychange', handleVisibilityChange);
       };
     }
-
-    // Start polling for live wins
-    const fetchLiveWins = async () => {
-      try {
-        const response = await fetch('/api/coinflip/live')
-        if (response.ok) {
-          const data = await response.json()
-          setLiveWins(data)
-        }
-      } catch (error) {
-        console.error('Error fetching live wins:', error)
-      }
-    }
-
-    // Initial fetch
-    fetchLiveWins()
-
-    // Poll every 5 seconds
-    const interval = setInterval(fetchLiveWins, 5000)
-
-    return () => interval && clearInterval(interval)
   }, [])
 
   // Functie om actuele balans op te halen uit database (met debounce)
@@ -520,90 +498,6 @@ export default function JackpotPage() {
           color: #ef4444;
         }
 
-        .live-wins {
-          width: 100%;
-          max-width: 800px;
-          margin: 1rem 0;
-          padding: 2rem;
-          background: rgba(26, 26, 27, 0.6);
-          backdrop-filter: blur(20px);
-          border: 1px solid rgba(255, 107, 0, 0.2);
-          border-radius: 16px;
-        }
-
-        .live-wins h2 {
-          font-size: 1.5rem;
-          font-weight: 700;
-          color: #FF6B00;
-          margin-bottom: 1.5rem;
-          text-align: center;
-        }
-
-        .win-list {
-          max-width: 800px;
-          margin: 0 auto;
-          padding: 0;
-        }
-
-        .win-item {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 1rem;
-          border-bottom: 1px solid rgba(255, 107, 0, 0.1);
-          font-size: 0.9rem;
-          background: rgba(0, 0, 0, 0.2);
-          border-radius: 8px;
-          margin-bottom: 0.5rem;
-        }
-
-        .win-item:last-child {
-          border-bottom: none;
-          margin-bottom: 0;
-        }
-
-        .win-info {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-        }
-
-        .win-address {
-          color: #FF6B00;
-          font-weight: 600;
-          text-overflow: ellipsis;
-          overflow: hidden;
-          white-space: nowrap;
-          max-width: 150px;
-        }
-
-        .win-side {
-          color: #fff;
-          font-weight: 600;
-          text-transform: uppercase;
-          font-size: 0.8rem;
-          padding: 0.3rem 0.6rem;
-          border-radius: 6px;
-          background: rgba(255, 107, 0, 0.2);
-          border: 1px solid rgba(255, 107, 0, 0.3);
-        }
-
-        .win-amount {
-          color: #22c55e;
-          font-weight: 700;
-          font-size: 1rem;
-        }
-
-        .win-time {
-          color: rgba(255, 255, 255, 0.6);
-          font-size: 0.8rem;
-        }
-
-        .win-icon {
-          margin-right: 0.3rem;
-          color: #FFB800;
-        }
-
         .footer {
           text-align: center;
           margin-top: 2rem;
@@ -698,15 +592,6 @@ export default function JackpotPage() {
           .message {
             font-size: 0.8rem;
             padding: 0.8rem 1.2rem;
-          }
-          
-          .live-wins h2 {
-            font-size: 1.2rem;
-          }
-          
-          .win-item {
-            padding: 0.8rem;
-            font-size: 0.8rem;
           }
         }
 
@@ -976,33 +861,6 @@ export default function JackpotPage() {
         >
           {isFlipping ? 'Flipping...' : 'Flip Coin'}
         </button>
-
-        <div className="live-wins">
-          <h2>Recent Wins</h2>
-          <div className="win-list">
-            {liveWins.map((win, index) => (
-              <div key={index} className="win-item">
-                <div className="win-info">
-                  <span className="win-icon">🏆</span>
-                  <span className="win-address">
-                    {win.address.slice(0, 6)}...{win.address.slice(-4)}
-                  </span>
-                  <span className="win-side">
-                    {win.side}
-                  </span>
-                </div>
-                <div className="win-details">
-                  <span className="win-amount">
-                    +{win.amount.toLocaleString()} sats
-                  </span>
-                  <span className="win-time">
-                    {new Date(win.timestamp).toLocaleTimeString()}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
         
         <div className="footer">
           <p>⚡ Powered by Bitcoin Lightning Network ⚡</p>
