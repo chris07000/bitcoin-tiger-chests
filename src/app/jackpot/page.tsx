@@ -68,29 +68,10 @@ export default function JackpotPage() {
         const response = await fetch('/api/coinflip/live')
         if (response.ok) {
           const data = await response.json()
-          console.log('Live wins API response:', data);
           setLiveWins(data)
-        } else {
-          console.log('No live wins from API, using mock data');
-          // Tijdelijk mock data voor testing
-          const mockWins = [
-            { address: 'bc1p123...xyz', amount: 15000, timestamp: new Date(Date.now() - 300000), side: 'heads' },
-            { address: 'bc1p456...abc', amount: 8500, timestamp: new Date(Date.now() - 600000), side: 'tails' },
-            { address: 'bc1p789...def', amount: 12000, timestamp: new Date(Date.now() - 900000), side: 'heads' },
-            { address: 'bc1p101...ghi', amount: 6800, timestamp: new Date(Date.now() - 1200000), side: 'tails' },
-            { address: 'bc1p112...jkl', amount: 18000, timestamp: new Date(Date.now() - 1500000), side: 'heads' }
-          ];
-          setLiveWins(mockWins);
         }
       } catch (error) {
         console.error('Error fetching live wins:', error)
-        // Fallback mock data bij error
-        const mockWins = [
-          { address: 'bc1p123...xyz', amount: 15000, timestamp: new Date(Date.now() - 300000), side: 'heads' },
-          { address: 'bc1p456...abc', amount: 8500, timestamp: new Date(Date.now() - 600000), side: 'tails' },
-          { address: 'bc1p789...def', amount: 12000, timestamp: new Date(Date.now() - 900000), side: 'heads' }
-        ];
-        setLiveWins(mockWins);
       }
     }
 
