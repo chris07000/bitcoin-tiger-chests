@@ -138,7 +138,7 @@ function HomeContent() {
               <div className="pulse-overlay"></div>
               <div className="chest-container">
                 <Image 
-                  src="/chestpixel2.png" 
+                  src="/chests.png" 
                   alt="Mystery Chests" 
                   width={240}
                   height={240}
@@ -181,7 +181,7 @@ function HomeContent() {
               <div className="pulse-overlay"></div>
               <div className="raffle-container">
                 <Image 
-                  src="/tiger-pixel1.png" 
+                  src="/raffle.png" 
                   alt="Bitcoin Raffle" 
                   width={230}
                   height={230}
