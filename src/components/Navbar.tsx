@@ -23,7 +23,7 @@ export default function Navbar() {
   // Page load effect to force balance refresh
   useEffect(() => {
     if (walletAddress) {
-      console.log('Navbar: Page loaded, checking if balance refresh needed for:', walletAddress);
+      // console.log('Navbar: Page loaded, checking if balance refresh needed for:', walletAddress);
       
       // Check if we recently refreshed (within last 30 seconds)
       const lastFetch = localStorage.getItem('lastBalanceFetch');
@@ -38,7 +38,7 @@ export default function Navbar() {
         forceRefreshBalance().then(newBalance => {
           if (newBalance > 0 || newBalance === 0) {
             setBalance(newBalance.toLocaleString());
-            console.log('Navbar: Balance refreshed on page load:', newBalance);
+            // console.log('Navbar: Balance refreshed on page load:', newBalance);
           }
         }).catch(error => {
           console.error('Navbar: Failed to refresh balance on page load:', error);
@@ -60,7 +60,7 @@ export default function Navbar() {
       // Alleen updaten als we een geldige balans hebben
       if (newBalance > 0 || newBalance === 0) {
         setBalance(newBalance.toLocaleString())
-        console.log('Navbar: Balans bijgewerkt via API:', newBalance)
+        // console.log('Navbar: Balans bijgewerkt via API:', newBalance)
       } else {
         console.warn('Navbar: Ongeldige balans ontvangen:', newBalance)
       }
@@ -96,13 +96,13 @@ export default function Navbar() {
     
     const updateBalance = async () => {
       if (walletAddress) {
-        console.log('Navbar: Attempting balance update...')
+        // console.log('Navbar: Attempting balance update...')
       
         // AGGRESSIVE Debounce: Check for recent updates (increased to 10 seconds)
         const lastFetch = localStorage.getItem('lastBalanceFetch');
         const now = Date.now();
         if (lastFetch && (now - parseInt(lastFetch)) < 10000) {
-          console.log('Navbar: Skipping balance fetch - recent update detected (10s debounce)');
+          // console.log('Navbar: Skipping balance fetch - recent update detected (10s debounce)');
           return;
         }
         
@@ -111,7 +111,7 @@ export default function Navbar() {
     }
 
     const handleBalanceUpdate = (event: CustomEvent<{ balance: number, wallet: string }>) => {
-      console.log('Navbar: Received balance update event');
+      // console.log('Navbar: Received balance update event');
       
       if (event.detail.wallet === walletAddress) {
         // console.log(`Balance updated from event to ${event.detail.balance}`);

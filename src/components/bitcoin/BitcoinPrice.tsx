@@ -43,7 +43,7 @@ export default function BitcoinPrice() {
         lightningBalances[walletAddress] = data.balance;
         localStorage.setItem('lightningBalances', JSON.stringify(lightningBalances));
         
-        console.log('BitcoinPrice: Balans bijgewerkt via API:', data.balance);
+        // console.log('BitcoinPrice: Balans bijgewerkt via API:', data.balance);
       }
     } catch (error) {
       console.error('BitcoinPrice: Fout bij ophalen balans via API:', error);
@@ -81,7 +81,7 @@ export default function BitcoinPrice() {
     
     // Luister naar balance update events in plaats van polling
     const handleBalanceUpdate = (event: CustomEvent<{ balance: number, wallet: string }>) => {
-      console.log('BitcoinPrice: Received balance update event', event.detail);
+      // console.log('BitcoinPrice: Received balance update event', event.detail);
       
       // Alleen updaten als het voor onze huidige wallet is
       if (event.detail.wallet === walletAddress) {
@@ -150,13 +150,13 @@ export default function BitcoinPrice() {
       }
 
       // First, refresh the balance from the server to ensure we have the latest balance
-      console.log('Refreshing balance before withdrawal validation...');
+      // console.log('Refreshing balance before withdrawal validation...');
       setPendingWithdrawal(true);
       
       try {
         // Use fetchBalance from Lightning context which returns the balance value
         const freshBalance = await fetchBalance();
-        console.log('Fresh balance for withdrawal validation:', freshBalance);
+        // console.log('Fresh balance for withdrawal validation:', freshBalance);
         
         // Use the fresh balance for validation instead of cached contextBalance
         if (withdrawAmount > freshBalance) {
@@ -183,7 +183,7 @@ export default function BitcoinPrice() {
         return;
       }
 
-      console.log('Proceeding with withdrawal after balance validation...');
+      // console.log('Proceeding with withdrawal after balance validation...');
       
       await withdraw(withdrawAmount, invoice);
       

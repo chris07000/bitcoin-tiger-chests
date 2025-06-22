@@ -172,7 +172,7 @@ export const LightningProvider = ({ children }: { children: ReactNode }) => {
     if (!isClient || !walletAddress) return balance;
     
     try {
-      console.log('FORCE REFRESH: Fetching current balance from server for:', walletAddress);
+      // console.log('FORCE REFRESH: Fetching current balance from server for:', walletAddress);
       
       // Force refresh ignoreert de time throttling
       const forceRefreshOptions = {
@@ -195,7 +195,7 @@ export const LightningProvider = ({ children }: { children: ReactNode }) => {
       }
 
       const data = await response.json();
-      console.log('FORCE REFRESH: Fetched wallet data, setting balance:', data.balance);
+      // console.log('FORCE REFRESH: Fetched wallet data, setting balance:', data.balance);
       
       // Update state en verspreid de update via het custom event
       updateBalanceWithTimestamp(data.balance);
@@ -230,12 +230,12 @@ export const LightningProvider = ({ children }: { children: ReactNode }) => {
 
     // Listen for page navigation to force balance refresh
     const handlePageNavigation = () => {
-      console.log('Lightning: Page navigation detected, forcing balance refresh');
+      // console.log('Lightning: Page navigation detected, forcing balance refresh');
       if (walletAddress) {
         // Force refresh balance on page navigation after a short delay
         setTimeout(() => {
           forceRefreshBalance().then(newBalance => {
-            console.log('Lightning: Balance refreshed after page navigation:', newBalance);
+            // console.log('Lightning: Balance refreshed after page navigation:', newBalance);
           }).catch(error => {
             console.error('Lightning: Failed to refresh balance after page navigation:', error);
           });
@@ -245,12 +245,12 @@ export const LightningProvider = ({ children }: { children: ReactNode }) => {
 
     // Listen for custom page navigation events from ClientLayout
     const handlePageNavigated = (event: CustomEvent) => {
-      console.log('Lightning: Received pageNavigated event:', event.detail);
+      // console.log('Lightning: Received pageNavigated event:', event.detail);
       if (walletAddress) {
         // Force refresh balance when navigating to new page
         setTimeout(() => {
           forceRefreshBalance().then(newBalance => {
-            console.log('Lightning: Balance refreshed after page navigation to:', event.detail.pathname, 'New balance:', newBalance);
+            // console.log('Lightning: Balance refreshed after page navigation to:', event.detail.pathname, 'New balance:', newBalance);
           }).catch(error => {
             console.error('Lightning: Failed to refresh balance after page navigation:', error);
           });
@@ -290,11 +290,11 @@ export const LightningProvider = ({ children }: { children: ReactNode }) => {
 
   const setBalance = (newBalance: number) => {
     if (!isClient) return;
-    console.log('Balance update requested:', {
-      previous: balance,
-      new: newBalance,
-      change: newBalance - balance
-    });
+    // console.log('Balance update requested:', {
+    //   previous: balance,
+    //   new: newBalance,
+    //   change: newBalance - balance
+    // });
     
     // Gebruik de nieuwe utility functie
     updateBalanceWithTimestamp(newBalance);
@@ -305,14 +305,14 @@ export const LightningProvider = ({ children }: { children: ReactNode }) => {
     if (!isClient || !walletAddress) return balance;
     
     try {
-      console.log('Fetching current balance from server for:', walletAddress);
+      // console.log('Fetching current balance from server for:', walletAddress);
       
       // Verhoog de minimum tijd tussen fetches van 500ms naar 2 seconden voor normale fetches
       const now = Date.now();
       const minTimeBetweenFetches = 2000; // minimaal 2 seconden tussen API calls
       
       if (lastBalanceFetch && (now - lastBalanceFetch < minTimeBetweenFetches)) {
-        console.log(`Skipping balance fetch - last fetch was ${now - lastBalanceFetch}ms ago (min: ${minTimeBetweenFetches}ms)`);
+        // console.log(`Skipping balance fetch - last fetch was ${now - lastBalanceFetch}ms ago (min: ${minTimeBetweenFetches}ms)`);
         return balance; // Return huidige balans als we te snel opnieuw proberen op te halen
       }
       
@@ -334,7 +334,7 @@ export const LightningProvider = ({ children }: { children: ReactNode }) => {
       }
 
       const data = await response.json();
-      console.log('Fetched wallet data, setting balance:', data.balance);
+      // console.log('Fetched wallet data, setting balance:', data.balance);
       
       // Update state en verspreid de update via het custom event
       updateBalanceWithTimestamp(data.balance);

@@ -12,7 +12,7 @@ export default function JackpotPage() {
   const [result, setResult] = useState<'heads' | 'tails' | null>(null)
   const [message, setMessage] = useState<string>('')
   const [walletAddress, setWalletAddress] = useState<string>('')
-  const { balance, setBalance, walletAddress: contextWalletAddress } = useLightning()
+  const { balance: contextBalance, setBalance: setLightningBalance, fetchBalance, forceRefreshBalance, updateBalanceWithTimestamp, walletAddress: contextWalletAddress } = useLightning()
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
   const [winAudio, setWinAudio] = useState<HTMLAudioElement | null>(null)
   const [showRankUpModal, setShowRankUpModal] = useState(false)
@@ -25,7 +25,7 @@ export default function JackpotPage() {
       setWalletAddress(storedWallet)
       
       // No need to fetch balance here since LightningContext handles it
-      console.log('Coinflip: Using wallet from context:', storedWallet, 'Balance:', balance)
+      // console.log('Coinflip: Using wallet from context:', storedWallet, 'Balance:', balance)
     }
 
     // Initialize audio on client side only
@@ -33,96 +33,91 @@ export default function JackpotPage() {
       setAudio(new Audio('/coin-flip.mp3'))
       setWinAudio(new Audio('/win.mp3'))
       
-      // Voeg event listener toe voor wanneer de tab weer actief wordt (met debounce)
-      const handleVisibilityChange = () => {
-        if (document.visibilityState === 'visible') {
-          // Debounce: alleen refresh als tab lang inactief was (minimaal 30 seconden)
-          const lastFetch = localStorage.getItem('lastBalanceFetch');
-          const now = Date.now();
-          const timeSinceLastFetch = lastFetch ? now - parseInt(lastFetch) : 0;
+      // Voeg useEffect toe voor balans ophalen met optimized caching
+      useEffect(() => {
+        if (walletAddress) {
+          // console.log('Coinflip: Using wallet from context:', storedWallet, 'Balance:', balance)
           
-          if (timeSinceLastFetch > 30000) { // 30 seconden
-            console.log('Tab weer actief na lange tijd, balans verversen...');
-            const currentWallet = localStorage.getItem('walletAddress');
-            if (currentWallet) {
-              fetchCurrentBalance(currentWallet);
+          // Voeg visibility change listener toe voor balans verversing
+          const handleVisibilityChange = async () => {
+            if (!document.hidden && walletAddress) {
+              const now = Date.now();
+              const lastUpdate = localStorage.getItem('lastBalanceUpdate');
+              
+              // Als we binnen 30 seconden al een update hadden, sla dan over
+              if (lastUpdate && (now - parseInt(lastUpdate)) < 30000) {
+                // console.log('Tab actief maar recente balance update, geen refresh nodig');
+                return;
+              }
+              
+              await fetchCurrentBalance();
             }
-          } else {
-            console.log('Tab actief maar recente balance update, geen refresh nodig');
-          }
+          };
+          
+          document.addEventListener('visibilitychange', handleVisibilityChange);
+          
+          return () => {
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+          };
         }
-      };
-      
-      document.addEventListener('visibilitychange', handleVisibilityChange);
-      
-      // Clean up de event listener
-      return () => {
-        document.removeEventListener('visibilitychange', handleVisibilityChange);
-      };
+      }, [walletAddress, storedWallet, contextBalance]);
     }
   }, [])
 
-  // Functie om actuele balans op te halen uit database (met debounce)
-  const fetchCurrentBalance = async (walletAddr: string) => {
+  // Functie om huidige balans op te halen met debouncing
+  const fetchCurrentBalance = async () => {
+    if (!walletAddress) return;
+    
     try {
-      // AGGRESSIVE Debounce: alleen uitvoeren als er geen recente fetch was (verhoogd naar 5 seconden)
-      const lastFetch = localStorage.getItem('lastBalanceFetch');
       const now = Date.now();
+      const lastFetch = localStorage.getItem('lastBalanceFetch');
+      
+      // Debounce van 5 seconden voor balance fetches
       if (lastFetch && (now - parseInt(lastFetch)) < 5000) {
-        console.log('Balance fetch debounced - recent fetch detected (5s)');
+        // console.log('Balance fetch debounced - recent fetch detected (5s)');
         return;
       }
-
-      console.log(`Ophalen actuele balans voor wallet: ${walletAddr}...`);
-      const response = await fetch(`/api/wallet/${walletAddr}`);
       
+      localStorage.setItem('lastBalanceFetch', now.toString());
+      
+      const response = await fetch(`/api/wallet/${walletAddress}`);
       if (response.ok) {
         const data = await response.json();
-        console.log(`Actuele balans opgehaald: ${data.balance}`);
+        setLightningBalance(data.balance);
+        // console.log(`Actuele balans opgehaald: ${data.balance}`);
         
-        // Update zowel state als localStorage
-        setBalance(data.balance);
-        updateBalanceInStorage(walletAddr, data.balance);
-      } else {
-        console.error('Fout bij ophalen balans:', await response.text());
+        // Update Lightning context
+        updateBalanceWithTimestamp(data.balance);
       }
     } catch (error) {
-      console.error('Fout bij API-aanroep voor balans:', error);
+      console.error('Fout bij ophalen actuele balans:', error);
     }
-  }
-
-  // Update de balans in localStorage na een succesvolle inzet (met debounce)
-  const updateBalanceInStorage = (walletAddr: string, newBalance: number) => {
+  };
+  
+  // Functie om balans bij te werken en event te dispatchen met debouncing
+  const updateBalanceAndDispatch = async (newBalance: number, walletAddr: string) => {
     try {
-      // Update balans in lightningBalances
-      const balances = JSON.parse(localStorage.getItem('lightningBalances') || '{}');
-      balances[walletAddr] = newBalance;
-      localStorage.setItem('lightningBalances', JSON.stringify(balances));
+      setLightningBalance(newBalance);
+      // console.log(`Balans bijgewerkt naar ${newBalance} voor wallet ${walletAddr}`);
       
-      // Update lastFetch timestamp om andere systemen te debounce
-      localStorage.setItem('lastBalanceFetch', Date.now().toString());
+      // Update Lightning context
+      updateBalanceWithTimestamp(newBalance);
       
-      console.log(`Balans bijgewerkt naar ${newBalance} voor wallet ${walletAddr}`);
-      
-      // Stuur een gedebounce balance update event (max 1x per 3 seconden nu)
-      const lastEventTime = localStorage.getItem('lastBalanceEvent');
+      // Dispatch balance update event met debouncing
       const now = Date.now();
-      if (!lastEventTime || (now - parseInt(lastEventTime)) > 3000) {
+      const lastEvent = localStorage.getItem('lastBalanceEvent');
+      
+      if (!lastEvent || (now - parseInt(lastEvent)) > 3000) { // Max 1 event per 3 seconden
         localStorage.setItem('lastBalanceEvent', now.toString());
         
-        // Stuur het balance update event naar andere componenten
-        const event = new CustomEvent('balanceUpdate', {
-          detail: { balance: newBalance, wallet: walletAddr }
-        });
-        window.dispatchEvent(event);
-        console.log('Balance update event dispatched (3s debounce)');
+        // console.log('Balance update event dispatched (3s debounce)');
       } else {
-        console.log('Balance event skipped - too frequent');
+        // console.log('Balance event skipped - too frequent');
       }
-    } catch (err) {
-      console.error('Fout bij bijwerken balans in localStorage:', err);
+    } catch (error) {
+      console.error('Fout bij updaten balans:', error);
     }
-  }
+  };
 
   const handleBet = async () => {
     if (!selectedSide || betAmount <= 0 || !walletAddress) {
@@ -130,7 +125,7 @@ export default function JackpotPage() {
       return
     }
 
-    if (betAmount > balance) {
+    if (betAmount > contextBalance) {
       setMessage('Insufficient balance')
       return
     }
@@ -143,9 +138,9 @@ export default function JackpotPage() {
     setResult(randomStart)
     
     // Direct het inzetbedrag aftrekken
-    const newBalance = balance - betAmount
-    setBalance(newBalance)
-    updateBalanceInStorage(walletAddress, newBalance)
+    const newBalance = contextBalance - betAmount
+    setLightningBalance(newBalance)
+    updateBalanceAndDispatch(newBalance, walletAddress)
 
     try {
       // Speel het coin flip geluid af
@@ -170,8 +165,8 @@ export default function JackpotPage() {
       if (!response.ok) {
         const error = await response.json()
         // Bij error het bedrag teruggeven
-        setBalance(balance)
-        updateBalanceInStorage(walletAddress, balance)
+        setLightningBalance(contextBalance)
+        updateBalanceAndDispatch(contextBalance, walletAddress)
         throw new Error(error.error || 'Failed to place bet')
       }
 
@@ -203,8 +198,8 @@ export default function JackpotPage() {
         
         // Update balance bij winst of verlies met het juiste bedrag uit de API
         const finalBalance = data.balance
-        setBalance(finalBalance)
-        updateBalanceInStorage(walletAddress, finalBalance)
+        setLightningBalance(finalBalance)
+        updateBalanceAndDispatch(finalBalance, walletAddress)
         
         if (data.won) {
           setMessage(`You won ${data.reward.toLocaleString()} sats!`)
@@ -759,11 +754,11 @@ export default function JackpotPage() {
         
         <div className="balance-container">
           <div className="balance-display">
-            Balance: {balance.toLocaleString()} sats
+            Balance: {contextBalance.toLocaleString()} sats
           </div>
           <button 
             className="refresh-button" 
-            onClick={() => walletAddress && fetchCurrentBalance(walletAddress)}
+            onClick={() => walletAddress && fetchCurrentBalance()}
             title="Refresh Balance">
             ↻
           </button>
