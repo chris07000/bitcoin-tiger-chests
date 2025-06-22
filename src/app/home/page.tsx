@@ -649,9 +649,12 @@ function HomeContent() {
         .chest-img,
         .coinflip-img,
         .raffle-img {
-          width: 100%;
-          height: 100%;
+          max-width: 100%;
+          max-height: 100%;
+          width: auto;
+          height: auto;
           object-fit: contain;
+          object-position: center;
           border-radius: 0;
           background: none;
           box-shadow: none;
@@ -742,12 +745,12 @@ function HomeContent() {
         
         .recent-winners,
         .bitcoin-price-section {
-          background: rgba(26, 26, 27, 0.6);
-          backdrop-filter: blur(20px);
-          border: 1px solid rgba(255, 107, 0, 0.3);
-          border-radius: 16px;
+          background: transparent;
+          backdrop-filter: none;
+          border: none;
+          border-radius: 0;
           padding: 2rem;
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+          box-shadow: none;
         }
         
         .section-header {
@@ -802,20 +805,20 @@ function HomeContent() {
         }
         
         .benefit-card {
-          background: rgba(26, 26, 27, 0.6);
-          backdrop-filter: blur(20px);
-          border: 1px solid rgba(255, 107, 0, 0.3);
-          border-radius: 16px;
+          background: transparent;
+          backdrop-filter: none;
+          border: none;
+          border-radius: 0;
           padding: 2rem;
           text-align: center;
           transition: all 0.3s ease;
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+          box-shadow: none;
         }
         
         .benefit-card:hover {
           transform: translateY(-4px);
-          border-color: rgba(255, 107, 0, 0.6);
-          box-shadow: 0 12px 40px rgba(255, 107, 0, 0.1);
+          border-color: transparent;
+          box-shadow: none;
         }
         
         .benefit-icon {
@@ -836,16 +839,16 @@ function HomeContent() {
         }
         
         .cta-section {
-          background: rgba(26, 26, 27, 0.8);
-          backdrop-filter: blur(20px);
-          border: 1px solid rgba(255, 107, 0, 0.3);
-          border-radius: 24px;
+          background: transparent;
+          backdrop-filter: none;
+          border: none;
+          border-radius: 0;
           margin: 4rem 1rem;
           padding: 4rem 2rem;
           text-align: center;
           position: relative;
           overflow: hidden;
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+          box-shadow: none;
         }
         
         .slot-symbols {
