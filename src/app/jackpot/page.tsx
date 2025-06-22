@@ -237,6 +237,20 @@ export default function JackpotPage() {
           background: linear-gradient(135deg, #0A0A0B 0%, #1A1A1B 100%);
         }
         
+        /* Global image sharpening */
+        img {
+          image-rendering: -webkit-optimize-contrast;
+          image-rendering: -moz-crisp-edges;
+          image-rendering: pixelated;
+          image-rendering: crisp-edges;
+          image-rendering: optimizeQuality;
+          -ms-interpolation-mode: nearest-neighbor;
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+          transform: translateZ(0);
+          -webkit-transform: translateZ(0);
+        }
+        
         .page-content {
           display: flex;
           flex-direction: column;

@@ -775,12 +775,21 @@ export default function RafflePage() {
         body {
           margin: 0;
           padding: 0;
-          background: #0A0A0B;
-          color: #FFFFFF;
-          font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-          overflow-x: hidden;
-          width: 100%;
-          max-width: 100%;
+          background: linear-gradient(135deg, #0A0A0B 0%, #1A1A1B 100%);
+        }
+        
+        /* Global image sharpening */
+        img {
+          image-rendering: -webkit-optimize-contrast;
+          image-rendering: -moz-crisp-edges;
+          image-rendering: pixelated;
+          image-rendering: crisp-edges;
+          image-rendering: optimizeQuality;
+          -ms-interpolation-mode: nearest-neighbor;
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+          transform: translateZ(0);
+          -webkit-transform: translateZ(0);
         }
         
         .page-content {

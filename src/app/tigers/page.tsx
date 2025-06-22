@@ -78,6 +78,20 @@ export default function TigersPage() {
           padding: 4rem 1rem 2rem;
         }
         
+        /* Global image sharpening */
+        img {
+          image-rendering: -webkit-optimize-contrast;
+          image-rendering: -moz-crisp-edges;
+          image-rendering: pixelated;
+          image-rendering: crisp-edges;
+          image-rendering: optimizeQuality;
+          -ms-interpolation-mode: nearest-neighbor;
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+          transform: translateZ(0);
+          -webkit-transform: translateZ(0);
+        }
+        
         .content-wrapper {
           max-width: 1200px;
           margin: 0 auto;

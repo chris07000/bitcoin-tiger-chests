@@ -384,6 +384,10 @@ function HomeContent() {
           height: auto;
           border-radius: 12px;
           box-shadow: 0 8px 32px rgba(255, 107, 0, 0.3);
+          image-rendering: -webkit-optimize-contrast;
+          image-rendering: crisp-edges;
+          image-rendering: pixelated;
+          -ms-interpolation-mode: nearest-neighbor;
         }
         
         .sparkle-wrapper {
@@ -962,6 +966,15 @@ function HomeContent() {
             padding: 1rem 2rem;
             font-size: 1rem;
           }
+        }
+        
+        /* Global image sharpening */
+        img {
+          image-rendering: -webkit-optimize-contrast;
+          image-rendering: crisp-edges;
+          image-rendering: pixelated;
+          -ms-interpolation-mode: nearest-neighbor;
+          image-rendering: optimizeQuality;
         }
       `}</style>
     </main>

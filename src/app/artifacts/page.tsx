@@ -234,6 +234,20 @@ export default function ArtifactsPage() {
           font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
 
+        /* Global image sharpening */
+        img {
+          image-rendering: -webkit-optimize-contrast;
+          image-rendering: -moz-crisp-edges;
+          image-rendering: pixelated;
+          image-rendering: crisp-edges;
+          image-rendering: optimizeQuality;
+          -ms-interpolation-mode: nearest-neighbor;
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+          transform: translateZ(0);
+          -webkit-transform: translateZ(0);
+        }
+
         .hero-section {
           text-align: center;
           margin-bottom: 3rem;
