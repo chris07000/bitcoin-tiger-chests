@@ -159,8 +159,8 @@ function HomeContent() {
               <Image 
                 src="/tigercoin.png" 
                 alt="Coinflip" 
-                width={250} 
-                height={250}
+                width={320} 
+                height={320}
                 className="coinflip-img"
               />
             </div>
