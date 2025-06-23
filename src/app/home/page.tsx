@@ -130,16 +130,21 @@ function HomeContent() {
           <Link href="/" className="game-card chest-game">
             <div className="hot-badge">POPULAR</div>
             <div className="game-image chest-image">
-              <div className="shine-effect"></div>
-              <div className="pulse-overlay"></div>
-              <Image 
-                src="/chests.png" 
-                alt="Mystery Chests" 
-                width={320}
-                height={320}
-                className="chest-img"
-                priority
-              />
+              <div className="game-frame">
+                <div className="game-decorative-corners"></div>
+                <div className="game-inner-frame">
+                  <div className="shine-effect"></div>
+                  <div className="pulse-overlay"></div>
+                  <Image 
+                    src="/chests.png" 
+                    alt="Mystery Chests" 
+                    width={320}
+                    height={320}
+                    className="chest-img"
+                    priority
+                  />
+                </div>
+              </div>
             </div>
             <div className="game-info">
               <h3 className="pixel-text">Mystery Chests</h3>
@@ -150,15 +155,20 @@ function HomeContent() {
           
           <Link href="/jackpot" className="game-card coinflip-game">
             <div className="game-image coinflip-image">
-              <div className="shine-effect"></div>
-              <div className="pulse-overlay"></div>
-              <Image 
-                src="/tigercoin.png" 
-                alt="Coinflip" 
-                width={320} 
-                height={320}
-                className="coinflip-img"
-              />
+              <div className="game-frame">
+                <div className="game-decorative-corners"></div>
+                <div className="game-inner-frame">
+                  <div className="shine-effect"></div>
+                  <div className="pulse-overlay"></div>
+                  <Image 
+                    src="/tigercoin.png" 
+                    alt="Coinflip" 
+                    width={320} 
+                    height={320}
+                    className="coinflip-img"
+                  />
+                </div>
+              </div>
             </div>
             <div className="game-info">
               <h3 className="pixel-text">Coinflip</h3>
@@ -169,16 +179,21 @@ function HomeContent() {
           
           <Link href="/raffle" className="game-card raffle-game">
             <div className="game-image raffle-image">
-              <div className="shine-effect"></div>
-              <div className="pulse-overlay"></div>
-              <Image 
-                src="/raffle.png" 
-                alt="Bitcoin Raffle" 
-                width={320}
-                height={320}
-                className="raffle-img"
-                priority
-              />
+              <div className="game-frame">
+                <div className="game-decorative-corners"></div>
+                <div className="game-inner-frame">
+                  <div className="shine-effect"></div>
+                  <div className="pulse-overlay"></div>
+                  <Image 
+                    src="/raffle.png" 
+                    alt="Bitcoin Raffle" 
+                    width={320}
+                    height={320}
+                    className="raffle-img"
+                    priority
+                  />
+                </div>
+              </div>
             </div>
             <div className="game-info">
               <h3 className="pixel-text">Bitcoin Raffle</h3>
@@ -765,21 +780,167 @@ function HomeContent() {
           width: 100%;
         }
         
+        .game-frame {
+          position: relative;
+          background: rgba(26, 26, 27, 0.4);
+          backdrop-filter: blur(15px);
+          border: 2px solid rgba(255, 107, 0, 0.2);
+          border-radius: 20px;
+          padding: 1rem;
+          box-shadow: 
+            0 15px 30px rgba(0, 0, 0, 0.5),
+            0 0 0 1px rgba(255, 255, 255, 0.03),
+            inset 0 1px 0 rgba(255, 255, 255, 0.08);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          width: 100%;
+          max-width: 300px;
+        }
+        
+        .game-frame::before {
+          content: '';
+          position: absolute;
+          top: -2px;
+          left: -2px;
+          right: -2px;
+          bottom: -2px;
+          background: linear-gradient(45deg, 
+            #FF6B00, #FFB800, #FF6B00, #FFB800, #FF6B00);
+          background-size: 400% 400%;
+          border-radius: 22px;
+          z-index: -1;
+          animation: gradientShift 6s ease infinite;
+          opacity: 0.5;
+        }
+        
+        .game-frame::after {
+          content: '';
+          position: absolute;
+          top: -3px;
+          left: -3px;
+          right: -3px;
+          bottom: -3px;
+          background: linear-gradient(135deg, 
+            rgba(255, 107, 0, 0.08) 0%, 
+            rgba(255, 184, 0, 0.03) 50%, 
+            rgba(255, 107, 0, 0.08) 100%);
+          border-radius: 23px;
+          z-index: -2;
+          filter: blur(6px);
+        }
+        
+        .game-inner-frame {
+          position: relative;
+          background: rgba(0, 0, 0, 0.15);
+          border: 1px solid rgba(255, 107, 0, 0.15);
+          border-radius: 12px;
+          padding: 0.75rem;
+          overflow: hidden;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        
+        .game-inner-frame::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 1px;
+          background: linear-gradient(90deg, 
+            transparent, 
+            rgba(255, 107, 0, 0.4), 
+            transparent);
+        }
+        
+        .game-inner-frame::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          height: 1px;
+          background: linear-gradient(90deg, 
+            transparent, 
+            rgba(255, 184, 0, 0.3), 
+            transparent);
+        }
+        
+        .game-decorative-corners {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          pointer-events: none;
+          z-index: 1;
+        }
+        
+        .game-decorative-corners::before,
+        .game-decorative-corners::after {
+          content: '';
+          position: absolute;
+          width: 16px;
+          height: 16px;
+          border: 2px solid rgba(255, 107, 0, 0.4);
+        }
+        
+        .game-decorative-corners::before {
+          top: 6px;
+          left: 6px;
+          border-right: none;
+          border-bottom: none;
+          border-radius: 6px 0 0 0;
+        }
+        
+        .game-decorative-corners::after {
+          bottom: 6px;
+          right: 6px;
+          border-left: none;
+          border-top: none;
+          border-radius: 0 0 6px 0;
+        }
+        
+        .game-card:hover .game-frame {
+          transform: translateY(-6px) scale(1.02);
+          box-shadow: 
+            0 25px 50px rgba(0, 0, 0, 0.7),
+            0 0 0 1px rgba(255, 255, 255, 0.06),
+            inset 0 1px 0 rgba(255, 255, 255, 0.12),
+            0 0 60px rgba(255, 107, 0, 0.25);
+        }
+        
+        .game-card:hover .game-frame::before {
+          opacity: 0.8;
+          animation-duration: 3s;
+        }
+        
         .chest-img,
         .coinflip-img,
         .raffle-img {
-          max-width: 280px;
-          max-height: 280px;
+          max-width: 220px;
+          max-height: 220px;
           width: auto;
           height: auto;
           object-fit: contain;
           object-position: center center;
-          border-radius: 0;
+          border-radius: 8px;
           background: none !important;
           box-shadow: none !important;
           border: none !important;
           display: block;
           margin: 0 auto;
+          position: relative;
+          z-index: 2;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          filter: drop-shadow(0 4px 16px rgba(255, 107, 0, 0.2));
+        }
+        
+        .game-card:hover .chest-img,
+        .game-card:hover .coinflip-img,
+        .game-card:hover .raffle-img {
+          transform: scale(1.05);
+          filter: drop-shadow(0 8px 24px rgba(255, 107, 0, 0.4));
         }
         
         .shine-effect {
@@ -1111,6 +1272,48 @@ function HomeContent() {
             max-width: 95%;
           }
           
+          .game-frame {
+            padding: 0.75rem;
+            border-radius: 16px;
+            max-width: 280px;
+          }
+          
+          .game-frame::before {
+            border-radius: 18px;
+          }
+          
+          .game-frame::after {
+            border-radius: 19px;
+          }
+          
+          .game-inner-frame {
+            padding: 0.5rem;
+            border-radius: 10px;
+          }
+          
+          .game-decorative-corners::before,
+          .game-decorative-corners::after {
+            width: 12px;
+            height: 12px;
+          }
+          
+          .game-decorative-corners::before {
+            top: 4px;
+            left: 4px;
+          }
+          
+          .game-decorative-corners::after {
+            bottom: 4px;
+            right: 4px;
+          }
+          
+          .chest-img,
+          .coinflip-img,
+          .raffle-img {
+            max-width: 180px;
+            max-height: 180px;
+          }
+          
           .hero-subtitle {
             font-size: 1rem;
           }
@@ -1190,6 +1393,48 @@ function HomeContent() {
           
           .banner-image {
             max-width: 90%;
+          }
+          
+          .game-frame {
+            padding: 0.5rem;
+            border-radius: 14px;
+            max-width: 250px;
+          }
+          
+          .game-frame::before {
+            border-radius: 16px;
+          }
+          
+          .game-frame::after {
+            border-radius: 17px;
+          }
+          
+          .game-inner-frame {
+            padding: 0.4rem;
+            border-radius: 8px;
+          }
+          
+          .game-decorative-corners::before,
+          .game-decorative-corners::after {
+            width: 10px;
+            height: 10px;
+          }
+          
+          .game-decorative-corners::before {
+            top: 3px;
+            left: 3px;
+          }
+          
+          .game-decorative-corners::after {
+            bottom: 3px;
+            right: 3px;
+          }
+          
+          .chest-img,
+          .coinflip-img,
+          .raffle-img {
+            max-width: 160px;
+            max-height: 160px;
           }
           
           .cta-button.large {
