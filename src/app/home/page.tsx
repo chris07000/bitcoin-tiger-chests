@@ -1300,24 +1300,45 @@ function HomeContent() {
           }
           
           .banner-frame {
-            display: none;
+            background: none !important;
+            border: none !important;
+            box-shadow: none !important;
+            backdrop-filter: none !important;
+            padding: 0 !important;
+            border-radius: 0 !important;
+            max-width: 100%;
+            width: 100%;
+          }
+          
+          .banner-frame::before,
+          .banner-frame::after {
+            display: none !important;
           }
           
           .banner-decorative-corners {
-            display: none;
+            display: none !important;
           }
           
           .banner-inner-frame {
-            display: none;
+            background: none !important;
+            border: none !important;
+            padding: 0 !important;
+            border-radius: 0 !important;
+          }
+          
+          .banner-inner-frame::before,
+          .banner-inner-frame::after {
+            display: none !important;
           }
           
           .banner-image {
-            max-width: 95%;
-            width: 95%;
-            height: auto;
-            border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(255, 107, 0, 0.4);
-            border: 2px solid rgba(255, 107, 0, 0.3);
+            max-width: 95% !important;
+            width: 95% !important;
+            height: auto !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(255, 107, 0, 0.4) !important;
+            border: 2px solid rgba(255, 107, 0, 0.3) !important;
+            display: block !important;
           }
           
           .game-frame {
@@ -1429,24 +1450,45 @@ function HomeContent() {
           }
           
           .banner-frame {
-            display: none;
+            background: none !important;
+            border: none !important;
+            box-shadow: none !important;
+            backdrop-filter: none !important;
+            padding: 0 !important;
+            border-radius: 0 !important;
+            max-width: 100%;
+            width: 100%;
+          }
+          
+          .banner-frame::before,
+          .banner-frame::after {
+            display: none !important;
           }
           
           .banner-decorative-corners {
-            display: none;
+            display: none !important;
           }
           
           .banner-inner-frame {
-            display: none;
+            background: none !important;
+            border: none !important;
+            padding: 0 !important;
+            border-radius: 0 !important;
+          }
+          
+          .banner-inner-frame::before,
+          .banner-inner-frame::after {
+            display: none !important;
           }
           
           .banner-image {
-            max-width: 90%;
-            width: 90%;
-            height: auto;
-            border-radius: 8px;
-            box-shadow: 0 6px 24px rgba(255, 107, 0, 0.4);
-            border: 1px solid rgba(255, 107, 0, 0.3);
+            max-width: 90% !important;
+            width: 90% !important;
+            height: auto !important;
+            border-radius: 8px !important;
+            box-shadow: 0 6px 24px rgba(255, 107, 0, 0.4) !important;
+            border: 1px solid rgba(255, 107, 0, 0.3) !important;
+            display: block !important;
           }
           
           .game-frame {
