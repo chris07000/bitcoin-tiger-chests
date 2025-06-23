@@ -918,8 +918,8 @@ function HomeContent() {
         .chest-img,
         .coinflip-img,
         .raffle-img {
-          max-width: 220px;
-          max-height: 220px;
+          max-width: 180px;
+          max-height: 180px;
           width: auto;
           height: auto;
           object-fit: contain;
@@ -961,29 +961,34 @@ function HomeContent() {
         }
         
         .game-info h3 {
-          font-size: 1.3rem;
-          margin-bottom: 0.5rem;
+          font-size: 1.5rem;
+          margin-bottom: 0.8rem;
           color: #FF6B00;
           text-align: center;
+          font-weight: 700;
+          text-shadow: 0 2px 8px rgba(255, 107, 0, 0.3);
         }
         
         .game-description {
-          color: rgba(255, 255, 255, 0.8);
-          margin-bottom: 1rem;
-          font-size: 0.9rem;
-          line-height: 1.4;
+          color: rgba(255, 255, 255, 0.9);
+          margin-bottom: 1.2rem;
+          font-size: 1rem;
+          line-height: 1.5;
           flex: 1;
           text-align: center;
+          font-weight: 500;
         }
         
         .play-now {
           color: #FF6B00;
           font-weight: 700;
-          font-size: 0.9rem;
+          font-size: 1rem;
           display: flex;
           align-items: center;
           justify-content: center;
           gap: 0.5rem;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
         }
         
         .play-arrow {
@@ -1314,6 +1319,19 @@ function HomeContent() {
             max-height: 180px;
           }
           
+          .game-info h3 {
+            font-size: 1.5rem;
+          }
+          
+          .game-description {
+            font-size: 1rem;
+            margin-bottom: 1.2rem;
+          }
+          
+          .play-now {
+            font-size: 1rem;
+          }
+          
           .hero-subtitle {
             font-size: 1rem;
           }
@@ -1435,6 +1453,19 @@ function HomeContent() {
           .raffle-img {
             max-width: 160px;
             max-height: 160px;
+          }
+          
+          .game-info h3 {
+            font-size: 1.3rem;
+          }
+          
+          .game-description {
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+          }
+          
+          .play-now {
+            font-size: 0.9rem;
           }
           
           .cta-button.large {
