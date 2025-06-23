@@ -58,19 +58,36 @@ function HomeContent() {
         
         <div className={`hero-content ${isVisible ? 'visible' : ''}`}>
           <div className="banner-container">
-            <div className="banner-frame">
+            <div className="banner-frame desktop-only">
               <div className="banner-decorative-corners"></div>
               <div className="banner-inner-frame">
-              <Image 
+                <Image 
                   src="/tigerbanner.png" 
                   alt="Bitcoin Tiger Collective" 
                   width={800} 
                   height={300} 
-                  className="banner-image"
+                  className="banner-image desktop-banner"
                   priority
                 />
               </div>
             </div>
+            
+            <Image 
+              src="/tigerbanner.png" 
+              alt="Bitcoin Tiger Collective" 
+              width={400} 
+              height={150} 
+              className="mobile-banner-image mobile-only"
+              priority
+              style={{
+                width: '90vw',
+                maxWidth: '400px',
+                height: 'auto',
+                borderRadius: '8px',
+                border: '2px solid rgba(255, 107, 0, 0.3)',
+                boxShadow: '0 4px 20px rgba(255, 107, 0, 0.3)'
+              }}
+            />
           </div>
           
           <p className="hero-subtitle">
@@ -413,6 +430,22 @@ function HomeContent() {
           margin-bottom: 2rem;
           position: relative;
           padding: 2rem;
+        }
+        
+        .desktop-only {
+          display: block;
+        }
+        
+        .mobile-only {
+          display: none;
+        }
+        
+        .mobile-banner-image {
+          object-fit: contain;
+          image-rendering: -webkit-optimize-contrast;
+          image-rendering: crisp-edges;
+          image-rendering: pixelated;
+          -ms-interpolation-mode: nearest-neighbor;
         }
         
         .banner-frame {
@@ -1294,50 +1327,13 @@ function HomeContent() {
           .banner-container {
             padding: 0;
             margin: 0;
-            width: 100%;
-            display: flex;
-            justify-content: center;
           }
           
-          .banner-frame {
-            background: none !important;
-            border: none !important;
-            box-shadow: none !important;
-            backdrop-filter: none !important;
-            padding: 0 !important;
-            border-radius: 0 !important;
-            max-width: 100%;
-            width: 100%;
-          }
-          
-          .banner-frame::before,
-          .banner-frame::after {
+          .desktop-only {
             display: none !important;
           }
           
-          .banner-decorative-corners {
-            display: none !important;
-          }
-          
-          .banner-inner-frame {
-            background: none !important;
-            border: none !important;
-            padding: 0 !important;
-            border-radius: 0 !important;
-          }
-          
-          .banner-inner-frame::before,
-          .banner-inner-frame::after {
-            display: none !important;
-          }
-          
-          .banner-image {
-            max-width: 95% !important;
-            width: 95% !important;
-            height: auto !important;
-            border-radius: 12px !important;
-            box-shadow: 0 8px 32px rgba(255, 107, 0, 0.4) !important;
-            border: 2px solid rgba(255, 107, 0, 0.3) !important;
+          .mobile-only {
             display: block !important;
           }
           
@@ -1444,50 +1440,13 @@ function HomeContent() {
           .banner-container {
             padding: 0;
             margin: 0;
-            width: 100%;
-            display: flex;
-            justify-content: center;
           }
           
-          .banner-frame {
-            background: none !important;
-            border: none !important;
-            box-shadow: none !important;
-            backdrop-filter: none !important;
-            padding: 0 !important;
-            border-radius: 0 !important;
-            max-width: 100%;
-            width: 100%;
-          }
-          
-          .banner-frame::before,
-          .banner-frame::after {
+          .desktop-only {
             display: none !important;
           }
           
-          .banner-decorative-corners {
-            display: none !important;
-          }
-          
-          .banner-inner-frame {
-            background: none !important;
-            border: none !important;
-            padding: 0 !important;
-            border-radius: 0 !important;
-          }
-          
-          .banner-inner-frame::before,
-          .banner-inner-frame::after {
-            display: none !important;
-          }
-          
-          .banner-image {
-            max-width: 90% !important;
-            width: 90% !important;
-            height: auto !important;
-            border-radius: 8px !important;
-            box-shadow: 0 6px 24px rgba(255, 107, 0, 0.4) !important;
-            border: 1px solid rgba(255, 107, 0, 0.3) !important;
+          .mobile-only {
             display: block !important;
           }
           
