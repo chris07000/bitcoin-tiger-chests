@@ -555,6 +555,7 @@ function HomeContent() {
         
         .banner-image {
           max-width: 100%;
+          width: 100%;
           height: auto;
           border-radius: 12px;
           position: relative;
@@ -565,6 +566,7 @@ function HomeContent() {
           image-rendering: pixelated;
           -ms-interpolation-mode: nearest-neighbor;
           filter: drop-shadow(0 8px 32px rgba(255, 107, 0, 0.4));
+          object-fit: contain;
         }
         
         .banner-frame:hover .banner-image {
@@ -1290,11 +1292,11 @@ function HomeContent() {
           }
           
           .banner-container {
-            padding: 1rem;
+            padding: 0.5rem;
           }
           
           .banner-frame {
-            padding: 1rem;
+            padding: 0.8rem;
             border-radius: 20px;
             max-width: 100%;
           }
@@ -1308,7 +1310,7 @@ function HomeContent() {
           }
           
           .banner-inner-frame {
-            padding: 0.75rem;
+            padding: 0.5rem;
             border-radius: 12px;
           }
           
@@ -1329,7 +1331,9 @@ function HomeContent() {
           }
           
           .banner-image {
-            max-width: 95%;
+            max-width: 100%;
+            width: 100%;
+            height: auto;
           }
           
           .game-frame {
@@ -1433,11 +1437,11 @@ function HomeContent() {
         
         @media (max-width: 480px) {
           .banner-container {
-            padding: 0.5rem;
+            padding: 0.3rem;
           }
           
           .banner-frame {
-            padding: 0.75rem;
+            padding: 0.6rem;
             border-radius: 16px;
           }
           
@@ -1450,7 +1454,7 @@ function HomeContent() {
           }
           
           .banner-inner-frame {
-            padding: 0.5rem;
+            padding: 0.4rem;
             border-radius: 10px;
           }
           
@@ -1471,7 +1475,9 @@ function HomeContent() {
           }
           
           .banner-image {
-            max-width: 90%;
+            max-width: 100%;
+            width: 100%;
+            height: auto;
           }
           
           .game-frame {
