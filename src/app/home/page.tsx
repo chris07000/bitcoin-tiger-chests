@@ -129,80 +129,92 @@ function HomeContent() {
         </div>
         
         <div className="games-grid hero-games">
-          <Link href="/" className="game-card chest-game">
-            <div className="hot-badge">POPULAR</div>
-            <div className="game-image chest-image">
-              <div className="game-frame">
-                <div className="game-decorative-corners"></div>
-                <div className="game-inner-frame">
-                  <div className="shine-effect"></div>
-                  <div className="pulse-overlay"></div>
-                  <Image 
-                    src="/chests.png" 
-                    alt="Mystery Chests" 
-                    width={320}
-                    height={320}
-                    className="chest-img"
-                    priority
-                  />
+          <div className="game-container">
+            <Link href="/" className="game-card chest-game">
+              <div className="hot-badge">POPULAR</div>
+              <div className="game-image chest-image">
+                <div className="game-frame">
+                  <div className="game-decorative-corners"></div>
+                  <div className="game-inner-frame">
+                    <div className="shine-effect"></div>
+                    <div className="pulse-overlay"></div>
+                    <Image 
+                      src="/chests.png" 
+                      alt="Mystery Chests" 
+                      width={320}
+                      height={320}
+                      className="chest-img"
+                      priority
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
+            </Link>
             <div className="game-info">
               <h3 className="pixel-text">Mystery Chests</h3>
               <p className="game-description">Open chests to win up to 150,000 sats</p>
-              <div className="play-now pixel-text">PLAY NOW <span className="play-arrow">→</span></div>
+              <Link href="/" className="play-now-link">
+                <div className="play-now pixel-text">PLAY NOW <span className="play-arrow">→</span></div>
+              </Link>
             </div>
-          </Link>
+          </div>
           
-          <Link href="/jackpot" className="game-card coinflip-game">
-            <div className="game-image coinflip-image">
-              <div className="game-frame">
-                <div className="game-decorative-corners"></div>
-                <div className="game-inner-frame">
-                  <div className="shine-effect"></div>
-                  <div className="pulse-overlay"></div>
-                  <Image 
-                    src="/tigercoin.png" 
-                    alt="Coinflip" 
-                    width={320} 
-                    height={320}
-                    className="coinflip-img"
-                  />
+          <div className="game-container">
+            <Link href="/jackpot" className="game-card coinflip-game">
+              <div className="game-image coinflip-image">
+                <div className="game-frame">
+                  <div className="game-decorative-corners"></div>
+                  <div className="game-inner-frame">
+                    <div className="shine-effect"></div>
+                    <div className="pulse-overlay"></div>
+                    <Image 
+                      src="/tigercoin.png" 
+                      alt="Coinflip" 
+                      width={320} 
+                      height={320}
+                      className="coinflip-img"
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
+            </Link>
             <div className="game-info">
               <h3 className="pixel-text">Coinflip</h3>
               <p className="game-description">Double your sats with 50% win chance</p>
-              <div className="play-now pixel-text">PLAY NOW <span className="play-arrow">→</span></div>
+              <Link href="/jackpot" className="play-now-link">
+                <div className="play-now pixel-text">PLAY NOW <span className="play-arrow">→</span></div>
+              </Link>
             </div>
-          </Link>
+          </div>
           
-          <Link href="/raffle" className="game-card raffle-game">
-            <div className="game-image raffle-image">
-              <div className="game-frame">
-                <div className="game-decorative-corners"></div>
-                <div className="game-inner-frame">
-                  <div className="shine-effect"></div>
-                  <div className="pulse-overlay"></div>
-                  <Image 
-                    src="/raffle.png" 
-                    alt="Bitcoin Raffle" 
-                    width={320}
-                    height={320}
-                    className="raffle-img"
-                    priority
-                  />
+          <div className="game-container">
+            <Link href="/raffle" className="game-card raffle-game">
+              <div className="game-image raffle-image">
+                <div className="game-frame">
+                  <div className="game-decorative-corners"></div>
+                  <div className="game-inner-frame">
+                    <div className="shine-effect"></div>
+                    <div className="pulse-overlay"></div>
+                    <Image 
+                      src="/raffle.png" 
+                      alt="Bitcoin Raffle" 
+                      width={320}
+                      height={320}
+                      className="raffle-img"
+                      priority
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
+            </Link>
             <div className="game-info">
               <h3 className="pixel-text">Bitcoin Raffle</h3>
               <p className="game-description">Win exclusive Bitcoin Ordinals</p>
-              <div className="play-now pixel-text">PLAY NOW <span className="play-arrow">→</span></div>
+              <Link href="/raffle" className="play-now-link">
+                <div className="play-now pixel-text">PLAY NOW <span className="play-arrow">→</span></div>
+              </Link>
             </div>
-          </Link>
+          </div>
         </div>
         
         <div className="jackpot-display">
@@ -727,6 +739,14 @@ function HomeContent() {
           padding: 0 1rem;
         }
         
+        .game-container {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          transition: all 0.3s ease;
+        }
+        
         .game-card {
           background: transparent !important;
           backdrop-filter: none !important;
@@ -739,18 +759,91 @@ function HomeContent() {
           position: relative;
           overflow: visible;
           box-shadow: none !important;
-          height: 400px;
           display: flex;
           flex-direction: column;
           align-items: center;
           text-align: center;
+          margin-bottom: 1.5rem;
         }
         
-        .game-card:hover {
+        .game-container:hover .game-card {
           transform: translateY(-8px);
-          border-color: transparent !important;
-          box-shadow: none !important;
-          background: transparent !important;
+        }
+        
+        .game-info {
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-start;
+          align-items: center;
+          text-align: center;
+          width: 100%;
+          max-width: 350px;
+          background: rgba(26, 26, 27, 0.6);
+          backdrop-filter: blur(15px);
+          border: 1px solid rgba(255, 107, 0, 0.3);
+          border-radius: 16px;
+          padding: 2rem 1.5rem;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+          transition: all 0.3s ease;
+        }
+        
+        .game-container:hover .game-info {
+          border-color: rgba(255, 107, 0, 0.5);
+          transform: translateY(-4px);
+          box-shadow: 0 12px 40px rgba(255, 107, 0, 0.15);
+        }
+        
+        .game-info h3 {
+          font-size: 2.2rem;
+          margin-bottom: 1rem;
+          color: #FF6B00;
+          text-align: center;
+          font-weight: 700;
+          text-shadow: 0 2px 8px rgba(255, 107, 0, 0.3);
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+        
+        .game-description {
+          color: rgba(255, 255, 255, 0.9);
+          margin-bottom: 1.5rem;
+          font-size: 1.2rem;
+          line-height: 1.6;
+          text-align: center;
+          font-weight: 500;
+        }
+        
+        .play-now-link {
+          text-decoration: none;
+          color: inherit;
+          width: 100%;
+        }
+        
+        .play-now {
+          background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+          color: white;
+          font-weight: 700;
+          font-size: 1.2rem;
+          padding: 1rem 2rem;
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          box-shadow: 0 4px 15px rgba(255, 107, 0, 0.3);
+          transition: all 0.3s ease;
+          border: none;
+          cursor: pointer;
+        }
+        
+        .play-now:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 25px rgba(255, 107, 0, 0.5);
+          background: linear-gradient(135deg, #FFB800 0%, #FF6B00 100%);
         }
         
         .hot-badge {
@@ -763,7 +856,7 @@ function HomeContent() {
           border-radius: 20px;
           font-size: 0.75rem;
           font-weight: 700;
-          z-index: 3;
+          z-index: 5;
         }
         
         .game-image {
@@ -903,7 +996,7 @@ function HomeContent() {
           border-radius: 0 0 6px 0;
         }
         
-        .game-card:hover .game-frame {
+        .game-container:hover .game-frame {
           transform: translateY(-6px) scale(1.02);
           box-shadow: 
             0 25px 50px rgba(0, 0, 0, 0.7),
@@ -912,7 +1005,7 @@ function HomeContent() {
             0 0 60px rgba(255, 107, 0, 0.25);
         }
         
-        .game-card:hover .game-frame::before {
+        .game-container:hover .game-frame::before {
           opacity: 0.8;
           animation-duration: 3s;
         }
@@ -938,9 +1031,9 @@ function HomeContent() {
           filter: drop-shadow(0 4px 16px rgba(255, 107, 0, 0.2));
         }
         
-        .game-card:hover .chest-img,
-        .game-card:hover .coinflip-img,
-        .game-card:hover .raffle-img {
+        .game-container:hover .chest-img,
+        .game-container:hover .coinflip-img,
+        .game-container:hover .raffle-img {
           transform: scale(1.05);
           filter: drop-shadow(0 8px 24px rgba(255, 107, 0, 0.4));
         }
@@ -953,51 +1046,11 @@ function HomeContent() {
           display: none !important;
         }
         
-        .game-info {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          justify-content: flex-start;
-          align-items: center;
-          text-align: center;
-        }
-        
-        .game-info h3 {
-          font-size: 1.5rem;
-          margin-bottom: 0.8rem;
-          color: #FF6B00;
-          text-align: center;
-          font-weight: 700;
-          text-shadow: 0 2px 8px rgba(255, 107, 0, 0.3);
-        }
-        
-        .game-description {
-          color: rgba(255, 255, 255, 0.9);
-          margin-bottom: 1.2rem;
-          font-size: 1rem;
-          line-height: 1.5;
-          flex: 1;
-          text-align: center;
-          font-weight: 500;
-        }
-        
-        .play-now {
-          color: #FF6B00;
-          font-weight: 700;
-          font-size: 1rem;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 0.5rem;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-        }
-        
         .play-arrow {
           transition: transform 0.3s ease;
         }
         
-        .game-card:hover .play-arrow {
+        .game-container:hover .play-arrow {
           transform: translateX(4px);
         }
         
@@ -1321,8 +1374,13 @@ function HomeContent() {
             max-height: 180px;
           }
           
+          .game-info {
+            padding: 1.5rem 1rem;
+            max-width: 320px;
+          }
+          
           .game-info h3 {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
           }
           
           .game-description {
@@ -1332,6 +1390,7 @@ function HomeContent() {
           
           .play-now {
             font-size: 1rem;
+            padding: 0.8rem 1.5rem;
           }
           
           .hero-subtitle {
@@ -1457,8 +1516,13 @@ function HomeContent() {
             max-height: 160px;
           }
           
+          .game-info {
+            padding: 1.2rem 0.8rem;
+            max-width: 280px;
+          }
+          
           .game-info h3 {
-            font-size: 1.3rem;
+            font-size: 1.5rem;
           }
           
           .game-description {
@@ -1468,6 +1532,7 @@ function HomeContent() {
           
           .play-now {
             font-size: 0.9rem;
+            padding: 0.7rem 1.2rem;
           }
           
           .cta-button.large {
