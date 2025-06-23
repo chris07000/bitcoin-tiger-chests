@@ -61,7 +61,7 @@ function HomeContent() {
             <div className="banner-frame">
               <div className="banner-decorative-corners"></div>
               <div className="banner-inner-frame">
-                <Image 
+              <Image 
                   src="/tigerbanner.png" 
                   alt="Bitcoin Tiger Collective" 
                   width={800} 
@@ -130,89 +130,89 @@ function HomeContent() {
         
         <div className="games-grid hero-games">
           <div className="game-container">
-            <Link href="/" className="game-card chest-game">
-              <div className="hot-badge">POPULAR</div>
-              <div className="game-image chest-image">
+          <Link href="/" className="game-card chest-game">
+            <div className="hot-badge">POPULAR</div>
+            <div className="game-image chest-image">
                 <div className="game-frame">
                   <div className="game-decorative-corners"></div>
                   <div className="game-inner-frame">
-                    <div className="shine-effect"></div>
-                    <div className="pulse-overlay"></div>
-                    <Image 
+              <div className="shine-effect"></div>
+              <div className="pulse-overlay"></div>
+                <Image 
                       src="/chests.png" 
-                      alt="Mystery Chests" 
+                  alt="Mystery Chests" 
                       width={320}
                       height={320}
-                      className="chest-img"
-                      priority
-                    />
-                  </div>
-                </div>
+                  className="chest-img"
+                  priority
+                />
+              </div>
+            </div>
               </div>
             </Link>
             <div className="game-info">
               <h3 className="pixel-text">Mystery Chests</h3>
               <p className="game-description">Open chests to win up to 150,000 sats</p>
               <Link href="/" className="play-now-link">
-                <div className="play-now pixel-text">PLAY NOW <span className="play-arrow">→</span></div>
-              </Link>
+              <div className="play-now pixel-text">PLAY NOW <span className="play-arrow">→</span></div>
+          </Link>
             </div>
           </div>
           
           <div className="game-container">
-            <Link href="/jackpot" className="game-card coinflip-game">
-              <div className="game-image coinflip-image">
+          <Link href="/jackpot" className="game-card coinflip-game">
+            <div className="game-image coinflip-image">
                 <div className="game-frame">
                   <div className="game-decorative-corners"></div>
                   <div className="game-inner-frame">
-                    <div className="shine-effect"></div>
-                    <div className="pulse-overlay"></div>
-                    <Image 
+              <div className="shine-effect"></div>
+              <div className="pulse-overlay"></div>
+                <Image 
                       src="/tigercoin.png" 
-                      alt="Coinflip" 
+                  alt="Coinflip" 
                       width={320} 
                       height={320}
-                      className="coinflip-img"
-                    />
-                  </div>
-                </div>
+                  className="coinflip-img"
+                />
+              </div>
+            </div>
               </div>
             </Link>
             <div className="game-info">
               <h3 className="pixel-text">Coinflip</h3>
               <p className="game-description">Double your sats with 50% win chance</p>
               <Link href="/jackpot" className="play-now-link">
-                <div className="play-now pixel-text">PLAY NOW <span className="play-arrow">→</span></div>
-              </Link>
+              <div className="play-now pixel-text">PLAY NOW <span className="play-arrow">→</span></div>
+          </Link>
             </div>
           </div>
           
           <div className="game-container">
-            <Link href="/raffle" className="game-card raffle-game">
-              <div className="game-image raffle-image">
+          <Link href="/raffle" className="game-card raffle-game">
+            <div className="game-image raffle-image">
                 <div className="game-frame">
                   <div className="game-decorative-corners"></div>
                   <div className="game-inner-frame">
-                    <div className="shine-effect"></div>
-                    <div className="pulse-overlay"></div>
-                    <Image 
+              <div className="shine-effect"></div>
+              <div className="pulse-overlay"></div>
+                <Image 
                       src="/raffle.png" 
-                      alt="Bitcoin Raffle" 
+                  alt="Bitcoin Raffle" 
                       width={320}
                       height={320}
-                      className="raffle-img"
-                      priority
-                    />
-                  </div>
-                </div>
+                  className="raffle-img"
+                  priority
+                />
+              </div>
+            </div>
               </div>
             </Link>
             <div className="game-info">
               <h3 className="pixel-text">Bitcoin Raffle</h3>
               <p className="game-description">Win exclusive Bitcoin Ordinals</p>
               <Link href="/raffle" className="play-now-link">
-                <div className="play-now pixel-text">PLAY NOW <span className="play-arrow">→</span></div>
-              </Link>
+              <div className="play-now pixel-text">PLAY NOW <span className="play-arrow">→</span></div>
+          </Link>
             </div>
           </div>
         </div>
@@ -543,7 +543,7 @@ function HomeContent() {
         }
         
         .banner-frame:hover::before {
-          opacity: 1;
+            opacity: 1;
           animation-duration: 2s;
         }
         
@@ -777,12 +777,12 @@ function HomeContent() {
           align-items: center;
           text-align: center;
           width: 100%;
-          max-width: 350px;
+          max-width: 280px;
           background: rgba(26, 26, 27, 0.6);
           backdrop-filter: blur(15px);
           border: 1px solid rgba(255, 107, 0, 0.3);
-          border-radius: 16px;
-          padding: 2rem 1.5rem;
+          border-radius: 12px;
+          padding: 1.2rem 1rem;
           box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
           transition: all 0.3s ease;
         }
@@ -794,8 +794,8 @@ function HomeContent() {
         }
         
         .game-info h3 {
-          font-size: 2.2rem;
-          margin-bottom: 1rem;
+          font-size: 1.6rem;
+          margin-bottom: 0.6rem;
           color: #FF6B00;
           text-align: center;
           font-weight: 700;
@@ -808,9 +808,9 @@ function HomeContent() {
         
         .game-description {
           color: rgba(255, 255, 255, 0.9);
-          margin-bottom: 1.5rem;
-          font-size: 1.2rem;
-          line-height: 1.6;
+          margin-bottom: 1rem;
+          font-size: 0.95rem;
+          line-height: 1.4;
           text-align: center;
           font-weight: 500;
         }
@@ -825,9 +825,9 @@ function HomeContent() {
           background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
           color: white;
           font-weight: 700;
-          font-size: 1.2rem;
-          padding: 1rem 2rem;
-          border-radius: 12px;
+          font-size: 0.9rem;
+          padding: 0.7rem 1.5rem;
+          border-radius: 8px;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -1375,22 +1375,22 @@ function HomeContent() {
           }
           
           .game-info {
-            padding: 1.5rem 1rem;
-            max-width: 320px;
+            padding: 1rem 0.8rem;
+            max-width: 260px;
           }
           
           .game-info h3 {
-            font-size: 1.8rem;
+            font-size: 1.4rem;
           }
           
           .game-description {
-            font-size: 1rem;
-            margin-bottom: 1.2rem;
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
           }
           
           .play-now {
-            font-size: 1rem;
-            padding: 0.8rem 1.5rem;
+            font-size: 0.85rem;
+            padding: 0.6rem 1.2rem;
           }
           
           .hero-subtitle {
@@ -1517,22 +1517,22 @@ function HomeContent() {
           }
           
           .game-info {
-            padding: 1.2rem 0.8rem;
-            max-width: 280px;
+            padding: 1rem 0.8rem;
+            max-width: 260px;
           }
           
           .game-info h3 {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
           }
           
           .game-description {
             font-size: 0.9rem;
-            margin-bottom: 1rem;
+            margin-bottom: 0.8rem;
           }
           
           .play-now {
-            font-size: 0.9rem;
-            padding: 0.7rem 1.2rem;
+            font-size: 0.85rem;
+            padding: 0.6rem 1.2rem;
           }
           
           .cta-button.large {

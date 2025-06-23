@@ -282,8 +282,8 @@ export default function Navbar() {
                         router.push('/');
                         setShowGamesMenu(false);
                       }}
-                    >
-                      Chests
+            >
+              Chests
                     </button>
                     <button
                       className="games-option"
@@ -291,8 +291,8 @@ export default function Navbar() {
                         router.push('/jackpot');
                         setShowGamesMenu(false);
                       }}
-                    >
-                      Coinflip
+            >
+              Coinflip
                     </button>
                   </div>
                 )}
@@ -356,9 +356,9 @@ export default function Navbar() {
             >
               How to Play
             </Link>
+            </div>
           </div>
-        </div>
-
+          
         {/* Right side - Balance & Wallet */}
         <div className="navbar-right">
           <div className="balance-display">
@@ -403,7 +403,7 @@ export default function Navbar() {
               >
                 ×
               </button>
-            </div>
+          </div>
           )}
         </div>
 
@@ -440,20 +440,20 @@ export default function Navbar() {
             {/* Games Section */}
             <div className="mobile-games-section">
               <div className="mobile-section-title">Games</div>
-              <Link 
-                href="/" 
+            <Link 
+              href="/" 
                 className={`mobile-nav-link ${pathname === '/' ? 'active' : ''}`}
                 onClick={() => setIsMenuOpen(false)}
-              >
-                Chests
-              </Link>
-              <Link 
-                href="/jackpot" 
+            >
+              Chests
+            </Link>
+            <Link 
+              href="/jackpot" 
                 className={`mobile-nav-link ${pathname === '/jackpot' ? 'active' : ''}`}
                 onClick={() => setIsMenuOpen(false)}
-              >
-                Coinflip
-              </Link>
+            >
+              Coinflip
+            </Link>
             </div>
             
             <Link 
@@ -474,29 +474,29 @@ export default function Navbar() {
             {/* Collection Section */}
             <div className="mobile-collection-section">
               <div className="mobile-section-title">Collection</div>
-              <Link 
-                href="/tigers" 
+            <Link 
+              href="/tigers" 
                 className={`mobile-nav-link ${pathname === '/tigers' ? 'active' : ''}`}
                 onClick={() => setIsMenuOpen(false)}
-              >
-                Tigers
-              </Link>
-              <Link 
-                href="/artifacts" 
+            >
+              Tigers
+            </Link>
+            <Link 
+              href="/artifacts" 
                 className={`mobile-nav-link ${pathname === '/artifacts' ? 'active' : ''}`}
                 onClick={() => setIsMenuOpen(false)}
-              >
-                Artifacts
-              </Link>
-              <Link 
+            >
+              Artifacts
+            </Link>
+            <Link 
                 href="/staking" 
                 className={`mobile-nav-link ${pathname === '/staking' ? 'active' : ''}`}
                 onClick={() => setIsMenuOpen(false)}
-              >
+            >
                 Staking
-              </Link>
-            </div>
-            
+            </Link>
+          </div>
+          
             <Link 
               href="/how-to-play" 
               className={`mobile-nav-link ${pathname === '/how-to-play' ? 'active' : ''}`}
