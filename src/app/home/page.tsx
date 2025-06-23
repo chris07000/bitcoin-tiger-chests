@@ -1287,58 +1287,37 @@ function HomeContent() {
         /* Mobile Responsiveness */
         @media (max-width: 768px) {
           .hero-section {
-            padding: 3rem 0rem 2rem;
-            margin: 1rem 0rem 2rem;
+            padding: 2rem 1rem;
+            margin: 1rem 0;
           }
           
           .banner-container {
-            padding: 0rem;
+            padding: 0;
             margin: 0;
-            width: 100vw;
-            margin-left: calc(-50vw + 50%);
+            width: 100%;
+            display: flex;
+            justify-content: center;
           }
           
           .banner-frame {
-            padding: 0.5rem;
-            border-radius: 16px;
-            max-width: none;
-            width: 100%;
-            margin: 0 auto;
+            display: none;
           }
           
-          .banner-frame::before {
-            border-radius: 18px;
-          }
-          
-          .banner-frame::after {
-            border-radius: 20px;
+          .banner-decorative-corners {
+            display: none;
           }
           
           .banner-inner-frame {
-            padding: 0.3rem;
-            border-radius: 10px;
-          }
-          
-          .banner-decorative-corners::before,
-          .banner-decorative-corners::after {
-            width: 12px;
-            height: 12px;
-          }
-          
-          .banner-decorative-corners::before {
-            top: 4px;
-            left: 4px;
-          }
-          
-          .banner-decorative-corners::after {
-            bottom: 4px;
-            right: 4px;
+            display: none;
           }
           
           .banner-image {
-            max-width: 100%;
-            width: 100%;
+            max-width: 95%;
+            width: 95%;
             height: auto;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(255, 107, 0, 0.4);
+            border: 2px solid rgba(255, 107, 0, 0.3);
           }
           
           .game-frame {
@@ -1442,53 +1421,32 @@ function HomeContent() {
         
         @media (max-width: 480px) {
           .banner-container {
-            padding: 0rem;
+            padding: 0;
             margin: 0;
-            width: 100vw;
-            margin-left: calc(-50vw + 50%);
+            width: 100%;
+            display: flex;
+            justify-content: center;
           }
           
           .banner-frame {
-            padding: 0.3rem;
-            border-radius: 12px;
-            max-width: none;
-            width: 100%;
-            margin: 0 auto;
+            display: none;
           }
           
-          .banner-frame::before {
-            border-radius: 14px;
-          }
-          
-          .banner-frame::after {
-            border-radius: 16px;
+          .banner-decorative-corners {
+            display: none;
           }
           
           .banner-inner-frame {
-            padding: 0.2rem;
-            border-radius: 8px;
-          }
-          
-          .banner-decorative-corners::before,
-          .banner-decorative-corners::after {
-            width: 10px;
-            height: 10px;
-          }
-          
-          .banner-decorative-corners::before {
-            top: 3px;
-            left: 3px;
-          }
-          
-          .banner-decorative-corners::after {
-            bottom: 3px;
-            right: 3px;
+            display: none;
           }
           
           .banner-image {
-            max-width: 100%;
-            width: 100%;
+            max-width: 90%;
+            width: 90%;
             height: auto;
+            border-radius: 8px;
+            box-shadow: 0 6px 24px rgba(255, 107, 0, 0.4);
+            border: 1px solid rgba(255, 107, 0, 0.3);
           }
           
           .game-frame {
