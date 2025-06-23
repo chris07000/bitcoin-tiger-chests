@@ -1,5 +1,7 @@
 'use client'
 
+// Updated text sizes for better readability - v1.1
+
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
