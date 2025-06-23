@@ -41,17 +41,165 @@ function HomeContent() {
           display: flex;
           justify-content: center;
           margin-bottom: 1.5rem;
+          position: relative;
+          padding: 2rem;
+        }
+        
+        .banner-frame {
+          position: relative;
+          background: rgba(26, 26, 27, 0.4);
+          backdrop-filter: blur(20px);
+          border: 2px solid rgba(255, 107, 0, 0.3);
+          border-radius: 24px;
+          padding: 1.5rem;
+          box-shadow: 
+            0 20px 40px rgba(0, 0, 0, 0.6),
+            0 0 0 1px rgba(255, 255, 255, 0.05),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          max-width: 900px;
+          width: 100%;
+        }
+        
+        .banner-frame::before {
+          content: '';
+          position: absolute;
+          top: -2px;
+          left: -2px;
+          right: -2px;
+          bottom: -2px;
+          background: linear-gradient(45deg, 
+            #FF6B00, #FFB800, #FF6B00, #FFB800, #FF6B00);
+          background-size: 400% 400%;
+          border-radius: 26px;
+          z-index: -1;
+          animation: gradientShift 4s ease infinite;
+          opacity: 0.7;
+        }
+        
+        .banner-frame::after {
+          content: '';
+          position: absolute;
+          top: -4px;
+          left: -4px;
+          right: -4px;
+          bottom: -4px;
+          background: linear-gradient(135deg, 
+            rgba(255, 107, 0, 0.1) 0%, 
+            rgba(255, 184, 0, 0.05) 50%, 
+            rgba(255, 107, 0, 0.1) 100%);
+          border-radius: 28px;
+          z-index: -2;
+          filter: blur(8px);
+        }
+        
+        .banner-inner-frame {
+          position: relative;
+          background: rgba(0, 0, 0, 0.2);
+          border: 1px solid rgba(255, 107, 0, 0.2);
+          border-radius: 16px;
+          padding: 1rem;
+          overflow: hidden;
+        }
+        
+        .banner-inner-frame::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 1px;
+          background: linear-gradient(90deg, 
+            transparent, 
+            rgba(255, 107, 0, 0.6), 
+            transparent);
+        }
+        
+        .banner-inner-frame::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          height: 1px;
+          background: linear-gradient(90deg, 
+            transparent, 
+            rgba(255, 184, 0, 0.4), 
+            transparent);
+        }
+        
+        .banner-decorative-corners {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          pointer-events: none;
+          z-index: 1;
+        }
+        
+        .banner-decorative-corners::before,
+        .banner-decorative-corners::after {
+          content: '';
+          position: absolute;
+          width: 20px;
+          height: 20px;
+          border: 2px solid rgba(255, 107, 0, 0.6);
+        }
+        
+        .banner-decorative-corners::before {
+          top: 8px;
+          left: 8px;
+          border-right: none;
+          border-bottom: none;
+          border-radius: 8px 0 0 0;
+        }
+        
+        .banner-decorative-corners::after {
+          bottom: 8px;
+          right: 8px;
+          border-left: none;
+          border-top: none;
+          border-radius: 0 0 8px 0;
+        }
+        
+        .banner-frame:hover {
+          transform: translateY(-4px) scale(1.01);
+          box-shadow: 
+            0 30px 60px rgba(0, 0, 0, 0.8),
+            0 0 0 1px rgba(255, 255, 255, 0.08),
+            inset 0 1px 0 rgba(255, 255, 255, 0.15),
+            0 0 80px rgba(255, 107, 0, 0.3);
+        }
+        
+        .banner-frame:hover::before {
+          opacity: 1;
+          animation-duration: 2s;
+        }
+        
+        @keyframes gradientShift {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
         }
         
         .banner-image {
           max-width: 100%;
           height: auto;
           border-radius: 12px;
-          box-shadow: 0 8px 32px rgba(255, 107, 0, 0.3);
+          position: relative;
+          z-index: 2;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           image-rendering: -webkit-optimize-contrast;
           image-rendering: crisp-edges;
           image-rendering: pixelated;
           -ms-interpolation-mode: nearest-neighbor;
+          filter: drop-shadow(0 8px 32px rgba(255, 107, 0, 0.4));
+        }
+        
+        .banner-frame:hover .banner-image {
+          transform: scale(1.02);
+          filter: drop-shadow(0 12px 48px rgba(255, 107, 0, 0.6));
         }
         
         .pixel-subtitle {
@@ -172,6 +320,45 @@ function HomeContent() {
         }
         
         @media (max-width: 768px) {
+          .banner-container {
+            padding: 1rem;
+          }
+          
+          .banner-frame {
+            padding: 1rem;
+            border-radius: 20px;
+            max-width: 100%;
+          }
+          
+          .banner-frame::before {
+            border-radius: 22px;
+          }
+          
+          .banner-frame::after {
+            border-radius: 24px;
+          }
+          
+          .banner-inner-frame {
+            padding: 0.75rem;
+            border-radius: 12px;
+          }
+          
+          .banner-decorative-corners::before,
+          .banner-decorative-corners::after {
+            width: 15px;
+            height: 15px;
+          }
+          
+          .banner-decorative-corners::before {
+            top: 6px;
+            left: 6px;
+          }
+          
+          .banner-decorative-corners::after {
+            bottom: 6px;
+            right: 6px;
+          }
+          
           .banner-image {
             max-width: 95%;
           }
@@ -211,6 +398,44 @@ function HomeContent() {
         }
         
         @media (max-width: 480px) {
+          .banner-container {
+            padding: 0.5rem;
+          }
+          
+          .banner-frame {
+            padding: 0.75rem;
+            border-radius: 16px;
+          }
+          
+          .banner-frame::before {
+            border-radius: 18px;
+          }
+          
+          .banner-frame::after {
+            border-radius: 20px;
+          }
+          
+          .banner-inner-frame {
+            padding: 0.5rem;
+            border-radius: 10px;
+          }
+          
+          .banner-decorative-corners::before,
+          .banner-decorative-corners::after {
+            width: 12px;
+            height: 12px;
+          }
+          
+          .banner-decorative-corners::before {
+            top: 4px;
+            left: 4px;
+          }
+          
+          .banner-decorative-corners::after {
+            bottom: 4px;
+            right: 4px;
+          }
+          
           .banner-image {
             max-width: 90%;
           }
@@ -304,14 +529,19 @@ function HomeContent() {
       
       <header className="pixel-header">
         <div className="banner-container">
-          <Image 
-            src="/tigerbanner.png" 
-            alt="Bitcoin Tiger Collective" 
-            width={800} 
-            height={300} 
-            className="banner-image"
-            priority
-          />
+          <div className="banner-frame">
+            <div className="banner-decorative-corners"></div>
+            <div className="banner-inner-frame">
+              <Image 
+                src="/tigerbanner.png" 
+                alt="Bitcoin Tiger Collective" 
+                width={800} 
+                height={300} 
+                className="banner-image"
+                priority
+              />
+            </div>
+          </div>
         </div>
         <p className="pixel-subtitle">
           Unlock the power of blockchain rewards with our mystery chests and experience the future of Bitcoin gaming
