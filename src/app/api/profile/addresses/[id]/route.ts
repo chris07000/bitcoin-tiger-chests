@@ -3,9 +3,15 @@ import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
+interface RouteContext {
+  params: {
+    id: string
+  }
+}
+
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: RouteContext
 ) {
   try {
     const { id } = params
@@ -14,10 +20,8 @@ export async function DELETE(
       return NextResponse.json({ error: 'Address ID required' }, { status: 400 })
     }
 
-    // Delete the crypto address
-    await prisma.cryptoAddress.delete({
-      where: { id }
-    })
+    // Delete the crypto address using raw query as fallback
+    await prisma.$executeRaw`DELETE FROM "CryptoAddress" WHERE id = ${id}`
 
     return NextResponse.json({ success: true })
   } catch (error) {
