@@ -21,7 +21,19 @@ function HomeContent() {
   }[]>([])
   
   const [isVisible, setIsVisible] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
   const heroRef = useRef(null)
+
+  // Check if on mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768)
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   useEffect(() => {
     // Animatie bij laden
@@ -93,7 +105,7 @@ function HomeContent() {
         
         <div className={`hero-content ${isVisible ? 'visible' : ''}`}>
           <div className="banner-container">
-            <div className="banner-frame desktop-only">
+            <div className="banner-frame">
               <div className="banner-decorative-corners"></div>
               <div className="banner-inner-frame">
                 <Image 
@@ -107,22 +119,24 @@ function HomeContent() {
               </div>
             </div>
             
-            <Image 
-              src="/tigerbanner.png" 
-              alt="Bitcoin Tiger Collective" 
-              width={400} 
-              height={150} 
-              className="mobile-banner-image mobile-only"
-              priority
-              style={{
-                width: '90vw',
-                maxWidth: '400px',
-                height: 'auto',
-                borderRadius: '8px',
-                border: '2px solid rgba(255, 107, 0, 0.3)',
-                boxShadow: '0 4px 20px rgba(255, 107, 0, 0.3)'
-              }}
-            />
+            {isMobile && (
+              <Image 
+                src="/tigerbanner.png" 
+                alt="Bitcoin Tiger Collective" 
+                width={400} 
+                height={150} 
+                className="mobile-banner-image"
+                priority
+                style={{
+                  width: '90vw',
+                  maxWidth: '400px',
+                  height: 'auto',
+                  borderRadius: '8px',
+                  border: '2px solid rgba(255, 107, 0, 0.3)',
+                  boxShadow: '0 4px 20px rgba(255, 107, 0, 0.3)'
+                }}
+              />
+            )}
           </div>
           
           <p className="hero-subtitle">
@@ -484,15 +498,6 @@ function HomeContent() {
           margin-bottom: 2rem;
           position: relative;
           padding: 2rem;
-        }
-        
-        /* Desktop visibility rules - default with !important */
-        .desktop-only {
-          display: block !important;
-        }
-        
-        .mobile-only {
-          display: none !important;
         }
         
         .mobile-banner-image {
@@ -1441,14 +1446,6 @@ function HomeContent() {
             margin: 0;
           }
           
-          .desktop-only {
-            display: none !important;
-          }
-          
-          .mobile-only {
-            display: block !important;
-          }
-          
           .game-frame {
             padding: 0.75rem;
             border-radius: 16px;
@@ -1552,14 +1549,6 @@ function HomeContent() {
           .banner-container {
             padding: 0;
             margin: 0;
-          }
-          
-          .desktop-only {
-            display: none !important;
-          }
-          
-          .mobile-only {
-            display: block !important;
           }
           
           .game-frame {
