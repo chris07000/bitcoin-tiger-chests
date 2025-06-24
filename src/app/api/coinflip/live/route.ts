@@ -63,7 +63,15 @@ export async function GET() {
         // Get wallet info separately to avoid relation issues
         const wallet = await prisma.wallet.findUnique({
           where: { id: win.walletId },
-          select: { address: true }
+          select: { 
+            address: true,
+            UserProfile: {
+              select: {
+                displayName: true,
+                avatar: true
+              }
+            }
+          }
         });
         
         // Get the side from the paymentHash
@@ -72,8 +80,12 @@ export async function GET() {
           side = 'tails';
         }
         
+        const profile = wallet?.UserProfile;
+        
         formattedWins.push({
           address: wallet?.address || 'unknown',
+          displayName: profile?.displayName || null,
+          avatar: profile?.avatar || null,
           amount: Number(win.amount),
           timestamp: win.createdAt,
           side: side

@@ -13,6 +13,8 @@ function HomeContent() {
   const { walletAddress } = useWallet()
   const [recentWinners, setRecentWinners] = useState<{
     address: string;
+    displayName?: string;
+    avatar?: string;
     amount: number;
     game: string;
     timestamp: string;
@@ -30,8 +32,44 @@ function HomeContent() {
       try {
         const response = await fetch('/api/winners')
         if (response.ok) {
-          const data = await response.json()
-          setRecentWinners(data)
+          const winnersData = await response.json()
+          
+          // Get profile data for winners
+          const addresses = winnersData.map((w: any) => {
+            // Convert shortened address back to full address if needed
+            // For now, we'll work with what we have
+            return w.address
+          }).filter((addr: string) => addr && addr !== 'unknown')
+          
+          if (addresses.length > 0) {
+            try {
+              const profileResponse = await fetch('/api/profile/display', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ addresses })
+              })
+              
+              if (profileResponse.ok) {
+                const profilesData = await profileResponse.json()
+                
+                // Merge profile data with winners
+                const enhancedWinners = winnersData.map((winner: any) => ({
+                  ...winner,
+                  displayName: profilesData[winner.address]?.displayName,
+                  avatar: profilesData[winner.address]?.avatar
+                }))
+                
+                setRecentWinners(enhancedWinners)
+              } else {
+                setRecentWinners(winnersData)
+              }
+            } catch (profileError) {
+              console.error('Error fetching profiles:', profileError)
+              setRecentWinners(winnersData)
+            }
+          } else {
+            setRecentWinners(winnersData)
+          }
         }
       } catch (error) {
         console.error('Error fetching winners:', error)
@@ -99,13 +137,19 @@ function HomeContent() {
             <div className="ticker-content">
               <div className="ticker-items">
                 {recentWinners.slice(0, 5).map((winner, i) => (
-                  <span key={i}>
+                  <span key={i} className="ticker-winner">
+                    {winner.avatar && (
+                      <img src={winner.avatar} alt="Avatar" className="ticker-avatar" />
+                    )}
                     {winner.game === 'Jackpot' ? '💎' : 
                      winner.game === 'Bronze Chest' ? '🥉' :
                      winner.game === 'Silver Chest' ? '🥈' :
                      winner.game === 'Gold Chest' ? '🥇' :
                      winner.game === 'Coinflip' ? '🪙' : 
-                     winner.game === 'Raffle' ? '🎟️' : '🏆'} {winner.address} won {winner.amount.toLocaleString()} sats
+                     winner.game === 'Raffle' ? '🎟️' : '🏆'} 
+                    <span className="ticker-name">
+                      {winner.displayName || winner.address}
+                    </span> won {winner.amount.toLocaleString()} sats
                   </span>
                 ))}
               </div>
@@ -262,8 +306,19 @@ function HomeContent() {
           <div className="winners-feed">
             {recentWinners.map((winner, i) => (
               <div key={i} className="winner-entry">
-                <div className="winner-game">{winner.game}</div>
-                <div className="winner-address">{winner.address}</div>
+                <div className="winner-profile">
+                  {winner.avatar ? (
+                    <img src={winner.avatar} alt="Avatar" className="winner-avatar" />
+                  ) : (
+                    <div className="winner-avatar-placeholder">🐅</div>
+                  )}
+                  <div className="winner-info">
+                    <div className="winner-name">
+                      {winner.displayName || winner.address}
+                    </div>
+                    <div className="winner-game">{winner.game}</div>
+                  </div>
+                </div>
                 <div className="winner-amount">{winner.amount.toLocaleString()} sats</div>
               </div>
             ))}
@@ -1129,39 +1184,96 @@ function HomeContent() {
         }
         
         .winner-entry {
-          display: grid;
-          grid-template-columns: 1fr 2fr 1fr;
-          gap: 1rem;
-          padding: 0.75rem;
-          border-bottom: none;
-          font-size: 0.9rem;
-          background: rgba(255, 107, 0, 0.05);
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 1rem;
+          background: rgba(26, 26, 27, 0.4);
+          border: 1px solid rgba(255, 107, 0, 0.2);
           border-radius: 8px;
           margin-bottom: 0.5rem;
           transition: all 0.3s ease;
         }
         
         .winner-entry:hover {
-          background: rgba(255, 107, 0, 0.1);
+          border-color: rgba(255, 107, 0, 0.4);
           transform: translateX(4px);
         }
         
-        .winner-game {
-          color: #FF6B00;
+        .winner-profile {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          flex: 1;
+        }
+        
+        .winner-avatar {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          border: 2px solid rgba(255, 107, 0, 0.5);
+          object-fit: cover;
+        }
+        
+        .winner-avatar-placeholder {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          border: 2px solid rgba(255, 107, 0, 0.5);
+          background: rgba(255, 107, 0, 0.1);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.2rem;
+        }
+        
+        .winner-info {
+          display: flex;
+          flex-direction: column;
+          gap: 0.2rem;
+        }
+        
+        .winner-name {
           font-weight: 600;
-        }
-        
-        .winner-address {
-          color: rgba(255, 255, 255, 0.8);
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
-        
-        .winner-amount {
           color: #FFB800;
+          font-size: 0.9rem;
+        }
+
+        .winner-game {
+          color: rgba(255, 255, 255, 0.7);
+          font-size: 0.8rem;
+        }
+
+        .winner-address {
+          color: rgba(255, 255, 255, 0.6);
+          font-size: 0.8rem;
+          font-family: monospace;
+        }
+
+        .winner-amount {
+          color: #22c55e;
+          font-weight: 700;
+          font-size: 0.9rem;
+        }
+        
+        /* Ticker Avatar Styles */
+        .ticker-winner {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+        
+        .ticker-avatar {
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          border: 1px solid rgba(255, 107, 0, 0.5);
+          object-fit: cover;
+        }
+        
+        .ticker-name {
           font-weight: 600;
-          text-align: right;
+          color: #FFB800;
         }
         
         .benefits-section {

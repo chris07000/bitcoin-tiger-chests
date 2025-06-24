@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 export default function JackpotBanner() {
   const [jackpotAmount, setJackpotAmount] = useState(250000)
   const [lastWinner, setLastWinner] = useState<string | null>(null)
+  const [winnerProfile, setWinnerProfile] = useState<{displayName?: string, avatar?: string} | null>(null)
   const [isGlowing, setIsGlowing] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
 
@@ -13,7 +14,27 @@ export default function JackpotBanner() {
       if (!response.ok) throw new Error('Failed to fetch jackpot');
       const data = await response.json();
       setJackpotAmount(data.balance);
-      if (data.lastWinner) setLastWinner(data.lastWinner);
+      
+      if (data.lastWinner && data.lastWinner !== lastWinner) {
+        setLastWinner(data.lastWinner);
+        
+        // Fetch winner profile
+        try {
+          const profileResponse = await fetch('/api/profile/display', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ addresses: [data.lastWinner] })
+          });
+          
+          if (profileResponse.ok) {
+            const profileData = await profileResponse.json();
+            setWinnerProfile(profileData[data.lastWinner] || null);
+          }
+        } catch (profileError) {
+          console.error('Error fetching winner profile:', profileError);
+          setWinnerProfile(null);
+        }
+      }
     } catch (error) {
       console.error('Error fetching jackpot:', error);
     }
@@ -77,8 +98,21 @@ export default function JackpotBanner() {
 
           {lastWinner && (
             <div className="jackpot-last-winner">
-              {isMobile ? 'Winner: ' : 'Last Winner: '}
-              {formatWinner(lastWinner)}
+              <div className="winner-display">
+                {winnerProfile?.avatar && (
+                  <img 
+                    src={winnerProfile.avatar} 
+                    alt="Winner avatar" 
+                    className="winner-avatar"
+                  />
+                )}
+                <span className="winner-text">
+                  {isMobile ? 'Winner: ' : 'Last Winner: '}
+                  <span className="winner-name">
+                    {winnerProfile?.displayName || formatWinner(lastWinner)}
+                  </span>
+                </span>
+              </div>
             </div>
           )}
         </div>

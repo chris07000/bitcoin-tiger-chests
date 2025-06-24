@@ -44,7 +44,13 @@ export async function GET() {
       include: {
         Wallet: {
           select: {
-            address: true
+            address: true,
+            UserProfile: {
+              select: {
+                displayName: true,
+                avatar: true
+              }
+            }
           }
         }
       }
@@ -78,14 +84,21 @@ export async function GET() {
         gameType = 'Raffle';
       }
       
-      // Vertaal het volledige wallet adres naar een verkorte versie
+      // Haal profiel info op
+      const profile = win.Wallet?.UserProfile;
       const address = win.Wallet?.address || 'unknown';
+      const displayName = profile?.displayName;
+      const avatar = profile?.avatar;
+      
+      // Vertaal het volledige wallet adres naar een verkorte versie
       const shortenedAddress = address.length > 10 
         ? `${address.substring(0, 6)}...${address.substring(address.length - 4)}`
         : address;
       
       return {
         address: shortenedAddress,
+        displayName: displayName || null,
+        avatar: avatar || null,
         amount: Math.floor(Number(win.amount)), // Rond af naar beneden om hele sats te tonen
         game: gameType,
         side: side || undefined, // Alleen toevoegen als het beschikbaar is
