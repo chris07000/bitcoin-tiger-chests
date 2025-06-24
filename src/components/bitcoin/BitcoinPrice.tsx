@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useWallet } from '../../context/WalletContext';
 import { useLightning } from '../../context/LightningContext';
-import LightningModal from '../lightning/LightningModal';
+import DepositModal from './DepositModal';
 
 export default function BitcoinPrice() {
   const [btcPrice, setBtcPrice] = useState<number | null>(null);
@@ -11,9 +11,6 @@ export default function BitcoinPrice() {
   const [showDepositModal, setShowDepositModal] = useState(false);
   const [withdrawAmount, setWithdrawAmount] = useState<number>(1000);
   const [invoice, setInvoice] = useState<string>('');
-  const [depositInvoice, setDepositInvoice] = useState<string | null>(null);
-  const [depositPaymentHash, setDepositPaymentHash] = useState<string | null>(null);
-  const [depositAmount, setDepositAmount] = useState<number>(1000);
   const [isClient, setIsClient] = useState(false);
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const [showErrorAlert, setShowErrorAlert] = useState(false);
@@ -23,7 +20,7 @@ export default function BitcoinPrice() {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const { connectedWallet, walletAddress, connectXverse, connectMagicEden, disconnectWallet } = useWallet();
-  const { balance: contextBalance, setBalance, withdraw, generateInvoice, isInitialized, pendingWithdrawal: contextPendingWithdrawal, fetchBalance } = useLightning();
+  const { balance: contextBalance, setBalance, withdraw, isInitialized, pendingWithdrawal: contextPendingWithdrawal, fetchBalance } = useLightning();
   
   // Nieuwe functie om de actuele balans op te halen
   const fetchActualBalance = async () => {
@@ -114,30 +111,6 @@ export default function BitcoinPrice() {
       (window as any).currentBtcPrice = price;
     } catch (error) {
       console.error('Error fetching Bitcoin price:', error);
-    }
-  };
-
-  const handleDeposit = async (amount: number) => {
-    try {
-      if (!walletAddress) {
-        setErrorMessage('Please connect your wallet first');
-        setShowErrorAlert(true);
-        return;
-      }
-
-      if (!isInitialized) {
-        setErrorMessage('Please wait while we connect to your wallet');
-        setShowErrorAlert(true);
-        return;
-      }
-
-      const response = await generateInvoice(amount, `Deposit for ${walletAddress}`);
-      setDepositInvoice(response.paymentRequest);
-      setDepositPaymentHash(response.paymentHash);
-    } catch (error) {
-      console.error('Error generating invoice:', error);
-      setErrorMessage(error instanceof Error ? error.message : 'Failed to generate invoice');
-      setShowErrorAlert(true);
     }
   };
 
@@ -282,9 +255,7 @@ export default function BitcoinPrice() {
           <div className="lightning-buttons">
             <button 
               className="pixel-button deposit"
-              onClick={() => {
-                setShowDepositModal(true);
-              }}
+              onClick={() => setShowDepositModal(true)}
               disabled={!isInitialized}
             >
               {isMobile ? '+' : 'Deposit'}
@@ -364,21 +335,8 @@ export default function BitcoinPrice() {
       )}
 
       {showDepositModal && (
-        <LightningModal
-          invoice={depositInvoice}
-          initialAmount={depositAmount}
-          onCloseAction={() => {
-            console.log('BitcoinPrice: Deposit modal closed, cleaning up state');
-            setShowDepositModal(false);
-            setDepositInvoice(null);
-            setDepositPaymentHash(null);
-            setDepositAmount(1000); // Reset to default amount
-          }}
-          paymentHash={depositPaymentHash}
-          onAmountChangeAction={(amount) => {
-            setDepositAmount(amount);
-            handleDeposit(amount);
-          }}
+        <DepositModal
+          onClose={() => setShowDepositModal(false)}
         />
       )}
 
