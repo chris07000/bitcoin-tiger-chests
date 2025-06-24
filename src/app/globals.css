@@ -1523,7 +1523,6 @@ body::after {
   align-items: center;
   padding: 1rem;
   z-index: 1000;
-  overflow-y: auto;
 }
 
 .modal-content {
@@ -1532,12 +1531,11 @@ body::after {
   border: calc(var(--pixel-size) * 2) solid var(--gold);
   max-width: 500px;
   width: 90%;
-  max-height: 90vh;
+  max-height: calc(100vh - 2rem);
   overflow-y: auto;
   position: relative;
   animation: modal-appear 0.3s ease-out;
   font-family: 'Press Start 2P', monospace;
-  margin: auto;
 }
 
 .modal-content h2 {
@@ -3740,12 +3738,13 @@ body::after {
   text-shadow: 0 0 8px rgba(255, 107, 0, 0.3) !important;
 }
 
-/* Responsive modal adjustments */
+/* Responsive modal adjustments - Only apply restrictive styles on mobile */
 @media (max-width: 768px) {
   .modal {
     padding: 0.5rem;
     align-items: flex-start;
     padding-top: 2rem;
+    overflow-y: auto;
   }
   
   .modal-content {
@@ -3807,6 +3806,7 @@ body::after {
   .modal {
     padding: 0.25rem;
     padding-top: 1rem;
+    overflow-y: auto;
   }
   
   .modal-content {

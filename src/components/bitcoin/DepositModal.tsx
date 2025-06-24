@@ -328,7 +328,6 @@ export default function DepositModal({ onClose }: DepositModalProps) {
             justify-content: center;
             z-index: 1000;
             padding: 1rem;
-            overflow-y: auto;
           }
 
           .deposit-modal {
@@ -338,10 +337,9 @@ export default function DepositModal({ onClose }: DepositModalProps) {
             padding: 2rem;
             max-width: 600px;
             width: 90%;
-            max-height: 90vh;
+            max-height: calc(100vh - 2rem);
             overflow-y: auto;
             color: white;
-            margin: auto;
           }
 
           .modal-header {
@@ -553,6 +551,7 @@ export default function DepositModal({ onClose }: DepositModalProps) {
               padding: 0.5rem;
               align-items: flex-start;
               padding-top: 2rem;
+              overflow-y: auto;
             }
             
             .deposit-modal {
@@ -676,6 +675,7 @@ export default function DepositModal({ onClose }: DepositModalProps) {
             .deposit-modal-overlay {
               padding: 0.25rem;
               padding-top: 1rem;
+              overflow-y: auto;
             }
             
             .deposit-modal {
