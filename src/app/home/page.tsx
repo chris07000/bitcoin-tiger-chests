@@ -484,6 +484,7 @@ function HomeContent() {
           padding: 2rem;
         }
         
+        /* Desktop visibility rules - default */
         .desktop-only {
           display: block;
         }
