@@ -1512,30 +1512,36 @@ body::after {
 }
 
 .modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 1rem;
-  z-index: 1000;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: rgba(0, 0, 0, 0.8) !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  padding: 1rem !important;
+  z-index: 9999 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
 }
 
 .modal-content {
-  background: #000;
-  padding: calc(var(--pixel-size) * 6);
-  border: calc(var(--pixel-size) * 2) solid var(--gold);
-  max-width: 500px;
-  width: 90%;
-  max-height: calc(100vh - 2rem);
-  overflow-y: auto;
-  position: relative;
-  animation: modal-appear 0.3s ease-out;
-  font-family: 'Press Start 2P', monospace;
+  background: #000 !important;
+  padding: calc(var(--pixel-size) * 6) !important;
+  border: calc(var(--pixel-size) * 2) solid var(--gold) !important;
+  max-width: 500px !important;
+  width: 90% !important;
+  max-height: calc(100vh - 4rem) !important;
+  overflow-y: auto !important;
+  position: relative !important;
+  animation: modal-appear 0.3s ease-out !important;
+  font-family: 'Press Start 2P', monospace !important;
+  margin: 0 !important;
+  z-index: 10000 !important;
 }
 
 .modal-content h2 {
@@ -3741,106 +3747,106 @@ body::after {
 /* Responsive modal adjustments - Only apply restrictive styles on mobile */
 @media (max-width: 768px) {
   .modal {
-    padding: 0.5rem;
-    align-items: flex-start;
-    padding-top: 2rem;
-    overflow-y: auto;
+    padding: 0.5rem !important;
+    align-items: flex-start !important;
+    padding-top: 2rem !important;
+    overflow-y: auto !important;
   }
   
   .modal-content {
-    width: 95%;
-    max-height: 85vh;
-    padding: calc(var(--pixel-size) * 3);
-    margin-top: 1rem;
-    margin-bottom: 1rem;
+    width: 95% !important;
+    max-height: 85vh !important;
+    padding: calc(var(--pixel-size) * 3) !important;
+    margin-top: 1rem !important;
+    margin-bottom: 1rem !important;
   }
   
   .modal-content h2 {
-    font-size: calc(var(--pixel-size) * 2.5);
-    margin-bottom: calc(var(--pixel-size) * 4);
+    font-size: calc(var(--pixel-size) * 2.5) !important;
+    margin-bottom: calc(var(--pixel-size) * 4) !important;
   }
   
   .input-group {
-    margin-bottom: calc(var(--pixel-size) * 3);
+    margin-bottom: calc(var(--pixel-size) * 3) !important;
   }
   
   .input-group label {
-    font-size: calc(var(--pixel-size) * 1.8);
-    margin-bottom: calc(var(--pixel-size) * 1.5);
+    font-size: calc(var(--pixel-size) * 1.8) !important;
+    margin-bottom: calc(var(--pixel-size) * 1.5) !important;
   }
   
   .amount-input, .invoice-input {
-    padding: calc(var(--pixel-size) * 2);
-    font-size: calc(var(--pixel-size) * 1.8);
+    padding: calc(var(--pixel-size) * 2) !important;
+    font-size: calc(var(--pixel-size) * 1.8) !important;
   }
   
   .modal-buttons {
-    gap: calc(var(--pixel-size) * 2);
-    flex-direction: column;
-    margin-top: calc(var(--pixel-size) * 4);
+    gap: calc(var(--pixel-size) * 2) !important;
+    flex-direction: column !important;
+    margin-top: calc(var(--pixel-size) * 4) !important;
   }
   
   .modal-buttons button {
-    padding: calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 4);
-    font-size: calc(var(--pixel-size) * 1.8);
-    width: 100%;
+    padding: calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 4) !important;
+    font-size: calc(var(--pixel-size) * 1.8) !important;
+    width: 100% !important;
   }
   
   .qr-container {
-    padding: 0.5rem;
-    margin: 0.5rem 0;
+    padding: 0.5rem !important;
+    margin: 0.5rem 0 !important;
   }
   
   .invoice-text {
-    font-size: 0.65rem;
-    padding: 0.4rem;
+    font-size: 0.65rem !important;
+    padding: 0.4rem !important;
   }
   
   .status-message {
-    font-size: 0.8rem;
-    margin-top: 0.5rem;
+    font-size: 0.8rem !important;
+    margin-top: 0.5rem !important;
   }
 }
 
 @media (max-width: 480px) {
   .modal {
-    padding: 0.25rem;
-    padding-top: 1rem;
-    overflow-y: auto;
+    padding: 0.25rem !important;
+    padding-top: 1rem !important;
+    overflow-y: auto !important;
   }
   
   .modal-content {
-    width: 98%;
-    max-height: 80vh;
-    padding: calc(var(--pixel-size) * 2);
+    width: 98% !important;
+    max-height: 80vh !important;
+    padding: calc(var(--pixel-size) * 2) !important;
   }
   
   .modal-content h2 {
-    font-size: calc(var(--pixel-size) * 2);
-    margin-bottom: calc(var(--pixel-size) * 3);
+    font-size: calc(var(--pixel-size) * 2) !important;
+    margin-bottom: calc(var(--pixel-size) * 3) !important;
   }
   
   .input-group label {
-    font-size: calc(var(--pixel-size) * 1.5);
+    font-size: calc(var(--pixel-size) * 1.5) !important;
   }
   
   .amount-input, .invoice-input {
-    padding: calc(var(--pixel-size) * 1.5);
-    font-size: calc(var(--pixel-size) * 1.5);
+    padding: calc(var(--pixel-size) * 1.5) !important;
+    font-size: calc(var(--pixel-size) * 1.5) !important;
   }
   
   .modal-buttons button {
-    padding: calc(var(--pixel-size) * 1.5) calc(var(--pixel-size) * 3);
-    font-size: calc(var(--pixel-size) * 1.5);
+    padding: calc(var(--pixel-size) * 1.5) calc(var(--pixel-size) * 3) !important;
+    font-size: calc(var(--pixel-size) * 1.5) !important;
   }
   
   .qr-container {
-    padding: 0.25rem;
+    padding: 0.25rem !important;
   }
   
   .invoice-text {
-    font-size: 0.6rem;
-    padding: 0.3rem;
+    font-size: 0.6rem !important;
+    padding: 0.3rem !important;
   }
 }
 

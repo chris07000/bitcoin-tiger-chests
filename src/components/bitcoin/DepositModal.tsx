@@ -317,29 +317,36 @@ export default function DepositModal({ onClose }: DepositModalProps) {
 
         <style jsx>{`
           .deposit-modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 1rem;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            background: rgba(0, 0, 0, 0.8) !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            z-index: 9999 !important;
+            padding: 1rem !important;
+            margin: 0 !important;
+            overflow: hidden !important;
           }
 
           .deposit-modal {
-            background: linear-gradient(135deg, #1a1a1b 0%, #2a2a2b 100%);
-            border: 2px solid #FF6B00;
-            border-radius: 16px;
-            padding: 2rem;
-            max-width: 600px;
-            width: 90%;
-            max-height: calc(100vh - 2rem);
-            overflow-y: auto;
-            color: white;
+            background: linear-gradient(135deg, #1a1a1b 0%, #2a2a2b 100%) !important;
+            border: 2px solid #FF6B00 !important;
+            border-radius: 16px !important;
+            padding: 2rem !important;
+            max-width: 600px !important;
+            width: 90% !important;
+            max-height: calc(100vh - 4rem) !important;
+            overflow-y: auto !important;
+            color: white !important;
+            margin: 0 !important;
+            z-index: 10000 !important;
+            position: relative !important;
           }
 
           .modal-header {
@@ -548,197 +555,197 @@ export default function DepositModal({ onClose }: DepositModalProps) {
 
           @media (max-width: 768px) {
             .deposit-modal-overlay {
-              padding: 0.5rem;
-              align-items: flex-start;
-              padding-top: 2rem;
-              overflow-y: auto;
+              padding: 0.5rem !important;
+              align-items: flex-start !important;
+              padding-top: 2rem !important;
+              overflow-y: auto !important;
             }
             
             .deposit-modal {
-              width: 95%;
-              max-height: 85vh;
-              padding: 1rem;
-              margin-top: 1rem;
-              margin-bottom: 1rem;
+              width: 95% !important;
+              max-height: 85vh !important;
+              padding: 1rem !important;
+              margin-top: 1rem !important;
+              margin-bottom: 1rem !important;
             }
             
             .modal-header h2 {
-              font-size: 1.2rem;
-              margin-bottom: 1rem;
+              font-size: 1.2rem !important;
+              margin-bottom: 1rem !important;
             }
             
             .deposit-options {
-              grid-template-columns: 1fr;
-              gap: 0.8rem;
+              grid-template-columns: 1fr !important;
+              gap: 0.8rem !important;
             }
             
             .option-card {
-              padding: 1rem;
+              padding: 1rem !important;
             }
             
             .option-card h3 {
-              font-size: 0.9rem;
-              margin-bottom: 0.4rem;
+              font-size: 0.9rem !important;
+              margin-bottom: 0.4rem !important;
             }
             
             .option-card p {
-              font-size: 0.8rem;
+              font-size: 0.8rem !important;
             }
             
             .option-card ul {
-              margin-top: 0.5rem;
-              padding-left: 0.8rem;
+              margin-top: 0.5rem !important;
+              padding-left: 0.8rem !important;
             }
             
             .option-card li {
-              margin-bottom: 0.2rem;
-              font-size: 0.75rem;
+              margin-bottom: 0.2rem !important;
+              font-size: 0.75rem !important;
             }
             
             .amount-input input {
-              padding: 0.6rem;
+              padding: 0.6rem !important;
             }
             
             .amount-input label {
-              font-size: 0.9rem;
-              margin-bottom: 0.4rem;
+              font-size: 0.9rem !important;
+              margin-bottom: 0.4rem !important;
             }
             
             .generate-button, .btcpay-checkout-button {
-              padding: 0.8rem 1.5rem;
-              font-size: 0.9rem;
+              padding: 0.8rem 1.5rem !important;
+              font-size: 0.9rem !important;
             }
             
             .back-button {
-              padding: 0.4rem 0.8rem;
-              font-size: 0.8rem;
-              margin-bottom: 0.8rem;
+              padding: 0.4rem 0.8rem !important;
+              font-size: 0.8rem !important;
+              margin-bottom: 0.8rem !important;
             }
             
             .invoice-details {
-              padding: 0.8rem;
-              margin-bottom: 0.8rem;
+              padding: 0.8rem !important;
+              margin-bottom: 0.8rem !important;
             }
             
             .invoice-details p {
-              font-size: 0.8rem;
-              margin-bottom: 0.3rem;
+              font-size: 0.8rem !important;
+              margin-bottom: 0.3rem !important;
             }
             
             .address-display {
-              flex-direction: column;
-              gap: 0.4rem;
+              flex-direction: column !important;
+              gap: 0.4rem !important;
             }
             
             .address-display code {
-              font-size: 0.7rem;
-              padding: 0.6rem;
+              font-size: 0.7rem !important;
+              padding: 0.6rem !important;
             }
             
             .copy-button {
-              padding: 0.6rem 0.8rem;
-              width: 100%;
+              padding: 0.6rem 0.8rem !important;
+              width: 100% !important;
             }
             
             .deposit-notes {
-              padding: 0.8rem;
-              margin-bottom: 0.8rem;
+              padding: 0.8rem !important;
+              margin-bottom: 0.8rem !important;
             }
             
             .deposit-notes ul {
-              margin: 0.4rem 0 0 0.8rem;
+              margin: 0.4rem 0 0 0.8rem !important;
             }
             
             .deposit-notes li {
-              font-size: 0.75rem;
-              margin-bottom: 0.2rem;
+              font-size: 0.75rem !important;
+              margin-bottom: 0.2rem !important;
             }
             
             .payment-status {
-              padding: 0.8rem;
-              font-size: 0.8rem;
+              padding: 0.8rem !important;
+              font-size: 0.8rem !important;
             }
             
             .error-message {
-              padding: 0.8rem;
-              margin-top: 0.8rem;
-              font-size: 0.8rem;
+              padding: 0.8rem !important;
+              margin-top: 0.8rem !important;
+              font-size: 0.8rem !important;
             }
             
             .loading {
-              padding: 1.5rem;
-              font-size: 0.9rem;
+              padding: 1.5rem !important;
+              font-size: 0.9rem !important;
             }
           }
 
           @media (max-width: 480px) {
             .deposit-modal-overlay {
-              padding: 0.25rem;
-              padding-top: 1rem;
-              overflow-y: auto;
+              padding: 0.25rem !important;
+              padding-top: 1rem !important;
+              overflow-y: auto !important;
             }
             
             .deposit-modal {
-              width: 98%;
-              max-height: 80vh;
-              padding: 0.8rem;
+              width: 98% !important;
+              max-height: 80vh !important;
+              padding: 0.8rem !important;
             }
             
             .modal-header h2 {
-              font-size: 1rem;
-              margin-bottom: 0.8rem;
+              font-size: 1rem !important;
+              margin-bottom: 0.8rem !important;
             }
             
             .close-button {
-              font-size: 1.2rem;
+              font-size: 1.2rem !important;
             }
             
             .option-card {
-              padding: 0.8rem;
+              padding: 0.8rem !important;
             }
             
             .option-icon {
-              font-size: 1.5rem;
-              margin-bottom: 0.5rem;
+              font-size: 1.5rem !important;
+              margin-bottom: 0.5rem !important;
             }
             
             .option-card h3 {
-              font-size: 0.8rem;
+              font-size: 0.8rem !important;
             }
             
             .option-card p {
-              font-size: 0.7rem;
+              font-size: 0.7rem !important;
             }
             
             .option-card li {
-              font-size: 0.7rem;
+              font-size: 0.7rem !important;
             }
             
             .amount-input input {
-              padding: 0.5rem;
-              font-size: 0.9rem;
+              padding: 0.5rem !important;
+              font-size: 0.9rem !important;
             }
             
             .amount-input small {
-              font-size: 0.7rem;
+              font-size: 0.7rem !important;
             }
             
             .generate-button, .btcpay-checkout-button {
-              padding: 0.7rem 1.2rem;
-              font-size: 0.8rem;
+              padding: 0.7rem 1.2rem !important;
+              font-size: 0.8rem !important;
             }
             
             .address-display code {
-              font-size: 0.65rem;
-              padding: 0.5rem;
+              font-size: 0.65rem !important;
+              padding: 0.5rem !important;
             }
             
             .invoice-details p {
-              font-size: 0.75rem;
+              font-size: 0.75rem !important;
             }
             
             .deposit-notes li {
-              font-size: 0.7rem;
+              font-size: 0.7rem !important;
             }
           }
         `}</style>
