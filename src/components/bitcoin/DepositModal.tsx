@@ -327,6 +327,8 @@ export default function DepositModal({ onClose }: DepositModalProps) {
             align-items: center;
             justify-content: center;
             z-index: 1000;
+            padding: 1rem;
+            overflow-y: auto;
           }
 
           .deposit-modal {
@@ -336,9 +338,10 @@ export default function DepositModal({ onClose }: DepositModalProps) {
             padding: 2rem;
             max-width: 600px;
             width: 90%;
-            max-height: 80vh;
+            max-height: 90vh;
             overflow-y: auto;
             color: white;
+            margin: auto;
           }
 
           .modal-header {
@@ -546,19 +549,195 @@ export default function DepositModal({ onClose }: DepositModalProps) {
           }
 
           @media (max-width: 768px) {
-            .deposit-options {
-              grid-template-columns: 1fr;
+            .deposit-modal-overlay {
+              padding: 0.5rem;
+              align-items: flex-start;
+              padding-top: 2rem;
             }
             
             .deposit-modal {
+              width: 95%;
+              max-height: 85vh;
+              padding: 1rem;
+              margin-top: 1rem;
+              margin-bottom: 1rem;
+            }
+            
+            .modal-header h2 {
+              font-size: 1.2rem;
+              margin-bottom: 1rem;
+            }
+            
+            .deposit-options {
+              grid-template-columns: 1fr;
+              gap: 0.8rem;
+            }
+            
+            .option-card {
               padding: 1rem;
             }
-
+            
+            .option-card h3 {
+              font-size: 0.9rem;
+              margin-bottom: 0.4rem;
+            }
+            
+            .option-card p {
+              font-size: 0.8rem;
+            }
+            
+            .option-card ul {
+              margin-top: 0.5rem;
+              padding-left: 0.8rem;
+            }
+            
+            .option-card li {
+              margin-bottom: 0.2rem;
+              font-size: 0.75rem;
+            }
+            
+            .amount-input input {
+              padding: 0.6rem;
+            }
+            
+            .amount-input label {
+              font-size: 0.9rem;
+              margin-bottom: 0.4rem;
+            }
+            
+            .generate-button, .btcpay-checkout-button {
+              padding: 0.8rem 1.5rem;
+              font-size: 0.9rem;
+            }
+            
+            .back-button {
+              padding: 0.4rem 0.8rem;
+              font-size: 0.8rem;
+              margin-bottom: 0.8rem;
+            }
+            
+            .invoice-details {
+              padding: 0.8rem;
+              margin-bottom: 0.8rem;
+            }
+            
+            .invoice-details p {
+              font-size: 0.8rem;
+              margin-bottom: 0.3rem;
+            }
+            
             .address-display {
               flex-direction: column;
+              gap: 0.4rem;
             }
-
+            
             .address-display code {
+              font-size: 0.7rem;
+              padding: 0.6rem;
+            }
+            
+            .copy-button {
+              padding: 0.6rem 0.8rem;
+              width: 100%;
+            }
+            
+            .deposit-notes {
+              padding: 0.8rem;
+              margin-bottom: 0.8rem;
+            }
+            
+            .deposit-notes ul {
+              margin: 0.4rem 0 0 0.8rem;
+            }
+            
+            .deposit-notes li {
+              font-size: 0.75rem;
+              margin-bottom: 0.2rem;
+            }
+            
+            .payment-status {
+              padding: 0.8rem;
+              font-size: 0.8rem;
+            }
+            
+            .error-message {
+              padding: 0.8rem;
+              margin-top: 0.8rem;
+              font-size: 0.8rem;
+            }
+            
+            .loading {
+              padding: 1.5rem;
+              font-size: 0.9rem;
+            }
+          }
+
+          @media (max-width: 480px) {
+            .deposit-modal-overlay {
+              padding: 0.25rem;
+              padding-top: 1rem;
+            }
+            
+            .deposit-modal {
+              width: 98%;
+              max-height: 80vh;
+              padding: 0.8rem;
+            }
+            
+            .modal-header h2 {
+              font-size: 1rem;
+              margin-bottom: 0.8rem;
+            }
+            
+            .close-button {
+              font-size: 1.2rem;
+            }
+            
+            .option-card {
+              padding: 0.8rem;
+            }
+            
+            .option-icon {
+              font-size: 1.5rem;
+              margin-bottom: 0.5rem;
+            }
+            
+            .option-card h3 {
+              font-size: 0.8rem;
+            }
+            
+            .option-card p {
+              font-size: 0.7rem;
+            }
+            
+            .option-card li {
+              font-size: 0.7rem;
+            }
+            
+            .amount-input input {
+              padding: 0.5rem;
+              font-size: 0.9rem;
+            }
+            
+            .amount-input small {
+              font-size: 0.7rem;
+            }
+            
+            .generate-button, .btcpay-checkout-button {
+              padding: 0.7rem 1.2rem;
+              font-size: 0.8rem;
+            }
+            
+            .address-display code {
+              font-size: 0.65rem;
+              padding: 0.5rem;
+            }
+            
+            .invoice-details p {
+              font-size: 0.75rem;
+            }
+            
+            .deposit-notes li {
               font-size: 0.7rem;
             }
           }

@@ -1521,8 +1521,9 @@ body::after {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-top: 4rem;
+  padding: 1rem;
   z-index: 1000;
+  overflow-y: auto;
 }
 
 .modal-content {
@@ -1531,9 +1532,12 @@ body::after {
   border: calc(var(--pixel-size) * 2) solid var(--gold);
   max-width: 500px;
   width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
   position: relative;
   animation: modal-appear 0.3s ease-out;
   font-family: 'Press Start 2P', monospace;
+  margin: auto;
 }
 
 .modal-content h2 {
@@ -3734,6 +3738,110 @@ body::after {
   font-weight: 800 !important;
   font-size: 1.1rem !important;
   text-shadow: 0 0 8px rgba(255, 107, 0, 0.3) !important;
+}
+
+/* Responsive modal adjustments */
+@media (max-width: 768px) {
+  .modal {
+    padding: 0.5rem;
+    align-items: flex-start;
+    padding-top: 2rem;
+  }
+  
+  .modal-content {
+    width: 95%;
+    max-height: 85vh;
+    padding: calc(var(--pixel-size) * 3);
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .modal-content h2 {
+    font-size: calc(var(--pixel-size) * 2.5);
+    margin-bottom: calc(var(--pixel-size) * 4);
+  }
+  
+  .input-group {
+    margin-bottom: calc(var(--pixel-size) * 3);
+  }
+  
+  .input-group label {
+    font-size: calc(var(--pixel-size) * 1.8);
+    margin-bottom: calc(var(--pixel-size) * 1.5);
+  }
+  
+  .amount-input, .invoice-input {
+    padding: calc(var(--pixel-size) * 2);
+    font-size: calc(var(--pixel-size) * 1.8);
+  }
+  
+  .modal-buttons {
+    gap: calc(var(--pixel-size) * 2);
+    flex-direction: column;
+    margin-top: calc(var(--pixel-size) * 4);
+  }
+  
+  .modal-buttons button {
+    padding: calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 4);
+    font-size: calc(var(--pixel-size) * 1.8);
+    width: 100%;
+  }
+  
+  .qr-container {
+    padding: 0.5rem;
+    margin: 0.5rem 0;
+  }
+  
+  .invoice-text {
+    font-size: 0.65rem;
+    padding: 0.4rem;
+  }
+  
+  .status-message {
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal {
+    padding: 0.25rem;
+    padding-top: 1rem;
+  }
+  
+  .modal-content {
+    width: 98%;
+    max-height: 80vh;
+    padding: calc(var(--pixel-size) * 2);
+  }
+  
+  .modal-content h2 {
+    font-size: calc(var(--pixel-size) * 2);
+    margin-bottom: calc(var(--pixel-size) * 3);
+  }
+  
+  .input-group label {
+    font-size: calc(var(--pixel-size) * 1.5);
+  }
+  
+  .amount-input, .invoice-input {
+    padding: calc(var(--pixel-size) * 1.5);
+    font-size: calc(var(--pixel-size) * 1.5);
+  }
+  
+  .modal-buttons button {
+    padding: calc(var(--pixel-size) * 1.5) calc(var(--pixel-size) * 3);
+    font-size: calc(var(--pixel-size) * 1.5);
+  }
+  
+  .qr-container {
+    padding: 0.25rem;
+  }
+  
+  .invoice-text {
+    font-size: 0.6rem;
+    padding: 0.3rem;
+  }
 }
 
 
