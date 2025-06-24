@@ -25,6 +25,40 @@ interface AddressInfo {
   unconfirmedBalance: number
 }
 
+interface BTCPayInvoice {
+  id: string
+  storeId: string
+  amount: string
+  currency: string
+  type: string
+  checkoutLink: string
+  status: string
+  additionalStatus: string
+  monitoringExpiration: number
+  expirationTime: number
+  createdTime: number
+  availableStatusesForManualMarking: string[]
+  archived: boolean
+  metadata: {
+    orderId?: string
+    buyerName?: string
+    buyerEmail?: string
+  }
+}
+
+interface BTCPayPaymentMethod {
+  paymentMethod: string
+  destination: string
+  paymentLink: string
+  rate: string
+  paymentMethodPaid: string
+  totalPaid: string
+  due: string
+  amount: string
+  networkFee: string
+  cryptoCode: string
+}
+
 export class BitcoinService {
   private apiUrl: string
 
@@ -181,6 +215,158 @@ export class BitcoinService {
   }
 }
 
+export class BTCPayService {
+  private baseUrl: string
+  private apiKey: string
+  private storeId: string
+
+  constructor() {
+    this.baseUrl = process.env.BTCPAY_SERVER_URL || ''
+    this.apiKey = process.env.BTCPAY_API_KEY || ''
+    this.storeId = process.env.BTCPAY_STORE_ID || ''
+    
+    if (!this.baseUrl || !this.apiKey || !this.storeId) {
+      console.warn('BTCPay Server environment variables not configured')
+    }
+  }
+
+  private getHeaders() {
+    return {
+      'Authorization': `token ${this.apiKey}`,
+      'Content-Type': 'application/json'
+    }
+  }
+
+  // Create a new invoice for Bitcoin payment
+  async createInvoice(amount: number, orderId: string, buyerEmail?: string): Promise<BTCPayInvoice> {
+    try {
+      const response = await fetch(`${this.baseUrl}/api/v1/stores/${this.storeId}/invoices`, {
+        method: 'POST',
+        headers: this.getHeaders(),
+        body: JSON.stringify({
+          amount: satoshisToBTC(amount).toString(),
+          currency: 'BTC',
+          metadata: {
+            orderId,
+            buyerEmail: buyerEmail || `user@bitcointiger.io`,
+            buyerName: 'Bitcoin Tiger User'
+          },
+          checkout: {
+            speedPolicy: 'MediumSpeed', // Wait for 1 confirmation
+            paymentMethods: ['BTC'],
+            expirationMinutes: 60,
+            monitoringMinutes: 1440, // 24 hours
+            paymentTolerance: 0,
+            redirectURL: process.env.NEXT_PUBLIC_BASE_URL,
+            redirectAutomatically: false,
+            requiresRefundEmail: false,
+            checkoutType: 'V1'
+          }
+        })
+      })
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        throw new Error(`BTCPay API error: ${response.status} - ${errorText}`)
+      }
+
+      const invoice = await response.json()
+      return invoice
+    } catch (error) {
+      console.error('Error creating BTCPay invoice:', error)
+      throw error
+    }
+  }
+
+  // Get invoice status and payment details
+  async getInvoice(invoiceId: string): Promise<BTCPayInvoice> {
+    try {
+      const response = await fetch(`${this.baseUrl}/api/v1/stores/${this.storeId}/invoices/${invoiceId}`, {
+        headers: this.getHeaders()
+      })
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch invoice: ${response.status}`)
+      }
+
+      return await response.json()
+    } catch (error) {
+      console.error('Error fetching BTCPay invoice:', error)
+      throw error
+    }
+  }
+
+  // Get payment methods for an invoice (includes Bitcoin address)
+  async getPaymentMethods(invoiceId: string): Promise<BTCPayPaymentMethod[]> {
+    try {
+      const response = await fetch(`${this.baseUrl}/api/v1/stores/${this.storeId}/invoices/${invoiceId}/payment-methods`, {
+        headers: this.getHeaders()
+      })
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch payment methods: ${response.status}`)
+      }
+
+      return await response.json()
+    } catch (error) {
+      console.error('Error fetching payment methods:', error)
+      throw error
+    }
+  }
+
+  // Check if invoice is paid and confirmed
+  async isInvoicePaid(invoiceId: string): Promise<{
+    paid: boolean
+    confirmed: boolean
+    status: string
+    amountPaid?: number
+  }> {
+    try {
+      const invoice = await this.getInvoice(invoiceId)
+      
+      const paid = invoice.status === 'Processing' || invoice.status === 'Settled'
+      const confirmed = invoice.status === 'Settled'
+      
+      // Get payment amount if paid
+      let amountPaid = 0
+      if (paid) {
+        const paymentMethods = await this.getPaymentMethods(invoiceId)
+        const btcMethod = paymentMethods.find(pm => pm.cryptoCode === 'BTC')
+        if (btcMethod && btcMethod.totalPaid) {
+          amountPaid = btcToSatoshis(parseFloat(btcMethod.totalPaid))
+        }
+      }
+
+      return {
+        paid,
+        confirmed,
+        status: invoice.status,
+        amountPaid: paid ? amountPaid : undefined
+      }
+    } catch (error) {
+      console.error('Error checking invoice payment status:', error)
+      return {
+        paid: false,
+        confirmed: false,
+        status: 'Error'
+      }
+    }
+  }
+
+  // Validate if BTCPay Server is properly configured
+  async validateConfiguration(): Promise<boolean> {
+    try {
+      const response = await fetch(`${this.baseUrl}/api/v1/stores/${this.storeId}`, {
+        headers: this.getHeaders()
+      })
+      return response.ok
+    } catch (error) {
+      console.error('BTCPay Server configuration invalid:', error)
+      return false
+    }
+  }
+}
+
 // Helper functions
 export function satoshisToBTC(satoshis: number): number {
   return satoshis / 100000000
@@ -198,4 +384,5 @@ export function formatBitcoinAmount(satoshis: number): string {
 }
 
 // Export singleton instance
-export const bitcoinService = new BitcoinService() 
+export const bitcoinService = new BitcoinService()
+export const btcPayService = new BTCPayService() 

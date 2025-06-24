@@ -2,21 +2,31 @@
 import { useState, useEffect } from 'react'
 import { useWallet } from '@/context/WalletContext'
 import { useLightning } from '@/context/LightningContext'
-import { bitcoinService, formatBitcoinAmount } from '@/lib/bitcoin-utils'
+import { formatBitcoinAmount } from '@/lib/bitcoin-utils'
 import LightningModal from '../lightning/LightningModal'
 
 interface DepositModalProps {
   onClose: () => void
 }
 
+interface BTCPayInvoice {
+  invoiceId: string
+  bitcoinAddress: string
+  amount: number
+  amountBTC: string
+  checkoutLink: string
+  expiresAt: string
+  network: string
+}
+
 export default function DepositModal({ onClose }: DepositModalProps) {
   const [depositType, setDepositType] = useState<'lightning' | 'bitcoin' | null>(null)
   const [amount, setAmount] = useState(10000)
-  const [bitcoinAddress, setBitcoinAddress] = useState<string>('')
+  const [btcPayInvoice, setBtcPayInvoice] = useState<BTCPayInvoice | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string>('')
-  const [checkingTransactions, setCheckingTransactions] = useState(false)
-  const [transactionStatus, setTransactionStatus] = useState<string>('')
+  const [checkingPayment, setCheckingPayment] = useState(false)
+  const [paymentStatus, setPaymentStatus] = useState<string>('')
   
   // Lightning states
   const [lightningInvoice, setLightningInvoice] = useState<string | null>(null)
@@ -25,73 +35,88 @@ export default function DepositModal({ onClose }: DepositModalProps) {
   const { walletAddress } = useWallet()
   const { generateInvoice, isInitialized } = useLightning()
 
-  // Generate Bitcoin address when Bitcoin deposit is selected
+  // Generate Bitcoin invoice when Bitcoin deposit is selected
   useEffect(() => {
-    if (depositType === 'bitcoin' && walletAddress && !bitcoinAddress) {
-      generateBitcoinAddress()
+    if (depositType === 'bitcoin' && walletAddress && !btcPayInvoice) {
+      createBitcoinInvoice()
     }
-  }, [depositType, walletAddress])
+  }, [depositType, walletAddress, amount])
 
-  const generateBitcoinAddress = async () => {
+  const createBitcoinInvoice = async () => {
     if (!walletAddress) return
     
     setLoading(true)
     setError('')
     
     try {
-      const response = await fetch(`/api/bitcoin/address?wallet=${walletAddress}`)
-      if (!response.ok) throw new Error('Failed to generate Bitcoin address')
+      const response = await fetch(`/api/bitcoin/address?wallet=${walletAddress}&amount=${amount}`)
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.details || errorData.error || 'Failed to create Bitcoin invoice')
+      }
       
-      const data = await response.json()
-      setBitcoinAddress(data.bitcoinAddress)
+      const invoiceData = await response.json()
+      setBtcPayInvoice(invoiceData)
       
-      // Start checking for transactions
-      startTransactionMonitoring(data.bitcoinAddress)
+      // Start monitoring payment status
+      startPaymentMonitoring(invoiceData.invoiceId)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to generate address')
+      setError(err instanceof Error ? err.message : 'Failed to create invoice')
     } finally {
       setLoading(false)
     }
   }
 
-  const startTransactionMonitoring = (address: string) => {
-    const checkTransactions = async () => {
+  const startPaymentMonitoring = (invoiceId: string) => {
+    const checkPayment = async () => {
       if (!walletAddress) return
       
       try {
-        setCheckingTransactions(true)
+        setCheckingPayment(true)
         const response = await fetch('/api/bitcoin/address', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             walletAddress,
-            bitcoinAddress: address,
-            checkTransactions: true
+            invoiceId
           })
         })
         
         if (response.ok) {
           const data = await response.json()
-          if (data.newTransactions.length > 0) {
-            setTransactionStatus(`✅ Received ${data.newTransactions.length} transaction(s)!`)
-            // Close modal after successful deposit
-            setTimeout(() => onClose(), 2000)
+          
+          if (data.confirmed) {
+            setPaymentStatus(`✅ Payment confirmed! Received ${formatBitcoinAmount(data.amount)}`)
+            // Close modal after successful payment
+            setTimeout(() => onClose(), 3000)
+          } else if (data.paid) {
+            setPaymentStatus('⏳ Payment received, waiting for confirmation...')
           } else {
-            setTransactionStatus('Waiting for transaction...')
+            setPaymentStatus('🔍 Waiting for payment...')
           }
         }
       } catch (err) {
-        console.error('Error checking transactions:', err)
+        console.error('Error checking payment status:', err)
       } finally {
-        setCheckingTransactions(false)
+        setCheckingPayment(false)
       }
     }
 
-    // Check every 30 seconds
-    const interval = setInterval(checkTransactions, 30000)
+    // Check immediately, then every 30 seconds
+    checkPayment()
+    const interval = setInterval(checkPayment, 30000)
     
-    // Cleanup interval when component unmounts
+    // Cleanup interval when component unmounts or payment is confirmed
     return () => clearInterval(interval)
+  }
+
+  const handleAmountChange = (newAmount: number) => {
+    setAmount(newAmount)
+    if (btcPayInvoice) {
+      // Reset and create new invoice with new amount
+      setBtcPayInvoice(null)
+      setPaymentStatus('')
+    }
   }
 
   const handleLightningDeposit = async () => {
@@ -113,6 +138,12 @@ export default function DepositModal({ onClose }: DepositModalProps) {
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text)
+  }
+
+  const openBTCPayCheckout = () => {
+    if (btcPayInvoice?.checkoutLink) {
+      window.open(btcPayInvoice.checkoutLink, '_blank')
+    }
   }
 
   if (lightningInvoice && depositType === 'lightning') {
@@ -158,10 +189,11 @@ export default function DepositModal({ onClose }: DepositModalProps) {
             <div className="option-card bitcoin" onClick={() => setDepositType('bitcoin')}>
               <div className="option-icon">₿</div>
               <h3>Bitcoin Layer 1</h3>
-              <p>On-chain deposits, higher security</p>
+              <p>On-chain deposits via BTCPay</p>
               <ul>
                 <li>✅ Maximum security</li>
                 <li>✅ No channel required</li>
+                <li>✅ Powered by BTCPay Server</li>
                 <li>⏱️ ~10-60 min confirmation</li>
                 <li>💰 Higher network fees</li>
               </ul>
@@ -201,41 +233,78 @@ export default function DepositModal({ onClose }: DepositModalProps) {
               ← Back
             </button>
             
+            <div className="amount-input">
+              <label>Amount (sats):</label>
+              <input
+                type="number"
+                value={amount}
+                onChange={(e) => handleAmountChange(Math.max(1000, parseInt(e.target.value) || 1000))}
+                min="1000"
+              />
+              <small>Minimum: 1,000 sats</small>
+            </div>
+            
             <div className="deposit-info">
-              <h3>Bitcoin Deposit Address</h3>
-              <p>Send Bitcoin to this address:</p>
+              <h3>Bitcoin Deposit via BTCPay Server</h3>
               
               {loading ? (
-                <div className="loading">Generating address...</div>
-              ) : bitcoinAddress ? (
-                <div className="address-container">
-                  <div className="address-display">
-                    <code>{bitcoinAddress}</code>
+                <div className="loading">Creating BTCPay invoice...</div>
+              ) : btcPayInvoice ? (
+                <div className="invoice-container">
+                  <div className="invoice-details">
+                    <p><strong>Amount:</strong> {formatBitcoinAmount(btcPayInvoice.amount)} (₿{btcPayInvoice.amountBTC})</p>
+                    <p><strong>Network:</strong> {btcPayInvoice.network}</p>
+                    <p><strong>Expires:</strong> {new Date(btcPayInvoice.expiresAt).toLocaleString()}</p>
+                  </div>
+                  
+                  <div className="payment-options">
                     <button 
-                      className="copy-button"
-                      onClick={() => copyToClipboard(bitcoinAddress)}
+                      className="btcpay-checkout-button"
+                      onClick={openBTCPayCheckout}
                     >
-                      Copy
+                      🚀 Open BTCPay Checkout
                     </button>
+                    
+                    <div className="address-manual">
+                      <p><strong>Or send manually to:</strong></p>
+                      <div className="address-display">
+                        <code>{btcPayInvoice.bitcoinAddress}</code>
+                        <button 
+                          className="copy-button"
+                          onClick={() => copyToClipboard(btcPayInvoice.bitcoinAddress)}
+                        >
+                          Copy
+                        </button>
+                      </div>
+                    </div>
                   </div>
                   
                   <div className="deposit-notes">
                     <p><strong>Important:</strong></p>
                     <ul>
-                      <li>Minimum confirmations: 1</li>
-                      <li>Network: {process.env.NODE_ENV === 'production' ? 'Mainnet' : 'Testnet'}</li>
+                      <li>Send exactly {formatBitcoinAmount(btcPayInvoice.amount)} to this address</li>
+                      <li>Payment will be credited after 1 confirmation</li>
+                      <li>This invoice expires in 1 hour</li>
                       <li>Only send Bitcoin to this address</li>
                     </ul>
                   </div>
                   
-                  {checkingTransactions && (
-                    <div className="transaction-status">
-                      🔍 Monitoring for transactions...
-                      {transactionStatus && <p>{transactionStatus}</p>}
+                  {paymentStatus && (
+                    <div className="payment-status">
+                      {checkingPayment && <span className="spinner">⏳</span>}
+                      <p>{paymentStatus}</p>
                     </div>
                   )}
                 </div>
-              ) : null}
+              ) : (
+                <button 
+                  className="generate-button"
+                  onClick={createBitcoinInvoice}
+                  disabled={loading}
+                >
+                  {loading ? 'Creating...' : 'Create Bitcoin Invoice'}
+                </button>
+              )}
             </div>
           </div>
         )}
@@ -359,7 +428,14 @@ export default function DepositModal({ onClose }: DepositModalProps) {
             color: white;
           }
 
-          .generate-button {
+          .amount-input small {
+            display: block;
+            margin-top: 0.25rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.8rem;
+          }
+
+          .generate-button, .btcpay-checkout-button {
             background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
             color: white;
             border: none;
@@ -368,6 +444,7 @@ export default function DepositModal({ onClose }: DepositModalProps) {
             cursor: pointer;
             font-weight: 600;
             width: 100%;
+            margin-bottom: 1rem;
           }
 
           .generate-button:disabled {
@@ -375,7 +452,23 @@ export default function DepositModal({ onClose }: DepositModalProps) {
             cursor: not-allowed;
           }
 
-          .address-container {
+          .invoice-container {
+            margin-top: 1rem;
+          }
+
+          .invoice-details {
+            background: rgba(255, 107, 0, 0.1);
+            border: 1px solid rgba(255, 107, 0, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+          }
+
+          .payment-options {
+            margin-bottom: 1rem;
+          }
+
+          .address-manual {
             margin-top: 1rem;
           }
 
@@ -383,7 +476,7 @@ export default function DepositModal({ onClose }: DepositModalProps) {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            margin-bottom: 1rem;
+            margin-top: 0.5rem;
           }
 
           .address-display code {
@@ -392,7 +485,7 @@ export default function DepositModal({ onClose }: DepositModalProps) {
             border-radius: 8px;
             flex: 1;
             word-break: break-all;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
           }
 
           .copy-button {
@@ -416,12 +509,25 @@ export default function DepositModal({ onClose }: DepositModalProps) {
             margin: 0.5rem 0 0 1rem;
           }
 
-          .transaction-status {
+          .payment-status {
             background: rgba(16, 185, 129, 0.1);
             border: 1px solid rgba(16, 185, 129, 0.3);
             border-radius: 8px;
             padding: 1rem;
             text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+          }
+
+          .spinner {
+            animation: spin 1s linear infinite;
+          }
+
+          @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
           }
 
           .error-message {
@@ -446,6 +552,14 @@ export default function DepositModal({ onClose }: DepositModalProps) {
             
             .deposit-modal {
               padding: 1rem;
+            }
+
+            .address-display {
+              flex-direction: column;
+            }
+
+            .address-display code {
+              font-size: 0.7rem;
             }
           }
         `}</style>
