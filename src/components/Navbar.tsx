@@ -356,6 +356,12 @@ export default function Navbar() {
             >
               How to Play
             </Link>
+            <Link 
+              href="/profile" 
+              className={`nav-link ${pathname === '/profile' ? 'active' : ''}`}
+            >
+              Profile
+            </Link>
             </div>
           </div>
           
@@ -503,6 +509,13 @@ export default function Navbar() {
               onClick={() => setIsMenuOpen(false)}
             >
               How to Play
+            </Link>
+            <Link 
+              href="/profile" 
+              className={`mobile-nav-link ${pathname === '/profile' ? 'active' : ''}`}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Profile
             </Link>
           </div>
         </div>
