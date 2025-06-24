@@ -47,6 +47,7 @@ function ProfileContent() {
   const [gameStats, setGameStats] = useState<GameStats | null>(null)
   const [isEditing, setIsEditing] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [uploadingAvatar, setUploadingAvatar] = useState(false)
   
   // Form states
   const [displayName, setDisplayName] = useState('')
@@ -103,6 +104,57 @@ function ProfileContent() {
     }
   }
 
+  const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file')
+      return
+    }
+
+    // Validate file size (max 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      alert('Image must be smaller than 2MB')
+      return
+    }
+
+    setUploadingAvatar(true)
+
+    try {
+      // Convert to base64
+      const reader = new FileReader()
+      reader.onload = async () => {
+        const base64 = reader.result as string
+        
+        // Save avatar to profile
+        const response = await fetch('/api/profile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            walletAddress,
+            displayName,
+            bio,
+            avatar: base64
+          })
+        })
+        
+        if (response.ok) {
+          fetchProfile() // Refresh profile data
+        } else {
+          alert('Failed to upload avatar')
+        }
+      }
+      reader.readAsDataURL(file)
+    } catch (error) {
+      console.error('Error uploading avatar:', error)
+      alert('Failed to upload avatar')
+    } finally {
+      setUploadingAvatar(false)
+    }
+  }
+
   const saveProfile = async () => {
     try {
       const response = await fetch('/api/profile', {
@@ -111,7 +163,8 @@ function ProfileContent() {
         body: JSON.stringify({
           walletAddress,
           displayName,
-          bio
+          bio,
+          avatar: profile?.avatar // Keep existing avatar
         })
       })
       
@@ -202,9 +255,21 @@ function ProfileContent() {
                 <span>🐅</span>
               </div>
             )}
-            <button className="avatar-upload-btn">
-              📷
+            <button className="avatar-upload-btn" disabled={uploadingAvatar}>
+              {uploadingAvatar ? '⏳' : '📷'}
             </button>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleAvatarUpload}
+              style={{ display: 'none' }}
+              ref={(input) => {
+                if (input) {
+                  const button = input.previousElementSibling as HTMLButtonElement
+                  button.onclick = () => input.click()
+                }
+              }}
+            />
           </div>
           
           <div className="profile-info">
@@ -474,6 +539,17 @@ function ProfileContent() {
         .avatar-upload-btn:hover {
           transform: scale(1.1);
           box-shadow: 0 4px 15px rgba(255, 107, 0, 0.4);
+        }
+        
+        .avatar-upload-btn:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+          transform: none;
+        }
+        
+        .avatar-upload-btn:disabled:hover {
+          transform: none;
+          box-shadow: none;
         }
         
         .profile-info {
@@ -819,32 +895,206 @@ function ProfileContent() {
         
         /* Mobile Responsiveness */
         @media (max-width: 768px) {
+          .profile-container {
+            padding: 1rem 0.5rem;
+            padding-top: 70px;
+          }
+          
+          .profile-header {
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+          }
+          
           .profile-avatar-section {
             flex-direction: column;
             align-items: center;
+            text-align: center;
+            gap: 1.5rem;
+          }
+          
+          .avatar-image,
+          .avatar-placeholder {
+            width: 100px;
+            height: 100px;
+          }
+          
+          .avatar-upload-btn {
+            width: 35px;
+            height: 35px;
+            font-size: 1rem;
+          }
+          
+          .display-name {
+            font-size: 2rem;
+          }
+          
+          .bio {
+            font-size: 1rem;
             text-align: center;
           }
           
           .profile-stats-quick {
             grid-template-columns: 1fr;
+            gap: 0.8rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+          }
+          
+          .stat-item {
+            padding: 0.8rem;
+          }
+          
+          .stat-value {
+            font-size: 1.5rem;
+          }
+          
+          .profile-section {
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+          }
+          
+          .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
           }
           
           .stats-grid {
             grid-template-columns: 1fr;
+            gap: 1rem;
+          }
+          
+          .stat-card {
+            padding: 1.2rem;
           }
           
           .add-address-form {
             grid-template-columns: 1fr;
+            gap: 0.8rem;
+          }
+          
+          .address-type-select,
+          .address-input,
+          .label-input,
+          .add-address-btn {
+            width: 100%;
+            font-size: 1rem;
+            padding: 0.9rem;
+          }
+          
+          .address-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem;
           }
           
           .address-info {
             flex-direction: column;
             align-items: flex-start;
             gap: 0.5rem;
+            width: 100%;
+          }
+          
+          .address-value {
+            word-break: break-all;
+            font-size: 0.85rem;
+          }
+          
+          .remove-address-btn {
+            align-self: flex-end;
+            margin-top: 0.5rem;
+          }
+          
+          .detail-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+            padding: 1rem;
+          }
+          
+          .detail-value {
+            word-break: break-all;
+            font-size: 0.9rem;
+          }
+          
+          .edit-form {
+            gap: 1rem;
+          }
+          
+          .name-input {
+            font-size: 1.2rem;
+            padding: 1rem;
+          }
+          
+          .bio-input {
+            padding: 1rem;
+            font-size: 1rem;
+          }
+          
+          .edit-buttons {
+            flex-direction: column;
+            gap: 0.8rem;
+          }
+          
+          .save-btn,
+          .cancel-btn {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1rem;
+          }
+        }
+        
+        /* Extra small mobile devices */
+        @media (max-width: 480px) {
+          .profile-container {
+            padding: 0.5rem 0.25rem;
+            padding-top: 65px;
+          }
+          
+          .profile-header {
+            padding: 1rem;
+            border-radius: 15px;
+          }
+          
+          .avatar-image,
+          .avatar-placeholder {
+            width: 80px;
+            height: 80px;
+          }
+          
+          .avatar-upload-btn {
+            width: 28px;
+            height: 28px;
+            font-size: 0.9rem;
           }
           
           .display-name {
-            font-size: 2rem;
+            font-size: 1.8rem;
+          }
+          
+          .profile-section {
+            padding: 1rem;
+            border-radius: 15px;
+          }
+          
+          .section-title {
+            font-size: 1.3rem;
+          }
+          
+          .stat-card {
+            padding: 1rem;
+          }
+          
+          .stat-card h3 {
+            font-size: 1rem;
+          }
+          
+          .address-type-select,
+          .address-input,
+          .label-input,
+          .add-address-btn {
+            padding: 0.8rem;
+            font-size: 0.9rem;
           }
         }
         
