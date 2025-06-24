@@ -3,18 +3,12 @@ import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
-interface RouteContext {
-  params: {
-    id: string
-  }
-}
-
 export async function DELETE(
   request: NextRequest,
-  { params }: RouteContext
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params
+    const { id } = await params
 
     if (!id) {
       return NextResponse.json({ error: 'Address ID required' }, { status: 400 })
