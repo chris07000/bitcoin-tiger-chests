@@ -203,7 +203,6 @@ function HomeContent() {
         <div className="games-grid hero-games">
           <div className="game-container">
           <Link href="/" className="game-card chest-game">
-            <div className="hot-badge">POPULAR</div>
             <div className="game-image chest-image">
                 <div className="game-frame">
                   <div className="game-decorative-corners"></div>
