@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { PrismaClient } from '@prisma/client'
 import { v4 as uuidv4 } from 'uuid'
-import { ensureProfileExists } from '@/app/api/profile/route'
+import { ensureProfileExists } from '@/lib/profile-utils'
 
 export async function POST(request: Request) {
   try {

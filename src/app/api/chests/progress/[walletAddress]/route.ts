@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import crypto from 'crypto';
-import { ensureProfileExists } from '@/app/api/profile/route';
+import { ensureProfileExists } from '@/lib/profile-utils';
 
 // In-memory fallback when database is not available
 const progressCache = new Map<string, any>();

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { ensureProfileExists } from '@/app/api/profile/route'
+import { ensureProfileExists } from '@/lib/profile-utils'
 
 export async function POST(request: NextRequest) {
   try {

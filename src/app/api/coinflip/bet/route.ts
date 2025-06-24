@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 // import { updateUserRanking } from '@/lib/ranking';
 import { v4 as uuidv4 } from 'uuid';
-import { ensureProfileExists } from '@/app/api/profile/route';
+import { ensureProfileExists } from '@/lib/profile-utils';
 
 // Define TransactionType enum locally
 enum TransactionType {
