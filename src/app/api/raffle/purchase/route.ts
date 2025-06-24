@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { ensureProfileExists } from '@/app/api/profile/route'
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,6 +20,9 @@ export async function POST(request: NextRequest) {
         { error: 'Invalid request data', status: 400 }
       )
     }
+    
+    // Ensure profile exists for this wallet
+    await ensureProfileExists(walletAddress)
     
     // Zoek naar de raffle
     const raffle = await prisma.raffle.findUnique({

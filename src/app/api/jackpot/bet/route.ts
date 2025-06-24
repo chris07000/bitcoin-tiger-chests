@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { ensureProfileExists } from '@/app/api/profile/route'
 
 export async function POST(req: Request) {
   try {
@@ -11,6 +12,9 @@ export async function POST(req: Request) {
         { status: 400 }
       )
     }
+
+    // Ensure profile exists for this wallet
+    await ensureProfileExists(walletAddress)
 
     if (!prisma) {
       return NextResponse.json(

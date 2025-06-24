@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import crypto from 'crypto';
+import { ensureProfileExists } from '@/app/api/profile/route';
 
 // In-memory fallback when database is not available
 const progressCache = new Map<string, any>();
@@ -22,6 +23,9 @@ export async function GET(
         { status: 400 }
       );
     }
+
+    // Ensure profile exists for this wallet
+    await ensureProfileExists(walletAddress);
 
     // Try database first, but handle 403 errors gracefully
     try {
@@ -205,6 +209,9 @@ export async function POST(
         { status: 400 }
       );
     }
+
+    // Ensure profile exists for this wallet
+    await ensureProfileExists(walletAddress);
 
     // Try database update first
     try {

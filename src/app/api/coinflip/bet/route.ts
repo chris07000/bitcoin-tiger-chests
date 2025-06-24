@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 // import { updateUserRanking } from '@/lib/ranking';
 import { v4 as uuidv4 } from 'uuid';
+import { ensureProfileExists } from '@/app/api/profile/route';
 
 // Define TransactionType enum locally
 enum TransactionType {
@@ -71,6 +72,9 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
+
+    // Ensure profile exists for this wallet
+    await ensureProfileExists(walletAddress);
 
     // Check if prisma is available
     if (!prisma) {

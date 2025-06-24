@@ -35,11 +35,8 @@ function HomeContent() {
           const winnersData = await response.json()
           
           // Get profile data for winners
-          const addresses = winnersData.map((w: any) => {
-            // Convert shortened address back to full address if needed
-            // For now, we'll work with what we have
-            return w.address
-          }).filter((addr: string) => addr && addr !== 'unknown')
+          const addresses = winnersData.map((w: any) => w.fullAddress)
+            .filter((addr: string) => addr && addr !== 'unknown')
           
           if (addresses.length > 0) {
             try {
@@ -55,8 +52,8 @@ function HomeContent() {
                 // Merge profile data with winners
                 const enhancedWinners = winnersData.map((winner: any) => ({
                   ...winner,
-                  displayName: profilesData[winner.address]?.displayName,
-                  avatar: profilesData[winner.address]?.avatar
+                  displayName: profilesData[winner.fullAddress]?.displayName,
+                  avatar: profilesData[winner.fullAddress]?.avatar
                 }))
                 
                 setRecentWinners(enhancedWinners)

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { PrismaClient } from '@prisma/client'
 import { v4 as uuidv4 } from 'uuid'
+import { ensureProfileExists } from '@/app/api/profile/route'
 
 export async function POST(request: Request) {
   try {
@@ -10,6 +11,9 @@ export async function POST(request: Request) {
     if (!walletAddress || !betAmount || !selectedSide) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
+
+    // Ensure profile exists for this wallet
+    await ensureProfileExists(walletAddress)
 
     // Check if prisma is available
     if (!prisma) {
