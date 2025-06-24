@@ -6,49 +6,46 @@ const prisma = new PrismaClient()
 // Helper function to ensure profile exists for a wallet
 export async function ensureProfileExists(walletAddress: string) {
   try {
-    // Get or create wallet
-    let wallet = await prisma.wallet.findUnique({
-      where: { address: walletAddress },
-      select: { id: true }
-    })
+    console.log(`Ensuring profile exists for wallet: ${walletAddress}`)
+    
+    // Get or create wallet first using raw SQL
+    const walletResult = await prisma.$queryRaw`
+      INSERT INTO "Wallet" (id, address, balance, "createdAt", "updatedAt")
+      VALUES (${walletAddress}, ${walletAddress}, 0, ${new Date()}, ${new Date()})
+      ON CONFLICT (address) DO UPDATE SET "updatedAt" = ${new Date()}
+      RETURNING id
+    ` as Array<{ id: string }>
+    
+    const walletId = walletResult[0].id
+    console.log(`Wallet ID: ${walletId}`)
 
-    if (!wallet) {
-      wallet = await prisma.wallet.create({
-        data: {
-          id: walletAddress,
-          address: walletAddress,
-          balance: 0
-        },
-        select: { id: true }
-      })
-    }
-
-    // Check if profile exists using raw query
+    // Check if profile exists
     const existingProfile = await prisma.$queryRaw`
-      SELECT * FROM "UserProfile" WHERE "walletId" = ${wallet.id} LIMIT 1
+      SELECT * FROM "UserProfile" WHERE "walletId" = ${walletId} LIMIT 1
     ` as Array<any>
 
-    let profile
-    if (existingProfile.length === 0) {
-      // Create new profile
-      const newProfile = await prisma.$queryRaw`
-        INSERT INTO "UserProfile" ("walletId", "joinedAt", "lastSeen")
-        VALUES (${wallet.id}, ${new Date()}, ${new Date()})
-        RETURNING *
-      ` as Array<any>
-      profile = newProfile[0]
-    } else {
-      // Update last seen
+    if (existingProfile.length > 0) {
+      console.log('Found existing profile, updating lastSeen...')
       const updatedProfile = await prisma.$queryRaw`
         UPDATE "UserProfile" 
-        SET "lastSeen" = ${new Date()}
-        WHERE "walletId" = ${wallet.id}
+        SET "lastSeen" = ${new Date()}, "updatedAt" = ${new Date()}
+        WHERE "walletId" = ${walletId}
         RETURNING *
       ` as Array<any>
-      profile = updatedProfile[0]
+      return updatedProfile[0]
     }
 
-    return profile
+    // Create new profile
+    console.log('Creating new profile...')
+    const newProfile = await prisma.$queryRaw`
+      INSERT INTO "UserProfile" ("id", "walletId", "joinedAt", "lastSeen", "createdAt", "updatedAt")
+      VALUES (gen_random_uuid(), ${walletId}, ${new Date()}, ${new Date()}, ${new Date()}, ${new Date()})
+      RETURNING *
+    ` as Array<any>
+
+    console.log('Profile created successfully:', newProfile[0]?.id)
+    return newProfile[0]
+
   } catch (error) {
     console.error('Error ensuring profile exists:', error)
     return null
@@ -87,31 +84,27 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Wallet address required' }, { status: 400 })
     }
 
-    // Get or create wallet
-    let wallet = await prisma.wallet.findUnique({
-      where: { address: walletAddress }
-    })
+    // Get or create wallet using raw SQL
+    const walletResult = await prisma.$queryRaw`
+      INSERT INTO "Wallet" (id, address, balance, "createdAt", "updatedAt")
+      VALUES (${walletAddress}, ${walletAddress}, 0, ${new Date()}, ${new Date()})
+      ON CONFLICT (address) DO UPDATE SET "updatedAt" = ${new Date()}
+      RETURNING id
+    ` as Array<{ id: string }>
+    
+    const walletId = walletResult[0].id
 
-    if (!wallet) {
-      wallet = await prisma.wallet.create({
-        data: {
-          id: walletAddress,
-          address: walletAddress,
-          balance: 0
-        }
-      })
-    }
-
-    // Use raw SQL for upsert
+    // Upsert profile using raw SQL
     const profile = await prisma.$queryRaw`
-      INSERT INTO "UserProfile" ("walletId", "displayName", "bio", "avatar", "joinedAt", "lastSeen")
-      VALUES (${wallet.id}, ${displayName}, ${bio}, ${avatar}, ${new Date()}, ${new Date()})
+      INSERT INTO "UserProfile" ("id", "walletId", "displayName", "bio", "avatar", "joinedAt", "lastSeen", "createdAt", "updatedAt")
+      VALUES (gen_random_uuid(), ${walletId}, ${displayName}, ${bio}, ${avatar}, ${new Date()}, ${new Date()}, ${new Date()}, ${new Date()})
       ON CONFLICT ("walletId") 
       DO UPDATE SET 
         "displayName" = EXCLUDED."displayName",
         "bio" = EXCLUDED."bio", 
         "avatar" = EXCLUDED."avatar",
-        "lastSeen" = EXCLUDED."lastSeen"
+        "lastSeen" = EXCLUDED."lastSeen",
+        "updatedAt" = EXCLUDED."updatedAt"
       RETURNING *
     ` as Array<any>
 
