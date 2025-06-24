@@ -478,19 +478,21 @@ function HomeContent() {
         
         .banner-container {
           display: flex;
+          flex-direction: column;
+          align-items: center;
           justify-content: center;
           margin-bottom: 2rem;
           position: relative;
           padding: 2rem;
         }
         
-        /* Desktop visibility rules - default */
+        /* Desktop visibility rules - default with !important */
         .desktop-only {
-          display: block;
+          display: block !important;
         }
         
         .mobile-only {
-          display: none;
+          display: none !important;
         }
         
         .mobile-banner-image {
