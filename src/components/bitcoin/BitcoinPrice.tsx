@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useWallet } from '../../context/WalletContext';
 import { useLightning } from '../../context/LightningContext';
 import DepositModal from './DepositModal';
+import ModalPortal from '../ui/Modal';
 
 export default function BitcoinPrice() {
   const [btcPrice, setBtcPrice] = useState<number | null>(null);
@@ -278,13 +279,27 @@ export default function BitcoinPrice() {
       )}
 
       {showWithdrawModal && (
-        <div className="modal">
-          <div className="modal-content">
-            <h2>Withdraw sats</h2>
-            <div className="warning-message">
+        <ModalPortal 
+          isOpen={showWithdrawModal} 
+          onClose={() => setShowWithdrawModal(false)}
+          className="btc-price-withdraw-modal"
+        >
+          <div className="btc-price-modal-content">
+            <div className="btc-price-modal-header">
+              <h2>Withdraw sats</h2>
+              <button 
+                className="btc-price-modal-close" 
+                onClick={() => setShowWithdrawModal(false)}
+              >
+                ×
+              </button>
+            </div>
+            
+            <div className="btc-price-warning-message">
               ⚠️ {isMobile ? 'Create an invoice for EXACTLY this amount' : 'Important: Please create an invoice for EXACTLY this amount'}
             </div>
-            <div className="input-group">
+            
+            <div className="btc-price-input-group">
               <label>Amount (sats):</label>
               <input
                 type="number"
@@ -292,30 +307,33 @@ export default function BitcoinPrice() {
                 onChange={(e) => setWithdrawAmount(Number(e.target.value))}
                 min="1"
                 max={contextBalance}
-                className="amount-input"
+                className="btc-price-amount-input"
                 disabled={pendingWithdrawal}
               />
             </div>
-            <div className="input-group">
+            
+            <div className="btc-price-input-group">
               <label>Lightning Invoice:</label>
               <input
                 type="text"
                 value={invoice}
                 onChange={(e) => setInvoice(e.target.value)}
                 placeholder="lnbc..."
-                className="invoice-input"
+                className="btc-price-invoice-input"
                 disabled={pendingWithdrawal}
               />
             </div>
-            <div className="modal-buttons">
+            
+            <div className="btc-price-modal-buttons">
               <button 
+                className="btc-price-withdraw-btn"
                 onClick={handleWithdraw}
                 disabled={pendingWithdrawal}
-                className={pendingWithdrawal ? 'pending' : ''}
               >
                 {pendingWithdrawal ? '...' : isMobile ? 'Send' : 'Withdraw'}
               </button>
               <button 
+                className="btc-price-cancel-btn"
                 onClick={() => {
                   setShowWithdrawModal(false);
                   setInvoice('');
@@ -325,13 +343,204 @@ export default function BitcoinPrice() {
                 {isMobile ? '×' : 'Cancel'}
               </button>
             </div>
-            {pendingWithdrawal && (
-              <div className="pending-message">
+            
+            {contextPendingWithdrawal && (
+              <div className="btc-price-pending-message">
                 ⏳ {isMobile ? 'Processing...' : 'Processing withdrawal... Please wait'}
               </div>
             )}
+
+            <style jsx>{`
+              .btc-price-modal-content {
+                background: linear-gradient(135deg, #1a1a1b 0%, #2a2a2b 100%);
+                border: 2px solid #FF6B00;
+                border-radius: 16px;
+                padding: 2rem;
+                max-width: 500px;
+                width: 90%;
+                max-height: calc(100vh - 4rem);
+                overflow-y: auto;
+                color: white;
+                position: relative;
+                font-family: 'Press Start 2P', monospace;
+              }
+
+              .btc-price-modal-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 2rem;
+              }
+
+              .btc-price-modal-header h2 {
+                color: #FFB800;
+                margin: 0;
+                font-size: 1.2rem;
+              }
+
+              .btc-price-modal-close {
+                background: none;
+                border: none;
+                color: #FF6B00;
+                font-size: 1.5rem;
+                cursor: pointer;
+                padding: 0;
+                width: 30px;
+                height: 30px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              }
+
+              .btc-price-warning-message {
+                background-color: #fff3cd;
+                border: 2px solid #ffeeba;
+                color: #856404;
+                padding: 1rem;
+                margin-bottom: 1rem;
+                border-radius: 4px;
+                font-size: 0.7rem;
+                text-align: center;
+              }
+
+              .btc-price-input-group {
+                margin-bottom: 1.5rem;
+              }
+
+              .btc-price-input-group label {
+                display: block;
+                margin-bottom: 0.5rem;
+                color: #FFB800;
+                font-size: 0.8rem;
+              }
+
+              .btc-price-amount-input,
+              .btc-price-invoice-input {
+                width: 100%;
+                padding: 0.75rem;
+                border: 1px solid #FF6B00;
+                border-radius: 8px;
+                background: rgba(0, 0, 0, 0.3);
+                color: white;
+                font-family: 'Press Start 2P', monospace;
+                font-size: 0.8rem;
+              }
+
+              .btc-price-modal-buttons {
+                display: flex;
+                gap: 1rem;
+                margin-top: 1rem;
+              }
+
+              .btc-price-withdraw-btn {
+                background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+                color: white;
+                border: none;
+                padding: 0.75rem 1.5rem;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: 600;
+                flex: 1;
+                font-family: 'Press Start 2P', monospace;
+                font-size: 0.7rem;
+              }
+
+              .btc-price-withdraw-btn:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+              }
+
+              .btc-price-cancel-btn {
+                background: transparent;
+                color: #FF6B00;
+                border: 1px solid #FF6B00;
+                padding: 0.75rem 1.5rem;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: 600;
+                flex: 1;
+                font-family: 'Press Start 2P', monospace;
+                font-size: 0.7rem;
+              }
+
+              .btc-price-pending-message {
+                background: rgba(255, 107, 0, 0.1);
+                border: 1px solid rgba(255, 107, 0, 0.3);
+                border-radius: 8px;
+                padding: 1rem;
+                margin-top: 1rem;
+                text-align: center;
+                font-size: 0.7rem;
+              }
+
+              @media (max-width: 768px) {
+                .btc-price-modal-content {
+                  width: 95%;
+                  padding: 1rem;
+                  max-height: 85vh;
+                }
+                
+                .btc-price-modal-header h2 {
+                  font-size: 1rem;
+                }
+                
+                .btc-price-warning-message {
+                  font-size: 0.6rem;
+                  padding: 0.8rem;
+                }
+                
+                .btc-price-input-group label {
+                  font-size: 0.7rem;
+                }
+                
+                .btc-price-amount-input,
+                .btc-price-invoice-input {
+                  font-size: 0.7rem;
+                  padding: 0.6rem;
+                }
+                
+                .btc-price-withdraw-btn,
+                .btc-price-cancel-btn {
+                  font-size: 0.6rem;
+                  padding: 0.6rem 1rem;
+                }
+                
+                .btc-price-modal-buttons {
+                  flex-direction: column;
+                }
+              }
+
+              @media (max-width: 480px) {
+                .btc-price-modal-content {
+                  width: 98%;
+                  padding: 0.8rem;
+                  max-height: 80vh;
+                }
+                
+                .btc-price-modal-header h2 {
+                  font-size: 0.9rem;
+                }
+                
+                .btc-price-warning-message {
+                  font-size: 0.5rem;
+                  padding: 0.6rem;
+                }
+                
+                .btc-price-amount-input,
+                .btc-price-invoice-input {
+                  padding: 0.5rem;
+                  font-size: 0.6rem;
+                }
+                
+                .btc-price-withdraw-btn,
+                .btc-price-cancel-btn {
+                  padding: 0.5rem 0.8rem;
+                  font-size: 0.5rem;
+                }
+              }
+            `}</style>
           </div>
-        </div>
+        </ModalPortal>
       )}
 
       {showDepositModal && (

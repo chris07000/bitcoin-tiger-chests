@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import QRCode from 'react-qr-code';
 import { useLightning } from '@/context/LightningContext';
+import ModalPortal from '../ui/Modal';
 
 interface LightningModalProps {
   invoice: string | null;
@@ -176,26 +177,45 @@ export default function LightningModal({
   };
 
   return (
-    <div className="modal">
-      <div className="modal-content">
-        <h2>{isMobile ? 'Deposit' : 'Lightning Deposit'}</h2>
-        <div className="input-group">
+    <ModalPortal 
+      isOpen={!!invoice} 
+      onClose={handleCloseWithCleanup}
+      className="lightning-modal-portal"
+    >
+      <div className="lightning-modal-content">
+        <div className="lightning-modal-header">
+          <h2>{isMobile ? 'Deposit' : 'Lightning Deposit'}</h2>
+          <button 
+            className="lightning-modal-close" 
+            onClick={handleCloseWithCleanup}
+          >
+            ×
+          </button>
+        </div>
+        
+        <div className="lightning-input-group">
           <label>{isMobile ? 'Amount:' : 'Amount (sats):'}</label>
           <input
             type="number"
             value={amount}
             onChange={(e) => handleAmountChange(Math.max(0, parseInt(e.target.value) || 0))}
             min="1"
-            className="amount-input"
+            className="lightning-amount-input"
           />
         </div>
         
         {!currentInvoice && (
-          <div className="modal-buttons">
-            <button onClick={handleGenerateInvoice}>
+          <div className="lightning-modal-buttons">
+            <button 
+              className="lightning-generate-btn"
+              onClick={handleGenerateInvoice}
+            >
               {isMobile ? 'Create' : 'Generate Invoice'}
             </button>
-            <button onClick={handleCloseWithCleanup}>
+            <button 
+              className="lightning-cancel-btn"
+              onClick={handleCloseWithCleanup}
+            >
               {isMobile ? '×' : 'Cancel'}
             </button>
           </div>
@@ -203,24 +223,24 @@ export default function LightningModal({
 
         {currentInvoice && (
           <>
-            <div className="input-group">
+            <div className="lightning-input-group">
               <label>{isMobile ? 'QR Code:' : 'Scan QR Code:'}</label>
-              <div className="qr-container">
+              <div className="lightning-qr-container">
                 <QRCode
                   value={currentInvoice}
                   size={isMobile ? 150 : 200}
                   level="H"
                 />
               </div>
-              <div className="invoice-text-container">
-                <div className="invoice-text">
+              <div className="lightning-invoice-text-container">
+                <div className="lightning-invoice-text">
                   {isMobile 
                     ? `${currentInvoice.substring(0, 15)}...${currentInvoice.substring(currentInvoice.length - 15)}`
                     : currentInvoice
                   }
                 </div>
                 <button 
-                  className="copy-button"
+                  className="lightning-copy-button"
                   onClick={copyToClipboard}
                   title="Copy Lightning Invoice"
                 >
@@ -229,95 +249,267 @@ export default function LightningModal({
               </div>
             </div>
 
-            <div className="status-message">
+            <div className="lightning-status-message">
               {paymentStatus === 'pending' && (
                 <p>{isMobile ? 'Waiting...' : 'Waiting for payment...'}</p>
               )}
               {paymentStatus === 'paid' && (
-                <p className="success">
+                <p className="lightning-success">
                   {isMobile ? 'Received! ⚡' : 'Payment received! ⚡'}
                 </p>
               )}
               {paymentStatus === 'failed' && (
-                <p className="error">
+                <p className="lightning-error">
                   {isMobile ? 'Failed. Try again.' : 'Payment failed. Please try again.'}
                 </p>
               )}
             </div>
 
-            <div className="modal-buttons">
-              <button onClick={handleCloseWithCleanup}>
+            <div className="lightning-modal-buttons">
+              <button 
+                className="lightning-cancel-btn"
+                onClick={handleCloseWithCleanup}
+              >
                 {isMobile ? 'Close' : 'Close'}
               </button>
             </div>
           </>
         )}
-      </div>
       
-      <style jsx>{`
-        .invoice-text-container {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          margin-top: 0.5rem;
-        }
-        
-        .invoice-text {
-          font-family: var(--font-geist-mono);
-          font-size: 0.75rem;
-          color: var(--gold);
-          word-break: break-all;
-          background: black;
-          border: 1px solid var(--gold);
-          padding: 0.5rem;
-          border-radius: 4px;
-          flex: 1;
-        }
-        
-        .copy-button {
-          background: var(--gold);
-          color: black;
-          border: 1px solid black;
-          padding: 0.5rem;
-          border-radius: 4px;
-          cursor: pointer;
-          font-size: 0.75rem;
-          font-weight: bold;
-          min-width: ${isMobile ? '40px' : '60px'};
-          height: 40px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: all 0.2s ease;
-          flex-shrink: 0;
-        }
-        
-        .copy-button:hover {
-          background: #ffea00;
-          transform: translateY(-1px);
-        }
-        
-        .copy-button:active {
-          transform: translateY(0);
-        }
-        
-        @media (max-width: 768px) {
-          .invoice-text-container {
-            flex-direction: column;
-            gap: 0.5rem;
+        <style jsx>{`
+          .lightning-modal-content {
+            background: linear-gradient(135deg, #1a1a1b 0%, #2a2a2b 100%);
+            border: 2px solid #FF6B00;
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: calc(100vh - 4rem);
+            overflow-y: auto;
+            color: white;
+            position: relative;
+            font-family: 'Press Start 2P', monospace;
           }
-          
-          .copy-button {
+
+          .lightning-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+          }
+
+          .lightning-modal-header h2 {
+            color: #FFB800;
+            margin: 0;
+            font-size: 1.2rem;
+          }
+
+          .lightning-modal-close {
+            background: none;
+            border: none;
+            color: #FF6B00;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+
+          .lightning-input-group {
+            margin-bottom: 1.5rem;
+          }
+
+          .lightning-input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #FFB800;
+            font-size: 0.8rem;
+          }
+
+          .lightning-amount-input {
             width: 100%;
-            min-width: auto;
+            padding: 0.75rem;
+            border: 1px solid #FF6B00;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.8rem;
+          }
+
+          .lightning-qr-container {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1rem;
+          }
+
+          .lightning-invoice-text-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
           }
           
-          .invoice-text {
-            font-size: 0.7rem;
-            padding: 0.75rem;
+          .lightning-invoice-text {
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: #FFB800;
+            word-break: break-all;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #FFB800;
+            padding: 0.5rem;
+            border-radius: 4px;
+            flex: 1;
           }
-        }
-      `}</style>
-    </div>
+          
+          .lightning-copy-button {
+            background: #FFB800;
+            color: black;
+            border: 1px solid black;
+            padding: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: bold;
+            min-width: ${isMobile ? '40px' : '60px'};
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+            font-family: 'Press Start 2P', monospace;
+          }
+          
+          .lightning-copy-button:hover {
+            background: #ffea00;
+            transform: translateY(-1px);
+          }
+
+          .lightning-modal-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+          }
+
+          .lightning-generate-btn {
+            background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            flex: 1;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.7rem;
+          }
+
+          .lightning-cancel-btn {
+            background: transparent;
+            color: #FF6B00;
+            border: 1px solid #FF6B00;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            flex: 1;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.7rem;
+          }
+
+          .lightning-status-message {
+            background: rgba(255, 107, 0, 0.1);
+            border: 1px solid rgba(255, 107, 0, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            text-align: center;
+            font-size: 0.8rem;
+          }
+
+          .lightning-success {
+            color: #10b981;
+          }
+
+          .lightning-error {
+            color: #ef4444;
+          }
+
+          @media (max-width: 768px) {
+            .lightning-modal-content {
+              width: 95%;
+              padding: 1rem;
+              max-height: 85vh;
+            }
+            
+            .lightning-modal-header h2 {
+              font-size: 1rem;
+            }
+            
+            .lightning-input-group label {
+              font-size: 0.7rem;
+            }
+            
+            .lightning-amount-input {
+              font-size: 0.7rem;
+              padding: 0.6rem;
+            }
+            
+            .lightning-invoice-text-container {
+              flex-direction: column;
+              gap: 0.5rem;
+            }
+            
+            .lightning-copy-button {
+              width: 100%;
+              min-width: auto;
+            }
+            
+            .lightning-generate-btn,
+            .lightning-cancel-btn {
+              font-size: 0.6rem;
+              padding: 0.6rem 1rem;
+            }
+            
+            .lightning-modal-buttons {
+              flex-direction: column;
+            }
+          }
+
+          @media (max-width: 480px) {
+            .lightning-modal-content {
+              width: 98%;
+              padding: 0.8rem;
+              max-height: 80vh;
+            }
+            
+            .lightning-modal-header {
+              margin-bottom: 1rem;
+            }
+            
+            .lightning-modal-header h2 {
+              font-size: 0.9rem;
+            }
+            
+            .lightning-input-group {
+              margin-bottom: 1rem;
+            }
+            
+            .lightning-invoice-text {
+              font-size: 0.65rem;
+              padding: 0.4rem;
+            }
+          }
+        `}</style>
+      </div>
+    </ModalPortal>
   );
 } 

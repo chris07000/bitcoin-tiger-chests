@@ -4,6 +4,7 @@ import { useWallet } from '@/context/WalletContext'
 import { useLightning } from '@/context/LightningContext'
 import { formatBitcoinAmount } from '@/lib/bitcoin-utils'
 import LightningModal from '../lightning/LightningModal'
+import ModalPortal from '../ui/Modal'
 
 interface DepositModalProps {
   onClose: () => void
@@ -166,17 +167,21 @@ export default function DepositModal({ onClose }: DepositModalProps) {
   }
 
   return (
-    <div className="deposit-modal-overlay" onClick={onClose}>
-      <div className="deposit-modal" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
+    <ModalPortal 
+      isOpen={true} 
+      onClose={onClose}
+      className="deposit-modal-portal"
+    >
+      <div className="deposit-modal-content">
+        <div className="deposit-modal-header">
           <h2>Choose Deposit Method</h2>
-          <button className="close-button" onClick={onClose}>×</button>
+          <button className="deposit-close-button" onClick={onClose}>×</button>
         </div>
 
         {!depositType && (
           <div className="deposit-options">
-            <div className="option-card lightning" onClick={() => setDepositType('lightning')}>
-              <div className="option-icon">⚡</div>
+            <div className="deposit-option-card lightning" onClick={() => setDepositType('lightning')}>
+              <div className="deposit-option-icon">⚡</div>
               <h3>Lightning Network</h3>
               <p>Instant deposits, low fees</p>
               <ul>
@@ -186,8 +191,8 @@ export default function DepositModal({ onClose }: DepositModalProps) {
               </ul>
             </div>
 
-            <div className="option-card bitcoin" onClick={() => setDepositType('bitcoin')}>
-              <div className="option-icon">₿</div>
+            <div className="deposit-option-card bitcoin" onClick={() => setDepositType('bitcoin')}>
+              <div className="deposit-option-icon">₿</div>
               <h3>Bitcoin Layer 1</h3>
               <p>On-chain deposits via BTCPay</p>
               <ul>
@@ -202,12 +207,12 @@ export default function DepositModal({ onClose }: DepositModalProps) {
         )}
 
         {depositType === 'lightning' && (
-          <div className="lightning-deposit">
-            <button className="back-button" onClick={() => setDepositType(null)}>
+          <div className="deposit-lightning-section">
+            <button className="deposit-back-button" onClick={() => setDepositType(null)}>
               ← Back
             </button>
             
-            <div className="amount-input">
+            <div className="deposit-amount-input">
               <label>Amount (sats):</label>
               <input
                 type="number"
@@ -218,7 +223,7 @@ export default function DepositModal({ onClose }: DepositModalProps) {
             </div>
             
             <button 
-              className="generate-button"
+              className="deposit-generate-button"
               onClick={handleLightningDeposit}
               disabled={loading || !isInitialized}
             >
@@ -228,12 +233,12 @@ export default function DepositModal({ onClose }: DepositModalProps) {
         )}
 
         {depositType === 'bitcoin' && (
-          <div className="bitcoin-deposit">
-            <button className="back-button" onClick={() => setDepositType(null)}>
+          <div className="deposit-bitcoin-section">
+            <button className="deposit-back-button" onClick={() => setDepositType(null)}>
               ← Back
             </button>
             
-            <div className="amount-input">
+            <div className="deposit-amount-input">
               <label>Amount (sats):</label>
               <input
                 type="number"
@@ -248,29 +253,29 @@ export default function DepositModal({ onClose }: DepositModalProps) {
               <h3>Bitcoin Deposit via BTCPay Server</h3>
               
               {loading ? (
-                <div className="loading">Creating BTCPay invoice...</div>
+                <div className="deposit-loading">Creating BTCPay invoice...</div>
               ) : btcPayInvoice ? (
-                <div className="invoice-container">
-                  <div className="invoice-details">
+                <div className="deposit-invoice-container">
+                  <div className="deposit-invoice-details">
                     <p><strong>Amount:</strong> {formatBitcoinAmount(btcPayInvoice.amount)} (₿{btcPayInvoice.amountBTC})</p>
                     <p><strong>Network:</strong> {btcPayInvoice.network}</p>
                     <p><strong>Expires:</strong> {new Date(btcPayInvoice.expiresAt).toLocaleString()}</p>
                   </div>
                   
-                  <div className="payment-options">
+                  <div className="deposit-payment-options">
                     <button 
-                      className="btcpay-checkout-button"
+                      className="deposit-btcpay-checkout-button"
                       onClick={openBTCPayCheckout}
                     >
                       🚀 Open BTCPay Checkout
                     </button>
                     
-                    <div className="address-manual">
+                    <div className="deposit-address-manual">
                       <p><strong>Or send manually to:</strong></p>
-                      <div className="address-display">
+                      <div className="deposit-address-display">
                         <code>{btcPayInvoice.bitcoinAddress}</code>
                         <button 
-                          className="copy-button"
+                          className="deposit-copy-button"
                           onClick={() => copyToClipboard(btcPayInvoice.bitcoinAddress)}
                         >
                           Copy
@@ -290,15 +295,15 @@ export default function DepositModal({ onClose }: DepositModalProps) {
                   </div>
                   
                   {paymentStatus && (
-                    <div className="payment-status">
-                      {checkingPayment && <span className="spinner">⏳</span>}
+                    <div className="deposit-payment-status">
+                      {checkingPayment && <span className="deposit-spinner">⏳</span>}
                       <p>{paymentStatus}</p>
                     </div>
                   )}
                 </div>
               ) : (
                 <button 
-                  className="generate-button"
+                  className="deposit-generate-button"
                   onClick={createBitcoinInvoice}
                   disabled={loading}
                 >
@@ -310,58 +315,51 @@ export default function DepositModal({ onClose }: DepositModalProps) {
         )}
 
         {error && (
-          <div className="error-message">
+          <div className="deposit-error-message">
             ❌ {error}
           </div>
         )}
 
         <style jsx>{`
-          .deposit-modal-overlay {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            bottom: 0 !important;
-            width: 100vw !important;
-            height: 100vh !important;
-            background: rgba(0, 0, 0, 0.8) !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            z-index: 9999 !important;
-            padding: 1rem !important;
-            margin: 0 !important;
-            overflow: hidden !important;
+          .deposit-modal-content {
+            background: linear-gradient(135deg, #1a1a1b 0%, #2a2a2b 100%);
+            border: 2px solid #FF6B00;
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: calc(100vh - 4rem);
+            overflow-y: auto;
+            color: white;
+            position: relative;
+            font-family: 'Press Start 2P', monospace;
           }
 
-          .deposit-modal {
-            background: linear-gradient(135deg, #1a1a1b 0%, #2a2a2b 100%) !important;
-            border: 2px solid #FF6B00 !important;
-            border-radius: 16px !important;
-            padding: 2rem !important;
-            max-width: 600px !important;
-            width: 90% !important;
-            max-height: calc(100vh - 4rem) !important;
-            overflow-y: auto !important;
-            color: white !important;
-            margin: 0 !important;
-            z-index: 10000 !important;
-            position: relative !important;
-          }
-
-          .modal-header {
+          .deposit-modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 2rem;
           }
 
-          .close-button {
+          .deposit-modal-header h2 {
+            color: #FFB800;
+            margin: 0;
+            font-size: 1.2rem;
+          }
+
+          .deposit-close-button {
             background: none;
             border: none;
             color: #FF6B00;
             font-size: 1.5rem;
             cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
           }
 
           .deposit-options {
@@ -370,7 +368,7 @@ export default function DepositModal({ onClose }: DepositModalProps) {
             gap: 1rem;
           }
 
-          .option-card {
+          .deposit-option-card {
             background: rgba(26, 26, 27, 0.6);
             border: 2px solid rgba(255, 107, 0, 0.3);
             border-radius: 12px;
@@ -380,34 +378,40 @@ export default function DepositModal({ onClose }: DepositModalProps) {
             text-align: center;
           }
 
-          .option-card:hover {
+          .deposit-option-card:hover {
             border-color: #FF6B00;
             transform: translateY(-2px);
           }
 
-          .option-icon {
+          .deposit-option-icon {
             font-size: 2rem;
             margin-bottom: 1rem;
           }
 
-          .option-card h3 {
+          .deposit-option-card h3 {
             color: #FFB800;
             margin-bottom: 0.5rem;
+            font-size: 0.9rem;
           }
 
-          .option-card ul {
+          .deposit-option-card p {
+            font-size: 0.7rem;
+            margin-bottom: 1rem;
+          }
+
+          .deposit-option-card ul {
             text-align: left;
             margin-top: 1rem;
             padding-left: 1rem;
             color: rgba(255, 255, 255, 0.8);
           }
 
-          .option-card li {
+          .deposit-option-card li {
             margin-bottom: 0.25rem;
-            font-size: 0.9rem;
+            font-size: 0.6rem;
           }
 
-          .back-button {
+          .deposit-back-button {
             background: none;
             border: 1px solid #FF6B00;
             color: #FF6B00;
@@ -415,35 +419,40 @@ export default function DepositModal({ onClose }: DepositModalProps) {
             border-radius: 8px;
             cursor: pointer;
             margin-bottom: 1rem;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.7rem;
           }
 
-          .amount-input {
+          .deposit-amount-input {
             margin-bottom: 1rem;
           }
 
-          .amount-input label {
+          .deposit-amount-input label {
             display: block;
             margin-bottom: 0.5rem;
             color: #FFB800;
+            font-size: 0.8rem;
           }
 
-          .amount-input input {
+          .deposit-amount-input input {
             width: 100%;
             padding: 0.75rem;
             border: 1px solid #FF6B00;
             border-radius: 8px;
             background: rgba(0, 0, 0, 0.3);
             color: white;
-          }
-
-          .amount-input small {
-            display: block;
-            margin-top: 0.25rem;
-            color: rgba(255, 255, 255, 0.6);
+            font-family: 'Press Start 2P', monospace;
             font-size: 0.8rem;
           }
 
-          .generate-button, .btcpay-checkout-button {
+          .deposit-amount-input small {
+            display: block;
+            margin-top: 0.25rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.6rem;
+          }
+
+          .deposit-generate-button, .deposit-btcpay-checkout-button {
             background: linear-gradient(135deg, #FF6B00 0%, #FFB800 100%);
             color: white;
             border: none;
@@ -453,18 +462,20 @@ export default function DepositModal({ onClose }: DepositModalProps) {
             font-weight: 600;
             width: 100%;
             margin-bottom: 1rem;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.7rem;
           }
 
-          .generate-button:disabled {
+          .deposit-generate-button:disabled {
             opacity: 0.5;
             cursor: not-allowed;
           }
 
-          .invoice-container {
+          .deposit-invoice-container {
             margin-top: 1rem;
           }
 
-          .invoice-details {
+          .deposit-invoice-details {
             background: rgba(255, 107, 0, 0.1);
             border: 1px solid rgba(255, 107, 0, 0.3);
             border-radius: 8px;
@@ -472,37 +483,49 @@ export default function DepositModal({ onClose }: DepositModalProps) {
             margin-bottom: 1rem;
           }
 
-          .payment-options {
+          .deposit-invoice-details p {
+            margin-bottom: 0.5rem;
+            font-size: 0.7rem;
+          }
+
+          .deposit-payment-options {
             margin-bottom: 1rem;
           }
 
-          .address-manual {
+          .deposit-address-manual {
             margin-top: 1rem;
           }
 
-          .address-display {
+          .deposit-address-manual p {
+            font-size: 0.7rem;
+            margin-bottom: 0.5rem;
+          }
+
+          .deposit-address-display {
             display: flex;
             align-items: center;
             gap: 0.5rem;
             margin-top: 0.5rem;
           }
 
-          .address-display code {
+          .deposit-address-display code {
             background: rgba(0, 0, 0, 0.5);
             padding: 0.75rem;
             border-radius: 8px;
             flex: 1;
             word-break: break-all;
-            font-size: 0.8rem;
+            font-size: 0.6rem;
           }
 
-          .copy-button {
+          .deposit-copy-button {
             background: #10b981;
             color: white;
             border: none;
             padding: 0.75rem 1rem;
             border-radius: 8px;
             cursor: pointer;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.6rem;
           }
 
           .deposit-notes {
@@ -513,11 +536,21 @@ export default function DepositModal({ onClose }: DepositModalProps) {
             margin-bottom: 1rem;
           }
 
+          .deposit-notes p {
+            font-size: 0.7rem;
+            margin-bottom: 0.5rem;
+          }
+
           .deposit-notes ul {
             margin: 0.5rem 0 0 1rem;
           }
 
-          .payment-status {
+          .deposit-notes li {
+            font-size: 0.6rem;
+            margin-bottom: 0.25rem;
+          }
+
+          .deposit-payment-status {
             background: rgba(16, 185, 129, 0.1);
             border: 1px solid rgba(16, 185, 129, 0.3);
             border-radius: 8px;
@@ -529,7 +562,11 @@ export default function DepositModal({ onClose }: DepositModalProps) {
             gap: 0.5rem;
           }
 
-          .spinner {
+          .deposit-payment-status p {
+            font-size: 0.7rem;
+          }
+
+          .deposit-spinner {
             animation: spin 1s linear infinite;
           }
 
@@ -538,218 +575,107 @@ export default function DepositModal({ onClose }: DepositModalProps) {
             to { transform: rotate(360deg); }
           }
 
-          .error-message {
+          .deposit-error-message {
             background: rgba(239, 68, 68, 0.1);
             border: 1px solid rgba(239, 68, 68, 0.3);
             border-radius: 8px;
             padding: 1rem;
             margin-top: 1rem;
             text-align: center;
+            font-size: 0.7rem;
           }
 
-          .loading {
+          .deposit-loading {
             text-align: center;
             padding: 2rem;
             color: #FFB800;
+            font-size: 0.8rem;
           }
 
           @media (max-width: 768px) {
-            .deposit-modal-overlay {
-              padding: 0.5rem !important;
-              align-items: flex-start !important;
-              padding-top: 2rem !important;
-              overflow-y: auto !important;
+            .deposit-modal-content {
+              width: 95%;
+              padding: 1rem;
+              max-height: 85vh;
             }
             
-            .deposit-modal {
-              width: 95% !important;
-              max-height: 85vh !important;
-              padding: 1rem !important;
-              margin-top: 1rem !important;
-              margin-bottom: 1rem !important;
-            }
-            
-            .modal-header h2 {
-              font-size: 1.2rem !important;
-              margin-bottom: 1rem !important;
+            .deposit-modal-header h2 {
+              font-size: 1rem;
             }
             
             .deposit-options {
-              grid-template-columns: 1fr !important;
-              gap: 0.8rem !important;
+              grid-template-columns: 1fr;
+              gap: 0.8rem;
             }
             
-            .option-card {
-              padding: 1rem !important;
+            .deposit-option-card {
+              padding: 1rem;
             }
             
-            .option-card h3 {
-              font-size: 0.9rem !important;
-              margin-bottom: 0.4rem !important;
+            .deposit-option-card h3 {
+              font-size: 0.8rem;
             }
             
-            .option-card p {
-              font-size: 0.8rem !important;
+            .deposit-option-card p {
+              font-size: 0.6rem;
             }
             
-            .option-card ul {
-              margin-top: 0.5rem !important;
-              padding-left: 0.8rem !important;
+            .deposit-option-card li {
+              font-size: 0.5rem;
             }
             
-            .option-card li {
-              margin-bottom: 0.2rem !important;
-              font-size: 0.75rem !important;
+            .deposit-amount-input input {
+              padding: 0.6rem;
+              font-size: 0.7rem;
             }
             
-            .amount-input input {
-              padding: 0.6rem !important;
+            .deposit-generate-button, .deposit-btcpay-checkout-button {
+              padding: 0.8rem 1.5rem;
+              font-size: 0.6rem;
             }
             
-            .amount-input label {
-              font-size: 0.9rem !important;
-              margin-bottom: 0.4rem !important;
+            .deposit-address-display {
+              flex-direction: column;
+              gap: 0.4rem;
             }
             
-            .generate-button, .btcpay-checkout-button {
-              padding: 0.8rem 1.5rem !important;
-              font-size: 0.9rem !important;
-            }
-            
-            .back-button {
-              padding: 0.4rem 0.8rem !important;
-              font-size: 0.8rem !important;
-              margin-bottom: 0.8rem !important;
-            }
-            
-            .invoice-details {
-              padding: 0.8rem !important;
-              margin-bottom: 0.8rem !important;
-            }
-            
-            .invoice-details p {
-              font-size: 0.8rem !important;
-              margin-bottom: 0.3rem !important;
-            }
-            
-            .address-display {
-              flex-direction: column !important;
-              gap: 0.4rem !important;
-            }
-            
-            .address-display code {
-              font-size: 0.7rem !important;
-              padding: 0.6rem !important;
-            }
-            
-            .copy-button {
-              padding: 0.6rem 0.8rem !important;
-              width: 100% !important;
-            }
-            
-            .deposit-notes {
-              padding: 0.8rem !important;
-              margin-bottom: 0.8rem !important;
-            }
-            
-            .deposit-notes ul {
-              margin: 0.4rem 0 0 0.8rem !important;
-            }
-            
-            .deposit-notes li {
-              font-size: 0.75rem !important;
-              margin-bottom: 0.2rem !important;
-            }
-            
-            .payment-status {
-              padding: 0.8rem !important;
-              font-size: 0.8rem !important;
-            }
-            
-            .error-message {
-              padding: 0.8rem !important;
-              margin-top: 0.8rem !important;
-              font-size: 0.8rem !important;
-            }
-            
-            .loading {
-              padding: 1.5rem !important;
-              font-size: 0.9rem !important;
+            .deposit-copy-button {
+              width: 100%;
             }
           }
 
           @media (max-width: 480px) {
-            .deposit-modal-overlay {
-              padding: 0.25rem !important;
-              padding-top: 1rem !important;
-              overflow-y: auto !important;
+            .deposit-modal-content {
+              width: 98%;
+              padding: 0.8rem;
+              max-height: 80vh;
             }
             
-            .deposit-modal {
-              width: 98% !important;
-              max-height: 80vh !important;
-              padding: 0.8rem !important;
+            .deposit-modal-header h2 {
+              font-size: 0.9rem;
             }
             
-            .modal-header h2 {
-              font-size: 1rem !important;
-              margin-bottom: 0.8rem !important;
+            .deposit-option-card {
+              padding: 0.8rem;
             }
             
-            .close-button {
-              font-size: 1.2rem !important;
+            .deposit-option-icon {
+              font-size: 1.5rem;
+              margin-bottom: 0.5rem;
             }
             
-            .option-card {
-              padding: 0.8rem !important;
+            .deposit-amount-input input {
+              padding: 0.5rem;
+              font-size: 0.6rem;
             }
             
-            .option-icon {
-              font-size: 1.5rem !important;
-              margin-bottom: 0.5rem !important;
-            }
-            
-            .option-card h3 {
-              font-size: 0.8rem !important;
-            }
-            
-            .option-card p {
-              font-size: 0.7rem !important;
-            }
-            
-            .option-card li {
-              font-size: 0.7rem !important;
-            }
-            
-            .amount-input input {
-              padding: 0.5rem !important;
-              font-size: 0.9rem !important;
-            }
-            
-            .amount-input small {
-              font-size: 0.7rem !important;
-            }
-            
-            .generate-button, .btcpay-checkout-button {
-              padding: 0.7rem 1.2rem !important;
-              font-size: 0.8rem !important;
-            }
-            
-            .address-display code {
-              font-size: 0.65rem !important;
-              padding: 0.5rem !important;
-            }
-            
-            .invoice-details p {
-              font-size: 0.75rem !important;
-            }
-            
-            .deposit-notes li {
-              font-size: 0.7rem !important;
+            .deposit-generate-button, .deposit-btcpay-checkout-button {
+              padding: 0.7rem 1.2rem;
+              font-size: 0.5rem;
             }
           }
         `}</style>
       </div>
-    </div>
+    </ModalPortal>
   )
 } 
