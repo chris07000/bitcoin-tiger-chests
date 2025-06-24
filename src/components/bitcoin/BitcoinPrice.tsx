@@ -241,7 +241,7 @@ export default function BitcoinPrice() {
             <span className="balance-label">{isMobile ? 'Bal:' : 'Balance:'}</span>
             <span className="balance-value">{formatPrice(contextBalance)} sats</span>
             <button 
-              className="refresh-button" 
+              className="btc-price-refresh-button" 
               onClick={fetchActualBalance}
               disabled={isRefreshing}
               title="Refresh Balance"
@@ -573,30 +573,6 @@ export default function BitcoinPrice() {
           </div>
         </>
       )}
-      
-      <style jsx>{`
-        .refresh-button {
-          background: transparent;
-          border: none;
-          color: #ffd700;
-          cursor: pointer;
-          font-size: 0.9rem;
-          padding: 2px 6px;
-          border-radius: 3px;
-          transition: all 0.2s;
-          margin-left: 5px;
-        }
-        
-        .refresh-button:hover {
-          background: rgba(255, 215, 0, 0.1);
-          transform: rotate(180deg);
-        }
-        
-        .refresh-button:disabled {
-          opacity: 0.5;
-          cursor: wait;
-        }
-      `}</style>
     </div>
   );
 } 
