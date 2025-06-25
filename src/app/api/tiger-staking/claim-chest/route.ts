@@ -156,13 +156,8 @@ export async function POST(
           // Determine reward type if it's missing
           if (!(result as ExtendedTigerChestClaim).rewardType) {
             const baseReward = result.satoshisAmount;
-            if (baseReward >= 25000) {
-              (result as ExtendedTigerChestClaim).rewardType = "JACKPOT";
-            } else if (baseReward >= 10000) {
-              (result as ExtendedTigerChestClaim).rewardType = "HIGH_ROLL";
-            } else {
-              (result as ExtendedTigerChestClaim).rewardType = "LOW_ROLL";
-            }
+            // All tiger staking rewards are now simple tiger rewards (1,000-4,000 sats)
+            (result as ExtendedTigerChestClaim).rewardType = "TIGER_REWARD";
             console.log(`Determined reward type: ${(result as ExtendedTigerChestClaim).rewardType} based on amount: ${baseReward}`);
           }
           
@@ -188,23 +183,23 @@ export async function POST(
               let chestRewardType: string;
               
               if (chestRandomValue < 0.001) {
-                // 0.001% kans op jackpot (15.000-30.000 sats) - EXTREMELY RARE
-                const jackpotBase = Math.abs(Math.sin((Date.now() + i) * walletAddress.split('').reduce((a: number, b: string) => a + b.charCodeAt(0), 0)) * 15000);
-                chestReward = Math.floor(jackpotBase + 15000);
-                chestRewardType = "JACKPOT";
-                console.log(`JACKPOT HIT for chest #${i+1}! Value ${chestRandomValue} < 0.001`);
+                // Simple reward range: 1,000-4,000 sats per tiger
+                const rewardBase = Math.abs(Math.sin((Date.now() + i) * walletAddress.split('').reduce((a: number, b: string) => a + b.charCodeAt(0), 0)) * 3000);
+                chestReward = Math.floor(rewardBase + 1000);
+                chestRewardType = "TIGER_REWARD";
+                console.log(`Tiger reward for chest #${i+1}: ${chestReward} sats`);
               } else if (chestRandomValue < 0.01) {
-                // 0.009% kans op high roll (5.000-15.000 sats) - VERY RARE
-                const highRollBase = Math.abs(Math.cos((Date.now() + i) * Math.random() * 10000) * 10000);
-                chestReward = Math.floor(highRollBase + 5000);
-                chestRewardType = "HIGH_ROLL";
-                console.log(`HIGH ROLL for chest #${i+1}! Value ${chestRandomValue} < 0.01`);
+                // Simple reward range: 1,000-4,000 sats per tiger
+                const rewardBase = Math.abs(Math.cos((Date.now() + i) * Math.random() * 10000) * 3000);
+                chestReward = Math.floor(rewardBase + 1000);
+                chestRewardType = "TIGER_REWARD";
+                console.log(`Tiger reward for chest #${i+1}: ${chestReward} sats`);
               } else {
-                // 99.99% kans op low roll (1.000-5.000 sats) - NORMAL
-                const lowRollBase = Math.abs(Math.tan(chestSpecificEntropy) * 4000);
-                chestReward = Math.floor(lowRollBase + 1000);
-                chestRewardType = "LOW_ROLL";
-                console.log(`LOW ROLL for chest #${i+1}: Value ${chestRandomValue} >= 0.01`);
+                // Simple reward range: 1,000-4,000 sats per tiger
+                const rewardBase = Math.abs(Math.tan(chestSpecificEntropy) * 3000);
+                chestReward = Math.floor(rewardBase + 1000);
+                chestRewardType = "TIGER_REWARD";
+                console.log(`Tiger reward for chest #${i+1}: ${chestReward} sats`);
               }
               
               allRewards.push(chestReward);
@@ -246,23 +241,23 @@ export async function POST(
         let rewardType;
         
         if (randomValue < 0.001) {
-          // 0.001% kans op jackpot (15.000-30.000 sats) - EXTREMELY RARE
-          const jackpotBase = Math.abs(Math.sin(timestamp * walletHash) * 15000);
-          satoshisAmount = Math.floor(jackpotBase + 15000);
-          rewardType = "JACKPOT";
-          console.log(`JACKPOT HIT! Value ${randomValue} < 0.001`);
+          // Simple reward range: 1,000-4,000 sats per tiger
+          const rewardBase = Math.abs(Math.sin(timestamp * walletHash) * 3000);
+          satoshisAmount = Math.floor(rewardBase + 1000);
+          rewardType = "TIGER_REWARD";
+          console.log(`Tiger reward: ${satoshisAmount} sats`);
         } else if (randomValue < 0.01) {
-          // 0.009% kans op high roll (5.000-15.000 sats) - VERY RARE
-          const highRollBase = Math.abs(Math.cos(timestamp * randomSeed) * 10000);
-          satoshisAmount = Math.floor(highRollBase + 5000);
-          rewardType = "HIGH_ROLL";
-          console.log(`HIGH ROLL! Value ${randomValue} < 0.01`);
+          // Simple reward range: 1,000-4,000 sats per tiger
+          const rewardBase = Math.abs(Math.cos(timestamp * randomSeed) * 3000);
+          satoshisAmount = Math.floor(rewardBase + 1000);
+          rewardType = "TIGER_REWARD";
+          console.log(`Tiger reward: ${satoshisAmount} sats`);
         } else {
-          // 99.99% kans op low roll (1.000-5.000 sats) - NORMAL
-          const lowRollBase = Math.abs(Math.tan(combinedEntropy) * 4000);
-          satoshisAmount = Math.floor(lowRollBase + 1000);
-          rewardType = "LOW_ROLL";
-          console.log(`LOW ROLL: Value ${randomValue} >= 0.01`);
+          // Simple reward range: 1,000-4,000 sats per tiger
+          const rewardBase = Math.abs(Math.tan(combinedEntropy) * 3000);
+          satoshisAmount = Math.floor(rewardBase + 1000);
+          rewardType = "TIGER_REWARD";
+          console.log(`Tiger reward: ${satoshisAmount} sats`);
         }
         
         // Apply multiplier for tiger level
@@ -286,23 +281,23 @@ export async function POST(
             let chestRewardType: string;
             
             if (chestRandomValue < 0.001) {
-              // 0.001% kans op jackpot (15.000-30.000 sats) - EXTREMELY RARE
-              const jackpotBase = Math.abs(Math.sin((timestamp + i) * walletHash) * 15000);
-              chestReward = Math.floor(jackpotBase + 15000);
-              chestRewardType = "JACKPOT";
-              console.log(`JACKPOT HIT for chest #${i+1}! Value ${chestRandomValue} < 0.001`);
+              // Simple reward range: 1,000-4,000 sats per tiger
+              const rewardBase = Math.abs(Math.sin((Date.now() + i) * walletAddress.split('').reduce((a: number, b: string) => a + b.charCodeAt(0), 0)) * 3000);
+              chestReward = Math.floor(rewardBase + 1000);
+              chestRewardType = "TIGER_REWARD";
+              console.log(`Tiger reward for chest #${i+1}: ${chestReward} sats`);
             } else if (chestRandomValue < 0.01) {
-              // 0.009% kans op high roll (5.000-15.000 sats) - VERY RARE
-              const highRollBase = Math.abs(Math.cos((timestamp + i) * randomSeed) * 10000);
-              chestReward = Math.floor(highRollBase + 5000);
-              chestRewardType = "HIGH_ROLL";
-              console.log(`HIGH ROLL for chest #${i+1}! Value ${chestRandomValue} < 0.01`);
+              // Simple reward range: 1,000-4,000 sats per tiger
+              const rewardBase = Math.abs(Math.cos((Date.now() + i) * Math.random() * 10000) * 3000);
+              chestReward = Math.floor(rewardBase + 1000);
+              chestRewardType = "TIGER_REWARD";
+              console.log(`Tiger reward for chest #${i+1}: ${chestReward} sats`);
             } else {
-              // 99.99% kans op low roll (1.000-5.000 sats) - NORMAL
-              const lowRollBase = Math.abs(Math.tan(chestSpecificEntropy) * 4000);
-              chestReward = Math.floor(lowRollBase + 1000);
-              chestRewardType = "LOW_ROLL";
-              console.log(`LOW ROLL for chest #${i+1}: Value ${chestRandomValue} >= 0.01`);
+              // Simple reward range: 1,000-4,000 sats per tiger
+              const rewardBase = Math.abs(Math.tan(chestSpecificEntropy) * 3000);
+              chestReward = Math.floor(rewardBase + 1000);
+              chestRewardType = "TIGER_REWARD";
+              console.log(`Tiger reward for chest #${i+1}: ${chestReward} sats`);
             }
             
             allRewards.push(chestReward);
@@ -435,23 +430,23 @@ export async function POST(
       let rewardType;
       
       if (randomValue < 0.001) {
-        // 0.001% kans op jackpot (15.000-30.000 sats) - EXTREMELY RARE
-        const jackpotBase = Math.abs(Math.sin(timestamp * walletHash) * 15000);
-        satoshisAmount = Math.floor(jackpotBase + 15000);
-        rewardType = "JACKPOT";
-        console.log(`JACKPOT HIT in error fallback! Value ${randomValue} < 0.001`);
+        // Simple reward range: 1,000-4,000 sats per tiger
+        const rewardBase = Math.abs(Math.sin(timestamp * walletHash) * 3000);
+        satoshisAmount = Math.floor(rewardBase + 1000);
+        rewardType = "TIGER_REWARD";
+        console.log(`Tiger reward: ${satoshisAmount} sats`);
       } else if (randomValue < 0.01) {
-        // 0.009% kans op high roll (5.000-15.000 sats) - VERY RARE
-        const highRollBase = Math.abs(Math.cos(timestamp * randomSeed) * 10000);
-        satoshisAmount = Math.floor(highRollBase + 5000);
-        rewardType = "HIGH_ROLL";
-        console.log(`HIGH ROLL in error fallback! Value ${randomValue} < 0.01`);
+        // Simple reward range: 1,000-4,000 sats per tiger
+        const rewardBase = Math.abs(Math.cos(timestamp * randomSeed) * 3000);
+        satoshisAmount = Math.floor(rewardBase + 1000);
+        rewardType = "TIGER_REWARD";
+        console.log(`Tiger reward: ${satoshisAmount} sats`);
       } else {
-        // 99.99% kans op low roll (1.000-5.000 sats) - NORMAL
-        const lowRollBase = Math.abs(Math.tan(combinedEntropy) * 4000);
-        satoshisAmount = Math.floor(lowRollBase + 1000);
-        rewardType = "LOW_ROLL";
-        console.log(`LOW ROLL in error fallback: Value ${randomValue} >= 0.01`);
+        // Simple reward range: 1,000-4,000 sats per tiger
+        const rewardBase = Math.abs(Math.tan(combinedEntropy) * 3000);
+        satoshisAmount = Math.floor(rewardBase + 1000);
+        rewardType = "TIGER_REWARD";
+        console.log(`Tiger reward: ${satoshisAmount} sats`);
       }
       
       // Apply multiplier for tiger level if provided
@@ -474,23 +469,23 @@ export async function POST(
           let chestRewardType: string;
           
           if (chestRandomValue < 0.001) {
-            // 0.001% kans op jackpot (15.000-30.000 sats) - EXTREMELY RARE
-            const jackpotBase = Math.abs(Math.sin((timestamp + i) * walletHash) * 15000);
-            chestReward = Math.floor(jackpotBase + 15000);
-            chestRewardType = "JACKPOT";
-            console.log(`JACKPOT HIT for chest #${i+1} in error fallback! Value ${chestRandomValue} < 0.001`);
+            // Simple reward range: 1,000-4,000 sats per tiger
+            const rewardBase = Math.abs(Math.sin((Date.now() + i) * walletAddress.split('').reduce((a: number, b: string) => a + b.charCodeAt(0), 0)) * 3000);
+            chestReward = Math.floor(rewardBase + 1000);
+            chestRewardType = "TIGER_REWARD";
+            console.log(`Tiger reward for chest #${i+1}: ${chestReward} sats`);
           } else if (chestRandomValue < 0.01) {
-            // 0.009% kans op high roll (5.000-15.000 sats) - VERY RARE
-            const highRollBase = Math.abs(Math.cos((timestamp + i) * randomSeed) * 10000);
-            chestReward = Math.floor(highRollBase + 5000);
-            chestRewardType = "HIGH_ROLL";
-            console.log(`HIGH ROLL in error fallback! Value ${chestRandomValue} < 0.01`);
+            // Simple reward range: 1,000-4,000 sats per tiger
+            const rewardBase = Math.abs(Math.cos((Date.now() + i) * Math.random() * 10000) * 3000);
+            chestReward = Math.floor(rewardBase + 1000);
+            chestRewardType = "TIGER_REWARD";
+            console.log(`Tiger reward for chest #${i+1}: ${chestReward} sats`);
           } else {
-            // 99.99% kans op low roll (1.000-5.000 sats) - NORMAL
-            const lowRollBase = Math.abs(Math.tan(chestSpecificEntropy) * 4000);
-            chestReward = Math.floor(lowRollBase + 1000);
-            chestRewardType = "LOW_ROLL";
-            console.log(`LOW ROLL in error fallback: Value ${chestRandomValue} >= 0.01`);
+            // Simple reward range: 1,000-4,000 sats per tiger
+            const rewardBase = Math.abs(Math.tan(chestSpecificEntropy) * 3000);
+            chestReward = Math.floor(rewardBase + 1000);
+            chestRewardType = "TIGER_REWARD";
+            console.log(`Tiger reward for chest #${i+1}: ${chestReward} sats`);
           }
           
           allRewards.push(chestReward);
@@ -534,23 +529,23 @@ export async function POST(
     let rewardType;
     
     if (randomValue < 0.001) {
-      // 0.001% kans op jackpot (15.000-30.000 sats) - EXTREMELY RARE
-      const jackpotBase = Math.abs(Math.sin(timestamp * walletHash) * 15000);
-      satoshisAmount = Math.floor(jackpotBase + 15000);
-      rewardType = "JACKPOT";
-      console.log(`JACKPOT HIT in error fallback! Value ${randomValue} < 0.001`);
+      // Simple reward range: 1,000-4,000 sats per tiger
+      const rewardBase = Math.abs(Math.sin(timestamp * walletHash) * 3000);
+      satoshisAmount = Math.floor(rewardBase + 1000);
+      rewardType = "TIGER_REWARD";
+      console.log(`Tiger reward: ${satoshisAmount} sats`);
     } else if (randomValue < 0.01) {
-      // 0.009% kans op high roll (5.000-15.000 sats) - VERY RARE
-      const highRollBase = Math.abs(Math.cos(timestamp * randomSeed) * 10000);
-      satoshisAmount = Math.floor(highRollBase + 5000);
-      rewardType = "HIGH_ROLL";
-      console.log(`HIGH ROLL in error fallback! Value ${randomValue} < 0.01`);
+      // Simple reward range: 1,000-4,000 sats per tiger
+      const rewardBase = Math.abs(Math.cos(timestamp * randomSeed) * 3000);
+      satoshisAmount = Math.floor(rewardBase + 1000);
+      rewardType = "TIGER_REWARD";
+      console.log(`Tiger reward: ${satoshisAmount} sats`);
     } else {
-      // 99.99% kans op low roll (1.000-5.000 sats) - NORMAL
-      const lowRollBase = Math.abs(Math.tan(combinedEntropy) * 4000);
-      satoshisAmount = Math.floor(lowRollBase + 1000);
-      rewardType = "LOW_ROLL";
-      console.log(`LOW ROLL in error fallback: Value ${randomValue} >= 0.01`);
+      // Simple reward range: 1,000-4,000 sats per tiger
+      const rewardBase = Math.abs(Math.tan(combinedEntropy) * 3000);
+      satoshisAmount = Math.floor(rewardBase + 1000);
+      rewardType = "TIGER_REWARD";
+      console.log(`Tiger reward: ${satoshisAmount} sats`);
     }
     
     // Apply multiplier for tiger level if provided
@@ -573,23 +568,23 @@ export async function POST(
         let chestRewardType: string;
         
         if (chestRandomValue < 0.001) {
-          // 0.001% kans op jackpot (15.000-30.000 sats) - EXTREMELY RARE
-          const jackpotBase = Math.abs(Math.sin((timestamp + i) * walletHash) * 15000);
-          chestReward = Math.floor(jackpotBase + 15000);
-          chestRewardType = "JACKPOT";
-          console.log(`JACKPOT HIT for chest #${i+1} in error fallback! Value ${chestRandomValue} < 0.001`);
+          // Simple reward range: 1,000-4,000 sats per tiger
+          const rewardBase = Math.abs(Math.sin((Date.now() + i) * walletAddress.split('').reduce((a: number, b: string) => a + b.charCodeAt(0), 0)) * 3000);
+          chestReward = Math.floor(rewardBase + 1000);
+          chestRewardType = "TIGER_REWARD";
+          console.log(`Tiger reward for chest #${i+1}: ${chestReward} sats`);
         } else if (chestRandomValue < 0.01) {
-          // 0.009% kans op high roll (5.000-15.000 sats) - VERY RARE
-          const highRollBase = Math.abs(Math.cos((timestamp + i) * randomSeed) * 10000);
-          chestReward = Math.floor(highRollBase + 5000);
-          chestRewardType = "HIGH_ROLL";
-          console.log(`HIGH ROLL in error fallback! Value ${chestRandomValue} < 0.01`);
+          // Simple reward range: 1,000-4,000 sats per tiger
+          const rewardBase = Math.abs(Math.cos((Date.now() + i) * Math.random() * 10000) * 3000);
+          chestReward = Math.floor(rewardBase + 1000);
+          chestRewardType = "TIGER_REWARD";
+          console.log(`Tiger reward for chest #${i+1}: ${chestReward} sats`);
         } else {
-          // 99.99% kans op low roll (1.000-5.000 sats) - NORMAL
-          const lowRollBase = Math.abs(Math.tan(chestSpecificEntropy) * 4000);
-          chestReward = Math.floor(lowRollBase + 1000);
-          chestRewardType = "LOW_ROLL";
-          console.log(`LOW ROLL in error fallback: Value ${chestRandomValue} >= 0.01`);
+          // Simple reward range: 1,000-4,000 sats per tiger
+          const rewardBase = Math.abs(Math.tan(chestSpecificEntropy) * 3000);
+          chestReward = Math.floor(rewardBase + 1000);
+          chestRewardType = "TIGER_REWARD";
+          console.log(`Tiger reward for chest #${i+1}: ${chestReward} sats`);
         }
         
         allRewards.push(chestReward);
