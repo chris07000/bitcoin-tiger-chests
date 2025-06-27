@@ -6,56 +6,30 @@ import DepositModal from './DepositModal';
 import ModalPortal from '../ui/Modal';
 
 export default function BitcoinPrice() {
+  const { balance: contextBalance, processBalanceUpdate, withdraw, isInitialized, pendingWithdrawal: contextPendingWithdrawal, fetchBalance } = useLightning();
+  const { walletAddress, connectXverse, connectMagicEden, disconnectWallet, connectedWallet } = useWallet();
   const [btcPrice, setBtcPrice] = useState<number | null>(null);
   const [satsPerUSD, setSatsPerUSD] = useState<number | null>(null);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [showDepositModal, setShowDepositModal] = useState(false);
-  const [withdrawAmount, setWithdrawAmount] = useState<number>(1000);
+  const [withdrawAmount, setWithdrawAmount] = useState<number>(0);
   const [invoice, setInvoice] = useState<string>('');
-  const [isClient, setIsClient] = useState(false);
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const [showErrorAlert, setShowErrorAlert] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [pendingWithdrawal, setPendingWithdrawal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [isClient, setIsClient] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [pendingWithdrawal, setPendingWithdrawal] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const { connectedWallet, walletAddress, connectXverse, connectMagicEden, disconnectWallet } = useWallet();
-  const { balance: contextBalance, setBalance, withdraw, isInitialized, pendingWithdrawal: contextPendingWithdrawal, fetchBalance } = useLightning();
-  
-  // Nieuwe functie om de actuele balans op te halen
-  const fetchActualBalance = async () => {
-    if (!walletAddress) return;
-    
-    try {
-      setIsRefreshing(true);
-      const response = await fetch(`/api/wallet/${walletAddress}`);
-      
-      if (response.ok) {
-        const data = await response.json();
-        // Update balans in lightning context
-        setBalance(data.balance);
-        
-        // Update balans in localStorage voor consistentie met Navbar
-        const lightningBalances = JSON.parse(localStorage.getItem('lightningBalances') || '{}');
-        lightningBalances[walletAddress] = data.balance;
-        localStorage.setItem('lightningBalances', JSON.stringify(lightningBalances));
-        
-        // console.log('BitcoinPrice: Balans bijgewerkt via API:', data.balance);
-      }
-    } catch (error) {
-      console.error('BitcoinPrice: Fout bij ophalen balans via API:', error);
-    } finally {
-      setIsRefreshing(false);
-    }
-  };
-
+  // Initialize client state and check for mobile
   useEffect(() => {
     setIsClient(true);
     
-    // Check if we're on mobile
     const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
+      if (typeof window !== 'undefined') {
+        setIsMobile(window.innerWidth <= 768);
+      }
     };
     
     checkMobile();
@@ -63,6 +37,22 @@ export default function BitcoinPrice() {
     
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  const fetchActualBalance = async () => {
+    if (!walletAddress) return;
+    setIsRefreshing(true);
+    try {
+      const response = await fetch(`/api/wallet/${walletAddress}`);
+      if (response.ok) {
+        const data = await response.json();
+        await processBalanceUpdate(data.balance, 'bitcoin-price-refresh');
+      }
+    } catch (error) {
+      console.error('Error refreshing balance:', error);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
 
   useEffect(() => {
     fetchBitcoinPrice();
@@ -83,7 +73,7 @@ export default function BitcoinPrice() {
       
       // Alleen updaten als het voor onze huidige wallet is
       if (event.detail.wallet === walletAddress) {
-        setBalance(event.detail.balance);
+        processBalanceUpdate(event.detail.balance, 'bitcoin-price-event');
         // console.log('BitcoinPrice: Balance updated from event to', event.detail.balance);
       }
     };
@@ -123,52 +113,28 @@ export default function BitcoinPrice() {
         return;
       }
 
-      // First, refresh the balance from the server to ensure we have the latest balance
-      // console.log('Refreshing balance before withdrawal validation...');
-      setPendingWithdrawal(true);
-      
-      try {
-        // Use fetchBalance from Lightning context which returns the balance value
-        const freshBalance = await fetchBalance();
-        // console.log('Fresh balance for withdrawal validation:', freshBalance);
-        
-        // Use the fresh balance for validation instead of cached contextBalance
-        if (withdrawAmount > freshBalance) {
-          setErrorMessage(`Insufficient balance. Current balance: ${freshBalance} sats, requested: ${withdrawAmount} sats`);
-          setShowErrorAlert(true);
-          setPendingWithdrawal(false);
-          return;
-        }
-      } catch (balanceError) {
-        console.error('Error fetching fresh balance:', balanceError);
-        // Fallback to contextBalance if fresh balance fetch fails
-        if (withdrawAmount > contextBalance) {
-          setErrorMessage('Insufficient balance (using cached balance). Please refresh and try again.');
-          setShowErrorAlert(true);
-          setPendingWithdrawal(false);
-          return;
-        }
-      }
-
       if (!invoice || !invoice.startsWith('lnbc')) {
         setErrorMessage('Please enter a valid Lightning invoice');
         setShowErrorAlert(true);
-        setPendingWithdrawal(false);
         return;
       }
 
-      // console.log('Proceeding with withdrawal after balance validation...');
+      if (withdrawAmount > contextBalance) {
+        setErrorMessage(`Insufficient balance. Current balance: ${contextBalance} sats, requested: ${withdrawAmount} sats`);
+        setShowErrorAlert(true);
+        return;
+      }
+
+      setPendingWithdrawal(true);
       
+      // Use the centralized withdraw function which handles balance updates
       await withdraw(withdrawAmount, invoice);
       
       setShowWithdrawModal(false);
       setInvoice('');
       setShowSuccessAlert(true);
       
-      // Refresh balance again after successful withdrawal
-      setTimeout(() => {
-        fetchBalance();
-      }, 1000);
+      // The withdraw function already handles balance updates, so no need for manual refresh
     } catch (error) {
       console.error('Error withdrawing:', error);
       setErrorMessage(error instanceof Error ? error.message : 'Failed to process withdrawal');

@@ -396,8 +396,8 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
     address: ""
   });
   
-  // Import updateBalanceWithTimestamp van LightningContext
-  const { setBalance, balance, updateBalanceWithTimestamp, fetchBalance, isInitialized: lightningInitialized } = useLightning();
+  // Import processBalanceUpdate van LightningContext
+  const { setBalance, balance, processBalanceUpdate, fetchBalance, isInitialized: lightningInitialized } = useLightning();
 
   // Import WalletContext loading state
   const { isLoading: walletIsLoading, isInitialized: walletIsInitialized } = useWallet();
@@ -1643,7 +1643,7 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
           console.log('Fresh balance data from API:', data);
           
           // Update de Lightning Context balance direct
-          updateBalanceWithTimestamp(data.balance);
+          processBalanceUpdate(data.balance);
           
           console.log(`Updated balance via direct API call: new balance = ${data.balance} sats`);
           
@@ -1659,7 +1659,7 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
           // Fallback: gebruik de huidige balans + totale beloning
           const currentBalance = await fetchBalance();
         const newBalance = currentBalance + totalReward;
-        updateBalanceWithTimestamp(newBalance);
+        processBalanceUpdate(newBalance);
         
           console.log(`Fallback balance update: ${currentBalance} + ${totalReward} = ${newBalance} sats`);
         }
@@ -1905,7 +1905,7 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
               console.log('Fresh balance data from API:', data);
               
               // Update de Lightning Context balance direct
-              updateBalanceWithTimestamp(data.balance);
+              processBalanceUpdate(data.balance);
               
               console.log(`Updated balance via direct API call: new balance = ${data.balance} sats`);
               
@@ -1921,7 +1921,7 @@ const BitcoinTigersStaking: React.FC<{ walletAddress: string, userTigers?: Bitco
               // Fallback: gebruik de huidige balans + totale beloning
               const currentBalance = await fetchBalance();
             const newBalance = currentBalance + totalReward;
-            updateBalanceWithTimestamp(newBalance);
+            processBalanceUpdate(newBalance);
             
               console.log(`Fallback balance update: ${currentBalance} + ${totalReward} = ${newBalance} sats`);
             }

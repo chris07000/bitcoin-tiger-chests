@@ -38,7 +38,7 @@ export default function ChestCard({
   const [error, setError] = useState<string | null>(null)
   const [isClaiming, setIsClaiming] = useState(false)
   const { addOpenedChest } = useChestProgress()
-  const { setBalance, balance = 0, updateBalanceWithTimestamp } = useLightning()
+  const { setBalance, balance = 0, processBalanceUpdate } = useLightning()
   
   const title = type === 'gold' ? 'Gold\nChest' : `${type.charAt(0).toUpperCase() + type.slice(1)}\nChest`
   const totalPrice = joinJackpot ? price + jackpotFee : price
@@ -83,7 +83,7 @@ export default function ChestCard({
       // Pre-deduct from UI to show immediate feedback
       if (!isFree) {
         console.log('[Open] Pre-deducting balance to:', deductedBalance);
-        updateBalanceWithTimestamp(deductedBalance);
+        processBalanceUpdate(deductedBalance);
       }
 
       const results = [];
@@ -111,7 +111,7 @@ export default function ChestCard({
           
           // If failed, restore original balance
           console.log('[Open] Restoring original balance:', startingBalance);
-          updateBalanceWithTimestamp(startingBalance);
+          processBalanceUpdate(startingBalance);
           
           if (errorData.error === 'Insufficient balance') {
             setError(`You need ${totalPrice * amount} sats to open ${amount} chests. Please deposit more sats first.`);
@@ -130,7 +130,7 @@ export default function ChestCard({
         if (data.balance !== undefined) {
           console.log('[Open] DB balance from API:', data.balance);
           console.log('[Open] Change from starting balance:', data.balance - startingBalance);
-          updateBalanceWithTimestamp(data.balance);
+          processBalanceUpdate(data.balance);
         }
         
         results.push(data);
@@ -208,7 +208,7 @@ export default function ChestCard({
         if (response.ok) {
           const data = await response.json();
           console.log('[Claim] Refreshed balance from wallet API:', data.balance);
-          updateBalanceWithTimestamp(data.balance);
+          processBalanceUpdate(data.balance);
         }
       } catch (refreshError) {
         console.error('[Claim] Error refreshing balance:', refreshError);

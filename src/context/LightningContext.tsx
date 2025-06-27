@@ -36,7 +36,7 @@ interface LightningContextType {
   setWalletAddress: (address: string | null) => void;
   fetchBalance: () => Promise<number>;
   forceRefreshBalance: () => Promise<number>;
-  updateBalanceWithTimestamp: (newBalance: number) => void;
+  processBalanceUpdate: (newBalance: number, source?: string) => Promise<void>;
 }
 
 const LightningContext = createContext<LightningContextType | undefined>(undefined);
@@ -50,6 +50,8 @@ export const LightningProvider = ({ children }: { children: ReactNode }) => {
   const [isClient, setIsClient] = useState(false);
   const [lastBalanceFetch, setLastBalanceFetch] = useState<number>(0);
   const [lastInitialization, setLastInitialization] = useState<number>(0);
+  const [balanceUpdateQueue, setBalanceUpdateQueue] = useState<number[]>([]);
+  const [isProcessingBalanceUpdate, setIsProcessingBalanceUpdate] = useState<boolean>(false);
 
   // Get wallet from parent context
   const { walletAddress: contextWalletAddress, isLoading: walletIsLoading, isInitialized: walletIsInitialized } = useWallet();
@@ -198,7 +200,7 @@ export const LightningProvider = ({ children }: { children: ReactNode }) => {
       // console.log('FORCE REFRESH: Fetched wallet data, setting balance:', data.balance);
       
       // Update state en verspreid de update via het custom event
-      updateBalanceWithTimestamp(data.balance);
+      await processBalanceUpdate(data.balance, 'forceRefreshBalance');
       
       return data.balance;
     } catch (error) {
@@ -270,23 +272,67 @@ export const LightningProvider = ({ children }: { children: ReactNode }) => {
     };
   }, [isClient, walletAddress, forceRefreshBalance]);
 
-  // Utility functie om balans en timestamp in één keer bij te werken
-  const updateBalanceWithTimestamp = (newBalance: number) => {
+  // Centralized balance update processor
+  const processBalanceUpdate = async (newBalance: number, source: string = 'unknown') => {
     if (!isClient) return;
     
-    // Update state
-    setBalanceState(newBalance);
-    setLastBalanceFetch(Date.now());
+    // Prevent multiple simultaneous balance updates
+    if (isProcessingBalanceUpdate) {
+      console.log(`Balance update queued (${source}):`, newBalance);
+      setBalanceUpdateQueue(prev => [...prev, newBalance]);
+      return;
+    }
     
-    // Forceer een globale update door een custom event te dispatchen
-    if (typeof window !== 'undefined') {
-      // Creëer en dispatch een custom event voor balans updates
-      const event = new CustomEvent('balanceUpdated', { 
-        detail: { balance: newBalance, wallet: walletAddress } 
-      });
-      window.dispatchEvent(event);
+    setIsProcessingBalanceUpdate(true);
+    
+    try {
+      console.log(`Processing balance update (${source}): ${balance} -> ${newBalance}`);
+      
+      // Update state atomically
+      setBalanceState(newBalance);
+      setLastBalanceFetch(Date.now());
+      
+      // Dispatch global event for other components
+      if (typeof window !== 'undefined') {
+        const event = new CustomEvent('balanceUpdated', { 
+          detail: { balance: newBalance, wallet: walletAddress, source } 
+        });
+        window.dispatchEvent(event);
+      }
+      
+      // Process any queued updates after a brief delay
+      setTimeout(() => {
+        setIsProcessingBalanceUpdate(false);
+        setBalanceUpdateQueue(prev => {
+          if (prev.length > 0) {
+            const nextUpdate = prev[prev.length - 1]; // Take the most recent queued update
+            const remaining = prev.slice(0, -1);
+            if (remaining.length > 0) {
+              setBalanceUpdateQueue(remaining);
+            } else {
+              setBalanceUpdateQueue([]);
+            }
+            // Process the next update
+            setTimeout(() => processBalanceUpdate(nextUpdate, 'queued'), 50);
+          }
+          return prev;
+        });
+      }, 100);
+      
+    } catch (error) {
+      console.error('Error processing balance update:', error);
+      setIsProcessingBalanceUpdate(false);
     }
   };
+
+  // Process queued updates when queue changes
+  useEffect(() => {
+    if (!isProcessingBalanceUpdate && balanceUpdateQueue.length > 0) {
+      const nextUpdate = balanceUpdateQueue[balanceUpdateQueue.length - 1];
+      setBalanceUpdateQueue([]);
+      processBalanceUpdate(nextUpdate, 'queue-processor');
+    }
+  }, [balanceUpdateQueue, isProcessingBalanceUpdate]);
 
   const setBalance = (newBalance: number) => {
     if (!isClient) return;
@@ -296,8 +342,8 @@ export const LightningProvider = ({ children }: { children: ReactNode }) => {
     //   change: newBalance - balance
     // });
     
-    // Gebruik de nieuwe utility functie
-    updateBalanceWithTimestamp(newBalance);
+    // Use the new centralized update system
+    processBalanceUpdate(newBalance, 'setBalance');
   };
   
   // Nieuwe functie om de balans direct van de server op te halen
@@ -337,7 +383,7 @@ export const LightningProvider = ({ children }: { children: ReactNode }) => {
       // console.log('Fetched wallet data, setting balance:', data.balance);
       
       // Update state en verspreid de update via het custom event
-      updateBalanceWithTimestamp(data.balance);
+      await processBalanceUpdate(data.balance, 'fetchBalance');
       
       return data.balance;
     } catch (error) {
@@ -554,7 +600,7 @@ export const LightningProvider = ({ children }: { children: ReactNode }) => {
         setWalletAddress,
         fetchBalance,
         forceRefreshBalance,
-        updateBalanceWithTimestamp
+        processBalanceUpdate
       }}
     >
       {children}

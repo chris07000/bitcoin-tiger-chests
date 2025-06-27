@@ -6,23 +6,22 @@ import { useLightning } from '@/context/LightningContext'
 import Link from 'next/link'
 
 export default function JackpotPage() {
-  const [betAmount, setBetAmount] = useState<number>(0)
+  const { balance: contextBalance, walletAddress, fetchBalance, processBalanceUpdate } = useLightning()
   const [selectedSide, setSelectedSide] = useState<'heads' | 'tails' | null>(null)
-  const [isFlipping, setIsFlipping] = useState(false)
-  const [result, setResult] = useState<'heads' | 'tails' | null>(null)
+  const [betAmount, setBetAmount] = useState<number>(0)
+  const [result, setResult] = useState<'heads' | 'tails'>('heads')
+  const [isFlipping, setIsFlipping] = useState<boolean>(false)
   const [message, setMessage] = useState<string>('')
-  const [walletAddress, setWalletAddress] = useState<string>('')
-  const { balance: contextBalance, setBalance: setLightningBalance, updateBalanceWithTimestamp, walletAddress: contextWalletAddress } = useLightning()
+  const [showRankUpModal, setShowRankUpModal] = useState<boolean>(false)
+  const [rankUpLevel, setRankUpLevel] = useState<string>('')
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
   const [winAudio, setWinAudio] = useState<HTMLAudioElement | null>(null)
-  const [showRankUpModal, setShowRankUpModal] = useState(false)
-  const [rankUpLevel, setRankUpLevel] = useState('')
 
   // Initialize wallet address and audio - run once on mount
   useEffect(() => {
-    const storedWallet = contextWalletAddress || localStorage.getItem('walletAddress')
+    const storedWallet = walletAddress || localStorage.getItem('walletAddress')
     if (storedWallet && storedWallet !== walletAddress) {
-      setWalletAddress(storedWallet)
+      localStorage.setItem('walletAddress', storedWallet)
     }
 
     // Initialize audio on client side only
@@ -30,39 +29,12 @@ export default function JackpotPage() {
       setAudio(new Audio('/coin-flip.mp3'))
       setWinAudio(new Audio('/win.mp3'))
     }
-  }, [contextWalletAddress, walletAddress, audio])
+  }, [walletAddress, audio])
 
-  // Memoized balance fetch function to prevent recreating
-  const fetchCurrentBalance = useCallback(async () => {
-    if (!walletAddress) return;
-    
-    try {
-      const now = Date.now();
-      const lastFetch = localStorage.getItem('lastBalanceFetch');
-      
-      // Debounce van 10 seconden voor balance fetches
-      if (lastFetch && (now - parseInt(lastFetch)) < 10000) {
-        return;
-      }
-      
-      localStorage.setItem('lastBalanceFetch', now.toString());
-      
-      const response = await fetch(`/api/wallet/${walletAddress}`);
-      if (response.ok) {
-        const data = await response.json();
-        setLightningBalance(data.balance);
-        updateBalanceWithTimestamp(data.balance);
-      }
-    } catch (error) {
-      console.error('Error fetching balance:', error);
-    }
-  }, [walletAddress, setLightningBalance, updateBalanceWithTimestamp]);
-
-  // Memoized balance update function
-  const updateBalance = useCallback((newBalance: number) => {
-    setLightningBalance(newBalance);
-    updateBalanceWithTimestamp(newBalance);
-  }, [setLightningBalance, updateBalanceWithTimestamp]);
+  // Function to update balance through the centralized system
+  const updateBalance = (newBalance: number) => {
+    processBalanceUpdate(newBalance, 'coinflip-ui');
+  };
 
   const handleBet = async () => {
     if (!selectedSide || betAmount <= 0 || !walletAddress) {
@@ -713,7 +685,7 @@ export default function JackpotPage() {
           </div>
           <button 
             className="refresh-button" 
-            onClick={() => walletAddress && fetchCurrentBalance()}
+            onClick={() => walletAddress && fetchBalance()}
             title="Refresh Balance">
             ↻
           </button>
