@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { buildApiUrl } from '@/lib/api-utils';
 
 // API key voor beveiliging
 const ADMIN_API_KEY = process.env.ADMIN_API_KEY;
@@ -10,8 +9,13 @@ let cronIntervalId: NodeJS.Timeout | null = null;
 // Functie om de winnaar-trekking API aan te roepen
 async function callDrawWinnersAPI() {
   try {
-    // Roep de API aan met correcte URL handling
-    const response = await fetch(buildApiUrl(`/api/cron/draw-winners?apiKey=${ADMIN_API_KEY}`), {
+    // Pas de base URL aan op basis van environment
+    const baseUrl = process.env.NODE_ENV === 'production'
+      ? process.env.NEXT_PUBLIC_API_BASE_URL || process.env.VERCEL_URL || 'https://yourdomain.com'
+      : process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000';
+      
+    // Roep de API aan
+    const response = await fetch(`${baseUrl}/api/cron/draw-winners?apiKey=${ADMIN_API_KEY}`, {
       method: 'GET',
     });
     
