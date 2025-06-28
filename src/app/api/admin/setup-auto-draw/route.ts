@@ -11,7 +11,7 @@ async function callDrawWinnersAPI() {
   try {
     // Simple SSL fix: ensure HTTPS in production
     const baseUrl = process.env.NODE_ENV === 'production'
-      ? (process.env.NEXT_PUBLIC_API_BASE_URL || 'https://bitcoin-tiger-chests.vercel.app')
+      ? (process.env.NEXT_PUBLIC_API_BASE_URL || 'https://bitcointigercollective.xyz')
       : (process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000');
       
     // Roep de API aan
