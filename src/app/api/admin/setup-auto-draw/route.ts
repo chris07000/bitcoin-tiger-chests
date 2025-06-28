@@ -9,10 +9,10 @@ let cronIntervalId: NodeJS.Timeout | null = null;
 // Functie om de winnaar-trekking API aan te roepen
 async function callDrawWinnersAPI() {
   try {
-    // Pas de base URL aan op basis van environment
+    // Simple SSL fix: ensure HTTPS in production
     const baseUrl = process.env.NODE_ENV === 'production'
-      ? process.env.NEXT_PUBLIC_API_BASE_URL || process.env.VERCEL_URL || 'https://yourdomain.com'
-      : process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000';
+      ? (process.env.NEXT_PUBLIC_API_BASE_URL || 'https://bitcoin-tiger-chests.vercel.app')
+      : (process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000');
       
     // Roep de API aan
     const response = await fetch(`${baseUrl}/api/cron/draw-winners?apiKey=${ADMIN_API_KEY}`, {
