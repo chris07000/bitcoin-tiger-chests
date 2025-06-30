@@ -82,7 +82,7 @@ export async function GET(
           wallet = await prisma.wallet.create({
             data: {
               id: walletAddress, // Use address as ID
-              address,
+              address: walletAddress,
               balance: 0
             }
           });
