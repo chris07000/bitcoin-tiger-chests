@@ -1,7 +1,5 @@
 {
   "version": 2,
-  "buildCommand": "chmod +x build.sh && ./build.sh",
-  "installCommand": "rm -rf node_modules package-lock.json .next && npm install --force && npx prisma generate && npm cache clean --force",
   "framework": "nextjs",
   "functions": {
     "src/app/**/*.ts": {
