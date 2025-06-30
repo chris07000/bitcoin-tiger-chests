@@ -73,41 +73,58 @@ export async function GET(
       // Try database first
       if (prisma) {
         // Zoek de wallet in de database
-        const wallet = await (prisma as any).wallet.findUnique({
+        let wallet = await prisma.wallet.findUnique({
           where: { address: walletAddress }
         });
 
-        if (wallet) {
-          // Haal transacties apart op
-          const transactions = await (prisma as any).transaction.findMany({
-            where: { walletId: wallet.id },
-            orderBy: { createdAt: 'desc' },
-            take: 10
+        if (!wallet) {
+          console.log(`Wallet ${walletAddress} not found, creating new wallet`);
+          wallet = await prisma.wallet.create({
+            data: {
+              id: walletAddress, // Use address as ID
+              address,
+              balance: 0
+            }
           });
-
-          // Format de wallet data voor de response
-          const formattedTransactions = transactions.map((t: any) => ({
-            type: t.type,
-            amount: t.amount,
-            status: t.status,
-            paymentHash: t.paymentHash,
-            createdAt: t.createdAt
-          }));
-
-          // Return de wallet data met de huidige balans
-          const response = {
-            address: wallet.address,
-            balance: wallet.balance,
-            transactions: formattedTransactions,
-            success: true,
-            source: 'database'
-          };
-
-          // CACHE THE RESPONSE to reduce future DB calls
-          setCacheResponse(cacheKey, response);
-          
-          return NextResponse.json(response);
         }
+
+        // Haal transacties op
+        const transactions = await prisma.transaction.findMany({
+          where: { walletId: wallet.id },
+          orderBy: { createdAt: 'desc' },
+          take: 100
+        }).catch(error => {
+          console.error('Error fetching transactions:', error);
+          return []; // Return empty array on error instead of crashing
+        });
+
+        console.log(`Wallet data loaded for ${walletAddress}:`, {
+          balance: wallet.balance,
+          transactionCount: transactions.length
+        });
+
+        // Format de wallet data voor de response
+        const formattedTransactions = transactions.map((t: any) => ({
+          type: t.type,
+          amount: t.amount,
+          status: t.status,
+          paymentHash: t.paymentHash,
+          createdAt: t.createdAt
+        }));
+
+        // Return de wallet data met de huidige balans
+        const response = {
+          address: wallet.address,
+          balance: wallet.balance,
+          transactions: formattedTransactions,
+          success: true,
+          source: 'database'
+        };
+
+        // CACHE THE RESPONSE to reduce future DB calls
+        setCacheResponse(cacheKey, response);
+        
+        return NextResponse.json(response);
       }
     } catch (dbError) {
       console.warn('Database error, falling back to in-memory storage:', dbError);
@@ -133,11 +150,14 @@ export async function GET(
     // Als de wallet niet bestaat, return een 404
     return NextResponse.json({ error: "Wallet niet gevonden" }, { status: 404 });
   } catch (error) {
-    console.error("Error fetching wallet:", error);
-    return NextResponse.json(
-      { error: "Er is een fout opgetreden bij het ophalen van de wallet" },
-      { status: 500 }
-    );
+    console.error('Error in wallet GET route:', error);
+    
+    // Return a safe fallback instead of crashing
+    return NextResponse.json({
+      balance: 0,
+      transactions: [],
+      error: 'Failed to load wallet data'
+    }, { status: 200 }); // Return 200 to prevent frontend crashes
   }
 }
 
@@ -172,13 +192,13 @@ export async function PUT(
         console.log('Attempting database wallet initialization...');
         
         // Controleer of de wallet al bestaat
-        wallet = await (prisma as any).wallet.findUnique({
+        wallet = await prisma.wallet.findUnique({
           where: { address: walletAddress }
         });
 
         // Als de wallet nog niet bestaat, maak deze aan
         if (!wallet) {
-          wallet = await (prisma as any).wallet.create({
+          wallet = await prisma.wallet.create({
             data: {
               id: walletAddress, // Gebruik het adres als ID
               address: walletAddress,
@@ -278,7 +298,7 @@ export async function POST(
       // Try database first
       if (prisma) {
         // Get wallet
-        wallet = await (prisma as any).wallet.findUnique({
+        wallet = await prisma.wallet.findUnique({
           where: { address },
         });
 
@@ -298,8 +318,8 @@ export async function POST(
           }
 
           // Create transaction and update wallet in a transaction
-          const result = await (prisma as any).$transaction([
-            (prisma as any).transaction.create({
+          const result = await prisma.$transaction([
+            prisma.transaction.create({
               data: {
                 id: `tx-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`,
                 type,
@@ -308,7 +328,7 @@ export async function POST(
                 walletId: wallet.id,
               },
             }),
-            (prisma as any).wallet.update({
+            prisma.wallet.update({
               where: { id: wallet.id },
               data: { 
                 balance: newBalance,

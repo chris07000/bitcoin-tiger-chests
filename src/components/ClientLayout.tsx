@@ -6,6 +6,7 @@ import { BalanceProvider } from '@/context/BalanceContext';
 // next-auth/react is removed to fix deployment issues
 import { Toaster } from 'react-hot-toast';
 import Navbar from '@/components/Navbar';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 
@@ -35,18 +36,23 @@ export default function ClientLayout({
   children: React.ReactNode;
 }) {
   return (
-    // SessionProvider is removed to fix deployment issues
-    <WalletProvider>
-      <LightningProvider>
-        <BalanceProvider>
-          <GlobalBalanceSync />
-          <Navbar />
-          <div className="content-container">
-            {children}
-          </div>
-        </BalanceProvider>
-      </LightningProvider>
-      <Toaster />
-    </WalletProvider>
+    <ErrorBoundary>
+      <WalletProvider>
+        <LightningProvider>
+          <BalanceProvider>
+            <ErrorBoundary>
+              <GlobalBalanceSync />
+              <Navbar />
+              <div className="content-container">
+                <ErrorBoundary>
+                  {children}
+                </ErrorBoundary>
+              </div>
+            </ErrorBoundary>
+          </BalanceProvider>
+        </LightningProvider>
+        <Toaster />
+      </WalletProvider>
+    </ErrorBoundary>
   );
 } 
