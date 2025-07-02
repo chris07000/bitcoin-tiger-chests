@@ -230,109 +230,75 @@ export const LightningProvider = ({ children }: { children: ReactNode }) => {
       }
     };
 
-    // Listen for page navigation to force balance refresh
-    const handlePageNavigation = () => {
-      // console.log('Lightning: Page navigation detected, forcing balance refresh');
-      if (walletAddress) {
-        // Force refresh balance on page navigation after a short delay
-        setTimeout(() => {
-          forceRefreshBalance().then(newBalance => {
-            // console.log('Lightning: Balance refreshed after page navigation:', newBalance);
-          }).catch(error => {
-            console.error('Lightning: Failed to refresh balance after page navigation:', error);
-          });
-        }, 500);
-      }
-    };
+    // EMERGENCY: Disable page navigation balance refreshes to stop infinite loop
+    // const handlePageNavigation = () => {
+    //   console.log('Lightning: Page navigation detected, forcing balance refresh');
+    //   if (walletAddress) {
+    //     setTimeout(() => {
+    //       forceRefreshBalance().then(newBalance => {
+    //         console.log('Lightning: Balance refreshed after page navigation:', newBalance);
+    //       }).catch(error => {
+    //         console.error('Lightning: Failed to refresh balance after page navigation:', error);
+    //       });
+    //     }, 500);
+    //   }
+    // };
 
-    // Listen for custom page navigation events from ClientLayout
-    const handlePageNavigated = (event: CustomEvent) => {
-      // console.log('Lightning: Received pageNavigated event:', event.detail);
-      if (walletAddress) {
-        // Force refresh balance when navigating to new page
-        setTimeout(() => {
-          forceRefreshBalance().then(newBalance => {
-            // console.log('Lightning: Balance refreshed after page navigation to:', event.detail.pathname, 'New balance:', newBalance);
-          }).catch(error => {
-            console.error('Lightning: Failed to refresh balance after page navigation:', error);
-          });
-        }, 300);
-      }
-    };
+    // EMERGENCY: Disable page navigated events to stop infinite loop  
+    // const handlePageNavigated = (event: CustomEvent) => {
+    //   console.log('Lightning: Received pageNavigated event:', event.detail);
+    //   if (walletAddress) {
+    //     setTimeout(() => {
+    //       forceRefreshBalance().then(newBalance => {
+    //         console.log('Lightning: Balance refreshed after page navigation to:', event.detail.pathname, 'New balance:', newBalance);
+    //       }).catch(error => {
+    //         console.error('Lightning: Failed to refresh balance after page navigation:', error);
+    //       });
+    //     }, 300);
+    //   }
+    // };
 
-    // Listen for browser navigation events
-    window.addEventListener('popstate', handlePageNavigation);
-    window.addEventListener('pageNavigated', handlePageNavigated as EventListener);
+    // Only keep essential wallet connection events, disable navigation events
+    // window.addEventListener('popstate', handlePageNavigation);
+    // window.addEventListener('pageNavigated', handlePageNavigated as EventListener);
     window.addEventListener('walletConnected', handleWalletConnected as EventListener);
     
     return () => {
-      window.removeEventListener('popstate', handlePageNavigation);
-      window.removeEventListener('pageNavigated', handlePageNavigated as EventListener);
+      // window.removeEventListener('popstate', handlePageNavigation);
+      // window.removeEventListener('pageNavigated', handlePageNavigated as EventListener);
       window.removeEventListener('walletConnected', handleWalletConnected as EventListener);
     };
-  }, [isClient, walletAddress, forceRefreshBalance]);
+  }, [isClient, walletAddress]); // Remove forceRefreshBalance from dependencies
 
-  // Centralized balance update processor
+  // Centralized balance update processor - SIMPLIFIED to prevent loops
   const processBalanceUpdate = async (newBalance: number, source: string = 'unknown') => {
     if (!isClient) return;
     
-    // Prevent multiple simultaneous balance updates
-    if (isProcessingBalanceUpdate) {
-      console.log(`Balance update queued (${source}):`, newBalance);
-      setBalanceUpdateQueue(prev => [...prev, newBalance]);
-      return;
-    }
+    // EMERGENCY: Simplified version without queue or event dispatching
+    console.log(`Processing balance update (${source}): ${balance} -> ${newBalance}`);
     
-    setIsProcessingBalanceUpdate(true);
+    // Just update state directly, no queuing or events
+    setBalanceState(newBalance);
+    setLastBalanceFetch(Date.now());
     
-    try {
-      console.log(`Processing balance update (${source}): ${balance} -> ${newBalance}`);
-      
-      // Update state atomically
-      setBalanceState(newBalance);
-      setLastBalanceFetch(Date.now());
-      
-      // Dispatch global event for other components
-      if (typeof window !== 'undefined') {
-        const event = new CustomEvent('balanceUpdated', { 
-          detail: { balance: newBalance, wallet: walletAddress, source } 
-        });
-        window.dispatchEvent(event);
-      }
-      
-      // Process any queued updates after a brief delay
-      setTimeout(() => {
-        setIsProcessingBalanceUpdate(false);
-        setBalanceUpdateQueue(prev => {
-          if (prev.length > 0) {
-            const nextUpdate = prev[prev.length - 1]; // Take the most recent queued update
-            const remaining = prev.slice(0, -1);
-            if (remaining.length > 0) {
-              setBalanceUpdateQueue(remaining);
-            } else {
-              setBalanceUpdateQueue([]);
-            }
-            // Process the next update
-            setTimeout(() => processBalanceUpdate(nextUpdate, 'queued'), 50);
-          }
-          return prev;
-        });
-      }, 100);
-      
-    } catch (error) {
-      console.error('Error processing balance update:', error);
-      setIsProcessingBalanceUpdate(false);
-    }
+    // EMERGENCY: Disable event dispatching to prevent loops
+    // if (typeof window !== 'undefined') {
+    //   const event = new CustomEvent('balanceUpdated', { 
+    //     detail: { balance: newBalance, wallet: walletAddress, source } 
+    //   });
+    //   window.dispatchEvent(event);
+    // }
   };
 
+  // EMERGENCY: Disable balance update queue system to prevent loops
   // Process queued updates when queue changes
-  useEffect(() => {
-    if (!isProcessingBalanceUpdate && balanceUpdateQueue.length > 0) {
-      const nextUpdate = balanceUpdateQueue[balanceUpdateQueue.length - 1];
-      setBalanceUpdateQueue([]);
-      processBalanceUpdate(nextUpdate, 'queue-processor');
-    }
-  }, [balanceUpdateQueue, isProcessingBalanceUpdate]);
+  // useEffect(() => {
+  //   if (!isProcessingBalanceUpdate && balanceUpdateQueue.length > 0) {
+  //     const nextUpdate = balanceUpdateQueue[balanceUpdateQueue.length - 1];
+  //     setBalanceUpdateQueue([]);
+  //     processBalanceUpdate(nextUpdate, 'queue-processor');
+  //   }
+  // }, [balanceUpdateQueue, isProcessingBalanceUpdate]);
 
   const setBalance = (newBalance: number) => {
     if (!isClient) return;
