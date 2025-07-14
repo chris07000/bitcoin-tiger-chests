@@ -39,7 +39,11 @@ export async function GET(
       if (paymentStatus.paid && prisma) {
         // Check if this invoice was cancelled
         try {
-          const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000'}/api/lightning/cancelled-check`, {
+          const baseUrl = process.env.NODE_ENV === 'production'
+            ? process.env.NEXT_PUBLIC_API_BASE_URL || `https://${process.env.VERCEL_URL}` || 'https://bitcointigercollective.xyz'
+            : process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000';
+          
+          const response = await fetch(`${baseUrl}/api/lightning/cancelled-check`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ paymentHash: hash })

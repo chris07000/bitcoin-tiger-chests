@@ -11,7 +11,7 @@ async function callDrawWinnersAPI() {
   try {
     // Pas de base URL aan op basis van environment
     const baseUrl = process.env.NODE_ENV === 'production'
-      ? process.env.NEXT_PUBLIC_API_BASE_URL || process.env.VERCEL_URL || 'https://yourdomain.com'
+      ? process.env.NEXT_PUBLIC_API_BASE_URL || `https://${process.env.VERCEL_URL}` || 'https://bitcointigercollective.xyz'
       : process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000';
       
     // Roep de API aan
